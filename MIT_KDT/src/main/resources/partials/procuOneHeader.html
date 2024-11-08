@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>페이지 예시</title>
+    <style>
+        /* 헤더 스타일 */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 로고 스타일 */
+        .logo {
+            flex: 0 0 15%; /* 가로 15% */
+            display: flex;
+            align-items: center;
+        }
+        .logo img {
+            height: 24px;
+        }
+
+        /* 메뉴 영역 스타일 */
+        .menu {
+            flex: 1 0 60%; /* 가로 60% */
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .menu button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+        }
+        .menu button:hover {
+            color: #0073e6;
+        }
+
+        /* 설정 아이콘 스타일 */
+        .settings-icon {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* 메뉴 아이콘 스타일 */
+        .menu-icon {
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: auto; /* 로고와 메뉴 사이에 공간 확보 */
+        }
+    </style>
+</head>
+<body>
+<!-- 헤더 템플릿 -->
+<template id="header-template">
+    <div class="header">
+        <!-- 로고 -->
+        <div class="logo">
+            <a href="home.html">
+                <img src="logo.png" alt="ProcuOne 로고"> <!-- 로고 이미지 경로 -->
+            </a>
+        </div>
+
+        <!-- 메뉴 아이콘 -->
+        <div class="menu-icon">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <!-- 메뉴 버튼들 -->
+        <div class="menu">
+            <button>홈</button>
+            <button>조달계획</button>
+            <button>발주</button>
+            <button>입/출고</button>
+            <button>생산계획</button>
+            <button>업무현황</button>
+            <button>상세보기</button>
+        </div>
+
+        <!-- 설정 아이콘 -->
+        <div class="settings-icon">
+            <i class="fas fa-cog"></i>
+        </div>
+    </div>
+</template>
+</body>
+</html>
