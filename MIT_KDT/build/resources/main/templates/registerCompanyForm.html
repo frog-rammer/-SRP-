@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
 </head>
 <body>
+<!-- 헤더-->
+<div th:replace="partials/procuOneHeader :: header"></div>
     <h1>업체 등록</h1>
     <div>
         <lable>사업자번호:</lable>
