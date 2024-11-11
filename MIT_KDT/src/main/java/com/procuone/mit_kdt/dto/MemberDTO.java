@@ -16,5 +16,6 @@ public class MemberDTO {
     private String password;
     private String email;
     private String phone;
+    private String Dno;
     private LocalDate creationDate = LocalDate.now();
 }
