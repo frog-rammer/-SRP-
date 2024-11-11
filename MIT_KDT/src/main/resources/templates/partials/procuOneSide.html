@@ -3,8 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            width: 200px;
+            background-color: #333;
+            height: 100vh;
+            position: fixed;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            position: relative;
+        }
+
+        a {
+            display: block;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            background-color: #333;
+        }
+
+        a:hover {
+            background-color: #575757;
+        }
+
+        /* 드롭다운 메뉴 스타일 */
+        ul ul {
+            display: none;
+            position: absolute;
+            left: 200px;
+            top: 0;
+            width: 200px;
+            background-color: #444;
+        }
+
+        li:hover > ul {
+            display: block;
+        }
+
+        li > a:after {
+            content: ' ▼';
+        }
+
+        li:hover > a:after {
+            content: ' ▲';
+        }
+    </style>
 </head>
 <body>
-
+<nav>
+    <ul>
+        <li><a href="#">메인화면</a></li>
+        <li>
+            <a href="#">생산계획</a>
+            <ul>
+                <li><a href="#">생산계획등록</a></li>
+                <li><a href="#">생산계획조회</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">조달관리</a>
+            <ul>
+                <li><a href="#">품목정보등록</a></li>
+                <li><a href="#">계약 등록</a></li>
+                <li><a href="#">조달계획등록</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">발주관리</a>
+            <ul>
+                <li><a href="#">구매 발주서 관리</a></li>
+                <li><a href="#">진척 검수 처리</a></li>
+                <li><a href="#">발주 진행 현황</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">자재관리</a>
+            <ul>
+                <li><a href="#">자재 입출고</a></li>
+                <li><a href="#">거래명세서 발행</a></li>
+                <li><a href="#">재고 산출</a></li>
+                <li><a href="#">재고(금액)관리</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 </body>
 </html>
