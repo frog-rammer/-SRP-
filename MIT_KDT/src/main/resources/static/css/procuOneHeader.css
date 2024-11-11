@@ -1,0 +1,61 @@
+/* 전체 헤더 스타일 */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 로고 스타일 */
+.logo {
+    flex: 0 0 auto; /* 필요한 만큼만 공간 차지 */
+}
+
+.logo-img {
+    height: 30px; /* 로고 크기 조정 */
+}
+
+/* 메뉴 아이콘 스타일 */
+.menu-icon {
+    margin-right: auto; /* 로고와 메뉴 버튼 사이 공간 확보 */
+}
+
+.icon-img {
+    width: 24px; /* 아이콘 크기 조정 */
+    height: 24px;
+}
+
+/* 메뉴 버튼 스타일 */
+.menu {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.menu button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    padding: 8px 12px;
+    transition: color 0.3s ease;
+}
+
+.menu button:hover {
+    color: #0073e6;
+}
+
+/* 설정 아이콘 스타일 */
+.settings-icon {
+    flex: 0 0 auto;
+}
+
+.settings-icon .icon-img {
+    width: 24px; /* 설정 아이콘 크기 조정 */
+    height: 24px;
+}
