@@ -42,9 +42,9 @@ public class ViewController {
     @GetMapping("/estimateRegistration")
     public String estimateRegistration() { return "estimateRegistration"; }
 
-    @GetMapping("/progress-inspection")
-    public String progressInspection() { return "progress-inspection"; }
+    @GetMapping("/progressInspection")
+    public String progressInspection() { return "progressInspection"; }
 
-    @GetMapping("/purchase-orders")
-    public String purchaseOrders() { return "purchase-orders"; }
+    @GetMapping("/purchaseOrders")
+    public String purchaseOrders() { return "purchaseOrders"; }
 }
