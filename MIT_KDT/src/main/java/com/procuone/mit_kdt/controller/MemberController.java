@@ -16,7 +16,7 @@ public class MemberController {
     @Autowired
     MemberService memberService;
 
-    @GetMapping("/login")
+    @GetMapping({"/","/login"})
     public String login(Model model) {
         model.addAttribute("memberDTO", new MemberDTO());
         return "login";

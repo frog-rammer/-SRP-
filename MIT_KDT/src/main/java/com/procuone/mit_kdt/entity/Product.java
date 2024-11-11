@@ -1,8 +1,9 @@
 package com.procuone.mit_kdt.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Set;
 
 
 @Getter
@@ -15,13 +16,13 @@ import lombok.*;
 public class Product {
 
     @Id
-    private String productId;
-    private String productName;
-    private String productDimension;
-    private String productLargeCategory;
-    private String productMediumCategory;
-    private String productSmallCategory;
-    private String productMaterial;
-    private String productDrawingFile;
-    private String productQuantity;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long productId;
+
+    private String name;
+
+    private String description;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private Set<ProductItem> productItems;
 }
