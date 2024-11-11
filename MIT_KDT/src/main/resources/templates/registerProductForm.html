@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>품목등록</h1>
+    <div>
+        <label>제품코드</label>
+        <input type="text">
+    </div>
+    <div>
+        <lable>품목명</lable>
+        <input type="text">
+    </div>
+    <div>
+        <label>규격</label>
+        <input type="text" placeholder="가로(mm)">
+        <input type="text" placeholder="세로(mm)">
+        <input type="text" placeholder="높이(mm)">
+    </div>
+    <div>
+        <label>분류</label>
+        <select id="largeCategory" onchange="updateMiddleCategory()">
+            <option selected>== 대분류 ==</option>
+            <option>자전거 몸체</option>
+            <option>전기 시스템</option>
+            <option>구동 시스템</option>
+            <option>안전 장치</option>
+        </select>
+        <select id="middleCategory" onchange="updateSmallCategory()">
+            <option selected>== 중분류 ==</option>
+        </select>
+        <select id="smallCategory">
+            <option selected>== 소분류 ==</option>
+        </select>
+    </div>
+    <div>
+        <label>재질</label>
+        <input type="text">
+    </div>
+    <div>
+        <label>도면파일</label>
+        <input type="file">
+    </div>
+    <div>
+        <button type="submit">확인</button>
+        <button type="button">취소</button>
+    </div>
+    <script>
+        // 대분류에 맞는 중분류와 소분류 데이터
+        const categories = {
+            "자전거 몸체": {
+                "프레임": ["알류미늄 프레임"],
+                "포크": ["서스펨션 포크"],
+                "핸들바": ["넓은 알류미늄 핸들바", "스틸핸들바"],
+                "안장": ["쿠션 안장"],
+                "킥스탠드": ["알류미늄 킥스탠드"]
+            },
+            "전기 시스템": {
+                "모터": ["브러시리스 모터", "브러시모터"],
+                "배터리": ["리튬이온 배터리", "저용량배터리"],
+                "컨트롤러": ["컨트롤러"],
+                "디스플레이": ["LCD디스플레이", "LED 표시등"],
+                "센서": ["PAS센서"]
+            },
+            "구동 시스템": {
+                "변속기": ["다단 변속", "스프로킷 단일 속도 스프로킷"],
+                "체인": ["고강도 체인", "저비용체인"],
+                "페달": ["알루미늄 페달", "플라스틱 페달"]
+            },
+            "안전 장치": {
+                "제동장치": ["고성능 디스크 브레이크"],
+                "조명": ["고휘도 LED 조명", "LED 조명"],
+                "경고장치": ["알류미늄 벨"]
+            }
+        };
+
+        // 대분류 선택 시 중분류 업데이트
+        function updateMiddleCategory() {
+            const largeCategory = document.getElementById("largeCategory").value;
+            const middleCategorySelect = document.getElementById("middleCategory");
+            const smallCategorySelect = document.getElementById("smallCategory");
+
+            // 중분류 초기화
+            middleCategorySelect.innerHTML = "<option selected>== 중분류 ==</option>";
+            smallCategorySelect.innerHTML = "<option selected>== 소분류 ==</option>";
+
+            if (largeCategory !== "== 대분류 ==") {
+                const middleCategories = Object.keys(categories[largeCategory]);
+
+                // 중분류 추가
+                middleCategories.forEach(category => {
+                    const option = document.createElement("option");
+                    option.value = category;
+                    option.textContent = category;
+                    middleCategorySelect.appendChild(option);
+                });
+            }
+        }
+
+        // 중분류 선택 시 소분류 업데이트
+        function updateSmallCategory() {
+            const largeCategory = document.getElementById("largeCategory").value;
+            const middleCategory = document.getElementById("middleCategory").value;
+            const smallCategorySelect = document.getElementById("smallCategory");
+
+            // 소분류 초기화
+            smallCategorySelect.innerHTML = "<option selected>== 소분류 ==</option>";
+
+            if (middleCategory !== "== 중분류 ==" && largeCategory !== "== 대분류 ==") {
+                const smallCategories = categories[largeCategory][middleCategory];
+
+                // 소분류 추가
+                smallCategories.forEach(category => {
+                    const option = document.createElement("option");
+                    option.value = category;
+                    option.textContent = category;
+                    smallCategorySelect.appendChild(option);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
