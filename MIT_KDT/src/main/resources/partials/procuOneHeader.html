@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,6 +58,7 @@
     </style>
 </head>
 <body>
+<div th:fragment="header">
 <!-- 헤더 템플릿 -->
 <template id="header-template">
     <div class="header">
@@ -90,5 +91,6 @@
         </div>
     </div>
 </template>
+</div>
 </body>
 </html>
