@@ -1,0 +1,103 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.calendarWrap, .productPlanInputWrap, .productionPlanListWrap {
+    display: inline-block;
+    vertical-align: top;
+    padding: 10px;
+}
+.calendarWrap {
+    width: 60%;
+}
+.productPlanInputWrap {
+    width: 35%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.productPlanInputWrap h3 {
+    margin: 0;
+}
+.excelUploadBtn {
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.productPlanInputWrap input, .productPlanInputWrap select, .productPlanInputWrap button {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+.calendar div {
+    padding: 20px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    position: relative;
+}
+.calendar .header {
+    grid-column: span 7;
+    text-align: center;
+}
+.productionPlanListWrap {
+    width: 100%;
+    padding-top: 20px;
+}
+.productionPlanListSearchBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.productionPlanListSearchBar input[type="text"] {
+    width: 60%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+.detailsBtn {
+    padding: 8px 12px;
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.productionPlanList table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.productionPlanList table, .productionPlanList th, .productionPlanList td {
+    border: 1px solid #ddd;
+}
+.productionPlanList th, .productionPlanList td {
+    padding: 8px;
+    text-align: center;
+}
+.productionPlanListPagenation {
+    text-align: center;
+    padding-top: 10px;
+}
+.label {
+    font-size: 12px;
+    color: red;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
