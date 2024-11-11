@@ -10,21 +10,23 @@
 
 /* 로고 스타일 */
 .logo {
-    flex: 0 0 auto; /* 필요한 만큼만 공간 차지 */
+    flex: 0 0 auto;
 }
 
-.logo-img {
-    height: 30px; /* 로고 크기 조정 */
+.logo img {
+    height: 100px; /* 로고 이미지 높이 설정 */
+    width: auto; /* 비율에 맞게 자동 너비 설정 */
 }
 
 /* 메뉴 아이콘 스타일 */
 .menu-icon {
-    margin-right: auto; /* 로고와 메뉴 버튼 사이 공간 확보 */
+    margin-right: auto;
 }
 
-.icon-img {
-    width: 24px; /* 아이콘 크기 조정 */
-    height: 24px;
+.menu-icon img {
+    margin-left: 20px;
+    height: 40px; /* 메뉴 아이콘 높이 설정 */
+    width: auto; /* 비율에 맞게 자동 너비 설정 */
 }
 
 /* 메뉴 버튼 스타일 */
@@ -55,7 +57,8 @@
     flex: 0 0 auto;
 }
 
-.settings-icon .icon-img {
-    width: 24px; /* 설정 아이콘 크기 조정 */
-    height: 24px;
+.settings-icon img {
+    height: 40px; /* 설정 아이콘 높이 설정 */
+    margin-right: 20px;
+    width: auto; /* 비율에 맞게 자동 너비 설정 */
 }
