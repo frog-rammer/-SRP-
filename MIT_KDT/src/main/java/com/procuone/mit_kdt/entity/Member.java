@@ -19,6 +19,7 @@ public class Member{
     private String memberId;
     private String memberName;
     private String password;
+    private String Dno;
     private String email;
     private String phone;
     private LocalDate creationDate = LocalDate.now();
