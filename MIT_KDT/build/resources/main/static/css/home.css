@@ -1,0 +1,6 @@
+body {
+    background-image: url('/images/icon/'); /* 배경 이미지 경로 */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
