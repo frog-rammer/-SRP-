@@ -27,4 +27,24 @@ public class ViewController {
     @GetMapping("/productionPlanInput")
     public String productionPlanInput() { return "productionPlanInput"; }
 
+    @GetMapping("/company")
+    public String company() { return "company"; }
+
+    @GetMapping("/companyInput")
+    public String companyInput() { return "companyInput"; }
+
+    @GetMapping("/estimateInput")
+    public String estimateInput() { return "estimateInput"; }
+
+    @GetMapping("/estimate")
+    public String estimate() { return "estimate"; }
+
+    @GetMapping("/estimateRegistration")
+    public String estimateRegistration() { return "estimateRegistration"; }
+
+    @GetMapping("/progress-inspection")
+    public String progressInspection() { return "progress-inspection"; }
+
+    @GetMapping("/purchase-orders")
+    public String purchaseOrders() { return "purchase-orders"; }
 }
