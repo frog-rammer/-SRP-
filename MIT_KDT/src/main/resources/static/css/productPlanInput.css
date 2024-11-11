@@ -4,10 +4,15 @@ body {
     padding: 0;
     box-sizing: border-box;
 }
+.container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
 .calendarWrap, .productPlanInputWrap, .productionPlanListWrap {
     display: inline-block;
     vertical-align: top;
-    padding: 10px;
 }
 .calendarWrap {
     width: 60%;
@@ -47,7 +52,7 @@ body {
     text-align: center;
 }
 .calendar div {
-    padding: 20px;
+    padding: 15px;
     border: 1px solid #ddd;
     cursor: pointer;
     position: relative;
@@ -100,4 +105,34 @@ body {
     position: absolute;
     top: 5px;
     right: 5px;
+}
+
+/* 추가된 스타일 */
+/* 비활성화된 날짜 스타일 */
+.calendar .disabled {
+    color: #bbb;
+    background-color: #f0f0f0;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+/* 선택된 날짜 스타일 */
+.calendar .highlight {
+    background-color: #ffeb3b; /* 강조 색상 */
+    color: black;
+    font-weight: bold;
+}
+
+/* 반응형 레이아웃 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .calendarWrap, .productPlanInputWrap {
+        width: 100%;
+    }
+    .productionPlanListSearchBar input[type="text"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }
