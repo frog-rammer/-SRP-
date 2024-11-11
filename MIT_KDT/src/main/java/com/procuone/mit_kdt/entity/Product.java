@@ -17,5 +17,11 @@ public class Product {
     @Id
     private String productId;
     private String productName;
-    private String productDescription;
+    private String productDimension;
+    private String productLargeCategory;
+    private String productMediumCategory;
+    private String productSmallCategory;
+    private String productMaterial;
+    private String productDrawingFile;
+    private String productQuantity;
 }
