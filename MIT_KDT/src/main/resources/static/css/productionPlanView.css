@@ -1,0 +1,21 @@
+
+.container {
+    display: flex;
+    gap: 20px;
+}
+.calendarWrap, .productionPlanListWrap {
+    flex: 1;
+}
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+.calendar div {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+.highlight {
+    background-color: #ffeb3b; /* 하이라이트 색상 */
+}

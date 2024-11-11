@@ -20,4 +20,11 @@ public class ViewController {
 
     @GetMapping("/productList")
     public String productList() { return "productList"; }
+
+    @GetMapping("/productionPlanView")
+    public String productionPlanInfo() { return "productionPlanView"; }
+
+    @GetMapping("/productionPlanInput")
+    public String productionPlanInput() { return "productionPlanInput"; }
+
 }
