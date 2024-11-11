@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
 </head>
 <body>
+<!-- 헤더-->
+<div th:replace="partials/procuOneHeader :: header"></div>
     <h1>품목조회</h1>
     <div>
       <input type="text" placeholder="제품코드를 입력하세요">

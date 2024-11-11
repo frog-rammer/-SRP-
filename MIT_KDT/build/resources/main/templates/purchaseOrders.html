@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>구매 발주서 관리</title>
+  <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+  <style>
+    li{
+      list-style: none;
+      display:inline;
+    }
+  </style>
+</head>
+<body>
+<!-- 헤더-->
+<div th:replace="partials/procuOneHeader :: header"></div>
+<div id="content">
+  <section class="procurement-plan">
+    <div class="top">
+      <h2>구매 발주서 관리 - 조달 계획 리스트</h2>
+    </div>
+    <button id="order-btn" class="button">발주</button>
+    <div class="search-bar"></div>
+     <div class="date-search">
+       <label>
+         <input type="date" class="date-start">
+       </label>
+       <span>-</span>
+       <label>
+         <input type="date" class="date-end">
+       </label>
+       <button class="search-btn">검색</button>
+     </div>
+    <div class="keyword-search">
+      <label>
+        <select class="keyword-type">
+          <option>업체명</option>
+          <option>품목명</option>
+        </select>
+        <input type="text" class="keyword-search" placeholder="키워드 검색">
+        <button class="keyword-search-btn">검색</button>
+      </label>
+    </div>
+    <table>
+      <thead>
+      <tr>
+        <th>선택</th>
+        <th>조달계획번호</th>
+        <th>업체명</th>
+        <th>품목명</th>
+        <th>구매주문수량</th>
+        <th>조달납기일</th>
+        <th>사업자 번호</th>
+        <th>품목 코드</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="plan-row">
+        <td>
+          <label>
+            <input type="checkbox">
+          </label>
+        </td>
+        <td>proc123</td>
+        <td>삼성</td>
+        <td>퓨즈</td>
+        <td>100</td>
+        <td>2024-12-12</td>
+        <td>123-12-12345</td>
+        <td>sm12345</td>
+      </tr>
+      <tr class="plan-row">
+        <td>
+          <label>
+            <input type="checkbox">
+          </label>
+        </td>
+        <td>proc123</td>
+        <td>삼성</td>
+        <td>퓨즈</td>
+        <td>100</td>
+        <td>2024-12-12</td>
+        <td>123-12-12345</td>
+        <td>sm12345</td>
+      </tr>
+      <tr class="plan-row">
+        <td>
+          <label>
+            <input type="checkbox">
+          </label>
+        </td>
+        <td>proc123</td>
+        <td>삼성</td>
+        <td>퓨즈</td>
+        <td>100</td>
+        <td>2024-12-12</td>
+        <td>123-12-12345</td>
+        <td>sm12345</td>
+      </tr>
+      <tr class="plan-row">
+        <td>
+          <label>
+            <input type="checkbox">
+          </label>
+        </td>
+        <td>proc123</td>
+        <td>삼성</td>
+        <td>퓨즈</td>
+        <td>100</td>
+        <td>2024-12-12</td>
+        <td>123-12-12345</td>
+        <td>sm12345</td>
+      </tr>
+      <tr class="plan-row">
+        <td>
+          <label>
+            <input type="checkbox">
+          </label>
+        </td>
+        <td>proc123</td>
+        <td>삼성</td>
+        <td>퓨즈</td>
+        <td>100</td>
+        <td>2024-12-12</td>
+        <td>123-12-12345</td>
+        <td>sm12345</td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <ul>
+        <li><a href="#" class="page-btn">1</a></li>
+        <li><a href="#" class="page-btn">2</a></li>
+        <li><a href="#" class="page-btn">3</a></li>
+        <li><a href="#" class="page-btn">4</a></li>
+        <li><a href="#" class="page-btn">5</a></li>
+        <!--  다음 페이지 링크      -->
+        <li><a href="#" class="page-btn">▶</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="prochase-order">
+    <div class="top">
+      <h2>구매 발주서 관리 - 구매 발주서 리스트</h2>
+    </div>
+    <button id="delete-btn" class="button">삭제</button>
+    <button id="modify-btn" class="button">수정</button>
+    <div class="search-bar">
+      <div class="date-search">
+        <label>
+          <input type="date" class="date-start2" placeholder="시작 날짜">
+          <span>-</span>
+          <input type="date" class="date-end2" placeholder="종료 날짜">
+        </label>
+        <button class="search-btn2">검색</button>
+      </div>
+      <div class="keyword-search2">
+        <label>
+          <select class="keyword-type2">
+            <option>업체명</option>
+            <option>품목명</option>
+          </select>
+          <input type="text" class="keyword-search2" placeholder="키워드 검색">
+          <button class="keyword-search-btn2">검색</button>
+        </label>
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>발주번호</th>
+          <th>업체명</th>
+          <th>품목명</th>
+          <th>발주수량</th>
+          <th>입고예정일</th>
+          <th>발주일</th>
+        </tr>
+        </thead>
+        <tbody id="purchase-order-list">
+         <tr class="plan-row2">
+           <td>
+             <label>
+               <input type="checkbox">
+             </label>
+           </td>
+           <td>ord123</td>
+           <td>삼성</td>
+           <td>퓨즈</td>
+           <td>100</td>
+           <td>2024-12-15</td>
+           <td>2024-12-12</td>
+         </tr>
+         <tr class="plan-row2">
+           <td>
+             <label>
+               <input type="checkbox">
+             </label>
+           </td>
+           <td>ord123</td>
+           <td>삼성</td>
+           <td>퓨즈</td>
+           <td>100</td>
+           <td>2024-12-15</td>
+           <td>2024-12-12</td>
+         </tr>
+         <tr class="plan-row2">
+           <td>
+             <label>
+               <input type="checkbox">
+             </label>
+           </td>
+           <td>ord123</td>
+           <td>삼성</td>
+           <td>퓨즈</td>
+           <td>100</td>
+           <td>2024-12-15</td>
+           <td>2024-12-12</td>
+         </tr>
+         <tr class="plan-row2">
+           <td>
+             <label>
+               <input type="checkbox">
+             </label>
+           </td>
+           <td>ord123</td>
+           <td>삼성</td>
+           <td>퓨즈</td>
+           <td>100</td>
+           <td>2024-12-15</td>
+           <td>2024-12-12</td>
+         </tr>
+         <tr class="plan-row2">
+           <td>
+             <label>
+               <input type="checkbox">
+             </label>
+           </td>
+           <td>ord123</td>
+           <td>삼성</td>
+           <td>퓨즈</td>
+           <td>100</td>
+           <td>2024-12-15</td>
+           <td>2024-12-12</td>
+         </tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <ul>
+          <li><a href="#" class="page-btn">1</a></li>
+          <li><a href="#" class="page-btn">2</a></li>
+          <li><a href="#" class="page-btn">3</a></li>
+          <li><a href="#" class="page-btn">4</a></li>
+          <li><a href="#" class="page-btn">5</a></li>
+          <!--  다음 페이지 링크      -->
+          <li><a href="#" class="page-btn">▶</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
