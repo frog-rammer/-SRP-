@@ -7,9 +7,10 @@
   <link rel="stylesheet" th:href="@{/css/productPlanInput.css}">
 </head>
 <body>
-<!-- 헤더-->
+<!-- 헤더 -->
 <div th:replace="partials/procuOneHeader :: header"></div>
-<!-- 달력 부분-->
+
+<!-- 달력 부분 -->
 <section class="calendarWrap">
   <h3>생산 달력</h3>
   <label for="yearSelect">연도:</label>
@@ -35,41 +36,50 @@
 </section>
 
 <!-- 생산 계획 입력 부분 -->
-<section class="productPlanInputWrap">
-  <div class="header">
-    <h3>생산 계획 입력</h3>
-    <button class="excelUploadBtn">엑셀로 등록하기</button>
-  </div>
-  <label for="product">생산제품</label>
-  <select id="product">
-    <option>노트북 prod-003</option>
-    <!-- 다른 옵션 추가 가능 -->
-  </select>
-  <label for="startDate">생산 시작일</label>
-  <input type="date" id="startDate">
-  <label for="endDate">생산 종료일</label>
-  <input type="date" id="endDate">
-  <button onclick="resetDates()">날짜 초기화</button>
-  <label for="quantity">생산 수량</label>
-  <input type="number" id="quantity">
-  <label for="part">부품 선택</label>
-  <select id="part">
-    <option>베어링 GA01100-001</option>
-    <!-- 다른 옵션 추가 가능 -->
-  </select>
-  <label for="company">회사 선택</label>
-  <select id="company">
-    <option>(주)석스크림 114-86-35933</option>
-    <!-- 다른 옵션 추가 가능 -->
-  </select>
-  <button>저장</button>
-</section>
+<form th:action="@{/productionPlan/save}" th:object="${productionPlanDTO}" method="post">
+  <section class="productPlanInputWrap">
+    <div class="header">
+      <h3>생산 계획 입력</h3>
+      <button type="button" class="excelUploadBtn">엑셀로 등록하기</button>
+    </div>
+    <label for="productName">생산제품</label>
+    <select th:field="*{productName}" id="productName">
+      <option>노트북 prod-003</option>
+      <!-- 추가 가능한 옵션들 -->
+    </select>
+
+    <label for="planStartDate">생산 시작일</label>
+    <input type="date" th:field="*{planStartDate}" id="planStartDate">
+
+    <label for="planEndDate">생산 종료일</label>
+    <input type="date" th:field="*{planEndDate}" id="planEndDate">
+
+    <button type="button" onclick="resetDates()">날짜 초기화</button>
+
+    <label for="quantity">생산 수량</label>
+    <input type="number" th:field="*{quantity}" id="quantity">
+
+    <label for="partCode">부품 선택</label>
+    <select th:field="*{partCode}" id="partCode">
+      <option>베어링 GA01100-001</option>
+      <!-- 추가 가능한 옵션들 -->
+    </select>
+
+    <label for="companyName">회사 선택</label>
+    <select th:field="*{companyName}" id="companyName">
+      <option>(주)석스크림 114-86-35933</option>
+      <!-- 추가 가능한 옵션들 -->
+    </select>
+
+    <button type="submit">저장</button>
+  </section>
+</form>
 
 <!-- 생산 계획 목록 부분 -->
 <section class="productionPlanListWrap">
   <div class="productionPlanListSearchBar">
     <input type="text" placeholder="검색어를 입력하세요">
-    <button class="searchBtn"> 검색</button>
+    <button class="searchBtn">검색</button>
     <button class="detailsBtn">등록된 계획 자세히 보기</button>
   </div>
   <h3>생산 계획 목록</h3>
@@ -83,8 +93,8 @@
         <th>생산제품명</th>
         <th>생산제품코드</th>
         <th>생산수량</th>
-        <th>등록번호</th>
-        <th>등록업체</th>
+        <th>부품코드</th>
+        <th>회사명</th>
         <th>사업자번호</th>
       </tr>
       </thead>
@@ -110,6 +120,7 @@
     <button>다음</button>
   </section>
 </section>
+
 <script th:src="@{/JS/productPlanInput.js}"></script>
 </body>
 </html>
