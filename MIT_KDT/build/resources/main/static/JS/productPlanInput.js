@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const yearSelect = document.getElementById('yearSelect');
     const monthSelect = document.getElementById('monthSelect');
     const calendar = document.getElementById('calendar');
-    const startDateInput = document.getElementById('startDate');
-    const endDateInput = document.getElementById('endDate');
+    const startDateInput = document.getElementById('planStartDate');
+    const endDateInput = document.getElementById('planEndDate');
     let dateClicked = 0;
     let startDateCell = null;
     let endDateCell = null;
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function selectDate(year, month, day, cell) {
-        const selectedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const selectedDate = `${year}-${String((Number(month) + 1)).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
         if (dateClicked % 2 === 0) { // 시작일 선택
             if (startDateCell) startDateCell.querySelector('.label')?.remove();
@@ -94,6 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     yearSelect.addEventListener('change', async () => await renderCalendar(yearSelect.value, monthSelect.value));
     monthSelect.addEventListener('change', async () => await renderCalendar(yearSelect.value, monthSelect.value));
+
+    const resetButton = document.getElementById('resetDatesButton'); // id로 정확한 버튼 선택
+    if (resetButton) {
+        resetButton.addEventListener('click', resetDates); // 이벤트 리스너 추가
+    }
 
     // 초기 달력 렌더링
     renderCalendar(yearSelect.value, monthSelect.value);

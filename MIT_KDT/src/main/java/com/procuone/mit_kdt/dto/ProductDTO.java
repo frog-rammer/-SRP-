@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDTO {
-
     private String productId; // 제품코드
     private String productName; // 품목명
     private String productDimension; // 규격

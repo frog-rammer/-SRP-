@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class ProductionPlanDTO {
     
     // 수정 해야함
-    private String planNum;          // 생산계획번호
+    private int planNo;          // 생산계획번호
     private String productName;       // 생산제품명
     private String productCode;       // 생산제품코드
     private LocalDate planStartDate;  // 생산 시작일
