@@ -40,15 +40,9 @@ public class ItemController {
         // 빈 Item 객체와 카테고리 리스트를 모델에 추가
         model.addAttribute("item", new ItemDTO());
 
-        // 카테고리 목록을 계층 구조로 구성
-        List<Category> categories = categoryService.getAllCategories();
-
-        // categories 리스트가 비어 있지 않은지 확인
-        if (categories == null || categories.isEmpty()) {
-            System.out.println("Categories 리스트가 비어 있습니다.");
-        }
-
-        model.addAttribute("categories", categories);
+        // 최상위 카테고리 목록만 가져와서 초기 렌더링에 사용
+        List<Category> rootCategories = categoryService.getRootCategories();
+        model.addAttribute("categories", rootCategories);
 
         return "registerProductForm"; // registerProductForm.html 페이지 렌더링
     }

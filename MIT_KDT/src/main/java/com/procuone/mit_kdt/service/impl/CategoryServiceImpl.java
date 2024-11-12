@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -17,19 +15,23 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-
-    public Map<String, List<Category>> getCategoriesGroupedByType() {
-        List<Category> categories = categoryRepository.findAll();
-        // 타입별로 카테고리를 그룹화하여 반환
-        return categories.stream().collect(Collectors.groupingBy(Category::getType));
-    }
     @Override
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
     @Override
-    public Optional<Category> getCategoryById(Long id) {
-        return categoryRepository.findById(id);
+    public List<Category> getRootCategories() {
+        // 상위 카테고리가 없는 최상위 카테고리 가져오기 (대분류)
+        return categoryRepository.findByParentIsNull();
+    }
+
+    @Override
+    public List<Category> getSubCategoriesByParentId(Long parentId) {
+        // parentId에 해당하는 하위 카테고리 가져오기
+        Optional<Category> parentCategory = categoryRepository.findById(parentId);
+        return parentCategory.map(Category::getSubCategories)
+                .map(List::copyOf)
+                .orElse(List.of());
     }
 }
