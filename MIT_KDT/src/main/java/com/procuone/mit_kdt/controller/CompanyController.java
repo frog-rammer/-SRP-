@@ -29,11 +29,12 @@ public class CompanyController {
         return "registerCompanyForm"; // 해당하는 HTML 파일을 반환 (업체 등록 폼)
     }
 
+
     @GetMapping("/viewCompanyList")
     public String viewCompanyList(Model model) {
-        List<Company> companyList = companyService.getAllCompanies();  // 회사 목록 가져오기
+        List<CompanyDTO> companyList = companyService.getAllCompanies();  // 회사 목록 가져오기
         model.addAttribute("companyList", companyList);  // 모델에 추가
-        return "viewCompanyListForm";  // 뷰 이름
+        return "viewCompanylistForm";  // 뷰 이름
     }
 
     // 업체 등록 처리
@@ -41,6 +42,6 @@ public class CompanyController {
     public String registerCompany(@ModelAttribute("CompanyDTO") CompanyDTO companyDTO) {
         // DTO를 서비스로 전달하여 DB에 저장
         companyService.registerCompany(companyDTO);
-        return "viewCompanyListForm"; // 등록 완료 후 리다이렉트
+        return "/company/viewCompanyListForm"; // 등록 완료 후 리다이렉트
     }
 }

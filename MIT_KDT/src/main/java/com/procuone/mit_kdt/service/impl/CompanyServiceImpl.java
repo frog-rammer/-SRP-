@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -37,9 +38,16 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public List<Company> getAllCompanies() {
-        return companyRepository.findAll(); // 모든 회사 데이터를 DB에서 가져오기
+    public List<CompanyDTO> getAllCompanies() {
+        // 모든 회사 데이터를 DB에서 가져온 후 DTO로 변환
+        List<Company> companyList = companyRepository.findAll();
+
+        // Company 리스트를 CompanyDTO 리스트로 변환하여 반환
+        return companyList.stream()
+                .map(this::entityToDto)
+                .collect(Collectors.toList());
     }
+
 
     // DTO -> Entity 변환
     private Company dtoToEntity(CompanyDTO companyDTO) {
