@@ -1,89 +1,74 @@
 package com.procuone.mit_kdt.service.impl;
 
-import com.procuone.mit_kdt.dto.ProductDTO;
+import com.procuone.mit_kdt.entity.Item;
 import com.procuone.mit_kdt.entity.Product;
+import com.procuone.mit_kdt.repository.ItemRepository;
 import com.procuone.mit_kdt.repository.ProductRepository;
 import com.procuone.mit_kdt.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final ItemRepository itemRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, ItemRepository itemRepository) {
         this.productRepository = productRepository;
+        this.itemRepository = itemRepository;
     }
 
     @Override
-    public ProductDTO saveProduct(ProductDTO productDTO) {
-        Product product = Product.builder()
-                .productId(productDTO.getProductId())
-                .productName(productDTO.getProductName())
-                .productDimension(productDTO.getProductDimension())
-                .productLargeCategory(productDTO.getProductLargeCategory())
-                .productMediumCategory(productDTO.getProductMediumCategory())
-                .productSmallCategory(productDTO.getProductSmallCategory())
-                .productMaterial(productDTO.getProductMaterial())
-                .productDrawingFile(productDTO.getProductDrawingFile())
-                .productQuantity(productDTO.getProductQuantity())
-                .build();
-
-        Product savedProduct = productRepository.save(product);
-
-        return new ProductDTO(
-                savedProduct.getProductId(),
-                savedProduct.getProductName(),
-                savedProduct.getProductDimension(),
-                savedProduct.getProductLargeCategory(),
-                savedProduct.getProductMediumCategory(),
-                savedProduct.getProductSmallCategory(),
-                savedProduct.getProductMaterial(),
-                savedProduct.getProductDrawingFile(),
-                savedProduct.getProductQuantity()
-        );
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
     }
 
     @Override
-    public ProductDTO getProductById(String productId) {
-        Product product = productRepository.findByProductId(productId);
+    public Product getProductById(Long productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        return product.orElse(null);
+    }
 
-        if (product != null) {
-            return new ProductDTO(
-                    product.getProductId(),
-                    product.getProductName(),
-                    product.getProductDimension(),
-                    product.getProductLargeCategory(),
-                    product.getProductMediumCategory(),
-                    product.getProductSmallCategory(),
-                    product.getProductMaterial(),
-                    product.getProductDrawingFile(),
-                    product.getProductQuantity()
-            );
+    @Override
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
+    @Override
+    public void deleteProduct(Long productId) {
+        productRepository.deleteById(productId);
+    }
+
+    @Override
+    public Item saveItem(Long productId, Item item) {
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isPresent()) {
+            item.setProduct(product.get());  // Product와 Item 연결
+            return itemRepository.save(item);
         }
-        return null; // Product not found, you can throw exception if needed
+        return null;
     }
 
     @Override
-    public List<ProductDTO> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-        return products.stream()
-                .map(product -> new ProductDTO(
-                        product.getProductId(),
-                        product.getProductName(),
-                        product.getProductDimension(),
-                        product.getProductLargeCategory(),
-                        product.getProductMediumCategory(),
-                        product.getProductSmallCategory(),
-                        product.getProductMaterial(),
-                        product.getProductDrawingFile(),
-                        product.getProductQuantity()
-                ))
-                .collect(Collectors.toList());
+    public List<Item> getItemsByProduct(Long productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isPresent()) {
+            return itemRepository.findByProduct(product.get());  // Product 객체를 기반으로 Item 찾기
+        }
+        return null;
+    }
+
+
+    @Override
+    public void deleteItem(Long productId, Long itemId) {
+        Optional<Item> item = itemRepository.findById(itemId);
+        if (item.isPresent() && item.get().getProduct().getProductId().equals(productId)) {
+            itemRepository.delete(item.get());
+        }
     }
 }
