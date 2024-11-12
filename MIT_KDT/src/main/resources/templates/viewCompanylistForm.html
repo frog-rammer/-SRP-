@@ -22,18 +22,16 @@
             <th>Account</th>
         </tr>
         </thead>
-        <tbody> <!-- DTO 만들면 주석지우기  11-08 김승호-->
-<!--        <tr th:each="company : ${companyDTOs}"-->
-<!--            th:onclick="|window.location.href='/companyDetail/' + [[${company.businessid}]]|"-->
-<!--            class="clickable-row">-->
-<!--            <td th:text="${company.businessid}"></td>-->
-<!--            <td th:text="${company.com_name}"></td>-->
-<!--            <td th:text="${company.com_add}"></td>-->
-<!--            <td th:text="${company.com_manager}"></td>-->
-<!--            <td th:text="${company.com_phone}"></td>-->
-<!--            <td th:text="${company.com_email}"></td>-->
-<!--            <td th:text="${company.com_account}"></td>-->
-<!--        </tr>-->
+        <tbody>
+            <tr th:each="company : ${companyList}" th:onclick="|window.location.href='/companyDetail/' + [[${company.businessId}]]|" class="clickable-row">
+                <td th:text="${company.businessId}"></td>
+                <td th:text="${company.comName}"></td>
+                <td th:text="${company.comAdd}"></td>
+                <td th:text="${company.comManage}"></td>
+                <td th:text="${company.comPhone}"></td>
+                <td th:text="${company.comEmail}"></td>
+                <td th:text="${company.comAccount}"></td>
+            </tr>
         </tbody>
     </table>
 </div>
