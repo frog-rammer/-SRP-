@@ -4,11 +4,11 @@ import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.repository.CompanyRepository;
 import com.procuone.mit_kdt.service.CompanyService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -23,30 +23,19 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public void registerCompany(CompanyDTO companyDTO) {
         // DTO -> Entity 변환
-        Company company = Company.builder()
-                .businessId(companyDTO.getBusinessId())
-                .comAccount(companyDTO.getComAccount())
-                .comAdd(companyDTO.getComAdd())
-                .comEmail(companyDTO.getComEmail())
-                .comManage(companyDTO.getComManage())
-                .comName(companyDTO.getComName())
-                .comPhone(companyDTO.getComPhone())
-                .build();
+        Company company = dtoToEntity(companyDTO);
 
         // DB에 저장
         companyRepository.save(company);
     }
 
     @Override
-    public List<CompanyDTO> getAllCompanies() {
-        // 모든 회사 데이터를 DB에서 가져온 후 DTO로 변환
-        List<Company> companyList = companyRepository.findAll();
-
-        // Company 리스트를 CompanyDTO 리스트로 변환하여 반환
-        return companyList.stream()
-                .map(this::entityToDto)
-                .collect(Collectors.toList());
+    public Page<CompanyDTO> getAllCompanies(Pageable pageable) {
+        Page<Company> companyPage = companyRepository.findAll(pageable);
+        return companyPage.map(this::entityToDto); // entityToDto 사용
     }
+
+
 
 
     // DTO -> Entity 변환
