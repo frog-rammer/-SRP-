@@ -18,4 +18,6 @@ public class MemberDTO {
     private String phone;
     private String Dno;
     private LocalDate creationDate = LocalDate.now();
+
+
 }
