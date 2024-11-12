@@ -1,0 +1,35 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: 200px 1fr; /* 사이드바 너비, 나머지 영역 */
+    grid-template-rows: auto 1fr auto; /* 상단 헤더, 중간 메인 콘텐츠, 하단 푸터 */
+    height: 100vh;
+    grid-template-areas:
+        "header header"
+        "aside main"
+        "footer footer";
+}
+
+.layout-header {
+    grid-area: header;
+    background-color: #f1f1f1;
+}
+
+.layout-sidebar {
+    grid-area: aside;
+    background-color: #ffffff;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+.layout-main {
+    grid-area: main;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.layout-footer {
+    grid-area: footer;
+    background-color: #f1f1f1;
+    padding: 10px;
+    text-align: center;
+}
