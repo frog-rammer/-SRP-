@@ -5,10 +5,14 @@
   <title>생산 계획 관리</title>
   <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
   <link rel="stylesheet" th:href="@{/css/productPlanInput.css}">
+  <link rel="stylesheet" th:href="@{/css/processDiagram.css}">
+  <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 <body>
 <!-- 헤더 -->
 <div th:replace="partials/procuOneHeader :: header"></div>
+<div th:replace="partials/diagram/orderingPlan :: myDiagram"></div>
+<div th:replace="partials/procuOneSide :: side"></div>
 
 <!-- 달력 부분 -->
 <section class="calendarWrap">
@@ -121,6 +125,7 @@
   </section>
 </section>
 
+<script th:src="@{/JS/diagram.js}"></script>
 <script th:src="@{/JS/productPlanInput.js}"></script>
 </body>
 </html>

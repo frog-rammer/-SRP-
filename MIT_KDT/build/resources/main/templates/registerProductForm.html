@@ -6,51 +6,55 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
 </head>
 <body>
-<!-- 헤더-->
 <div th:replace="partials/procuOneHeader :: header"></div>
 <h1>품목등록</h1>
 
-<form th:action="@{/items}" th:object="${item}" method="post">
+<form th:action="@{/items/InputProduct}" th:object="${item}" method="post" enctype="multipart/form-data" onsubmit="combineDimensions()">
     <!-- 제품 코드 -->
     <div>
-        <label for="itemId">제품 코드</label>
-        <input type="text" th:field="*{itemId}" readonly/>
+        <label for="productCode">제품 코드</label>
+        <input type="text" th:field="*{productCode}" id="productCode" name="productCode" required/>
     </div>
 
     <!-- 품목명 -->
     <div>
-        <label for="name">품목명</label>
-        <input type="text" th:field="*{name}" />
+        <label for="itemName">품목명</label>
+        <input type="text" th:field="*{itemName}" id="itemName" name="itemName" required/>
     </div>
 
     <!-- 규격 -->
     <div>
-        <label for="specifications">규격</label>
-        <input type="text" th:field="*{specifications}" placeholder="가로(mm)" />
-        <input type="text" th:field="*{specifications}" placeholder="세로(mm)" />
-        <input type="text" th:field="*{specifications}" placeholder="높이(mm)" />
+        <label>규격</label>
+        <input type="text" id="width" placeholder="가로(mm)" required/>
+        <input type="text" id="height" placeholder="세로(mm)" required/>
+        <input type="text" id="depth" placeholder="높이(mm)" required/>
+        <input type="hidden" th:field="*{dimensions}" id="dimensions" name="dimensions" />
     </div>
 
     <!-- 분류 -->
-    <div>
-        <label for="category">분류</label>
-        <select th:field="*{category}" id="category" name="category">
-            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+    <div id="categoryDiv">
+        <label>분류</label>
+        <select id="largeCategory" onchange="updateMiddleCategory()">
+            <option value="">== 대분류 선택 ==</option>
+            <option th:each="category : ${categories}"
+                    th:value="${category.id}"
+                    th:text="${category.name}"
+                    th:if="${category.type == '대분류'}"></option>
         </select>
-    </div>
 
-    <!-- 제품 -->
-    <div>
-        <label for="product">제품</label>
-        <select th:field="*{product}" id="product" name="product">
-            <option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"></option>
+        <select id="middleCategory" onchange="updateSmallCategory()">
+            <option value="">== 중분류 선택 ==</option>
+        </select>
+
+        <select id="smallCategory">
+            <option value="">== 소분류 선택 ==</option>
         </select>
     </div>
 
     <!-- 도면파일 -->
     <div>
         <label for="drawingFile">도면파일</label>
-        <input type="file" th:field="*{drawingFile}" />
+        <input type="file" th:field="*{drawingFile}" id="drawingFile" name="drawingFile" />
     </div>
 
     <!-- 확인 버튼 -->
@@ -61,77 +65,51 @@
 </form>
 
 <script>
-    // 대분류에 맞는 중분류와 소분류 데이터
-    const categories = {
-        "자전거 몸체": {
-            "프레임": ["알류미늄 프레임"],
-            "포크": ["서스펨션 포크"],
-            "핸들바": ["넓은 알류미늄 핸들바", "스틸핸들바"],
-            "안장": ["쿠션 안장"],
-            "킥스탠드": ["알류미늄 킥스탠드"]
-        },
-        "전기 시스템": {
-            "모터": ["브러시리스 모터", "브러시모터"],
-            "배터리": ["리튬이온 배터리", "저용량배터리"],
-            "컨트롤러": ["컨트롤러"],
-            "디스플레이": ["LCD디스플레이", "LED 표시등"],
-            "센서": ["PAS센서"]
-        },
-        "구동 시스템": {
-            "변속기": ["다단 변속", "스프로킷 단일 속도 스프로킷"],
-            "체인": ["고강도 체인", "저비용체인"],
-            "페달": ["알루미늄 페달", "플라스틱 페달"]
-        },
-        "안전 장치": {
-            "제동장치": ["고성능 디스크 브레이크"],
-            "조명": ["고휘도 LED 조명", "LED 조명"],
-            "경고장치": ["알류미늄 벨"]
-        }
-    };
+    // JSON 형태로 Thymeleaf에서 제공하는 카테고리 데이터
+    const categories = /*[[${#json.write(categories)}]]*/ {};
 
-    // 대분류 선택 시 중분류 업데이트
+    function combineDimensions() {
+        const width = document.getElementById("width").value;
+        const height = document.getElementById("height").value;
+        const depth = document.getElementById("depth").value;
+        const dimensions = `${width} x ${height} x ${depth}`;
+        document.getElementById("dimensions").value = dimensions;
+    }
+
     function updateMiddleCategory() {
-        const largeCategory = document.getElementById("largeCategory").value;
+        const largeCategoryId = document.getElementById("largeCategory").value;
         const middleCategorySelect = document.getElementById("middleCategory");
         const smallCategorySelect = document.getElementById("smallCategory");
 
         // 중분류 초기화
-        middleCategorySelect.innerHTML = "<option selected>== 중분류 ==</option>";
-        smallCategorySelect.innerHTML = "<option selected>== 소분류 ==</option>";
+        middleCategorySelect.innerHTML = "<option value=''>== 중분류 선택 ==</option>";
+        smallCategorySelect.innerHTML = "<option value=''>== 소분류 선택 ==</option>";
 
-        if (largeCategory !== "== 대분류 ==") {
-            const middleCategories = Object.keys(categories[largeCategory]);
-
-            // 중분류 추가
-            middleCategories.forEach(category => {
-                const option = document.createElement("option");
-                option.value = category;
-                option.textContent = category;
-                middleCategorySelect.appendChild(option);
-            });
-        }
+        // 대분류에 해당하는 중분류 필터링
+        const middleCategories = Object.values(categories).filter(cat => cat.parentId == largeCategoryId && cat.type === '중분류');
+        middleCategories.forEach(category => {
+            const option = document.createElement("option");
+            option.value = category.id;
+            option.textContent = category.name;
+            middleCategorySelect.appendChild(option);
+        });
     }
 
-    // 중분류 선택 시 소분류 업데이트
     function updateSmallCategory() {
-        const largeCategory = document.getElementById("largeCategory").value;
-        const middleCategory = document.getElementById("middleCategory").value;
+        const middleCategoryId = document.getElementById("middleCategory").value;
         const smallCategorySelect = document.getElementById("smallCategory");
 
         // 소분류 초기화
-        smallCategorySelect.innerHTML = "<option selected>== 소분류 ==</option>";
+        smallCategorySelect.innerHTML = "<option value=''>== 소분류 선택 ==</option>";
 
-        if (middleCategory !== "== 중분류 ==" && largeCategory !== "== 대분류 ==") {
-            const smallCategories = categories[largeCategory][middleCategory];
-
-            // 소분류 추가
-            smallCategories.forEach(category => {
-                const option = document.createElement("option");
-                option.value = category;
-                option.textContent = category;
-                smallCategorySelect.appendChild(option);
-            });
-        }
+        // 중분류에 해당하는 소분류 필터링
+        const smallCategories = Object.values(categories).filter(cat => cat.parentId == middleCategoryId && cat.type === '소분류');
+        smallCategories.forEach(category => {
+            const option = document.createElement("option");
+            option.value = category.id;
+            option.textContent = category.name;
+            smallCategorySelect.appendChild(option);
+        });
     }
 </script>
 </body>
