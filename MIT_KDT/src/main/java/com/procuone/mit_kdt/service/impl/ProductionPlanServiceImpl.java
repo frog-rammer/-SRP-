@@ -17,11 +17,9 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     private ProductionPlanRepository productionPlanRepository;
 
     @Override
-    public void savePlan(ProductionPlanDTO planDTO) {
-        ProductionPlan plan = dtoToEntity(planDTO);
-        productionPlanRepository.save(plan);
+    public void savePlan(ProductionPlanDTO productionPlanDTO) {
+        productionPlanRepository.save(dtoToEntity(productionPlanDTO));
     }
-
     @Override
     public ProductionPlanDTO getPlanById(String planNum) {
         return productionPlanRepository.findById(planNum)
@@ -44,7 +42,7 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     // DTO를 엔티티로 변환
     private ProductionPlan dtoToEntity(ProductionPlanDTO dto) {
         return ProductionPlan.builder()
-                .planNum(dto.getPlanNum())
+                .planNo(dto.getPlanNo())
                 .productName(dto.getProductName())
                 .productCode(dto.getProductCode())
                 .planStartDate(dto.getPlanStartDate())
@@ -59,7 +57,7 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     // 엔티티를 DTO로 변환
     private ProductionPlanDTO entityToDto(ProductionPlan entity) {
         return ProductionPlanDTO.builder()
-                .planNum(entity.getPlanNum())
+                .planNo(entity.getPlanNo())
                 .productName(entity.getProductName())
                 .productCode(entity.getProductCode())
                 .planStartDate(entity.getPlanStartDate())

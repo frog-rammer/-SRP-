@@ -1,6 +1,8 @@
 package com.procuone.mit_kdt.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
@@ -15,7 +17,8 @@ import java.time.LocalDate;
 @ToString
 public class ProductionPlan {
     @Id
-    private String planNum;          // 생산계획번호
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int planNo;               //생산 계획 번호
     private String productName;       // 생산제품명
     private String productCode;       // 생산제품코드
     private LocalDate planStartDate;  // 생산 시작일
