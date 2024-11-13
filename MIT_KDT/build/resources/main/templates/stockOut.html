@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>자재 출고 관리</title>
+</head>
+<body>
+<div class="grid-container">
+  <!-- 헤더 -->
+  <header class="layout-header">
+    <div th:replace="partials/procuOneHeader :: header"></div>
+  </header>
+
+  <aside class="layout-sidebar">
+    <div th:replace="partials/procuOneSide :: side"></div>
+  </aside>
+
+  <main class="layout-main">
+
+  <h1>자재 출고 관리</h1>
+
+  <!-- 출고 대기 현황 테이블 -->
+  <h2>출고 대기 현황</h2>
+  <table border="1">
+    <thead>
+    <tr>
+      <th>선택</th>
+      <th>출고번호</th>
+      <th>요청일</th>
+      <th>담당자</th>
+      <th>조달계획코드</th>
+      <th>출고일</th>
+      <th>자재코드</th>
+      <th>자재명</th>
+      <th>현재 수량</th>
+      <th>요청 수량</th>
+      <th>등록일</th>
+      <th>수정일</th>
+      <th>출고 상태</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td><input type="checkbox" name="selectItem" value="EX000117"></td>
+      <td>EX000117</td>
+      <td>2025-01-02</td>
+      <td>N/A</td>
+      <td>P000112</td>
+      <td></td>
+      <td>MA000005</td>
+      <td>PDB30W</td>
+      <td>3851</td>
+      <td>30</td>
+      <td>2024-09-02</td>
+      <td>2024-09-02</td>
+      <td>대기</td>
+    </tr>
+
+    <tr>
+      <td><input type="checkbox" name="selectItem" value="EX000118"></td>
+      <td>EX000118</td>
+      <td>2025-01-02</td>
+      <td>N/A</td>
+      <td>P000113</td>
+      <td></td>
+      <td>MA000023</td>
+      <td>BAT50H</td>
+      <td>14500</td>
+      <td>150</td>
+      <td>2024-09-02</td>
+      <td>2024-09-02</td>
+      <td>대기</td>
+    </tr>
+
+    <tr>
+      <td><input type="checkbox" name="selectItem" value="EX000119"></td>
+      <td>EX000119</td>
+      <td>2024-09-29</td>
+      <td>N/A</td>
+      <td>P000114</td>
+      <td></td>
+      <td>MA000001</td>
+      <td>Sparky</td>
+      <td>197</td>
+      <td>50</td>
+      <td>2024-09-02</td>
+      <td>2024-11-13</td>
+      <td>대기</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- 출고 요청 버튼 -->
+  <button type="button" onclick="handleOutboundRequest()">출고 요청</button>
+
+  <!-- 출고 현황 테이블 -->
+  <h2>출고 현황</h2>
+  <table border="1">
+    <thead>
+    <tr>
+      <th>출고번호</th>
+      <th>요청일</th>
+      <th>담당자</th>
+      <th>조달계획코드</th>
+      <th>출고일</th>
+      <th>자재코드</th>
+      <th>자재명</th>
+      <th>현재 수량</th>
+      <th>요청 수량</th>
+      <th>등록일</th>
+      <th>수정일</th>
+      <th>출고 상태</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>EX000120</td>
+      <td>2024-09-01</td>
+      <td>N/A</td>
+      <td>P000115</td>
+      <td>2024-09-02</td>
+      <td>MA000006</td>
+      <td>ARM-2.6</td>
+      <td>100</td>
+      <td>100</td>
+      <td>2024-09-01</td>
+      <td>2024-09-02</td>
+      <td>진행중</td>
+    </tr>
+
+    <tr>
+      <td>EX000121</td>
+      <td>2024-09-05</td>
+      <td>홍길동</td>
+      <td>P000116</td>
+      <td>2024-09-06</td>
+      <td>MA000007</td>
+      <td>SteelX</td>
+      <td>500</td>
+      <td>500</td>
+      <td>2024-09-05</td>
+      <td>2024-09-06</td>
+      <td>진행중</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- 출고 내역 테이블 -->
+  <h2>출고 내역</h2>
+  <table border="1">
+    <thead>
+    <tr>
+      <th>출고번호</th>
+      <th>출고일</th>
+      <th>자재명</th>
+      <th>요청 수량</th>
+      <th>상태코드</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>EX000117</td>
+      <td>2024-09-01</td>
+      <td>PDB30W</td>
+      <td>30</td>
+      <td>자동 생성됨</td>
+    </tr>
+
+    <tr>
+      <td>EX000118</td>
+      <td>2024-09-05</td>
+      <td>BAT50H</td>
+      <td>150</td>
+      <td>자동 생성됨</td>
+    </tr>
+
+    <tr>
+      <td>EX000119</td>
+      <td>2024-09-09</td>
+      <td>Sparky</td>
+      <td>50</td>
+      <td>자동 생성됨</td>
+    </tr>
+
+    <tr>
+      <td>EX000120</td>
+      <td>2024-09-12</td>
+      <td>ARM-2.6</td>
+      <td>100</td>
+      <td>자동 생성됨</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a href="stockIn.html">입고 관리로 이동</a>
+  </main>
+
+  <footer class="layout-footer">
+
+
+  </footer>
+</div>
+
+<script>
+  // 출고 요청 버튼 클릭 시 선택된 항목에 대한 출고 요청 처리
+  function handleOutboundRequest() {
+    const selectedRows = document.querySelectorAll('input[name="selectItem"]:checked');  // 선택된 체크박스들 가져오기
+
+    if (selectedRows.length === 0) {
+      alert("출고 요청할 항목을 선택해 주세요.");
+      return; // 아무것도 선택되지 않으면 종료
+    }
+
+    selectedRows.forEach(row => {
+      const tr = row.closest('tr');  // 체크된 항목의 tr 가져오기
+      const outboundNumber = tr.cells[1].textContent;  // 출고번호
+      const materialName = tr.cells[7].textContent;  // 자재명
+      const requestQuantity = tr.cells[9].textContent;  // 요청 수량
+      const outboundStatus = tr.cells[11].textContent;  // 출고 상태 (대기)
+
+      // 출고 요청 처리 로직 (예: 서버로 데이터 전송 등)
+      console.log(`출고 요청: 출고번호 ${outboundNumber}, 자재명: ${materialName}, 요청 수량: ${requestQuantity}, 상태: ${outboundStatus}`);
+
+      // 알림
+      alert(`${outboundNumber} 출고 요청이 완료되었습니다.`);
+    });
+  }
+</script>
+
+</body>
+</html>
