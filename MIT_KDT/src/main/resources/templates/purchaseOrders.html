@@ -12,8 +12,17 @@
   </style>
 </head>
 <body>
+<div class="grid-container">
 <!-- 헤더-->
-<div th:replace="partials/procuOneHeader :: header"></div>
+  <header class="layout-header">
+    <div th:replace="partials/procuOneHeader :: header"></div>
+  </header>
+
+  <aside class="layout-sidebar">
+    <div th:replace="partials/procuOneSide :: side"></div>
+  </aside>
+
+  <main class="layout-main">
 <div id="content">
   <section class="procurement-plan">
     <div class="top">
@@ -257,6 +266,13 @@
       </div>
     </div>
   </section>
+</div>
+  </main>
+
+  <footer class="layout-footer">
+
+  </footer>
+
 </div>
 </body>
 </html>

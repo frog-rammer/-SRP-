@@ -6,16 +6,32 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
 </head>
 <body>
+<div class="grid-container">
 <!-- 헤더-->
-<div th:replace="partials/procuOneHeader :: header"></div>
-<h3>견적 정보 입력</h3>
-<form action="" method="POST">
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
 
-    <label for="">견적 제목</label>
-    <input t id="" name="" required><br><br>
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
 
-    <label for="">세부 내용</label>
-    <textarea name="" id="" cols="30" rows="10"></textarea>
-</form>
+    <main class="layout-main">
+        <h3>견적 정보 입력</h3>
+        <form action="" method="POST">
+
+            <label for="">견적 제목</label>
+            <input t id="" name="" required><br><br>
+
+            <label for="">세부 내용</label>
+            <textarea name="" id="" cols="30" rows="10"></textarea>
+        </form>
+    </main>
+
+    <footer class="layout-footer">
+
+    </footer>
+
+</div>
 </body>
 </html>

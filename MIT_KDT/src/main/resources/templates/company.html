@@ -6,26 +6,38 @@
   <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
 </head>
 <body>
+<div class="grid-container">
 <!-- 헤더-->
-<div th:replace="partials/procuOneHeader :: header"></div>
-<table>회사 정보 상세</table>
-<th>사업자 번호
-  <td text:></td>
-</th>
-<th>업체명
-<td text:></td>
-</th>
-<th>사업장 주소
-<td text:></td>
-</th>
-<th>담당자
-<td text:></td>
-</th>
-<th>담당자 연락처
-<td text:></td>
-</th>
-<th>담당자 이메일
-<td text:></td>
-</th>
+  <header class="layout-header">
+    <div th:replace="partials/procuOneHeader :: header"></div>
+  </header>
+  <aside class="layout-sidebar">
+    <div th:replace="partials/procuOneSide :: side"></div>
+  </aside>
+  <main class="layout-main">
+    <table>회사 정보 상세</table>
+    <th>사업자 번호
+      <td text:></td>
+    </th>
+    <th>업체명
+    <td text:></td>
+    </th>
+    <th>사업장 주소
+    <td text:></td>
+    </th>
+    <th>담당자
+    <td text:></td>
+    </th>
+    <th>담당자 연락처
+    <td text:></td>
+    </th>
+    <th>담당자 이메일
+    <td text:></td>
+    </th>
+  </main>
+  <footer class="layout-footer">
+
+  </footer>
+</div>
 </body>
 </html>
