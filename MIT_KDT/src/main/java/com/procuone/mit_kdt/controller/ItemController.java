@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,21 +42,23 @@ public class ItemController {
         return "procurementmanagement/registerProductForm"; // registerProductForm.html 페이지 렌더링
     }
 
-    // 상품 데이터 저장 처리
     @PostMapping("/InputProduct")
     public String saveItem(
-            @ModelAttribute Item item,
-            @RequestParam("drawingFile") MultipartFile file,
+            @ModelAttribute Item item, // Item 엔티티
+            @RequestParam("drawingFile") MultipartFile file, // 업로드된 파일
             RedirectAttributes redirectAttributes) {
 
-        // 파일 저장 처리
-        if (!file.isEmpty()) {
-            String uploadDir = "src/main/resources/static/images/BluePrints/"; // 파일 저장 경로
-            String filePath = saveFile(file, uploadDir, redirectAttributes);
+        // 파일 업로드 처리
+        if (file != null && !file.isEmpty()) {
+            String uploadDir = "src/main/resources/static/images/BluePrints/"; // 저장 경로
+            String webPath = "/images/BluePrints/"; // 반환할 웹 경로
+            String filePath = saveFile(file, uploadDir, webPath, redirectAttributes);
             if (filePath == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "파일 업로드에 실패했습니다.");
                 return "redirect:/items/registerProductForm";
             }
-            item.setDrawingFile(filePath); // 저장된 파일 경로 설정
+            // 파일 경로를 Item 엔티티의 drawingFilePath 필드에 저장
+            item.setDrawingFile(filePath);
         }
 
         // Item 엔티티 저장
@@ -65,6 +68,7 @@ public class ItemController {
         return "redirect:/items"; // 등록 완료 후 목록 페이지로 리다이렉트
     }
 
+
     // 하위 카테고리 AJAX 응답
     @GetMapping("/categories/subcategories")
     @ResponseBody
@@ -73,21 +77,34 @@ public class ItemController {
         return categoryService.getSubCategoriesByParentId(parentId);
     }
 
-    // 파일 저장 메서드 (중복 방지 및 예외 처리 포함)
-    private String saveFile(MultipartFile file, String uploadDir, RedirectAttributes redirectAttributes) {
-        String fileName = file.getOriginalFilename();
+
+    // 파일 저장 메서드
+    private String saveFile(MultipartFile file, String uploadDir, String webPath, RedirectAttributes redirectAttributes) {
         try {
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+            // 파일 저장 경로 생성
+            File uploadDirectory = new File(uploadDir);
+            if (!uploadDirectory.exists()) {
+                boolean isCreated = uploadDirectory.mkdirs(); // 디렉토리 생성
+                if (!isCreated) {
+                    throw new IOException("디렉토리 생성에 실패했습니다: " + uploadDir);
+                }
             }
-            Path filePath = uploadPath.resolve(fileName);
-            file.transferTo(filePath.toFile());
-            return "/images/BluePrints/" + fileName; // 웹 경로 반환
+
+            // 파일 이름 생성 (중복 방지)
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            File destinationFile = new File(uploadDir + fileName);
+
+            // 파일 저장
+            file.transferTo(destinationFile);
+
+            // 웹 경로 반환
+            return webPath + fileName;
         } catch (IOException e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "파일 업로드에 실패했습니다.");
+            redirectAttributes.addFlashAttribute("errorMessage", "파일 저장 중 오류가 발생했습니다.");
             return null;
         }
     }
+
+
 }
