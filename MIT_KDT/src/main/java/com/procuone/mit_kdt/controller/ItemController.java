@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/items")
@@ -38,6 +39,7 @@ public class ItemController {
 
         return "procurementPlan/registerProductForm"; // registerProductForm.html 페이지 렌더링
     }
+
     @GetMapping("/view")
     public String showView(Model model) {
         model.addAttribute("item", new ItemDTO());
@@ -46,26 +48,37 @@ public class ItemController {
 
     @PostMapping("/InputProduct")
     public String saveItem(
-            @ModelAttribute Item item, // Item 엔티티
+            @ModelAttribute ItemDTO itemDTO, // DTO로 입력받음
             @RequestParam("drawingFile") MultipartFile file, // 업로드된 파일
             RedirectAttributes redirectAttributes) {
 
-        // 파일 업로드 처리
-        if (file != null && !file.isEmpty()) {
-            String uploadDir = "src/main/resources/static/images/BluePrints/"; // 저장 경로
-            String webPath = "/images/BluePrints/"; // 반환할 웹 경로
-            String filePath = saveFile(file, uploadDir, webPath, redirectAttributes);
-            if (filePath == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "파일 업로드에 실패했습니다.");
-                return "redirect:/items/registerProductForm";
+        try {
+            // Step 1: 파일 업로드 처리
+            if (file != null && !file.isEmpty()) {
+                String uploadDir = "src/main/resources/static/images/BluePrints/"; // 저장 경로
+                String webPath = "/images/BluePrints/"; // 반환할 웹 경로
+                String filePath = saveFile(file, uploadDir, webPath, redirectAttributes);
+                if (filePath == null) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "파일 업로드에 실패했습니다.");
+                    return "redirect:/items/registerProductForm";
+                }
+                itemDTO.setDrawingFile(filePath); // 파일 경로를 DTO에 설정
             }
-            // 파일 경로를 Item 엔티티의 drawingFilePath 필드에 저장
-            item.setDrawingFile(filePath);
-        }
 
-        // Item 엔티티 저장
-        itemService.saveItem(item);
-        redirectAttributes.addFlashAttribute("successMessage", "품목이 성공적으로 등록되었습니다!");
+            // Step 2: 서비스 계층에서 저장 처리
+            boolean isSaved = itemService.saveItem(itemDTO);
+            if (!isSaved) {
+                redirectAttributes.addFlashAttribute("infoMessage", "기존 품목이 이미 등록되어 있습니다.");
+                return "redirect:/items"; // 기존 품목 참조로 리다이렉트
+            }
+
+            redirectAttributes.addFlashAttribute("successMessage", "품목이 성공적으로 등록되었습니다!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "품목 등록 중 오류 발생: " + e.getMessage());
+            return "redirect:/items/registerProductForm";
+        }
 
         return "redirect:/items"; // 등록 완료 후 목록 페이지로 리다이렉트
     }
@@ -78,7 +91,6 @@ public class ItemController {
         // 하위 카테고리를 DTO 형식으로 반환
         return categoryService.getSubCategoriesByParentId(parentId);
     }
-
 
     // 파일 저장 메서드
     private String saveFile(MultipartFile file, String uploadDir, String webPath, RedirectAttributes redirectAttributes) {
@@ -107,6 +119,4 @@ public class ItemController {
             return null;
         }
     }
-
-
 }

@@ -32,6 +32,11 @@
         <input type="hidden" th:field="*{dimensions}" id="dimensions" name="dimensions" />
     </div>
 
+    <div>
+        <label for="itemName">가격</label>
+        <input type="text" th:field="*{cost}" id="cost" name="cost" placeholder="품목명을 입력하세요" required />
+    </div>
+
     <!-- 분류 -->
     <div id="categoryDiv">
         <label>분류</label>
@@ -53,6 +58,7 @@
         <label for="drawingFile">도면파일</label>
         <input type="file" th:field="*{drawingFile}" id="drawingFile" name="drawingFile" accept=".png, .jpg, .jpeg, .pdf" />
     </div>
+
 
     <!-- 확인 및 취소 버튼 -->
     <div>
