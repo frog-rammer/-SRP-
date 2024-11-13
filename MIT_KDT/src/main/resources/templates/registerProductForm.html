@@ -6,37 +6,44 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
 </head>
 <body>
+
 <div th:replace="partials/procuOneHeader :: header"></div>
 <h1>품목등록</h1>
+
 <form th:action="@{/items/InputProduct}" th:object="${item}" method="post" enctype="multipart/form-data" onsubmit="combineDimensions()">
     <!-- 제품 코드 -->
     <div>
         <label for="productCode">제품 코드</label>
-        <input type="text" th:field="*{productCode}" id="productCode" name="productCode" required/>
+        <input type="text" th:field="*{productCode}" id="productCode" name="productCode" placeholder="제품 코드를 입력하세요" required />
     </div>
+
     <!-- 품목명 -->
     <div>
         <label for="itemName">품목명</label>
-        <input type="text" th:field="*{itemName}" id="itemName" name="itemName" required/>
+        <input type="text" th:field="*{itemName}" id="itemName" name="itemName" placeholder="품목명을 입력하세요" required />
     </div>
+
     <!-- 규격 -->
     <div>
         <label>규격</label>
-        <input type="text" id="width" placeholder="가로(mm)" required/>
-        <input type="text" id="height" placeholder="세로(mm)" required/>
-        <input type="text" id="depth" placeholder="높이(mm)" required/>
+        <input type="number" id="width" placeholder="가로(mm)" required />
+        <input type="number" id="height" placeholder="세로(mm)" required />
+        <input type="number" id="depth" placeholder="높이(mm)" required />
         <input type="hidden" th:field="*{dimensions}" id="dimensions" name="dimensions" />
     </div>
+
     <!-- 분류 -->
     <div id="categoryDiv">
         <label>분류</label>
         <div id="dynamicCategorySelects">
+            <!-- 첫 번째 카테고리 (최상위 카테고리) -->
             <select id="categorySelect_0" onchange="updateNextCategory(0)">
                 <option value="">== 분류 선택 ==</option>
                 <option th:each="category : ${categories}"
                         th:value="${category.id}"
                         th:text="${category.name}"
-                        th:attr="data-type=${category.type}, data-parent-id=${category.parent != null ? category.parent.id : ''}"></option>
+                        th:attr="data-type=${category.type}, data-parent-id=${category.parentId != null ? category.parentId : ''}">
+                </option>
             </select>
         </div>
     </div>
@@ -44,10 +51,10 @@
     <!-- 도면파일 -->
     <div>
         <label for="drawingFile">도면파일</label>
-        <input type="file" th:field="*{drawingFile}" id="drawingFile" name="drawingFile" />
+        <input type="file" th:field="*{drawingFile}" id="drawingFile" name="drawingFile" accept=".png, .jpg, .jpeg, .pdf" />
     </div>
 
-    <!-- 확인 버튼 -->
+    <!-- 확인 및 취소 버튼 -->
     <div>
         <button type="submit">확인</button>
         <button type="button" onclick="window.history.back()">취소</button>
@@ -55,55 +62,69 @@
 </form>
 
 <script>
+    // 규격 정보를 결합하여 숨겨진 input에 설정
     function combineDimensions() {
         const width = document.getElementById("width").value;
         const height = document.getElementById("height").value;
         const depth = document.getElementById("depth").value;
-        const dimensions = `${width} x ${height} x ${depth}`;
-        document.getElementById("dimensions").value = dimensions;
+
+        if (width && height && depth) {
+            const dimensions = `${width} x ${height} x ${depth}`;
+            document.getElementById("dimensions").value = dimensions;
+        }
     }
 
+    // 선택된 카테고리에 따라 하위 카테고리를 동적으로 로딩
     function updateNextCategory(level) {
         const currentSelect = document.getElementById(`categorySelect_${level}`);
         const selectedCategoryId = currentSelect.value;
 
-        // 다음 레벨의 셀렉트 박스 초기화 또는 제거
+        // 기존의 하위 카테고리 select를 삭제
         const nextSelect = document.getElementById(`categorySelect_${level + 1}`);
         if (nextSelect) {
             nextSelect.remove();
         }
 
-        // 선택된 카테고리가 없으면 종료
+        // 선택된 카테고리가 없는 경우 종료
         if (!selectedCategoryId) {
             return;
         }
 
-        // 새로운 셀렉트 박스 생성
-        const newSelect = document.createElement("select");
-        newSelect.id = `categorySelect_${level + 1}`;
-        newSelect.onchange = function() { updateNextCategory(level + 1); };
+        // AJAX 요청을 통해 하위 카테고리를 가져옴
+        fetch(`/items/categories/subcategories?parentId=${selectedCategoryId}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to fetch subcategories");
+                return response.json();
+            })
+            .then(subcategories => {
+                if (subcategories.length > 0) {
+                    // 새로운 select 요소 생성
+                    const newSelect = document.createElement("select");
+                    newSelect.id = `categorySelect_${level + 1}`;
+                    newSelect.onchange = function () { updateNextCategory(level + 1); };
 
-        const defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.textContent = "== 분류 선택 ==";
-        newSelect.appendChild(defaultOption);
+                    // 기본 옵션 추가
+                    const defaultOption = document.createElement("option");
+                    defaultOption.value = "";
+                    defaultOption.textContent = "== 분류 선택 ==";
+                    newSelect.appendChild(defaultOption);
 
-        // 현재 선택된 카테고리에 해당하는 하위 분류 추가
-        Array.from(currentSelect.options).forEach(option => {
-            if (option.dataset.parentId === selectedCategoryId) {
-                const newOption = document.createElement("option");
-                newOption.value = option.value;
-                newOption.textContent = option.textContent;
-                newOption.setAttribute("data-type", option.dataset.type);
-                newOption.setAttribute("data-parent-id", option.dataset.parentId);
-                newSelect.appendChild(newOption);
-            }
-        });
+                    // 하위 카테고리 옵션 추가
+                    subcategories.forEach(subcategory => {
+                        const newOption = document.createElement("option");
+                        newOption.value = subcategory.id;
+                        newOption.textContent = subcategory.name;
+                        newSelect.appendChild(newOption);
+                    });
 
-        // 새로운 셀렉트 박스를 DOM에 추가
-        if (newSelect.options.length > 1) {
-            document.getElementById("dynamicCategorySelects").appendChild(newSelect);
-        }
+                    // 새로운 select 요소를 DOM에 추가
+                    document.getElementById("dynamicCategorySelects").appendChild(newSelect);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching subcategories:', error);
+                alert("하위 카테고리를 불러오는 중 문제가 발생했습니다.");
+            });
     }
 </script>
 </body>

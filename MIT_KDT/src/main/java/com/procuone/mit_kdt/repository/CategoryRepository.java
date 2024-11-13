@@ -10,4 +10,5 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     // 최상위 카테고리 (부모가 없는 카테고리) 조회
     List<Category> findByParentIsNull();
+    List<Category> findByParentId(Long parentId);
 }
