@@ -38,7 +38,7 @@ public class ItemController {
         List<CategoryDTO> rootCategories = categoryService.getRootCategories();
         model.addAttribute("categories", rootCategories);
 
-        return "registerProductForm"; // registerProductForm.html 페이지 렌더링
+        return "procurementmanagement/registerProductForm"; // registerProductForm.html 페이지 렌더링
     }
 
     // 상품 데이터 저장 처리

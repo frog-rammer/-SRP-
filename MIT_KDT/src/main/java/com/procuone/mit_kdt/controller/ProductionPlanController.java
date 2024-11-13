@@ -21,7 +21,7 @@ public class ProductionPlanController {
     @GetMapping("/input")
     public String input(Model model) {
         model.addAttribute("productionPlanDTO", new ProductionPlanDTO());
-        return "productionPlanInput";  // 템플릿 이름
+        return "productionplan/productionPlanInput";  // 템플릿 이름
     }
 
     @PostMapping("/save")
