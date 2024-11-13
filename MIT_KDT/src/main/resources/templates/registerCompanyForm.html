@@ -6,50 +6,69 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<h1>업체 등록</h1>
+<div class="grid-container">
+    <!-- 헤더 -->
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
 
-<!-- 폼 시작, th:object로 DTO 객체 바인딩 -->
-<form action="/company/register" method="post" th:object="${CompanyDTO}">
-    <div>
-        <label for="businessId">사업자번호:</label>
-        <!-- th:field로 DTO의 속성과 바인딩 -->
-        <input type="text" id="businessId" th:field="*{businessId}" required>
-    </div>
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
 
-    <div>
-        <label for="comName">업체명:</label>
-        <input type="text" id="comName" th:field="*{comName}" required>
-    </div>
+    <main class="layout-main">
+        <h1>업체 등록</h1>
 
-    <div>
-        <label for="comAdd">사업장주소:</label>
-        <input type="text" id="comAdd" th:field="*{comAdd}" required>
-    </div>
+        <!-- 폼 시작, th:object로 DTO 객체 바인딩 -->
+        <form action="/company/register" method="post" th:object="${CompanyDTO}">
+            <div>
+                <label for="businessId">사업자번호:</label>
+                <!-- th:field로 DTO의 속성과 바인딩 -->
+                <input type="text" id="businessId" th:field="*{businessId}" required>
+            </div>
 
-    <div>
-        <label for="comAccount">계좌번호:</label>
-        <input type="text" id="comAccount" th:field="*{comAccount}" required>
-    </div>
+            <div>
+                <label for="comName">업체명:</label>
+                <input type="text" id="comName" th:field="*{comName}" required>
+            </div>
 
-    <div>
-        <label for="comEmail">담당자 이메일:</label>
-        <input type="email" id="comEmail" th:field="*{comEmail}" required>
-    </div>
+            <div>
+                <label for="comAdd">사업장주소:</label>
+                <input type="text" id="comAdd" th:field="*{comAdd}" required>
+            </div>
 
-    <div>
-        <label for="comManage">담당자:</label>
-        <input type="text" id="comManage" th:field="*{comManage}" required>
-    </div>
+            <div>
+                <label for="comAccount">계좌번호:</label>
+                <input type="text" id="comAccount" th:field="*{comAccount}" required>
+            </div>
 
-    <div>
-        <label for="comPhone">담당자 연락처:</label>
-        <input type="text" id="comPhone" th:field="*{comPhone}" required>
-    </div>
+            <div>
+                <label for="comEmail">담당자 이메일:</label>
+                <input type="email" id="comEmail" th:field="*{comEmail}" required>
+            </div>
 
-    <div>
-        <button type="submit">확인</button>
-        <button type="button" onclick="window.history.back()">취소</button>
-    </div>
-</form>
+            <div>
+                <label for="comManage">담당자:</label>
+                <input type="text" id="comManage" th:field="*{comManage}" required>
+            </div>
+
+            <div>
+                <label for="comPhone">담당자 연락처:</label>
+                <input type="text" id="comPhone" th:field="*{comPhone}" required>
+            </div>
+
+            <div>
+                <button type="submit">확인</button>
+                <button type="button" onclick="window.history.back()">취소</button>
+            </div>
+        </form>
+    </main>
+
+    <footer class="layout-footer">
+
+
+    </footer>
+
+</div>
 </body>
 </html>

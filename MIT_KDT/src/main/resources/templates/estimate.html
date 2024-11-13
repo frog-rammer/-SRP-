@@ -7,46 +7,58 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
 </head>
 <body>
+<div class="grid-container">
 <!-- 헤더-->
-<div th:replace="partials/procuOneHeader :: header"></div>
-<h2>견적 테이블</h2>
-<table>
-    <thead>
-    <tr>
-        <th>견적 코드</th>
-        <th>등록일</th>
-        <th>회사 이름</th>
-        <th>자재 코드</th>
-        <th>자재명</th>
-        <th>규격</th>
-        <th>수량</th>
-        <th>단가</th>
-        <th>총 금액</th>
-        <th>상태</th>
-        <th>계약 등록</th>
-    </tr>
-    <label for="search-input">
-        <button>검색 아이콘</button><!-- 금쪽이는 검색 아이콘 누르면 검색이 나오게 되어있는데 이건 추후 변경사항일듯.-->
-        <input type="text" id="search-input">
-        <button>검색</button>
-    </label>
-    </thead>
-    <tbody>
-    <tr>
-        <td text:></td>
-        <td text:></td>
-        <td text:></td>
-        <td text:></td>
-        <td text:></td>
-        <td text:></td>
-        <td text:></td>
-        <td text:></td>
-        <td text:></td>
-        <td text:></td>
-        <td text:></td>
-    </tr>
-    </tbody>
-</table>
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+    <main class="layout-main">
+        <h2>견적 테이블</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>견적 코드</th>
+                <th>등록일</th>
+                <th>회사 이름</th>
+                <th>자재 코드</th>
+                <th>자재명</th>
+                <th>규격</th>
+                <th>수량</th>
+                <th>단가</th>
+                <th>총 금액</th>
+                <th>상태</th>
+                <th>계약 등록</th>
+            </tr>
+            <label for="search-input">
+                <button>검색 아이콘</button><!-- 금쪽이는 검색 아이콘 누르면 검색이 나오게 되어있는데 이건 추후 변경사항일듯.-->
+                <input type="text" id="search-input">
+                <button>검색</button>
+            </label>
+            </thead>
+            <tbody>
+            <tr>
+                <td text:></td>
+                <td text:></td>
+                <td text:></td>
+                <td text:></td>
+                <td text:></td>
+                <td text:></td>
+                <td text:></td>
+                <td text:></td>
+                <td text:></td>
+                <td text:></td>
+                <td text:></td>
+            </tr>
+            </tbody>
+        </table>
+    </main>
+    <footer class="layout-footer">
+
+    </footer>
+</div>
 
 </body>
 </html>

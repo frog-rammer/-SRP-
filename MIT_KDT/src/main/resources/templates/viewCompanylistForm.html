@@ -6,52 +6,70 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
 </head>
 <body>
-<!-- 헤더 -->
-<div th:replace="partials/procuOneHeader :: header"></div>
+<div class="grid-container">
+    <!-- 헤더 -->
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
 
-<div>
-    <div>
-        <input type="text" placeholder="업체명을 입력하세요">
-        <button type="submit">검색</button>
-    </div>
-    <!-- 회사 리스트 테이블 -->
-    <table>
-        <thead>
-        <tr>
-            <th>Business ID</th>
-            <th>Company Name</th>
-            <th>Address</th>
-            <th>Manager</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Account</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- companyList 반복문으로 리스트 출력 -->
-        <tr th:each="company : ${companyList}" data-business-id="[[${company.businessId}]]" class="clickable-row">
-            <td th:text="${company.businessId}"></td> <!-- businessId 출력 -->
-            <td th:text="${company.comName}"></td> <!-- comName 출력 -->
-            <td th:text="${company.comAdd}"></td> <!-- comAdd 출력 -->
-            <td th:text="${company.comManage}"></td> <!-- comManage 출력 -->
-            <td th:text="${company.comPhone}"></td> <!-- comPhone 출력 -->
-            <td th:text="${company.comEmail}"></td> <!-- comEmail 출력 -->
-            <td th:text="${company.comAccount}"></td> <!-- comAccount 출력 -->
-        </tr>
-        </tbody>
-    </table>
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
 
-    <!-- 페이지네이션 -->
-    <div>
-        <span th:if="${currentPage > 0}">
-            <a th:href="@{/company/viewCompanyList(page=${currentPage - 1})}">Previous</a>
-        </span>
-        <span>Page <span th:text="${currentPage != null ? currentPage + 1 : 0}"></span> of <span th:text="${totalPages}"></span></span>
-        <span th:if="${currentPage < totalPages - 1}">
-            <a th:href="@{/company/viewCompanyList(page=${currentPage + 1})}">Next</a>
-        </span>
-    </div>
+    <main class="layout-main">
+
+        <div>
+            <div>
+                <input type="text" placeholder="업체명을 입력하세요">
+                <button type="submit">검색</button>
+            </div>
+            <!-- 회사 리스트 테이블 -->
+            <table>
+                <thead>
+                <tr>
+                    <th>Business ID</th>
+                    <th>Company Name</th>
+                    <th>Address</th>
+                    <th>Manager</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Account</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- companyList 반복문으로 리스트 출력 -->
+                <tr th:each="company : ${companyList}" data-business-id="[[${company.businessId}]]" class="clickable-row">
+                    <td th:text="${company.businessId}"></td> <!-- businessId 출력 -->
+                    <td th:text="${company.comName}"></td> <!-- comName 출력 -->
+                    <td th:text="${company.comAdd}"></td> <!-- comAdd 출력 -->
+                    <td th:text="${company.comManage}"></td> <!-- comManage 출력 -->
+                    <td th:text="${company.comPhone}"></td> <!-- comPhone 출력 -->
+                    <td th:text="${company.comEmail}"></td> <!-- comEmail 출력 -->
+                    <td th:text="${company.comAccount}"></td> <!-- comAccount 출력 -->
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 페이지네이션 -->
+            <div>
+                <span th:if="${currentPage > 0}">
+                    <a th:href="@{/company/viewCompanyList(page=${currentPage - 1})}">Previous</a>
+                </span>
+                <span>Page <span th:text="${currentPage != null ? currentPage + 1 : 0}"></span> of <span th:text="${totalPages}"></span></span>
+                <span th:if="${currentPage < totalPages - 1}">
+                    <a th:href="@{/company/viewCompanyList(page=${currentPage + 1})}">Next</a>
+                </span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="layout-footer">
+
+
+    </footer>
+
 </div>
+
 
 <script>
     // 클릭한 행의 Business ID로 이동

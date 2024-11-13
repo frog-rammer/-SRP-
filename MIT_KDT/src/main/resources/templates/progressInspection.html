@@ -12,6 +12,17 @@
     </style>
 </head>
 <body>
+<div class="grid-container">
+    <!-- 헤더 -->
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+
+<main class="layout-main">
  <h2>진척 검수 처리 - 발주리스트</h2>
 <div class="progress">
     <button class="plan-btn">검수계획 등록</button>
@@ -139,6 +150,13 @@
             <li><a href="#" class="page-btn">▶</a></li>
         </ul>
     </div>
+</div>
+</main>
+
+    <footer class="layout-footer">
+
+    </footer>
+
 </div>
 </body>
 </html>
