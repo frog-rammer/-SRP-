@@ -23,7 +23,7 @@ public class CompanyController {
     @GetMapping("/register")
     public String showCompanyRegisterForm(Model model) {
         model.addAttribute("CompanyDTO", new CompanyDTO()); // 빈 DTO 객체를 모델에 추가
-        return "registerCompanyForm"; // 해당하는 HTML 파일을 반환 (업체 등록 폼)
+        return "procurementPlan/registerCompanyForm"; // 해당하는 HTML 파일을 반환 (업체 등록 폼)
     }
 
     @GetMapping("/viewCompanyList")
@@ -40,7 +40,7 @@ public class CompanyController {
         model.addAttribute("totalPages", companyPage.getTotalPages());  // 총 페이지 수
         model.addAttribute("totalItems", companyPage.getTotalElements()); // 전체 아이템 수
 
-        return "viewCompanylistForm";  // 뷰 이름
+        return "procurementPlan/viewCompanylistForm";  // 뷰 이름
     }
 
 

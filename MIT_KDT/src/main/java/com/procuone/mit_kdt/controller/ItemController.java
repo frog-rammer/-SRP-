@@ -14,9 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
@@ -39,7 +36,12 @@ public class ItemController {
         List<CategoryDTO> rootCategories = categoryService.getRootCategories();
         model.addAttribute("categories", rootCategories);
 
-        return "procurementmanagement/registerProductForm"; // registerProductForm.html 페이지 렌더링
+        return "procurementPlan/registerProductForm"; // registerProductForm.html 페이지 렌더링
+    }
+    @GetMapping("/view")
+    public String showView(Model model) {
+        model.addAttribute("item", new ItemDTO());
+        return "procurementPlan/view";
     }
 
     @PostMapping("/InputProduct")

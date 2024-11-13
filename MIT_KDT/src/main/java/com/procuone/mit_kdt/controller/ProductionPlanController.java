@@ -21,8 +21,15 @@ public class ProductionPlanController {
     @GetMapping("/input")
     public String input(Model model) {
         model.addAttribute("productionPlanDTO", new ProductionPlanDTO());
-        return "productionplan/productionPlanInput";  // 템플릿 이름
+        return "procurementPlan/productionPlanInput";  // 템플릿 이름
     }
+
+    @GetMapping("/view")
+    public String view(Model model) {
+        model.addAttribute("productionPlanDTO", new ProductionPlanDTO());
+        return "procurementPlan/productionPlanView";
+    }
+
 
     @PostMapping("/save")
     public String planSave(@ModelAttribute("productionPlanDTO") ProductionPlanDTO productionPlanDTO,
@@ -36,9 +43,7 @@ public class ProductionPlanController {
 
         // 성공 메시지 추가
         model.addAttribute("successMessage", "생산 계획이 성공적으로 저장되었습니다.");
-        return "productionPlanInput";
+        return "procurementPlan/productionPlanInput";
     }
-
-
 
 }
