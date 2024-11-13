@@ -1,7 +1,6 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
-import com.procuone.mit_kdt.entity.ProductionPlan;
 import com.procuone.mit_kdt.service.ProductionPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
