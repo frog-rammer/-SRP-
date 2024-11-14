@@ -4,68 +4,77 @@
     <meta charset="UTF-8">
     <title>품목등록</title>
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
 </head>
 <body>
 
-<div th:replace="partials/procuOneHeader :: header"></div>
-<h1>품목등록</h1>
+<div class="grid-container">
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+    <main class="layout-main">
+        <h1>품목등록</h1>
 
-<form th:action="@{/items/InputProduct}" method="post" enctype="multipart/form-data" onsubmit="combineDimensions()">
-    <!-- 제품 코드 -->
-    <div>
-        <label for="productCode">제품 코드</label>
-        <input type="text" name="productCode" id="productCode" placeholder="제품 코드를 입력하세요" required />
-    </div>
+        <form th:action="@{/items/InputProduct}" method="post" enctype="multipart/form-data" onsubmit="combineDimensions()">
+            <!-- 제품 코드 -->
+            <div>
+                <label for="productCode">제품 코드</label>
+                <input type="text" name="productCode" id="productCode" placeholder="제품 코드를 입력하세요" required />
+            </div>
 
-    <!-- 품목명 -->
-    <div>
-        <label for="itemName">품목명</label>
-        <input type="text" name="itemName" id="itemName" placeholder="품목명을 입력하세요" required />
-    </div>
+            <!-- 품목명 -->
+            <div>
+                <label for="itemName">품목명</label>
+                <input type="text" name="itemName" id="itemName" placeholder="품목명을 입력하세요" required />
+            </div>
 
-    <!-- 규격 -->
-    <div>
-        <label>규격</label>
-        <input type="number" id="width" placeholder="가로(mm)" required />
-        <input type="number" id="height" placeholder="세로(mm)" required />
-        <input type="number" id="depth" placeholder="높이(mm)" required />
-        <input type="hidden" name="dimensions" id="dimensions" />
-    </div>
+            <!-- 규격 -->
+            <div>
+                <label>규격</label>
+                <input type="number" id="width" placeholder="가로(mm)" required />
+                <input type="number" id="height" placeholder="세로(mm)" required />
+                <input type="number" id="depth" placeholder="높이(mm)" required />
+                <input type="hidden" name="dimensions" id="dimensions" />
+            </div>
 
-    <div>
-        <label for="itemName">가격</label>
-        <input type="text" name="cost" id="cost" placeholder="가격을 입력하세요" required />
-    </div>
+            <div>
+                <label for="itemName">가격</label>
+                <input type="text" name="cost" id="cost" placeholder="가격을 입력하세요" required />
+            </div>
 
-    <!-- 분류 -->
-    <div id="categoryDiv">
-        <label>분류</label>
-        <div id="dynamicCategorySelects">
-            <!-- 첫 번째 카테고리 (최상위 카테고리) -->
-            <select id="categorySelect_0" name="categoryId" onchange="updateNextCategory(0)">
-                <option value="">== 분류 선택 ==</option>
-                <option th:each="category : ${categories}"
-                        th:value="${category.id}"
-                        th:text="${category.name}"
-                        th:attr="data-type=${category.type}, data-parent-id=${category.parentId != null ? category.parentId : ''}">
-                </option>
-            </select>
-        </div>
-    </div>
+            <!-- 분류 -->
+            <div id="categoryDiv">
+                <label>분류</label>
+                <div id="dynamicCategorySelects">
+                    <!-- 첫 번째 카테고리 (최상위 카테고리) -->
+                    <select id="categorySelect_0" name="categoryId" onchange="updateNextCategory(0)">
+                        <option value="">== 분류 선택 ==</option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.id}"
+                                th:text="${category.name}"
+                                th:attr="data-type=${category.type}, data-parent-id=${category.parentId != null ? category.parentId : ''}">
+                        </option>
+                    </select>
+                </div>
+            </div>
 
-    <!-- 도면파일 -->
-    <div>
-        <label for="file">도면파일</label>
-        <input type="file" id="file" name="file" accept=".png, .jpg, .jpeg, .pdf" />
-    </div>
+            <!-- 도면파일 -->
+            <div>
+                <label for="file">도면파일</label>
+                <input type="file" id="file" name="file" accept=".png, .jpg, .jpeg, .pdf" />
+            </div>
 
-    <!-- 확인 및 취소 버튼 -->
-    <div>
-        <button type="submit">확인</button>
-        <button type="button" onclick="window.history.back()">취소</button>
-    </div>
-</form>
-
+            <!-- 확인 및 취소 버튼 -->
+            <div>
+                <button type="submit">확인</button>
+                <button type="button" onclick="window.history.back()">취소</button>
+            </div>
+        </form>
+    </main>
+</div>
 <script>
     // 규격 정보를 결합하여 숨겨진 input에 설정
     function combineDimensions() {
