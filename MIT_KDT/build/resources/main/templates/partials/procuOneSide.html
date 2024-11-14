@@ -5,6 +5,22 @@
         <meta charset="UTF-8">
         <title>Title</title>
         <style>
+
+
+            @font-face {
+                font-family: 'Pretendard-Regular';
+                src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+                font-weight: 400;
+                font-style: normal;
+            }
+
+            /* 기본 스타일 */
+            #sideNav-body {
+                font-family: Pretendard-Regular, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+
             /* 기본 사이드바 레이아웃 */
             .layout-sidebar {
                 background-color: #ffffff;
@@ -32,7 +48,7 @@
             #sideNav a {
                 display: block;
                 padding: 15px;
-                color: black;
+                color: #000000;
                 text-decoration: none;
                 background-color: #ffffff;
             }
@@ -45,14 +61,21 @@
             /* 드롭다운 메뉴 스타일 */
             #sideNav ul ul {
                 display: none;
+                position: absolute;
+                left: 200px;
+                top: 0;
+                width: 200px;
+                background-color: #b3b2b2;
                 padding-left: 10px;
                 background-color: #f8f8f8;
                 border-left: 1px solid #ccc;
+
             }
 
             #sideNav li:hover > ul {
                 display: block;
             }
+
 
             /* 드롭다운 메뉴 항목 스타일 */
             #sideNav ul ul a {
