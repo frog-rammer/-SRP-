@@ -38,6 +38,17 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.save(newItem);
         return true; // 새로 저장
     }
+    // 최상위 아이템(A 자전거, B 자전거)을 조회
+    @Override
+    public List<ItemDTO> getTopItems() {
+        // `parent_id`가 NULL인 카테고리의 아이템 조회
+        List<Item> topItems = itemRepository.findTopItems();
+
+        // 기존 전환 메서드 사용하여 DTO 변환
+        return topItems.stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Optional<ItemDTO> getItemById(Long id) {

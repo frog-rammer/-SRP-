@@ -11,6 +11,4 @@ public class ContractController {
     public String register() {
         return "procurementPlan/registerContract";
     }
-
-
 }
