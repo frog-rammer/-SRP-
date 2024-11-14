@@ -1,6 +1,8 @@
 package com.procuone.mit_kdt.controller;
 
+import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
+import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.ProductionPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,16 +13,24 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/productionPlan")
 public class ProductionPlanController {
 
     @Autowired
     private ProductionPlanService productionPlanService;
+    @Autowired
+    private ItemService itemService;
 
     @GetMapping("/input")
     public String input(Model model) {
         model.addAttribute("productionPlanDTO", new ProductionPlanDTO());
+        // 상위 아이템 리스트를 모델에 추가
+        List<ItemDTO> topItems = itemService.getTopItems();
+        model.addAttribute("topItems", topItems);
+
         return "procurementPlan/productionPlanInput";  // 템플릿 이름
     }
 

@@ -35,9 +35,6 @@ public class CompanyServiceImpl implements CompanyService {
         return companyPage.map(this::entityToDto); // entityToDto 사용
     }
 
-
-
-
     // DTO -> Entity 변환
     private Company dtoToEntity(CompanyDTO companyDTO) {
         return Company.builder()

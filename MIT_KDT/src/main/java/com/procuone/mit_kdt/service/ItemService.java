@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemService {
+    // 상위 아이템(제품군) 조회
+    List<ItemDTO> getTopItems();
     // 품목 저장 (DTO를 통해 저장 처리)
     boolean saveItem(ItemDTO itemDTO);
 
