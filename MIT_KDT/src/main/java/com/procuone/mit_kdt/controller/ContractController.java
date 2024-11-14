@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ContractController {
     @GetMapping("/register")
     public String register() {
+        return "procurementPlan/compareContracts";
+    }
+    @GetMapping("/registerContract")
+    public String registerContract() {
         return "procurementPlan/registerContract";
     }
 }

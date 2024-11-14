@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+  <title>계약 비교 페이지</title>
+  <script>
+    // 품목 선택 시 테이블을 동적으로 갱신하는 함수
+    function updateTable() {
+      const selectedItem = document.getElementById("productSelect").value;
+
+      // 각 품목에 대한 회사별 가격 정보
+      const prices = {
+        "안장": [
+          { company: "회사 A", price: 100000 },
+          { company: "회사 B", price: 120000 },
+          { company: "회사 C", price: 110000 },
+          { company: "회사 D", price: 105000 },
+          { company: "회사 E", price: 115000 },
+          { company: "회사 F", price: 125000 }
+        ],
+        "페달": [
+          { company: "회사 B", price: 50000 },
+          { company: "회사 D", price: 60000 },
+          { company: "회사 E", price: 55000 }
+        ],
+        "프레임": [
+          { company: "회사 C", price: 200000 },
+          { company: "회사 D", price: 250000 },
+          { company: "회사 F", price: 220000 }
+        ]
+      };
+
+      // 테이블을 먼저 비우고, 선택된 품목에 해당하는 데이터로 채움
+      const tableBody = document.querySelector("table tbody");
+      tableBody.innerHTML = ""; // 테이블 내용 초기화
+
+      // 선택된 품목에 맞는 데이터로 테이블을 갱신
+      prices[selectedItem].forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+                    <td>${item.company}</td>
+                    <td>${selectedItem}</td>
+                    <td class="price">${item.price.toLocaleString()} 원</td>
+                    <td><a href="/contract/registerContract" class="contract-button"><button>계약하기</button></a></td>
+                `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // 페이지 로딩 시 기본 품목(안장)으로 초기화
+    window.onload = function() {
+      updateTable();
+    };
+  </script>
+  <style>
+    /* 테이블 스타일 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: rgb(50, 146, 142); /* 테이블 헤더 색상 */
+      color: white;
+    }
+
+    td {
+      background-color: #f9f9f9;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f2f2f2;
+    }
+
+    button {
+      background-color: rgb(50, 146, 142); /* 버튼 색상 */
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background-color: rgb(40, 126, 122); /* 버튼 hover 색상 */
+    }
+
+    .contract-button {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+<div class="grid-container">
+  <!-- 헤더-->
+  <header class="layout-header">
+    <div th:replace="partials/procuOneHeader :: header"></div>
+  </header>
+
+  <aside class="layout-sidebar">
+    <div th:replace="partials/procuOneSide :: side"></div>
+  </aside>
+
+  <main class="layout-main">
+    <header>
+      <h1>계약 비교 페이지</h1>
+      <p>다양한 회사들의 계약 조건을 비교하고, 원하는 계약을 선택하세요.</p>
+    </header>
+
+    <div id="productSelectWrapper">
+      <label for="productSelect">품목 선택: </label>
+      <select id="productSelect" onchange="updateTable()">
+        <option value="안장">안장</option>
+        <option value="페달">페달</option>
+        <option value="프레임">프레임</option>
+      </select>
+    </div>
+
+    <h2>계약 비교</h2>
+    <table border="1" cellpadding="10">
+      <thead>
+      <tr>
+        <th>회사명</th>
+        <th>품목</th>
+        <th>단가</th>
+        <th>계약하기 버튼</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- 테이블 내용은 JavaScript로 동적으로 갱신됨 -->
+      </tbody>
+    </table>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 계약 비교 서비스</p>
+  </footer>
+</div>
+</body>
+</html>
