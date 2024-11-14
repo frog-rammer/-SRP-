@@ -12,4 +12,7 @@ public class PurchaseOrderController {
 
     @GetMapping("/purchaseOrders")
     public String purchaseOrders() { return "purchaseOrder/purchaseOrders"; }
+
+    @GetMapping("/procurementPlanView")
+    public String procurementPlanView() { return "purchaseOrder/procurementPlanView"; }
 }

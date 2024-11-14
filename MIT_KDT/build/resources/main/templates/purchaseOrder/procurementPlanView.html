@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>조달계획 조회</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            color: #333333;
+        }
+
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .search-section h3 {
+            margin-bottom: 10px;
+        }
+
+        .search-section form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-section label {
+            margin-right: 5px;
+        }
+
+        .results-section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .results-section table th, .results-section table td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        .results-section table th {
+            background-color: #f2f2f2;
+        }
+
+        .results-section table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+<div class="grid-container">
+
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+    <main class="layout-main">
+        <h1>조달계획 조회</h1>
+        <section class="search-section">
+            <h3>검색</h3>
+            <form action="/procurementPlan/search" method="get">
+                <label for="itemName">품목명:</label>
+                <input type="text" id="itemName" name="itemName" placeholder="품목명을 입력하세요">
+
+                <label for="startDate">시작일:</label>
+                <input type="date" id="startDate" name="startDate">
+
+                <label for="endDate">종료일:</label>
+                <input type="date" id="endDate" name="endDate">
+
+                <button type="submit">검색</button>
+            </form>
+        </section>
+
+        <section class="results-section">
+            <h3>조회 결과</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>계획 번호</th>
+                    <th>관련 생산계획 ID</th>
+                    <th>품목명</th>
+                    <th>계획 수량</th>
+                    <th>계획 시작일</th>
+                    <th>계획 종료일</th>
+                    <th>상태</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>101</td>
+                    <td>전기자전거 A</td>
+                    <td>50</td>
+                    <td>2024-11-15</td>
+                    <td>2024-11-20</td>
+                    <td>진행 중</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>102</td>
+                    <td>전기자전거 B</td>
+                    <td>30</td>
+                    <td>2024-11-18</td>
+                    <td>2024-11-25</td>
+                    <td>대기 중</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>103</td>
+                    <td>알루미늄 프레임</td>
+                    <td>100</td>
+                    <td>2024-11-15</td>
+                    <td>2024-11-22</td>
+                    <td>발주 완료</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>104</td>
+                    <td>브러시리스 모터</td>
+                    <td>50</td>
+                    <td>2024-11-16</td>
+                    <td>2024-11-23</td>
+                    <td>진행 중</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+
+    <footer>
+        <p>&copy; 2024 조달관리 시스템</p>
+    </footer>
+</div>
+</body>
+</html>
