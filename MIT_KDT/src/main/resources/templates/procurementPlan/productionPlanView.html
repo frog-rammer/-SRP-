@@ -5,95 +5,6 @@
     <title>생산 계획 보기</title>
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/productionPlanView.css}">
-    <style>
-        /* form 스타일 */
-        form {
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        /* 제목 스타일 */
-        h3 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        /* 테이블 스타일 */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-            cursor: pointer;
-        }
-
-        /* 버튼 스타일 */
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 10px;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        /* 검색 입력창 스타일 */
-        input[type="text"] {
-            padding: 10px;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 200px;
-            margin-right: 10px;
-        }
-
-        /* 검색 바 스타일 */
-        .productionPlanListSearchBar {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        .productionPlanListSearchBar button {
-            margin-left: 10px;
-        }
-
-        /* 테이블 바디 스타일 */
-        #planTableBody tr {
-            cursor: pointer;
-        }
-
-    </style>
 </head>
 <body>
 <div class="grid-container">
@@ -139,7 +50,6 @@
                     <button class="detailsBtn">등록된 계획 자세히 보기</button>
                     <button onclick="updateProgress()">진행 상황 업데이트</button>
                 </div>
-                <form>
                 <h3>생산 계획 목록</h3>
                 <section class="productionPlanList">
                     <table>
@@ -157,22 +67,28 @@
                         </tr>
                         </thead>
                         <tbody id="planTableBody">
-                        <tr onclick="highlightProductionPeriod('2024-05-27', '2024-05-31')">
-                            <td>2024-05-27</td>
-                            <td>2024-05-31</td>
-                            <td>PROD-001</td>
-                            <td>모니터</td>
-                            <td>prod-001</td>
-                            <td>50</td>
-                            <td>WAA24704-001</td>
-                            <td>주조</td>
-                            <td>130-86-14788</td>
-                        </tr>
+                            <tr th:each="productionplan : ${productionPlanList}">
+                                <td th:text="${productionplan.planStartDate}"></td>
+                                <td th:text="${productionplan.planEndDate}"></td>
+                                <td th:text="${productionplan.planNo}"></td>
+                                <td th:text="${productionplan.productName}"></td>
+                                <td th:text="${productionplan.productCode}"></td>
+                                <td th:text="${productionplan.quantity}"></td>
+                            </tr>
                         <!-- 추가 데이터 행들 -->
                         </tbody>
                     </table>
                 </section>
-                </form>
+                <!-- 페이지네이션 -->
+                <div>
+                    <span th:if="${currentPage > 0}">
+                        <a th:href="@{/productionPlan/view(page=${currentPage - 1})}">Previous</a>
+                    </span>
+                                    <span>Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>
+                                    <span th:if="${currentPage < totalPages - 1}">
+                        <a th:href="@{/productionPlan/view(page=${currentPage + 1})}">Next</a>
+                    </span>
+                </div>
             </section>
         </div>
     </main>

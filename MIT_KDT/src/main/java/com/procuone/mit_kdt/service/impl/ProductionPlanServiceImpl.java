@@ -5,6 +5,8 @@ import com.procuone.mit_kdt.entity.ProductionPlan;
 import com.procuone.mit_kdt.repository.ProductionPlanRepository;
 import com.procuone.mit_kdt.service.ProductionPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +39,12 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     @Override
     public void deletePlan(String planNum) {
         productionPlanRepository.deleteById(planNum);
+    }
+
+    @Override
+    public Page<ProductionPlanDTO> getAllPlans(Pageable pageable) {
+        Page<ProductionPlan> planPage = productionPlanRepository.findAll(pageable);
+        return planPage.map(this::entityToDto);
     }
 
     // DTO를 엔티티로 변환
