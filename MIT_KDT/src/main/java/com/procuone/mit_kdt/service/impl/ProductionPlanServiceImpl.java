@@ -49,8 +49,6 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
                 .planEndDate(dto.getPlanEndDate())
                 .quantity(dto.getQuantity())
                 .partCode(dto.getPartCode())
-                .companyName(dto.getCompanyName())
-                .companyNumber(dto.getCompanyNumber())
                 .build();
     }
 
@@ -64,8 +62,6 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
                 .planEndDate(entity.getPlanEndDate())
                 .quantity(entity.getQuantity())
                 .partCode(entity.getPartCode())
-                .companyName(entity.getCompanyName())
-                .companyNumber(entity.getCompanyNumber())
                 .build();
     }
 }
