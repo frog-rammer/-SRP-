@@ -106,6 +106,35 @@
       cursor: pointer;
       font-size: 1rem;
     }
+
+    /* 버튼 컨테이너 */
+    .button-container {
+      display: flex;
+      justify-content: center; /* 가운데 정렬 */
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    /* 버튼 스타일 */
+    .button-container button {
+      padding: 12px 25px;
+      background-color: #31918D;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    /* 버튼 스타일(취소 버튼) */
+    .button-container .cancel-button {
+      background-color: #ccc;
+    }
+
+    /* 링크 스타일 */
+    .button-container a {
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
@@ -144,12 +173,6 @@
           <input type="text">
         </div>
       </div>
-
-      <!-- 등록/취소 버튼을 하단으로 이동 -->
-      <div class="button-container">
-        <button type="submit">등록</button>
-        <button type="button">취소</button>
-      </div>
     </div>
 
     <div class="divider"></div>
@@ -182,60 +205,12 @@
 
       <!-- 등록/취소 버튼 -->
       <div class="button-container">
-        <button type="submit">등록</button>
-        <button type="button">취소</button>
+        <a th:href="@{/contract/registerContract2(page=${currentPage})}"><button type="submit">등록</button></a>
+        <button type="button" class="cancel-button">취소</button>
       </div>
     </div>
 
     <div class="divider"></div>
-
-    <!-- 계약 관리 -->
-    <div class="form-section contract-management">
-      <h1>계약 관리</h1>
-      <div class="search-group">
-        <!-- 품목코드 셀렉트 (왼쪽 배치) -->
-        <select>
-          <option>품목코드</option>
-        </select>
-
-        <!-- 여백 -->
-        <div class="spacer"></div>
-
-        <!-- 텍스트 입력창 -->
-        <input type="text">
-
-        <!-- 검색 버튼 -->
-        <button type="submit">검색</button>
-      </div>
-
-      <!-- 테이블 -->
-      <table>
-        <thead>
-        <tr>
-          <th>품목코드</th>
-          <th>품목명</th>
-          <th>계약번호</th>
-          <th>업체명</th>
-          <th>사업자번호</th>
-          <th>단가</th>
-          <th>L/T(소요시간)</th>
-          <th>계약서</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
 
   </main>
 
