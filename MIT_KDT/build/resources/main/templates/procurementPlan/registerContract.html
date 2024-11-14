@@ -1,9 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
   <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+  <style>
+    /* 전체 컨테이너 스타일 */
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 3fr; /* 사이드바(1)과 메인(3) 비율 설정 */
+      grid-template-rows: auto 1fr auto; /* 헤더, 메인, 푸터 영역 설정 */
+      gap: 20px;
+      padding: 20px;
+      box-sizing: border-box;
+      height: 100vh;
+    }
+
+    /* 각 구역 스타일 */
+    .layout-header, .layout-footer {
+      grid-column: span 2; /* 헤더와 푸터는 두 열을 차지 */
+    }
+
+    .layout-sidebar {
+      grid-column: 1 / 2;  /* 왼쪽 사이드바 */
+    }
+
+    .layout-main {
+      grid-column: 2 / 3;  /* 메인 콘텐츠 영역 */
+      overflow-y: auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start; /* 위쪽 정렬 */
+      align-items: center; /* 가운데 정렬 */
+    }
+
+    /* 각 섹션 스타일 */
+    .form-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 700px; /* 폼의 최대 너비 설정 */
+    }
+
+    /* 섹션 제목 스타일 */
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #31918D; /* 새 색상 적용 */
+      padding-bottom: 5px;
+      color: #333;
+      text-align: center;
+    }
+
+    /* 라벨 스타일 */
+    .form-section label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+      color: #555;
+    }
+
+    /* 계약 관리 레이아웃 */
+    .contract-management {
+      width: 100%;
+      max-width: 950px; /* 계약 관리 섙션 넓게 설정 */
+    }
+
+    /* 계약 관리 검색창 위치 수정 */
+    .search-group {
+      display: flex;
+      justify-content: flex-start; /* 왼쪽 정렬 */
+      gap: 15px;
+      width: 100%;
+      align-items: center; /* 수직 정렬 추가 */
+    }
+
+    /* 여백을 두는 부분 */
+    .search-group .spacer {
+      flex-grow: 1; /* 여백을 채우기 위해 유동적으로 크기 확장 */
+    }
+
+    /* 검색창 길이 늘리기 */
+    .search-group select,
+    .search-group input[type="text"] {
+      width: 250px; /* 길이를 늘림 */
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #bbb;
+      border-radius: 5px;
+    }
+
+    /* 검색 버튼은 바로 옆에 위치 */
+    .search-group button {
+      padding: 12px 25px;
+      background-color: #31918D;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+  </style>
 </head>
 <body>
 <div class="grid-container">
@@ -12,95 +115,133 @@
     <div th:replace="partials/procuOneHeader :: header"></div>
   </header>
 
+  <!-- 사이드바 -->
   <aside class="layout-sidebar">
     <div th:replace="partials/procuOneSide :: side"></div>
   </aside>
 
+  <!-- 메인 영역 -->
   <main class="layout-main">
-    <h1>계약 등록</h1>
-    <div>
-      <label>계약서</label>
-      <input type="file">
+    <div class="form-section">
+      <h1>계약 등록</h1>
+      <div class="input-group">
+        <div>
+          <label>계약서</label>
+          <input type="file">
+        </div>
+        <div>
+          <label>업체명</label>
+          <select>
+            <option>업체명을 선택하세요</option>
+          </select>
+        </div>
+        <div>
+          <label>사업자 번호</label>
+          <input type="text">
+        </div>
+        <div>
+          <label>계좌 정보</label>
+          <input type="text">
+        </div>
+      </div>
+
+      <!-- 등록/취소 버튼을 하단으로 이동 -->
+      <div class="button-container">
+        <button type="submit">등록</button>
+        <button type="button">취소</button>
+      </div>
     </div>
-    <div>
-      <label>업체명</label>
-      <select>
-        <option>업체명을 선택하세요</option>
-      </select>
+
+    <div class="divider"></div>
+
+    <!-- 계약 항목 -->
+    <div class="form-section">
+      <h1>계약 항목</h1>
+      <div class="input-group">
+        <div>
+          <label>품목코드</label>
+          <input type="text">
+        </div>
+        <div>
+          <label>품목명</label>
+          <input type="text">
+        </div>
+        <div>
+          <label>단가</label>
+          <input type="text">
+        </div>
+        <div>
+          <label>L/T(소요시간)</label>
+          <input type="text">
+        </div>
+        <div>
+          <label>세부사항</label>
+          <input type="text">
+        </div>
+      </div>
+
+      <!-- 등록/취소 버튼 -->
+      <div class="button-container">
+        <button type="submit">등록</button>
+        <button type="button">취소</button>
+      </div>
     </div>
-    <div>
-      <label>사업자 번호</label>
-      <input type="text">
-    </div>
-    <div>
-      <label>계좌 정보</label>
-      <input type="text">
-    </div>
-    <h1>계약 항목</h1>
-    <div>
-      <label>품목코드</label>
-      <input type="text">
-    </div>
-    <div>
-      <label>품목명</label>
-      <input type="text">
-    </div>
-    <div>
-      <label>단가</label>
-      <input type="text">
-    </div>
-    <div>
-      <label>L/T(소요시간)</label>
-      <input type="text">
-    </div>
-    <div>
-      <label>세부사항</label>
-      <input type="text">
-    </div>
-    <div>
-      <button type="submit">등록</button>
-      <button type="button">취소</button>
-    </div>
-    <h1>계약 관리</h1>
-    <div>
-      <select>
-        <option>품목코드</option>
-      </select>
-      <input type="text">
-      <button type="submit">검색</button>
-    </div>
-    <div>
+
+    <div class="divider"></div>
+
+    <!-- 계약 관리 -->
+    <div class="form-section contract-management">
+      <h1>계약 관리</h1>
+      <div class="search-group">
+        <!-- 품목코드 셀렉트 (왼쪽 배치) -->
+        <select>
+          <option>품목코드</option>
+        </select>
+
+        <!-- 여백 -->
+        <div class="spacer"></div>
+
+        <!-- 텍스트 입력창 -->
+        <input type="text">
+
+        <!-- 검색 버튼 -->
+        <button type="submit">검색</button>
+      </div>
+
+      <!-- 테이블 -->
       <table>
         <thead>
-          <tr>
-            <th>품목코드</th>
-            <th>품목명</th>
-            <th>계약번호</th>
-            <th>업체명</th>
-            <th>사업자번호</th>
-            <th>단가</th>
-            <th>L/T(소요시간)</th>
-            <th>계약서</th>
-          </tr>
+        <tr>
+          <th>품목코드</th>
+          <th>품목명</th>
+          <th>계약번호</th>
+          <th>업체명</th>
+          <th>사업자번호</th>
+          <th>단가</th>
+          <th>L/T(소요시간)</th>
+          <th>계약서</th>
+        </tr>
         </thead>
         <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
         </tbody>
       </table>
     </div>
+
   </main>
 
+  <!-- 푸터 -->
   <footer class="layout-footer">
-
+    <p>© 2024 회사명. All Rights Reserved.</p>
   </footer>
 </div>
 </body>
