@@ -79,44 +79,53 @@
     </form>
 
     <!-- 생산 계획 목록 부분 -->
-    <section class="productionPlanListWrap">
-      <div class="productionPlanListSearchBar">
-        <input type="text" placeholder="검색어를 입력하세요">
-        <button class="searchBtn">검색</button>
-        <button class="detailsBtn">등록된 계획 자세히 보기</button>
-      </div>
-      <h3>생산 계획 목록</h3>
-      <section class="productionPlanList">
-        <table>
-          <thead>
-          <tr>
-            <th>생산 시작일</th>
-            <th>생산 종료일</th>
-            <th>생산계획번호</th>
-            <th>생산제품명</th>
-            <th>생산제품코드</th>
-            <th>생산수량</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>2024-05-27</td>
-            <td>2024-05-31</td>
-            <td>PROD-001</td>
-            <td>모니터</td>
-            <td>prod-001</td>
-            <td>50</td>
-          </tr>
-          <!-- 추가 데이터 행들 -->
-          </tbody>
-        </table>
-      </section>
-      <section class="productionPlanListPagenation">
-        <!-- 페이지네이션 버튼들 -->
-        <button>이전</button>
-        <button>다음</button>
-      </section>
-    </section>
+<!--    <section class="productionPlanListWrap">-->
+<!--      <div class="productionPlanListSearchBar">-->
+<!--        <input type="text" placeholder="검색어를 입력하세요">-->
+<!--        <button class="searchBtn">검색</button>-->
+<!--        <button class="detailsBtn">등록된 계획 자세히 보기</button>-->
+<!--      </div>-->
+<!--      <h3>생산 계획 목록</h3>-->
+<!--      <section class="productionPlanList">-->
+<!--        <table>-->
+<!--          <thead>-->
+<!--          <tr>-->
+<!--            <th>생산 시작일</th>-->
+<!--            <th>생산 종료일</th>-->
+<!--            <th>생산계획번호</th>-->
+<!--            <th>생산제품명</th>-->
+<!--            <th>생산제품코드</th>-->
+<!--            <th>생산수량</th>-->
+<!--          </tr>-->
+<!--          </thead>-->
+<!--          <tbody>-->
+<!--          <tr th:each="productionplan : ${productionplanList}">-->
+<!--            <td th:text="${productionPlanDTO.planStartDate}"></td>-->
+<!--            <td th:text="${productionPlanDTO.planEndDate}"></td>-->
+<!--            <td th:text="${productionPlanDTO.planNo}"></td>-->
+<!--            <td th:text="${productionPlanDTO.productName}"></td>-->
+<!--            <td th:text="${productionPlanDTO.productCode}"></td>-->
+<!--            <td th:text="${productionPlanDTO.quantity}"></td>-->
+<!--          </tr>-->
+<!--          &lt;!&ndash; 추가 데이터 행들 &ndash;&gt;-->
+<!--          </tbody>-->
+<!--        </table>-->
+<!--      </section>-->
+<!--      <div>-->
+<!--                <span th:if="${currentPage > 0}">-->
+<!--                    <a th:href="@{/productionPlan/view(page=${currentPage - 1})}">Previous</a>-->
+<!--                </span>-->
+<!--        <span>Page <span th:text="${currentPage != null ? currentPage + 1 : 0}"></span> of <span th:text="${totalPages}"></span></span>-->
+<!--        <span th:if="${currentPage < totalPages - 1}">-->
+<!--                    <a th:href="@{/productionPlan/view(page=${currentPage + 1})}">Next</a>-->
+<!--                </span>-->
+<!--      </div>-->
+<!--      <section class="productionPlanListPagenation">-->
+<!--        &lt;!&ndash; 페이지네이션 버튼들 &ndash;&gt;-->
+<!--        <button>이전</button>-->
+<!--        <button>다음</button>-->
+<!--      </section>-->
+<!--    </section>-->
   </main>
 
   <footer class="layout-footer">

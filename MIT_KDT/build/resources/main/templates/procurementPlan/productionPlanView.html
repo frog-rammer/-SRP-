@@ -67,21 +67,28 @@
                         </tr>
                         </thead>
                         <tbody id="planTableBody">
-                        <tr onclick="highlightProductionPeriod('2024-05-27', '2024-05-31')">
-                            <td>2024-05-27</td>
-                            <td>2024-05-31</td>
-                            <td>PROD-001</td>
-                            <td>모니터</td>
-                            <td>prod-001</td>
-                            <td>50</td>
-                            <td>WAA24704-001</td>
-                            <td>주조</td>
-                            <td>130-86-14788</td>
-                        </tr>
+                            <tr th:each="productionplan : ${productionPlanList}">
+                                <td th:text="${productionplan.planStartDate}"></td>
+                                <td th:text="${productionplan.planEndDate}"></td>
+                                <td th:text="${productionplan.planNo}"></td>
+                                <td th:text="${productionplan.productName}"></td>
+                                <td th:text="${productionplan.productCode}"></td>
+                                <td th:text="${productionplan.quantity}"></td>
+                            </tr>
                         <!-- 추가 데이터 행들 -->
                         </tbody>
                     </table>
                 </section>
+                <!-- 페이지네이션 -->
+                <div>
+                    <span th:if="${currentPage > 0}">
+                        <a th:href="@{/productionPlan/view(page=${currentPage - 1})}">Previous</a>
+                    </span>
+                                    <span>Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>
+                                    <span th:if="${currentPage < totalPages - 1}">
+                        <a th:href="@{/productionPlan/view(page=${currentPage + 1})}">Next</a>
+                    </span>
+                </div>
             </section>
         </div>
     </main>

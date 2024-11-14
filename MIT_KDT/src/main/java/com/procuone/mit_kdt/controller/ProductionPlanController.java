@@ -5,13 +5,13 @@ import com.procuone.mit_kdt.dto.ProductionPlanDTO;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.ProductionPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,25 +35,42 @@ public class ProductionPlanController {
     }
 
     @GetMapping("/view")
-    public String view(Model model) {
-        model.addAttribute("productionPlanDTO", new ProductionPlanDTO());
+    public String view(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(pageable);
+
+        model.addAttribute("productionPlanList", productionPlanPage.getContent()); // 생산 계획 목록
+        model.addAttribute("currentPage", productionPlanPage.getNumber());  // 현재 페이지
+        model.addAttribute("totalPages", productionPlanPage.getTotalPages());  // 총 페이지 수
+        model.addAttribute("totalItems", productionPlanPage.getTotalElements()); // 전체 아이템 수
+
         return "procurementPlan/productionPlanView";
     }
 
 
     @PostMapping("/save")
     public String planSave(@ModelAttribute("productionPlanDTO") ProductionPlanDTO productionPlanDTO,
-                           BindingResult result, Model model) {
+                           BindingResult result, Model model,
+                           @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         if (result.hasErrors()) {
-            return "productionPlanInput";  // 유효성 검사 실패 시 입력 폼으로 돌아가기
+            return "procurementPlan/productionPlanInput";  // 유효성 검사 실패 시 입력 폼으로 돌아가기
         }
 
         // 엔티티 저장
         productionPlanService.savePlan(productionPlanDTO);  // 엔티티를 서비스에 전달
 
+        // 페이지네이션 처리
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(pageable);
+
         // 성공 메시지 추가
         model.addAttribute("successMessage", "생산 계획이 성공적으로 저장되었습니다.");
-        return "procurementPlan/productionPlanInput";
+        model.addAttribute("productionPlanList", productionPlanPage.getContent()); // 생산 계획 목록
+        model.addAttribute("currentPage", productionPlanPage.getNumber());  // 현재 페이지
+        model.addAttribute("totalPages", productionPlanPage.getTotalPages());  // 총 페이지 수
+        model.addAttribute("totalItems", productionPlanPage.getTotalElements()); // 전체 아이템 수
+
+        return "procurementPlan/productionPlanView";  // 저장 후 "view" 페이지로 리다이렉트
     }
 
 }
