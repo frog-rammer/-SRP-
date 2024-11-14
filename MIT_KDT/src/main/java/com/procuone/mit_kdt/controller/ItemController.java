@@ -2,7 +2,6 @@ package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
-import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/items")
@@ -30,14 +28,10 @@ public class ItemController {
     // 상품 등록 폼 표시
     @GetMapping("/registerProductForm")
     public String showRegisterForm(Model model) {
-        // 빈 ItemDTO 객체와 최상위 카테고리 리스트를 모델에 추가
         model.addAttribute("item", new ItemDTO());
-
-        // 최상위 카테고리를 DTO 형식으로 가져옴
         List<CategoryDTO> rootCategories = categoryService.getRootCategories();
         model.addAttribute("categories", rootCategories);
-
-        return "procurementPlan/registerProductForm"; // registerProductForm.html 페이지 렌더링
+        return "procurementPlan/registerProductForm";
     }
 
     @GetMapping("/view")
@@ -48,28 +42,30 @@ public class ItemController {
 
     @PostMapping("/InputProduct")
     public String saveItem(
-            @ModelAttribute ItemDTO itemDTO, // DTO로 입력받음
-            @RequestParam("drawingFile") MultipartFile file, // 업로드된 파일
+            @ModelAttribute ItemDTO itemDTO,
+            @RequestParam(value = "file", required = false) MultipartFile file,
             RedirectAttributes redirectAttributes) {
 
         try {
-            // Step 1: 파일 업로드 처리
+            // 파일 업로드 처리
             if (file != null && !file.isEmpty()) {
-                String uploadDir = "src/main/resources/static/images/BluePrints/"; // 저장 경로
-                String webPath = "/images/BluePrints/"; // 반환할 웹 경로
+                String uploadDir = "C:/blueprints/"; // C 드라이브에 blueprints 디렉토리
+                String webPath = "/blueprints/";    // 웹 경로
                 String filePath = saveFile(file, uploadDir, webPath, redirectAttributes);
                 if (filePath == null) {
                     redirectAttributes.addFlashAttribute("errorMessage", "파일 업로드에 실패했습니다.");
                     return "redirect:/items/registerProductForm";
                 }
-                itemDTO.setDrawingFile(filePath); // 파일 경로를 DTO에 설정
+                itemDTO.setDrawingFile(filePath); // 파일 경로 설정
+            } else {
+                itemDTO.setDrawingFile(null); // 파일이 없으면 null
             }
 
-            // Step 2: 서비스 계층에서 저장 처리
+            // 서비스 계층 저장 호출
             boolean isSaved = itemService.saveItem(itemDTO);
             if (!isSaved) {
                 redirectAttributes.addFlashAttribute("infoMessage", "기존 품목이 이미 등록되어 있습니다.");
-                return "redirect:/items"; // 기존 품목 참조로 리다이렉트
+                return "redirect:/items";
             }
 
             redirectAttributes.addFlashAttribute("successMessage", "품목이 성공적으로 등록되었습니다!");
@@ -80,31 +76,28 @@ public class ItemController {
             return "redirect:/items/registerProductForm";
         }
 
-        return "redirect:/items"; // 등록 완료 후 목록 페이지로 리다이렉트
+        return "redirect:/items";
     }
 
-
-    // 하위 카테고리 AJAX 응답
     @GetMapping("/categories/subcategories")
     @ResponseBody
     public List<CategoryDTO> getSubCategories(@RequestParam Long parentId) {
-        // 하위 카테고리를 DTO 형식으로 반환
         return categoryService.getSubCategoriesByParentId(parentId);
     }
 
     // 파일 저장 메서드
     private String saveFile(MultipartFile file, String uploadDir, String webPath, RedirectAttributes redirectAttributes) {
         try {
-            // 파일 저장 경로 생성
+            // 디렉토리 생성
             File uploadDirectory = new File(uploadDir);
             if (!uploadDirectory.exists()) {
-                boolean isCreated = uploadDirectory.mkdirs(); // 디렉토리 생성
+                boolean isCreated = uploadDirectory.mkdirs();
                 if (!isCreated) {
-                    throw new IOException("디렉토리 생성에 실패했습니다: " + uploadDir);
+                    throw new IOException("디렉토리 생성 실패: " + uploadDir);
                 }
             }
 
-            // 파일 이름 생성 (중복 방지)
+            // 파일 이름 생성
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             File destinationFile = new File(uploadDir + fileName);
 
@@ -115,7 +108,7 @@ public class ItemController {
             return webPath + fileName;
         } catch (IOException e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "파일 저장 중 오류가 발생했습니다.");
+            redirectAttributes.addFlashAttribute("errorMessage", "파일 저장 중 오류 발생: " + e.getMessage());
             return null;
         }
     }
