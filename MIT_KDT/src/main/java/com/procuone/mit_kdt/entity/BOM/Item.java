@@ -21,7 +21,9 @@ public class Item {
 
     private String itemName; // 품목명
     private String drawingFile; // 도면 파일 경로
+    private boolean isShared; // 공유여부
     private String dimensions; // 치수 정보 (예: 100x50x30 mm)
+    private int cost;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

@@ -71,18 +71,6 @@
         <label for="quantity">생산 수량</label>
         <input type="number" th:field="*{quantity}" id="quantity">
 
-        <label for="partCode">부품 선택</label>
-        <select th:field="*{partCode}" id="partCode">
-          <option value="베어링 GA01100-001">베어링 GA01100-001</option>
-          <!-- 추가 가능한 옵션들 -->
-        </select>
-
-        <label for="companyName">회사 선택</label>
-        <select th:field="*{companyName}" id="companyName">
-          <option value="(주)석스크림 114-86-35933">(주)석스크림 114-86-35933</option>
-          <!-- 추가 가능한 옵션들 -->
-        </select>
-
         <button type="submit">저장</button>
       </section>
     </form>

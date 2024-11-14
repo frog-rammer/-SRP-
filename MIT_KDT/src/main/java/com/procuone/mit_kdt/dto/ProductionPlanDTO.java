@@ -20,6 +20,4 @@ public class ProductionPlanDTO {
     private LocalDate planEndDate;    // 생산 종료일
     private Integer quantity;         // 생산 수량
     private String partCode;          // 부품 코드
-    private String companyName;       // 회사명
-    private String companyNumber;     // 사업자번호
 }
