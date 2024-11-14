@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+</head>
+<body>
+<div class="grid-container">
+  <!-- 헤더 -->
+  <header class="layout-header">
+    <div th:replace="partials/procuOneHeader :: header"></div>
+  </header>
+
+  <aside class="layout-sidebar">
+    <div th:replace="partials/procuOneSide :: side"></div>
+  </aside>
+
+  <main class="layout-main">
+    <h1>계약 등록</h1>
+    <div>
+      <label>계약서</label>
+      <input type="file">
+    </div>
+    <div>
+      <label>업체명</label>
+      <select>
+        <option>업체명을 선택하세요</option>
+      </select>
+    </div>
+    <div>
+      <label>사업자 번호</label>
+      <input type="text">
+    </div>
+    <div>
+      <label>계좌 정보</label>
+      <input type="text">
+    </div>
+    <h1>계약 항목</h1>
+    <div>
+      <label>품목코드</label>
+      <input type="text">
+    </div>
+    <div>
+      <label>품목명</label>
+      <input type="text">
+    </div>
+    <div>
+      <label>단가</label>
+      <input type="text">
+    </div>
+    <div>
+      <label>L/T(소요시간)</label>
+      <input type="text">
+    </div>
+    <div>
+      <label>세부사항</label>
+      <input type="text">
+    </div>
+    <div>
+      <button type="submit">등록</button>
+      <button type="button">취소</button>
+    </div>
+    <h1>계약 관리</h1>
+    <div>
+      <select>
+        <option>품목코드</option>
+      </select>
+      <input type="text">
+      <button type="submit">검색</button>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>품목코드</th>
+            <th>품목명</th>
+            <th>계약번호</th>
+            <th>업체명</th>
+            <th>사업자번호</th>
+            <th>단가</th>
+            <th>L/T(소요시간)</th>
+            <th>계약서</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer class="layout-footer">
+
+  </footer>
+</div>
+</body>
+</html>

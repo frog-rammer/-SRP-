@@ -6,6 +6,7 @@
         <title>Title</title>
         <style>
 
+
             @font-face {
                 font-family: 'Pretendard-Regular';
                 src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
@@ -19,13 +20,20 @@
                 margin: 0;
                 padding: 0;
             }
-
-            #sideNav {
-                width: 200px;
+            /* 기본 사이드바 레이아웃 */
+            .layout-sidebar {
                 background-color: #ffffff;
-                border: #575757 1px solid;
-                height: 100vh;
-                position: fixed;
+                border-right: 1px solid #575757;
+                height: 100%;
+                padding: 10px;
+                overflow-y: auto;
+
+            }
+
+            /* 사이드바 네비게이션 스타일 */
+            #sideNav {
+                width: 100%; /* 사이드바 전체 너비 */
+                background-color: #ffffff;
             }
 
             #sideNav ul {
@@ -46,7 +54,8 @@
             }
 
             #sideNav a:hover {
-                background-color: #cdcbcb;
+                background-color: #575757;
+                color: white;
             }
 
             /* 드롭다운 메뉴 스타일 */
@@ -57,54 +66,66 @@
                 top: 0;
                 width: 200px;
                 background-color: #b3b2b2;
+                padding-left: 10px;
+                background-color: #f8f8f8;
+                border-left: 1px solid #ccc;
             }
 
             #sideNav li:hover > ul {
                 display: block;
             }
 
-            #sideNav li > a:after {
-                content: ' ';
+
+            /* 드롭다운 메뉴 항목 스타일 */
+            #sideNav ul ul a {
+                padding: 10px 15px;
+                background-color: #f8f8f8;
             }
 
-            #sideNav li:hover > a:after {
-                content: ' ';
+            #sideNav ul ul a:hover {
+                background-color: #575757;
+                color: white;
             }
         </style>
     </head>
     <body id="sideNav-body">
     <nav id="sideNav">
         <ul>
-            <li><a href="#" class="sideNav-link">메인화면</a></li>
             <li>
-                <a href="#" class="sideNav-link">생산계획</a>
+                <a href="#" class="sideNav-link">발주 계획</a>
                 <ul>
-                    <li><a href="#" class="sideNav-link">생산계획등록</a></li>
-                    <li><a href="#" class="sideNav-link">생산계획조회</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" class="sideNav-link">조달관리</a>
-                <ul>
-                    <li><a href="#" class="sideNav-link">품목정보등록</a></li>
-                    <li><a href="#" class="sideNav-link">계약 등록</a></li>
+                    <li><a href="/productionPlan/input" class="sideNav-link">생산계획등록</a></li>
+                    <li><a href="/productionPlan/view" class="sideNav-link">생산계획조회</a></li>
+                    <li><a href="/items/registerProductForm" class="sideNav-link">품목정보등록</a></li>
+                    <li><a href="#" class="sideNav-link">견적 관리</a></li>
+                    <li><a href="/company/register" class="sideNav-link">업체 등록</a></li>
+                    <li><a href="/company/viewCompanyList" class="sideNav-link">업체 리스트</a></li>
+                    <li><a href="/contract/register" class="sideNav-link">계약 등록</a></li>
                     <li><a href="#" class="sideNav-link">조달계획등록</a></li>
                 </ul>
             </li>
             <li>
-                <a href="#" class="sideNav-link">발주관리</a>
+                <a href="#" class="sideNav-link">구매 발주</a>
                 <ul>
-                    <li><a href="#" class="sideNav-link">구매 발주서 관리</a></li>
-                    <li><a href="#" class="sideNav-link">진척 검수 처리</a></li>
-                    <li><a href="#" class="sideNav-link">발주 진행 현황</a></li>
+                    <li><a href="#" class="sideNav-link">조달계획 조회</a></li>
+                    <li><a href="/purchaseOrder/purchaseOrders" class="sideNav-link">구매 발주서 관리</a></li>
+                    <li><a href="/purchaseOrder/progressInspection" class="sideNav-link">진척 검수 관리</a></li>
                 </ul>
             </li>
             <li>
-                <a href="#" class="sideNav-link">자재관리</a>
+                <a href="#" class="sideNav-link">자재 입고</a>
                 <ul>
-                    <li><a href="#" class="sideNav-link">자재 입출고</a></li>
-                    <li><a href="#" class="sideNav-link">거래명세서 발행</a></li>
-                    <li><a href="#" class="sideNav-link">재고 산출</a></li>
+                    <li><a href="" class="sideNav-link">발주 진행 현황</a></li>
+                    <li><a href="" class="sideNav-link">입고 검수 현황</a></li>
+                    <li><a href="/materialReceipt/invoice" class="sideNav-link">거래명세서 발행</a></li>
+                    <li><a href="/materialReceipt/stockIn" class="sideNav-link">자재 입고 관리</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="sideNav-link">자재 출고</a>
+                <ul>
+                    <li><a href="/materialIssue/stockOut" class="sideNav-link">자재 출고 관리</a></li>
+                    <li><a href="/materialIssue/stock" class="sideNav-link">재고 산출</a></li>
                     <li><a href="#" class="sideNav-link">재고(금액)관리</a></li>
                 </ul>
             </li>

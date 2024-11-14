@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>견적 정보 입력</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+</head>
+<body>
+<div class="grid-container">
+<!-- 헤더-->
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+
+    <main class="layout-main">
+        <h3>견적 정보 입력</h3>
+        <form action="" method="POST">
+
+            <label for="">견적 제목</label>
+            <input t id="" name="" required><br><br>
+
+            <label for="">세부 내용</label>
+            <textarea name="" id="" cols="30" rows="10"></textarea>
+        </form>
+    </main>
+
+    <footer class="layout-footer">
+
+    </footer>
+
+</div>
+</body>
+</html>

@@ -4,10 +4,11 @@ import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.repository.CompanyRepository;
 import com.procuone.mit_kdt.service.CompanyService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -22,23 +23,16 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public void registerCompany(CompanyDTO companyDTO) {
         // DTO -> Entity 변환
-        Company company = Company.builder()
-                .businessId(companyDTO.getBusinessId())
-                .comAccount(companyDTO.getComAccount())
-                .comAdd(companyDTO.getComAdd())
-                .comEmail(companyDTO.getComEmail())
-                .comManage(companyDTO.getComManage())
-                .comName(companyDTO.getComName())
-                .comPhone(companyDTO.getComPhone())
-                .build();
+        Company company = dtoToEntity(companyDTO);
 
         // DB에 저장
         companyRepository.save(company);
     }
 
     @Override
-    public List<Company> getAllCompanies() {
-        return companyRepository.findAll(); // 모든 회사 데이터를 DB에서 가져오기
+    public Page<CompanyDTO> getAllCompanies(Pageable pageable) {
+        Page<Company> companyPage = companyRepository.findAll(pageable);
+        return companyPage.map(this::entityToDto); // entityToDto 사용
     }
 
     // DTO -> Entity 변환

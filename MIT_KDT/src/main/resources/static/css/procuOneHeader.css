@@ -1,12 +1,14 @@
 
 @font-face {
-    font-family: 'Pretendard-Regular';
-    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-    font-weight: 400;
+    font-family: 'Godo';
     font-style: normal;
+    font-weight: 400;
+    src: url('//fastly.jsdelivr.net/korean-webfonts/1/corps/godo/Godo/GodoM.woff2') format('woff2'), url('//fastly.jsdelivr.net/korean-webfonts/1/corps/godo/Godo/GodoM.woff') format('woff');
+}
+.godo * {
+    font-family: 'Godo', sans-serif;
 }
 
-/* 전체 헤더 스타일 */
 .header {
     display: flex;
     align-items: center;
@@ -16,28 +18,27 @@
 
 }
 
-/* 로고 스타일 */
 .logo {
     flex: 0 0 auto;
 }
 
 .logo img {
-    height: 100px; /* 로고 이미지 높이 설정 */
-    width: auto; /* 비율에 맞게 자동 너비 설정 */
+    height: 100px;
+    width: auto;
 }
 
-/* 메뉴 아이콘 스타일 */
+
 .menu-icon {
 
 }
 
 .menu-icon img {
     margin-left: 20px;
-    height: 40px; /* 메뉴 아이콘 높이 설정 */
-    width: auto; /* 비율에 맞게 자동 너비 설정 */
+    height: 40px;
+    width: auto;
 }
 
-/* 메뉴 버튼 스타일 */
+
 .menu {
     flex: 1;
 
@@ -52,7 +53,7 @@
     font-size: 16px;
     color: #022e2a;
     cursor: pointer;
-    font-family: Godo, sans-serif;
+    font-family: 'Godo', sans-serif;
     padding: 8px 12px;
     transition: color 0.3s ease;
 }
@@ -60,14 +61,12 @@
 .menu button:hover {
     color: #0073e6;
 }
-
-/* 설정 아이콘 스타일 */
 .settings-icon {
     flex: 0 0 auto;
 }
 
 .settings-icon img {
-    height: 40px; /* 설정 아이콘 높이 설정 */
+    height: 40px;
     margin-right: 20px;
-    width: auto; /* 비율에 맞게 자동 너비 설정 */
+    width: auto;
 }

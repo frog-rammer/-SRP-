@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+  <title>자재 입고 관리</title>
+</head>
+<body>
+<div class="grid-container">
+  <!-- 헤더 -->
+  <header class="layout-header">
+    <div th:replace="partials/procuOneHeader :: header"></div>
+  </header>
+
+  <aside class="layout-sidebar">
+    <div th:replace="partials/procuOneSide :: side"></div>
+  </aside>
+
+  <main class="layout-main">
+  <h1>자재 입고 관리</h1>
+
+  <!-- 입고 대기 현황 테이블 -->
+  <h2>입고 대기 현황</h2>
+  <table border="1">
+    <thead>
+    <tr>
+      <th>입고 코드</th>
+      <th>도착일</th>
+      <th>도착 확인자</th>
+      <th>발주 코드</th>
+      <th>자재 코드</th>
+      <th>자재명</th>
+      <th>현재 수량</th>
+      <th>발주 수량</th>
+      <th>입고 수량</th>
+      <th>입고 상태</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 예시 -->
+    <tr>
+      <td>S12345</td>
+      <td>2024-10-01</td>
+      <td>홍길동</td>
+      <td>O98765</td>
+      <td>M54321</td>
+      <td>철판</td>
+      <td>100</td>
+      <td>150</td>
+      <td>50</td>
+      <td>대기</td>
+    </tr>
+
+    <tr>
+      <td>S67890</td>
+      <td>2024-10-05</td>
+      <td>김철수</td>
+      <td>O54321</td>
+      <td>M12345</td>
+      <td>알루미늄</td>
+      <td>200</td>
+      <td>300</td>
+      <td>100</td>
+      <td>대기</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- 입고 진행 현황 테이블 -->
+  <h2>입고 진행 현황</h2>
+  <table border="1">
+    <thead>
+    <tr>
+      <th>입고 코드</th>
+      <th>도착일</th>
+      <th>도착 확인자</th>
+      <th>발주 코드</th>
+      <th>자재 코드</th>
+      <th>자재명</th>
+      <th>현재 수량</th>
+      <th>발주 수량</th>
+      <th>입고 수량</th>
+      <th>입고 상태</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>S11223</td>
+      <td>2024-10-07</td>
+      <td>이영희</td>
+      <td>O23456</td>
+      <td>M67890</td>
+      <td>강철</td>
+      <td>500</td>
+      <td>600</td>
+      <td>300</td>
+      <td>진행중</td>
+    </tr>
+
+    <tr>
+      <td>S33445</td>
+      <td>2024-10-10</td>
+      <td>정수민</td>
+      <td>O76543</td>
+      <td>M23456</td>
+      <td>알루미늄</td>
+      <td>150</td>
+      <td>200</td>
+      <td>150</td>
+      <td>진행중</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a href="../materialIssue/stockOut.html">출고 관리로 이동</a>
+  </main>
+
+  <footer class="layout-footer">
+
+  </footer>
+</div>
+</body>
+</html>
