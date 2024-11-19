@@ -73,8 +73,9 @@ public class MemberServiceImpl implements MemberService {
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
         dto.setPassword(encodedPassword);
 
-
+        dto= setUserType(dto);
         Member entity = convertToEntity(dto);
+
         memberRepository.save(entity); // DB 저장 시 creationDate 자동 설정
 
         return entity.getMemberId(); // 가입된 회원의 ID 반환
@@ -84,5 +85,34 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean isMemberIdExists(String memberId) {
         return memberRepository.existsByMemberId(memberId);  // 존재 여부를 확인
+    }
+
+    @Override
+    public String getUserType(String memberId) {
+        // 예시로 데이터베이스에서 사용자의 부서번호로 타입을 조회
+        // 실제로는 memberRepository나 다른 DB 관련 클래스를 통해 데이터를 가져와야 함
+        String userType = memberRepository.findUserTypeByMemberId(memberId);
+        return userType;
+    }
+
+
+    // 부서번호에 따른 타입 설정
+    public MemberDTO setUserType(MemberDTO dto) {
+        switch (dto.getDno()) {
+            case "00":
+                dto.setType("구매부서");
+                break;
+            case "01":
+                dto.setType("생산부서");
+                break;
+            case "02":
+                dto.setType("자재부서");
+
+                break;
+            default:
+                dto.setType("기타");
+        }
+
+        return dto;
     }
 }

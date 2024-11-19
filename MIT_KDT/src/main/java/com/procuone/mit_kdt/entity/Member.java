@@ -23,6 +23,8 @@ public class Member{
     private String Dno;
     private String email;
     private String phone;
+    private String type;  // 사용자 타입 추가
+
 
     @Column(nullable = false, updatable = false)
     private LocalDate creationDate;
