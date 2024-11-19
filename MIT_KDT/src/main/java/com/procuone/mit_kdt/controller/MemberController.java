@@ -49,7 +49,6 @@ public class MemberController {
         }
     }
 
-
     @PostMapping("/signup")
     public String signup(MemberDTO dto, RedirectAttributes redirectAttributes) {
         String memberId = memberService.signup(dto);
@@ -71,6 +70,4 @@ public class MemberController {
         model.addAttribute("memberDTO", new MemberDTO());  // 빈 MemberDTO 객체를 뷰에 전달
         return "signup";  // 회원가입 폼을 렌더링
     }
-
-
 }

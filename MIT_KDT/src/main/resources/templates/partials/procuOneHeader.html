@@ -29,7 +29,7 @@
     <!-- 설정 아이콘 -->
     <!-- 로그인한 사용자의 이름과 타입을 헤더에 표시 -->
     <div>
-        <span th:if="${session.userType}">Welcome,<span th:text="${session.userType}">Usertype</span></span>
+        <span th:if="${session.userType}">환영합니다,<span th:text="${session.userType}">Usertype</span></span>
         <span th:if="${session.username}"><span th:text="${session.username}">Username</span>님</span>
     </div>
 
