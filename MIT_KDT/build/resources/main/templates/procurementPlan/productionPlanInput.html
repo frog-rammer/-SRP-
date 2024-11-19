@@ -1,129 +1,156 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>생산 계획 관리</title>
-  <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
-  <link rel="stylesheet" th:href="@{/css/productPlanInput.css}">
-  <link rel="stylesheet" th:href="@{/css/processDiagram.css}">
-  <link rel="stylesheet" th:href="@{/css/layout.css}">
-  <script src="https://d3js.org/d3.v6.min.js"></script>
+    <meta charset="UTF-8">
+    <title>생산 계획 관리</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/productPlanInput.css}">
+    <link rel="stylesheet" th:href="@{/css/processDiagram.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        .aaa {
+            display: flex;
+        }
+
+        .productPlanInputWrap {
+            width: 60%;
+        }
+    </style>
 </head>
 <body>
 <div class="grid-container">
-  <!-- 헤더 -->
-  <header class="layout-header">
-    <div th:replace="partials/procuOneHeader :: header"></div>
-  </header>
+    <!-- 헤더 -->
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
 
-  <aside class="layout-sidebar">
-    <div th:replace="partials/procuOneSide :: side"></div>
-  </aside>
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
 
-  <main class="layout-main">
-    <div th:replace="partials/diagram/orderingPlan :: myDiagram"></div>
-    <!-- 달력 부분 -->
-    <section class="calendarWrap">
-      <h3>생산 달력</h3>
-      <label for="yearSelect">연도:</label>
-      <select id="yearSelect"></select>
-      <label for="monthSelect">월:</label>
-      <select id="monthSelect">
-        <option value="0">1</option>
-        <option value="1">2</option>
-        <option value="2">3</option>
-        <option value="3">4</option>
-        <option value="4">5</option>
-        <option value="5">6</option>
-        <option value="6">7</option>
-        <option value="7">8</option>
-        <option value="8">9</option>
-        <option value="9">10</option>
-        <option value="10">11</option>
-        <option value="11">12</option>
-      </select>
-      <div class="calendar" id="calendar">
-        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-      </div>
-    </section>
+    <main class="layout-main">
 
-    <!-- 생산 계획 입력 부분 -->
-    <form th:action="@{/productionPlan/save}" th:object="${productionPlanDTO}" method="post">
-      <section class="productPlanInputWrap">
-        <div class="header">
-          <h3>생산 계획 입력</h3>
-          <button type="button" class="excelUploadBtn">엑셀로 등록하기</button>
+        <div th:replace="partials/diagram/orderingPlan :: myDiagram"></div>
+        <div class="aaa">
+            <!-- 달력 부분 -->
+            <section class="calendarWrap">
+                <h3>생산 달력</h3>
+                <label for="yearSelect">연도:</label>
+                <select id="yearSelect"></select>
+                <label for="monthSelect">월:</label>
+                <select id="monthSelect">
+                    <option value="0">1</option>
+                    <option value="1">2</option>
+                    <option value="2">3</option>
+                    <option value="3">4</option>
+                    <option value="4">5</option>
+                    <option value="5">6</option>
+                    <option value="6">7</option>
+                    <option value="7">8</option>
+                    <option value="8">9</option>
+                    <option value="9">10</option>
+                    <option value="10">11</option>
+                    <option value="11">12</option>
+                </select>
+                <div class="calendar" id="calendar">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+            </section>
+            <form class="inputForm" th:action="@{/productionPlan/save}" th:object="${productionPlanDTO}" method="post">
+                <section class="productPlanInputWrap">
+                    <div class="header">
+                        <h3>생산 계획 입력</h3>
+                        <button type="button" class="excelUploadBtn">엑셀로 등록하기</button>
+                    </div>
+                    <label for="productCode">생산제품</label>
+                    <select th:field="*{productCode}" id="ProductCode">
+                        <option value="" disabled selected>생산제품을 선택하세요</option>
+                        <option th:each="item : ${topItems}"
+                                th:value="${item.productCode}"
+                                th:text="${item.itemName}">
+                        </option>
+                    </select>
+
+                    <label for="planStartDate">생산 시작일</label>
+                    <input type="date" th:field="*{planStartDate}" id="planStartDate">
+
+                    <label for="planEndDate">생산 종료일</label>
+                    <input type="date" th:field="*{planEndDate}" id="planEndDate">
+
+                    <button type="button" id="resetDatesButton">날짜 초기화</button>
+
+                    <label for="quantity">생산 수량</label>
+                    <input type="number" th:field="*{quantity}" id="quantity">
+
+                    <button type="submit">저장</button>
+                </section>
+            </form>
         </div>
-        <label for="productCode">생산제품</label>
-        <select th:field="*{productCode}" id="ProductCode">
-          <option value="" disabled selected>생산제품을 선택하세요</option>
-          <option th:each="item : ${topItems}"
-                  th:value="${item.productCode}"
-                  th:text="${item.itemName}">
-          </option>
-        </select>
+        <!-- 생산 계획 입력 부분 -->
 
-        <label for="planStartDate">생산 시작일</label>
-        <input type="date" th:field="*{planStartDate}" id="planStartDate">
 
-        <label for="planEndDate">생산 종료일</label>
-        <input type="date" th:field="*{planEndDate}" id="planEndDate">
+        <!-- 생산 계획 목록 부분 -->
+        <!--    <section class="productionPlanListWrap">-->
+        <!--      <div class="productionPlanListSearchBar">-->
+        <!--        <input type="text" placeholder="검색어를 입력하세요">-->
+        <!--        <button class="searchBtn">검색</button>-->
+        <!--        <button class="detailsBtn">등록된 계획 자세히 보기</button>-->
+        <!--      </div>-->
+        <!--      <h3>생산 계획 목록</h3>-->
+        <!--      <section class="productionPlanList">-->
+        <!--        <table>-->
+        <!--          <thead>-->
+        <!--          <tr>-->
+        <!--            <th>생산 시작일</th>-->
+        <!--            <th>생산 종료일</th>-->
+        <!--            <th>생산계획번호</th>-->
+        <!--            <th>생산제품명</th>-->
+        <!--            <th>생산제품코드</th>-->
+        <!--            <th>생산수량</th>-->
+        <!--          </tr>-->
+        <!--          </thead>-->
+        <!--          <tbody>-->
+        <!--          <tr th:each="productionplan : ${productionplanList}">-->
+        <!--            <td th:text="${productionPlanDTO.planStartDate}"></td>-->
+        <!--            <td th:text="${productionPlanDTO.planEndDate}"></td>-->
+        <!--            <td th:text="${productionPlanDTO.planNo}"></td>-->
+        <!--            <td th:text="${productionPlanDTO.productName}"></td>-->
+        <!--            <td th:text="${productionPlanDTO.productCode}"></td>-->
+        <!--            <td th:text="${productionPlanDTO.quantity}"></td>-->
+        <!--          </tr>-->
+        <!--          &lt;!&ndash; 추가 데이터 행들 &ndash;&gt;-->
+        <!--          </tbody>-->
+        <!--        </table>-->
+        <!--      </section>-->
+        <!--      <div>-->
+        <!--                <span th:if="${currentPage > 0}">-->
+        <!--                    <a th:href="@{/productionPlan/view(page=${currentPage - 1})}">Previous</a>-->
+        <!--                </span>-->
+        <!--        <span>Page <span th:text="${currentPage != null ? currentPage + 1 : 0}"></span> of <span th:text="${totalPages}"></span></span>-->
+        <!--        <span th:if="${currentPage < totalPages - 1}">-->
+        <!--                    <a th:href="@{/productionPlan/view(page=${currentPage + 1})}">Next</a>-->
+        <!--                </span>-->
+        <!--      </div>-->
+        <!--      <section class="productionPlanListPagenation">-->
+        <!--        &lt;!&ndash; 페이지네이션 버튼들 &ndash;&gt;-->
+        <!--        <button>이전</button>-->
+        <!--        <button>다음</button>-->
+        <!--      </section>-->
+        <!--    </section>-->
 
-        <button type="button" id="resetDatesButton">날짜 초기화</button>
+    </main>
 
-        <label for="quantity">생산 수량</label>
-        <input type="number" th:field="*{quantity}" id="quantity">
+    <footer class="layout-footer">
 
-        <button type="submit">저장</button>
-      </section>
-    </form>
-
-    <!-- 생산 계획 목록 부분 -->
-    <section class="productionPlanListWrap">
-      <div class="productionPlanListSearchBar">
-        <input type="text" placeholder="검색어를 입력하세요">
-        <button class="searchBtn">검색</button>
-        <button class="detailsBtn">등록된 계획 자세히 보기</button>
-      </div>
-      <h3>생산 계획 목록</h3>
-      <section class="productionPlanList">
-        <table>
-          <thead>
-          <tr>
-            <th>생산 시작일</th>
-            <th>생산 종료일</th>
-            <th>생산계획번호</th>
-            <th>생산제품명</th>
-            <th>생산제품코드</th>
-            <th>생산수량</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>2024-05-27</td>
-            <td>2024-05-31</td>
-            <td>PROD-001</td>
-            <td>모니터</td>
-            <td>prod-001</td>
-            <td>50</td>
-          </tr>
-          <!-- 추가 데이터 행들 -->
-          </tbody>
-        </table>
-      </section>
-      <section class="productionPlanListPagenation">
-        <!-- 페이지네이션 버튼들 -->
-        <button>이전</button>
-        <button>다음</button>
-      </section>
-    </section>
-  </main>
-
-  <footer class="layout-footer">
-
-  </footer>
+    </footer>
 </div>
-
 
 
 <script th:src="@{/JS/diagram.js}"></script>
