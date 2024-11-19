@@ -11,7 +11,6 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class Company {
-
     @Id
     @Column(length = 20) // 사업자 번호 길이 제한
     private String businessId; // 사업자 번호

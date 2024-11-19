@@ -60,6 +60,7 @@ public class MemberServiceImpl implements MemberService {
                 .email(member.getEmail())
                 .Dno(member.getDno())
                 .creationDate(member.getCreationDate())
+                .type(member.getType())
                 .build();
     }
 
@@ -108,7 +109,9 @@ public class MemberServiceImpl implements MemberService {
                 break;
             case "02":
                 dto.setType("자재부서");
-
+                break;
+            case "05":
+                dto.setType("협력업체");
                 break;
             default:
                 dto.setType("기타");
