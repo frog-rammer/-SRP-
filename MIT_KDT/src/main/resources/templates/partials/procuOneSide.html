@@ -83,40 +83,39 @@
     <nav id="sideNav">
         <ul>
             <li>
-                <a href="#" class="sideNav-link">발주 계획</a>
+                <a href="#" class="sideNav-link">구매</a>
                 <ul>
-                    <li><a href="/productionPlan/input" class="sideNav-link">생산계획등록</a></li>
-                    <li><a href="/productionPlan/view" class="sideNav-link">생산계획조회</a></li>
                     <li><a href="/items/registerProductForm" class="sideNav-link">품목정보등록</a></li>
-                    <li><a href="#" class="sideNav-link">견적 관리</a></li>
-                    <li><a href="/company/register" class="sideNav-link">업체 등록</a></li>
-                    <li><a href="/company/viewCompanyList" class="sideNav-link">업체 리스트</a></li>
-                    <li><a href="/contract/register" class="sideNav-link">계약 등록</a></li>
-<!--                    <li><a href="#" class="sideNav-link">조달계획등록</a></li>-->
+                    <li><a href="/purchaseOrder/purchaseOrders" class="sideNav-link">구매발주서 관리</a></li>
+                    <li><a href="/contract/register" class="sideNav-link">계약관리</a></li>
+                    <li><a href="/purchaseOrder/progressInspection" class="sideNav-link">진척검수</a></li>
+                    <li><a href="/company/viewCompanyList" class="sideNav-link">업체리스트</a></li>
+                    <li><a href="/purchaseOrder/register" class="sideNav-link">조달계획등록</a></li>
+                    <li><a href="/purchaseOrder/planView" class="sideNav-link">조달계획 조회</a></li>
                 </ul>
             </li>
             <li>
-                <a href="#" class="sideNav-link">구매 발주</a>
+                <a href="#" class="sideNav-link">생산</a>
                 <ul>
-                    <li><a href="/purchaseOrder/procurementPlanView" class="sideNav-link">조달계획 조회</a></li>
-                    <li><a href="/purchaseOrder/purchaseOrders" class="sideNav-link">구매 발주서 관리</a></li>
-                    <li><a href="/purchaseOrder/progressInspection" class="sideNav-link">진척 검수 관리</a></li>
+                    <li><a href="/productionPlan/input" class="sideNav-link">생산계획 등록</a></li>
+                    <li><a href="/productionPlan/view" class="sideNav-link">생산계획 조회</a></li>
                 </ul>
             </li>
             <li>
-                <a href="#" class="sideNav-link">자재 입고</a>
+                <a href="#" class="sideNav-link">자재</a>
                 <ul>
-                    <li><a href="" class="sideNav-link">발주 진행 현황</a></li>
-                    <li><a href="" class="sideNav-link">입고 검수 현황</a></li>
-                    <li><a href="/materialReceipt/stockIn" class="sideNav-link">자재 입고 관리</a></li>
+                    <li><a href="/materialReceipt/inspectionStatus" class="sideNav-link">입고검수현황</a></li>
+                    <li><a href="/materialIssue/stockOut" class="sideNav-link">자재출고관리</a></li>
+                    <li><a href="/materialIssue/stockManagement" class="sideNav-link">재고금액관리</a></li>
+                    <li><a href="/materialReceipt/stockIn" class="sideNav-link">자재입고관리</a></li>
+                    <li><a href="/materialIssue/stock" class="sideNav-link">재고(산출)</a></li>
                 </ul>
             </li>
             <li>
-                <a href="#" class="sideNav-link">자재 출고</a>
+                <a href="#" class="sideNav-link">업체</a>
                 <ul>
-                    <li><a href="/materialIssue/stockOut" class="sideNav-link">자재 출고 관리</a></li>
-                    <li><a href="/materialIssue/stock" class="sideNav-link">재고 산출</a></li>
-                    <li><a href="#" class="sideNav-link">재고(금액)관리</a></li>
+                    <li><a href="/company/stockInput" class="sideNav-link">자기재고입력</a></li>
+                    <li><a href="/company/stockList" class="sideNav-link">재고</a></li>
                 </ul>
             </li>
         </ul>
@@ -131,6 +130,7 @@
                 if (parentLi.classList.contains('open')) {
                     parentLi.classList.remove('open');
                 } else {
+                    // 모든 메뉴를 닫고 클릭한 메뉴만 열기
                     document.querySelectorAll('#sideNav > ul > li').forEach(li => li.classList.remove('open'));
                     parentLi.classList.add('open');
                 }
