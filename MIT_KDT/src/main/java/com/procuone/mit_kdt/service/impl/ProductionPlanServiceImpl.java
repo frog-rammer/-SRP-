@@ -20,6 +20,10 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
 
     @Override
     public void savePlan(ProductionPlanDTO productionPlanDTO) {
+        // 새로운 ID 생성
+        String newId = generateNewId();
+        productionPlanDTO.setProductPlanCode(newId);
+
         productionPlanRepository.save(dtoToEntity(productionPlanDTO));
     }
     @Override
@@ -50,26 +54,32 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     // DTO를 엔티티로 변환
     private ProductionPlan dtoToEntity(ProductionPlanDTO dto) {
         return ProductionPlan.builder()
-                .planNo(dto.getPlanNo())
+                .productPlanCode(dto.getProductPlanCode())
                 .productName(dto.getProductName())
                 .productCode(dto.getProductCode())
                 .planStartDate(dto.getPlanStartDate())
                 .planEndDate(dto.getPlanEndDate())
                 .quantity(dto.getQuantity())
-                .partCode(dto.getPartCode())
                 .build();
     }
 
     // 엔티티를 DTO로 변환
     private ProductionPlanDTO entityToDto(ProductionPlan entity) {
         return ProductionPlanDTO.builder()
-                .planNo(entity.getPlanNo())
+                .productPlanCode(entity.getProductPlanCode())
                 .productName(entity.getProductName())
                 .productCode(entity.getProductCode())
                 .planStartDate(entity.getPlanStartDate())
                 .planEndDate(entity.getPlanEndDate())
                 .quantity(entity.getQuantity())
-                .partCode(entity.getPartCode())
                 .build();
+    }
+
+    private String generateNewId() {
+        String prefix = "PdPlan_";
+        int nextId = productionPlanRepository.findMaxId()
+                .map(id -> Integer.parseInt(id.substring(8)) + 1)
+                .orElse(1);
+        return prefix + String.format("%03d", nextId);
     }
 }

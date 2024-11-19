@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/productionPlan")
@@ -36,7 +37,7 @@ public class ProductionPlanController {
 
     @GetMapping("/view")
     public String view(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+         Pageable pageable = PageRequest.of(page, size);
         Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(pageable);
 
         model.addAttribute("productionPlanList", productionPlanPage.getContent()); // 생산 계획 목록
@@ -57,8 +58,9 @@ public class ProductionPlanController {
         }
 
         // 엔티티 저장
-        productionPlanService.savePlan(productionPlanDTO);  // 엔티티를 서비스에 전달
-
+        Optional<ItemDTO> itemDTO = itemService.findByProductCode(productionPlanDTO.getProductCode());
+        itemDTO.ifPresent(item -> productionPlanDTO.setProductName(item.getItemName()));
+        productionPlanService.savePlan(productionPlanDTO);  // DTO를 서비스에 전달
         // 페이지네이션 처리
         Pageable pageable = PageRequest.of(page, size);
         Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(pageable);
