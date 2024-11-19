@@ -1,9 +1,13 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.CompanyDTO;
+import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.dto.MemberDTO;
+import com.procuone.mit_kdt.service.CategoryService;
 import com.procuone.mit_kdt.service.CompanyService;
+import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,12 +15,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/company")
 public class CompanyController {
 
-    private final CompanyService companyService;
-    private final MemberService memberService;
+    @Autowired
+    CompanyService companyService;
+    @Autowired
+    MemberService memberService;
+    @Autowired
+    ItemService itemService;
+    @Autowired
+    CategoryService categoryService;
 
     public CompanyController(CompanyService companyService, MemberService memberService) {
         this.companyService = companyService;
@@ -78,9 +90,18 @@ public class CompanyController {
 
         return "procurementPlan/viewCompanylistForm";  // 뷰 이름
     }
+    @GetMapping("/supplierRregisterProduct")
+    public String supplierRregisterProduct(Model model) {
+        List<CategoryDTO> leafCategories = categoryService.getAllLeafCategories();
 
+        // 모델에 추가
+        model.addAttribute("categories", leafCategories);
+
+
+        return "supplier/supplierRregisterProduct";
+    }
     @Controller
-    public class SignupController {
+    public class SignupController{
 
         @GetMapping("/compSignup")
         public String compSignupPage() {
