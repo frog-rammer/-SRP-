@@ -33,8 +33,6 @@
             cursor: pointer;
         }
     </style>
-
-
 </head>
 <body>
 <div class="grid-container">
@@ -42,13 +40,10 @@
     <header class="layout-header">
         <div th:replace="partials/procuOneHeader :: header"></div>
     </header>
-
     <aside class="layout-sidebar">
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
-
     <main class="layout-main">
-
         <div>
             <div>
                 <input type="text" placeholder="업체명을 입력하세요">
@@ -69,7 +64,8 @@
                 </thead>
                 <tbody>
                 <!-- companyList 반복문으로 리스트 출력 -->
-                <tr th:each="company : ${companyList}" data-business-id="[[${company.businessId}]]" class="clickable-row">
+                <tr th:each="company : ${companyList}" data-business-id="[[${company.businessId}]]"
+                    class="clickable-row">
                     <td th:text="${company.businessId}"></td> <!-- businessId 출력 -->
                     <td th:text="${company.comName}"></td> <!-- comName 출력 -->
                     <td th:text="${company.comAdd}"></td> <!-- comAdd 출력 -->
@@ -80,32 +76,26 @@
                 </tr>
                 </tbody>
             </table>
-
             <!-- 페이지네이션 -->
             <div>
                 <span th:if="${currentPage > 0}">
                     <a th:href="@{/company/viewCompanyList(page=${currentPage - 1})}">Previous</a>
                 </span>
-                <span>Page <span th:text="${currentPage != null ? currentPage + 1 : 0}"></span> of <span th:text="${totalPages}"></span></span>
+                <span>Page <span th:text="${currentPage != null ? currentPage + 1 : 0}"></span> of <span
+                        th:text="${totalPages}"></span></span>
                 <span th:if="${currentPage < totalPages - 1}">
                     <a th:href="@{/company/viewCompanyList(page=${currentPage + 1})}">Next</a>
                 </span>
             </div>
         </div>
     </main>
-
     <footer class="layout-footer">
-
-
     </footer>
-
 </div>
-
-
 <script>
     // 클릭한 행의 Business ID로 이동
-    document.querySelectorAll('.clickable-row').forEach(function(row) {
-        row.addEventListener('click', function() {
+    document.querySelectorAll('.clickable-row').forEach(function (row) {
+        row.addEventListener('click', function () {
             const businessId = row.getAttribute('data-business-id');
             window.location.href = '/companyDetail/' + businessId;  // 클릭한 행의 Business ID로 이동
         });

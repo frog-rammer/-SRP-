@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/materialIssue")
-public class MaterialIssueController{
+public class MaterialIssueController {
 
     @GetMapping("/stock")
     public String stock() {

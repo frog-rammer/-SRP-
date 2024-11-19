@@ -31,6 +31,9 @@
     <div>
         <span th:if="${session.userType}">환영합니다,<span th:text="${session.userType}">Usertype</span></span>
         <span th:if="${session.username}"><span th:text="${session.username}">Username</span>님</span>
+        <form action="/logout" method="get">
+            <button type="submit">로그아웃</button>
+        </form>
     </div>
 
 </div>

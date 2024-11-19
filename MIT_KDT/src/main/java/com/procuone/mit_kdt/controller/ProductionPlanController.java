@@ -37,7 +37,7 @@ public class ProductionPlanController {
 
     @GetMapping("/view")
     public String view(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-         Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size);
         Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(pageable);
 
         model.addAttribute("productionPlanList", productionPlanPage.getContent()); // 생산 계획 목록

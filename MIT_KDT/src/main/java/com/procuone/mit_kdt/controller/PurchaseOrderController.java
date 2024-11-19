@@ -8,11 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/purchaseOrder")
 public class PurchaseOrderController {
     @GetMapping("/progressInspection")
-    public String progressInspection() { return "purchaseOrder/progressInspection"; }
+    public String progressInspection() {
+        return "purchaseOrder/progressInspection";
+    }
 
     @GetMapping("/purchaseOrders")
-    public String purchaseOrders() { return "purchaseOrder/purchaseOrders"; }
+    public String purchaseOrders() {
+        return "purchaseOrder/purchaseOrders";
+    }
 
     @GetMapping("/procurementPlanView")
-    public String procurementPlanView() { return "purchaseOrder/procurementPlanView"; }
+    public String procurementPlanView() {
+        return "purchaseOrder/procurementPlanView";
+    }
 }
