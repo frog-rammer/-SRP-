@@ -23,6 +23,13 @@ public class CompanyController {
         this.memberService = memberService;
     }
 
+    @GetMapping("/company/{id}")
+    public String getCompanyDetails(@PathVariable String businessId, Model model) {
+        CompanyDTO companyDTO = companyService.getCompanyDetails(businessId);
+        model.addAttribute("companyDTO", companyDTO);
+        return "companyDetails";  // Thymeleaf 템플릿 이름
+    }
+
     // 업체 등록 폼
     @GetMapping("/register")
     public String showCompanyRegisterForm(Model model) {

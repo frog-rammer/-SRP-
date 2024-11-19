@@ -14,12 +14,14 @@ public class ContractController {
     public String register() {
         return "procurementPlan/compareContracts";
     }
+
     @GetMapping("/registerContract")
     public String registerContract() {
         return "procurementPlan/registerContract";
     }
+
     @GetMapping("/registerContract2")
-    public String registerContract2(RedirectAttributes redirectAttributes){
+    public String registerContract2(RedirectAttributes redirectAttributes) {
         return "redirect:/contract/register";
     }
 }

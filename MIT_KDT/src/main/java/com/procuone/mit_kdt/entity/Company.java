@@ -30,4 +30,9 @@ public class Company {
     @Column(length = 1000) // 아이템 코드 리스트를 저장하는 필드
     private String itemCodes; // 회사가 관리하는 아이템 코드 리스트 (콤마로 구분)
 
+    private String comPaymentInfo; // 결제 정보
+    private String comBank; // 은행명
+    private String comAccountNumber; // 계좌번호
+    private String comEstimateList; // 견적 목록
+
 }

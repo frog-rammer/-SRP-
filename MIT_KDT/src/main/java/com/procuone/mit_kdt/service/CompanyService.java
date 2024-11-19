@@ -11,4 +11,7 @@ public interface CompanyService {
 
     // 페이징 처리된 회사 리스트 가져오기
     public abstract Page<CompanyDTO> getAllCompanies(Pageable pageable);
+
+    // 특정 회사 상세 조회
+    CompanyDTO getCompanyDetails(String businessId);
 }
