@@ -1,7 +1,10 @@
 package com.procuone.mit_kdt.entity.BOM;
 
+import com.procuone.mit_kdt.entity.CompanyItem;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,6 +27,9 @@ public class Item {
     private boolean isShared; // 공유여부
     private String dimensions; // 치수 정보 (예: 100x50x30 mm)
     private int cost;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private Set<CompanyItem> companyItems; // 이 품목을 공급하는 회사 리스트
 
     @ManyToOne
     @JoinColumn(name = "category_id")

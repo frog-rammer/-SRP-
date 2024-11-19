@@ -1,9 +1,13 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.CompanyDTO;
+import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.dto.MemberDTO;
+import com.procuone.mit_kdt.service.CategoryService;
 import com.procuone.mit_kdt.service.CompanyService;
+import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,12 +15,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/company")
 public class CompanyController {
 
-    private final CompanyService companyService;
-    private final MemberService memberService;
+    @Autowired
+    CompanyService companyService;
+    @Autowired
+    MemberService memberService;
+    @Autowired
+    ItemService itemService;
+    @Autowired
+    CategoryService categoryService;
 
     public CompanyController(CompanyService companyService, MemberService memberService) {
         this.companyService = companyService;
@@ -39,25 +51,26 @@ public class CompanyController {
 
     // 업체 등록 처리
     @PostMapping("/register")
-    public String registerCompany(@ModelAttribute CompanyDTO companyDTO) {
+    public String registerCompany(@ModelAttribute CompanyDTO companyDTO, @RequestParam String password) {
         // DTO를 서비스로 전달하여 DB에 저장
         companyService.registerCompany(companyDTO);
 
         // 업체 회원 정보도 멤버 테이블에 저장
-        MemberDTO memberDTO = convertCompanyToMemberDTO(companyDTO);
+        MemberDTO memberDTO = convertCompanyToMemberDTO(companyDTO,password);
         memberService.signup(memberDTO);  // 멤버 테이블에 추가
 
         return "redirect:/company/viewCompanyList"; // 등록 완료 후 리다이렉트
     }
 
     // CompanyDTO를 MemberDTO로 변환하는 메서드
-    private MemberDTO convertCompanyToMemberDTO(CompanyDTO companyDTO) {
+    private MemberDTO convertCompanyToMemberDTO(CompanyDTO companyDTO,String password) {
         return MemberDTO.builder()
                 .memberId(companyDTO.getComAccount())  // 회사 계정으로 멤버 ID를 설정
-                .password("defaultPassword")  // 기본 비밀번호 설정 (필요한 로직에 맞게 처리)
+                .memberName(companyDTO.getComName())
+                .password(password)  // 기본 비밀번호 설정 (필요한 로직에 맞게 처리)
                 .email(companyDTO.getComEmail())
                 .phone(companyDTO.getComPhone())
-                .Dno(companyDTO.getBusinessId())  // 사업자 번호 또는 다른 적합한 정보
+                .Dno("05")
                 .build();
     }
 
@@ -77,9 +90,18 @@ public class CompanyController {
 
         return "procurementPlan/viewCompanylistForm";  // 뷰 이름
     }
+    @GetMapping("/supplierRregisterProduct")
+    public String supplierRregisterProduct(Model model) {
+        List<CategoryDTO> leafCategories = categoryService.getAllLeafCategories();
 
+        // 모델에 추가
+        model.addAttribute("categories", leafCategories);
+
+
+        return "supplier/supplierRregisterProduct";
+    }
     @Controller
-    public class SignupController {
+    public class SignupController{
 
         @GetMapping("/compSignup")
         public String compSignupPage() {
