@@ -5,11 +5,102 @@
     <title>Title</title>
   <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
 </head>
+<style>
+  /* 기본 스타일 */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* 로그인 폼 스타일 */
+  form {
+    background-color: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px; /* 폼 최대 너비 설정 */
+    box-sizing: border-box; /* 패딩을 포함하여 너비 설정 */
+  }
+
+  /* 헤더 스타일 */
+  h1 {
+    color: #333;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* 로고 이미지 스타일 */
+  form img {
+    width: 300px; /* 로고 크기 */
+    height: auto;
+    margin-bottom: 20px; /* 로고와 입력 필드 사이의 간격 */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* 입력 필드 스타일 */
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px; /* 입력 필드 사이 간격 */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box; /* 패딩을 포함하여 너비 설정 */
+  }
+
+  input[type="text"]:focus, input[type="password"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+
+  /* 로그인 버튼 스타일 */
+  button {
+    width: 100%;
+    padding: 14px;
+    background-color: #31918D;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #26776A;
+  }
+
+  /* 링크 스타일 */
+  div a {
+    color: #007bff;
+    text-decoration: none;
+    margin-top: 15px;
+    font-size: 1em;
+  }
+
+  div a:hover {
+    text-decoration: underline;
+  }
+</style>
 <body>
 <!-- 헤더-->
-<div th:replace="partials/procuOneHeader :: header"></div>
-  <h1>로그인</h1>
 <form th:object="${memberDTO}" method="post">
+<div>
+  <img src="/images/logo.png" alt="ProcuOne 로고">
   <div>
     <label>아이디</label>
     <input type="text" name="memberId" th:field="*{memberId}">
@@ -21,6 +112,7 @@
     <a href="signup">회원가입</a>
     <a href="compSignup">업체 회원가입</a>
   </div>
+</div>
 </form>
 
 </body>
