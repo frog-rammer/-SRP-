@@ -9,4 +9,6 @@ public interface MemberService {
     String signup(MemberDTO memberDTO);
 
     boolean isMemberIdExists(String memberId);  // 아이디 중복 체크 메서드 추가
+
+    String getUserType(String memberId);
 }

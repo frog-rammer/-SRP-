@@ -23,6 +23,27 @@ public class Member{
     private String Dno;
     private String email;
     private String phone;
+    private String type;  // 사용자 타입 추가
+
+    // 부서번호에 따른 타입 설정
+    public void setUserType() {
+        switch (this.Dno) {
+            case "00":
+                this.type = "구매부서";
+                break;
+            case "01":
+                this.type = "생산부서";
+                break;
+            case "02":
+                this.type = "자재부서";
+                break;
+            case "03":
+                this.type = "협력업체";
+                break;
+            default:
+                this.type = "기타";
+        }
+    }
 
     @Column(nullable = false, updatable = false)
     private LocalDate creationDate;

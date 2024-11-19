@@ -27,11 +27,12 @@
     </div>
 
     <!-- 설정 아이콘 -->
-    <div class="settings-icon">
-        <a>
-            <img src="/images/icon/설정아이콘2.png" alt="메뉴 아이콘">
-        </a>
+    <!-- 로그인한 사용자의 이름과 타입을 헤더에 표시 -->
+    <div>
+        <span th:if="${session.username}">Welcome, <span th:text="${session.username}">Username</span>님</span>
+        <span th:if="${session.userType}">(${session.userType})</span>
     </div>
+
 </div>
 
 
