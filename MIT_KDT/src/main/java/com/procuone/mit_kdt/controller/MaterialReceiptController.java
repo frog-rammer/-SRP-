@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MaterialReceiptController {
 
     @GetMapping("/invoice")
-    public String invoice() { return "materialReceipt/invoice"; }
+    public String invoice() {
+        return "materialReceipt/invoice";
+    }
 
     @GetMapping("/stockIn")
-    public String stockIn() { return "materialReceipt/stockIn"; }
+    public String stockIn() {
+        return "materialReceipt/stockIn";
+    }
 }

@@ -2,6 +2,8 @@ package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.MemberDTO;
 import com.procuone.mit_kdt.service.MemberService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +24,16 @@ public class MemberController {
     @Autowired
     MemberService memberService;
 
-    @GetMapping({"/","/login"})
+    @GetMapping({"/", "/login"})
     public String login(Model model) {
         model.addAttribute("memberDTO", new MemberDTO());
         return "login";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return "redirect:/";
     }
 
     @PostMapping("/login")
@@ -64,6 +72,7 @@ public class MemberController {
         response.put("exists", exists);
         return ResponseEntity.ok(response);
     }
+
     // 회원가입 페이지 요청 처리
     @GetMapping("/signup")
     public String signupForm(Model model) {
