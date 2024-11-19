@@ -36,14 +36,19 @@ public class MemberController {
         if (ok.equals("success")) {
             // 로그인 성공 후, 사용자 정보와 타입을 세션에 저장
             String userType = memberService.getUserType(memberDTO.getMemberId()); // 회원의 타입을 서비스에서 가져옴
-            session.setAttribute("username", memberDTO.getMemberId()); // 또는 memberDTO.getMemberName()을 사용할 수 있음
-            session.setAttribute("userType", userType); // 세션에 사용자 타입 저장
+            session.setAttribute("username", memberDTO.getMemberId()); // 사용자 ID 세션에 저장
+            session.setAttribute("userType", userType); // 사용자 타입 세션에 저장
+
+            // 세션 값 확인을 위한 출력
+            System.out.println("UserType: " + session.getAttribute("userType"));
+            System.out.println("Username: " + session.getAttribute("username"));
 
             return "redirect:/Home"; // 홈 페이지로 리다이렉트
         } else {
             return "redirect:/login?error=true"; // 로그인 페이지로 다시 리다이렉트
         }
     }
+
 
     @PostMapping("/signup")
     public String signup(MemberDTO dto, RedirectAttributes redirectAttributes) {
