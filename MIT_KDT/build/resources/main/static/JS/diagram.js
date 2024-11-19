@@ -56,15 +56,27 @@
     .attr("d", "M0,-5L10,0L0,5")
     .attr("fill", "#4a6fa1");
 
+    // Node click event
     svg.selectAll("rect")
-    .data(nodes)
-    .enter()
-    .append("rect")
-    .attr("class", "node")
-    .attr("x", d => d.x)
-    .attr("y", d => d.y)
-    .attr("width", 120)
-    .attr("height", 30);
+        .data(nodes)
+        .enter()
+        .append("rect")
+        .attr("class", "node")
+        .attr("x", d => d.x)
+        .attr("y", d => d.y)
+        .attr("width", 120)
+        .attr("height", 30)
+        .on("click", function(event, d) {
+            const rect = d3.select(this);
+            if (rect.classed("complete")) {
+                rect.classed("complete", false).classed("in-progress", true);
+            } else if (rect.classed("in-progress")) {
+                rect.classed("in-progress", false);
+            } else {
+                rect.classed("complete", true);
+            }
+        });
+
 
     svg.selectAll("text")
     .data(nodes)
