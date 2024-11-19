@@ -45,10 +45,18 @@
       <label>핸드폰</label>
       <input class="addUser" name="phone" type="text">
     </div>
+    <!-- 부서번호 -->
     <div>
       <label>부서번호:</label>
-      <input class="addUser" name="dno" type="text">
+      <select name="dno">
+        <option selected value="">선택하세요</option>
+        <option value="00">구매 부서</option>
+        <option value="01">생산 부서</option>
+        <option value="02">자재 부서</option>
+        <option value="03">기타</option>
+      </select>
     </div>
+
     <div>
       <button type="submit">확인</button>
       <button type="reset">취소</button>
@@ -91,7 +99,7 @@
     const password = document.querySelector('input[name=password]').value;
     const password2 = document.querySelector('input[name=password2]').value;
     const phone = document.querySelector('input[name=phone]').value;
-    const dno = document.querySelector('input[name=dno]').value;
+    const dno = document.querySelector('select[name="dno"]').value;
     const email = document.querySelector('input[name=email]').value;  // 이메일 아이디
     const emailDirect = document.querySelector('input[name=emailDirect]').value; // 직접 입력된 도메인
     const emailSelect = document.querySelector('select[name=emailSelect]').value; // 선택된 도메인

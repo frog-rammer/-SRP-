@@ -46,6 +46,7 @@ public class MemberServiceImpl implements MemberService {
                 .phone(memberDTO.getPhone())
                 .email(memberDTO.getEmail())
                 .Dno(memberDTO.getDno())
+                .type(memberDTO.getType())
                 .creationDate(memberDTO.getCreationDate())
                 .build();
     }
