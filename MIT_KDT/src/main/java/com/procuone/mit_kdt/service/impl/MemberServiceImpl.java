@@ -85,4 +85,12 @@ public class MemberServiceImpl implements MemberService {
     public boolean isMemberIdExists(String memberId) {
         return memberRepository.existsByMemberId(memberId);  // 존재 여부를 확인
     }
+
+    @Override
+    public String getUserType(String memberId) {
+        // 예시로 데이터베이스에서 사용자의 부서번호로 타입을 조회
+        // 실제로는 memberRepository나 다른 DB 관련 클래스를 통해 데이터를 가져와야 함
+        String userType = memberRepository.findUserTypeByMemberId(memberId);
+        return userType;
+    }
 }
