@@ -47,7 +47,7 @@ public class MemberController {
         redirectAttributes.addFlashAttribute("memberDTO", dto);
         return "redirect:/login";
     }
-    
+
     @GetMapping("/check-id")
     public ResponseEntity<Map<String, Boolean>> checkId(@RequestParam String memberId) {
         // memberService에서 중복 아이디 확인
@@ -55,6 +55,12 @@ public class MemberController {
         Map<String, Boolean> response = new HashMap<>();
         response.put("exists", exists);
         return ResponseEntity.ok(response);
+    }
+    // 회원가입 페이지 요청 처리
+    @GetMapping("/signup")
+    public String signupForm(Model model) {
+        model.addAttribute("memberDTO", new MemberDTO());  // 빈 MemberDTO 객체를 뷰에 전달
+        return "signup";  // 회원가입 폼을 렌더링
     }
 
 
