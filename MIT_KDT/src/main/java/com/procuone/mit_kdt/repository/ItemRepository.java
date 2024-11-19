@@ -24,4 +24,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("SELECT i FROM Item i WHERE i.category.parent IS NULL")
     List<Item> findTopItems();
 
+    // 여러 카테고리 ID로 아이템 리스트 가져오기
+    List<Item> findByCategoryIdIn(List<Long> categoryIds);
 }

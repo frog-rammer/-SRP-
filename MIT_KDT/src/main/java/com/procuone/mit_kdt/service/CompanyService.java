@@ -14,4 +14,7 @@ public interface CompanyService {
 
     // 특정 회사 상세 조회
     CompanyDTO getCompanyDetails(String businessId);
+
+    // 아이디로 사업자번호 찾기
+    String getCompanyBusinessIdByAccount(String account);
 }
