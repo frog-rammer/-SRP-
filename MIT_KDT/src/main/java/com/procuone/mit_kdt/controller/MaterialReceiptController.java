@@ -17,4 +17,10 @@ public class MaterialReceiptController {
     public String stockIn() {
         return "materialReceipt/stockIn";
     }
+
+    @GetMapping("/prodCosts")
+    public String prodCosts() {return "materialReceipt/prodCosts";}
+
+    @GetMapping("/inspectionStatus")
+    public String inspectionStatus() {return "materialReceipt/inspectionStatus";}
 }

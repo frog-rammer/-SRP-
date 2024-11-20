@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>입고검수 현황</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .filter {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .status.complete {
+            color: green;
+        }
+
+        .status.pending {
+            color: orange;
+        }
+
+        .status.failed {
+            color: red;
+        }
+
+        .button {
+            padding: 10px 15px;
+            background-color: #32928E;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            background-color: #32928E;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>입고검수 현황</h1>
+
+    <!-- 필터 -->
+    <div class="filter">
+        <label for="dateFilter">날짜: </label>
+        <input type="date" id="dateFilter">
+        <label for="statusFilter">상태: </label>
+        <select id="statusFilter">
+            <option value="all">전체</option>
+            <option value="complete">검수 완료</option>
+            <option value="pending">검수 중</option>
+            <option value="failed">검수 미완료</option>
+        </select>
+        <button class="button" onclick="filterResults()">필터링</button>
+    </div>
+
+    <!-- 입고검수 테이블 -->
+    <table id="inspectionTable">
+        <thead>
+        <tr>
+            <th>입고 일자</th>
+            <th>상품명</th>
+            <th>수량</th>
+            <th>검수 상태</th>
+            <th>상세 보기</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>2024-11-15</td>
+            <td>전기자전거 A</td>
+            <td>100</td>
+            <td class="status complete">검수 완료</td>
+            <td><button class="button" onclick="viewDetails(1)">상세 보기</button></td>
+        </tr>
+        <tr>
+            <td>2024-11-18</td>
+            <td>전기자전거 B</td>
+            <td>50</td>
+            <td class="status pending">검수 중</td>
+            <td><button class="button" onclick="viewDetails(2)">상세 보기</button></td>
+        </tr>
+        <tr>
+            <td>2024-11-19</td>
+            <td>전동퀵보드</td>
+            <td>200</td>
+            <td class="status failed">검수 미완료</td>
+            <td><button class="button" onclick="viewDetails(3)">상세 보기</button></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+    function filterResults() {
+        const dateFilter = document.getElementById('dateFilter').value;
+        const statusFilter = document.getElementById('statusFilter').value;
+
+        const rows = document.querySelectorAll('#inspectionTable tbody tr');
+        rows.forEach(row => {
+            const date = row.cells[0].textContent;
+            const status = row.cells[3].textContent.trim().toLowerCase();
+
+            let showRow = true;
+
+            if (dateFilter && !date.includes(dateFilter)) {
+                showRow = false;
+            }
+
+            if (statusFilter !== 'all' && !status.includes(statusFilter)) {
+                showRow = false;
+            }
+
+            row.style.display = showRow ? '' : 'none';
+        });
+    }
+
+    function viewDetails(id) {
+        alert("상세 정보를 확인합니다. ID: " + id);
+    }
+</script>
+
+</body>
+</html>
