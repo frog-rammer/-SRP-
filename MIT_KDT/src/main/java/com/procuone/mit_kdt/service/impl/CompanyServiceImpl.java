@@ -93,8 +93,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     // 계정으로 사업자 번호 뽑기
     @Override
-    public String getCompanyBusinessIdByAccount(String account) {
-        return companyRepository.findBusinessIdByAccount(account);
+    public String getCompanyBusinessIdBycomId(String comId) {
+        return companyRepository.findBusinessIdByAccount(comId);
     }
 
 
