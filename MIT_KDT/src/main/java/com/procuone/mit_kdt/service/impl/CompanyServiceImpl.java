@@ -97,5 +97,11 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.findBusinessIdByAccount(comId);
     }
 
+    @Override
+    public Page<CompanyDTO> searchCompaniesByName(String searchTerm, Pageable pageable) {
+        // 회사 이름에 검색어가 포함된 결과를 페이징 처리하여 가져옴
+        Page<Company> companyPage = companyRepository.findByComNameContaining(searchTerm, pageable);
+        return companyPage.map(this::entityToDto); // 결과를 DTO로 변환
+    }
 
 }

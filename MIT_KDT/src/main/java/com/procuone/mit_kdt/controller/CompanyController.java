@@ -94,8 +94,32 @@ public class CompanyController {
         model.addAttribute("totalPages", companyPage.getTotalPages());  // 총 페이지 수
         model.addAttribute("totalItems", companyPage.getTotalElements()); // 전체 아이템 수
 
+
+
         return "procurementPlan/viewCompanylistForm";  // 뷰 이름
     }
+    @GetMapping("/search")
+    public String searchCompanies(@RequestParam("searchTerm") String searchTerm,
+                                  @RequestParam(defaultValue = "0") int page,
+                                  @RequestParam(defaultValue = "10") int size,
+                                  Model model) {
+
+        // Pageable 객체 생성
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 검색된 회사 목록을 가져옴
+        Page<CompanyDTO> companyPage = companyService.searchCompaniesByName(searchTerm, pageable);
+
+        // 모델에 데이터 추가
+        model.addAttribute("companyList", companyPage.getContent());  // 회사 목록
+        model.addAttribute("searchTerm", searchTerm);  // 검색어
+        model.addAttribute("currentPage", companyPage.getNumber());  // 현재 페이지
+        model.addAttribute("totalPages", companyPage.getTotalPages());  // 총 페이지 수
+        model.addAttribute("totalItems", companyPage.getTotalElements()); // 전체 아이템 수
+
+        return "procurementPlan/viewCompanylistForm";  // 검색 결과 페이지로 이동
+    }
+
     @GetMapping("/supplierRregisterProduct")
     public String supplierRregisterProduct(Model model, HttpSession session) {
 

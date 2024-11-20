@@ -17,4 +17,7 @@ public interface CompanyService {
 
     // 아이디로 사업자번호 찾기
     String getCompanyBusinessIdBycomId(String comId);
+
+    // 회사 이름으로 검색
+    Page<CompanyDTO> searchCompaniesByName(String searchTerm, Pageable pageable);
 }
