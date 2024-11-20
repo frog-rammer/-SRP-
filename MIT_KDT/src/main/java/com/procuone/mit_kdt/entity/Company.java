@@ -16,13 +16,13 @@ public class Company {
     @Id
     @Column(length = 20) // 사업자 번호 길이 제한
     private String businessId; // 사업자 번호
-    private String comAccount; // 회사 계좌
     private String comAdd; // 회사 주소
+    private String comId; //  회사 아이디
     private String comEmail; // 회사 이메일
     private String comManage; // 회사 담당자 이름
     private String comName; // 회사 이름
     private String comPhone; // 회사 연락처
-    private String comPaymentInfo; // 결제 정보
+    private String comPaymentInfo; // 결제 정보         결제 정보 : 은행명 + 계좌번호
     private String comBank; // 은행명
     private String comAccountNumber; // 계좌번호
 

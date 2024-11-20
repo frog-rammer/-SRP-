@@ -68,7 +68,7 @@ public class CompanyController {
     // CompanyDTO를 MemberDTO로 변환하는 메서드
     private MemberDTO convertCompanyToMemberDTO(CompanyDTO companyDTO,String password) {
         return MemberDTO.builder()
-                .memberId(companyDTO.getComAccount())  // 회사 계정으로 멤버 ID를 설정
+                .memberId(companyDTO.getComId())  // 회사 계정으로 멤버 ID를 설정
                 .memberName(companyDTO.getComName())
                 .password(password)  // 기본 비밀번호 설정 (필요한 로직에 맞게 처리)
                 .email(companyDTO.getComEmail())
