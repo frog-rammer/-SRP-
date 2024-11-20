@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>업체회원가입</title>
+    <script type="text/javascript" src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script> <!-- Daum 주소 검색 API 로드 -->
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <style>
         /* 기본 스타일 설정 */
@@ -227,7 +228,6 @@
             <input class="addCompany" name="comAccountNumber" type="text" required> <!-- comAccount : 계좌 -->
         </div>
 
-        <!-- 주소 필드 추가 -->
         <div>
             <label for="address">주소</label>
             <div style="display: flex; align-items: center;">
@@ -251,6 +251,40 @@
 </form>
 
 <script>
+    // 주소 검색 API (Daum Postcode API)
+    function findPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                // 주소 선택 시 입력될 값 처리
+                var fullAddress = data.address; // 전체 주소
+                var extraAddress = ''; // 상세주소 (선택 사항)
+
+                // 사용자가 선택한 주소에 추가 정보를 처리할 수 있음
+                if (data.addressType === "R") { // 'R'은 도로명 주소
+                    if (data.bname !== '') {
+                        extraAddress += data.bname;
+                    }
+                    if (data.buildingName !== '') {
+                        extraAddress += (extraAddress !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    fullAddress += (extraAddress !== '' ? ' (' + extraAddress + ')' : '');
+                }
+
+                // 주소 필드에 값을 설정
+                document.getElementById('address').value = fullAddress;
+                document.getElementById('detail_address').focus(); // 상세주소 입력으로 포커스 이동
+            }
+        }).open();
+    }
+
+    // 주소와 상세주소를 결합해서 hidden 필드에 저장
+    function updateCombinedAddress() {
+        const address = document.getElementById('address').value;
+        const detailAddress = document.getElementById('detail_address').value;
+        const combinedAddress = address + ' ' + detailAddress;
+        document.getElementById('combined_address').value = combinedAddress.trim();
+    }
+
     // 아이디 중복 확인 버튼 클릭 시
     document.getElementById("checkIdBtn").addEventListener("click", function() {
         const memberId = document.getElementById("comId").value;
@@ -277,17 +311,78 @@
             });
     });
 
-    // 주소 검색 API (예시)
-    function findPostcode() {
-        alert("주소 검색 기능은 실제 서비스에 맞게 구현되어야 합니다.");
-    }
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault();  // 폼 제출을 막는다
 
-    // 상세주소 입력 시 주소 합침
-    function updateCombinedAddress() {
-        const address = document.getElementById("address").value;
-        const detailAddress = document.getElementById("detail_address").value;
-        document.getElementById("combined_address").value = address + " " + detailAddress;
-    }
+        const comId = document.querySelector('input[name=comId]').value;  // 업체 아이디
+        const comManage = document.querySelector('input[name=comManage]').value;  // 관리 이름
+        const password = document.querySelector('input[name=password]').value;   //비밀번호
+        const password2 = document.querySelector('input[name=password2]').value; //비밀번호 확인
+        const comName = document.querySelector('input[name=comName]').value;  // 업체명
+        const comPhone = document.querySelector('input[name=comPhone]').value;  // 업체 연락처
+        const businessId = document.querySelector('input[name=businessId]').value;  // 사업자번호
+        const comEmail = document.querySelector('input[name=comEmail]').value;  // 이메일 아이디
+        const emailDirect = document.querySelector('input[name=emailDirect]').value; // 직접 입력된 도메인
+        const emailSelect = document.querySelector('select[name=emailSelect]').value; // 선택된 도메인
+        const comAdd = document.querySelector('input[name=comAdd]').value;  // 주소
+        const comBank = document.querySelector('input[name=comBank]').value; //은행
+        const comAccountNumber = document.querySelector('input[name=comAccountNumber]').value; // 계좌
+
+        let Useremail = '';
+
+        // 이메일 결합 로직: emailDirect와 emailSelect 둘 중 하나만 사용해야 함
+        if (emailDirect && emailSelect !== 'none') {
+            // 둘 다 입력될 수 없으므로 경고 메시지 표시
+            alert('이메일 아이디와 도메인은 하나만 입력해야 합니다.');
+            event.preventDefault();
+            return;
+        } else if (emailDirect) {
+            // emailDirect만 입력된 경우, 이메일 아이디 + 도메인 결합
+            Useremail = `${comEmail}@${emailDirect}`;
+        } else if (emailSelect !== 'none') {
+            // emailSelect만 선택된 경우, email 필드에 입력된 아이디와 결합
+            if (!comEmail) {
+                alert('이메일 아이디를 입력해주세요.');
+                event.preventDefault();
+                return;
+            }
+            Useremail = `${comEmail}@${emailSelect}`;
+        } else {
+            // emailDirect와 emailSelect가 모두 비어있을 경우
+            alert('이메일 아이디 또는 도메인을 선택해주세요.');
+            event.preventDefault();
+            return;
+        }
+
+        // 이메일 형식 검사
+        function validateEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
+        // 이메일 형식 검사
+        if (!validateEmail(Useremail)) {
+            alert('유효하지 않은 이메일 주소입니다.');
+            event.preventDefault();
+            return;
+        }
+
+        // 필수 입력 확인
+        if (!comName || !comId || !password || !password2 || !comManage || !Useremail || !businessId || !comPhone || !comAdd ||!comBank || !comAccountNumber) {
+            alert('아이디, 비밀번호, 이름, 이메일, 사업자번호, 연락처, 주소, 은행, 계좌는 필수 입력 항목입니다.');
+            return;
+        } else if (password !== password2) {
+            alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+            event.preventDefault();
+            return;
+        }
+
+        // **email 필드에 생성된 이메일 주소 값을 설정**
+        document.querySelector('input[name="comEmail"]').value = Useremail; // 이메일을 comEmail 필드에 설정
+
+        // 모든 조건을 통과하면 폼 제출
+        this.submit();
+    });
 </script>
 </body>
 </html>

@@ -63,7 +63,7 @@ public class CompanyController {
         MemberDTO memberDTO = convertCompanyToMemberDTO(companyDTO,password);
         memberService.signup(memberDTO);  // 멤버 테이블에 추가
 
-        return "redirect:/company/viewCompanyList"; // 등록 완료 후 리다이렉트
+        return "redirect:/";
     }
 
 
