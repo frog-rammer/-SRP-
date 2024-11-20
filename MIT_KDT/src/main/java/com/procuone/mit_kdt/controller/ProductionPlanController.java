@@ -72,7 +72,7 @@ public class ProductionPlanController {
         model.addAttribute("totalPages", productionPlanPage.getTotalPages());  // 총 페이지 수
         model.addAttribute("totalItems", productionPlanPage.getTotalElements()); // 전체 아이템 수
 
-        return "procurementPlan/productionPlanView";  // 저장 후 "view" 페이지로 리다이렉트
+        return "procurementPlan/productionPlanInput";  // 저장 후 "view" 페이지로 리다이렉트
     }
 
 }
