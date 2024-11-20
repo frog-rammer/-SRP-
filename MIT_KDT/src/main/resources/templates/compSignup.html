@@ -232,7 +232,7 @@
             <label for="address">주소</label>
             <div style="display: flex; align-items: center;">
                 <input type="text" id="address" placeholder="주소 검색을 통해 주소를 입력하세요" required readonly>
-                <button type="button" onclick="findPostcode()">주소 검색</button>
+                <button type="button" class="form-button" onclick="findPostcode()">주소 검색</button>
             </div>
         </div>
 
@@ -251,40 +251,15 @@
 </form>
 
 <script>
-    // 주소 검색 API (Daum Postcode API)
     function findPostcode() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                // 주소 선택 시 입력될 값 처리
-                var fullAddress = data.address; // 전체 주소
-                var extraAddress = ''; // 상세주소 (선택 사항)
-
-                // 사용자가 선택한 주소에 추가 정보를 처리할 수 있음
-                if (data.addressType === "R") { // 'R'은 도로명 주소
-                    if (data.bname !== '') {
-                        extraAddress += data.bname;
-                    }
-                    if (data.buildingName !== '') {
-                        extraAddress += (extraAddress !== '' ? ', ' + data.buildingName : data.buildingName);
-                    }
-                    fullAddress += (extraAddress !== '' ? ' (' + extraAddress + ')' : '');
-                }
-
-                // 주소 필드에 값을 설정
-                document.getElementById('address').value = fullAddress;
-                document.getElementById('detail_address').focus(); // 상세주소 입력으로 포커스 이동
-            }
-        }).open();
+        window.open('/addresses/address', '주소 검색', 'width=600,height=400');
     }
-
-    // 주소와 상세주소를 결합해서 hidden 필드에 저장
     function updateCombinedAddress() {
         const address = document.getElementById('address').value;
         const detailAddress = document.getElementById('detail_address').value;
         const combinedAddress = address + ' ' + detailAddress;
         document.getElementById('combined_address').value = combinedAddress.trim();
     }
-
     // 아이디 중복 확인 버튼 클릭 시
     document.getElementById("checkIdBtn").addEventListener("click", function() {
         const memberId = document.getElementById("comId").value;
