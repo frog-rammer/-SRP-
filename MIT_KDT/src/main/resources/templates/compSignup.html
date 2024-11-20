@@ -69,9 +69,17 @@
 
         <!-- 주소 필드 추가 (comAdd) -->
         <div>
-            <label>주소:</label>
-            <input class="addCompany" name="comAdd" type="text" required> <!-- comAdd : 주소 -->
+            <label for="address">주소</label>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="address" placeholder="주소 검색을 통해 주소를 입력하세요" required readonly>
+                <button type="button" onclick="findPostcode()">주소 검색</button>
+            </div>
         </div>
+        <div>
+            <label for="detail_address">상세주소</label>
+            <input type="text" id="detail_address" placeholder="상세주소를 입력하세요" oninput="updateCombinedAddress()">
+        </div>
+        <input type="hidden" id="combined_address" name="comAdd">
         <!-- 제출 버튼 -->
         <div>
             <button type="submit">확인</button>
@@ -81,6 +89,29 @@
 </form>
 
 <script>
+    function findPostcode() {
+        window.open('/addresses/address', '주소 검색', 'width=600,height=400');
+    }
+
+    function updateCombinedAddress() {
+        const address = document.getElementById('address').value;
+        const detailAddress = document.getElementById('detail_address').value;
+        const combinedAddress = address + ' ' + detailAddress;
+        document.getElementById('combined_address').value = combinedAddress.trim();
+    }
+
+    function checkPasswordMatch() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const errorMessage = document.getElementById('passwordError');
+
+        if (password !== confirmPassword) {
+            errorMessage.style.display = 'block';
+        } else {
+            errorMessage.style.display = 'none';
+        }
+    }
+
     // 아이디 중복 확인 버튼 클릭 시
     document.getElementById("checkIdBtn").addEventListener("click", function() {
         const memberId = document.getElementById("comAccount").value;
