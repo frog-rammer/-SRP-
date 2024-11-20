@@ -48,7 +48,7 @@ public class MemberController {
             // 로그인 성공 후, 사용자 정보와 타입을 세션에 저장
             String userType = memberService.getUserType(memberDTO.getMemberId()); // 회원의 타입을 서비스에서 가져옴
             if(userType.equals("협력업체")){
-                String businessId = companyService.getCompanyBusinessIdByAccount(memberDTO.getMemberId());
+                String businessId = companyService.getCompanyBusinessIdBycomId(memberDTO.getMemberId());
                 if(businessId != null){
                     session.setAttribute("businessId", businessId);
                 }else{
