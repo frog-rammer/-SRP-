@@ -15,7 +15,6 @@ import java.util.Set;
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name; // 카테고리 이름 (예: 프레임, 전기모터 등)
