@@ -50,7 +50,6 @@ public class CompanyServiceImpl implements CompanyService {
                 .comPaymentInfo(companyDTO.getComPaymentInfo()) // 결제 정보
                 .comBank(companyDTO.getComBank()) // 은행
                 .comAccountNumber(companyDTO.getComAccountNumber()) // 계좌번호
-                .comEstimateList(companyDTO.getComEstimateList()) // 견적 목록
                 .build();
     }
 
@@ -67,7 +66,6 @@ public class CompanyServiceImpl implements CompanyService {
                 .comPaymentInfo(company.getComPaymentInfo()) // 결제 정보
                 .comBank(company.getComBank()) // 은행
                 .comAccountNumber(company.getComAccountNumber()) // 계좌번호
-                .comEstimateList(company.getComEstimateList()) // 견적 목록
                 .build();
     }
 
@@ -90,7 +88,6 @@ public class CompanyServiceImpl implements CompanyService {
                 .comPaymentInfo(company.get().getComPaymentInfo())
                 .comBank(company.get().getComBank())
                 .comAccountNumber(company.get().getComAccountNumber())
-                .comEstimateList(company.get().getComEstimateList())
                 .build();
     }
 

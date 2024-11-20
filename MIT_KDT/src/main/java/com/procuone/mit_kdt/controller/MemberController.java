@@ -71,6 +71,7 @@ public class MemberController {
     public String compSignupPage() {
         return "compSignup";  // 'compSignup.html'을 반환
     }
+
     @PostMapping("/signup")
     public String signup(MemberDTO dto, RedirectAttributes redirectAttributes) {
         String memberId = memberService.signup(dto);

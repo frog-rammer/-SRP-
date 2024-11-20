@@ -25,7 +25,7 @@ public class Company {
     private String comPaymentInfo; // 결제 정보
     private String comBank; // 은행명
     private String comAccountNumber; // 계좌번호
-    private String comEstimateList; // 견적 목록
+
 
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)

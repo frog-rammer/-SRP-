@@ -57,13 +57,13 @@ public class CompanyController {
     public String registerCompany(@ModelAttribute CompanyDTO companyDTO, @RequestParam String password) {
         // DTO를 서비스로 전달하여 DB에 저장
         companyService.registerCompany(companyDTO);
-
         // 업체 회원 정보도 멤버 테이블에 저장
         MemberDTO memberDTO = convertCompanyToMemberDTO(companyDTO,password);
         memberService.signup(memberDTO);  // 멤버 테이블에 추가
 
         return "redirect:/company/viewCompanyList"; // 등록 완료 후 리다이렉트
     }
+
 
     // CompanyDTO를 MemberDTO로 변환하는 메서드
     private MemberDTO convertCompanyToMemberDTO(CompanyDTO companyDTO,String password) {
@@ -76,6 +76,7 @@ public class CompanyController {
                 .Dno("05")
                 .build();
     }
+
 
     @GetMapping("/viewCompanyList")
     public String viewCompanyList(Model model, @RequestParam(defaultValue = "0") int page,
@@ -98,6 +99,7 @@ public class CompanyController {
 
         // 0. 세션에서 businessId 가져오기
         String businessId = (String) session.getAttribute("businessId");
+
         if (businessId == null) {
             throw new IllegalStateException("Business ID not found in session");
         }
