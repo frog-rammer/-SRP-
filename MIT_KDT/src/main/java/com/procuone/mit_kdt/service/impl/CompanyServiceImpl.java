@@ -41,7 +41,7 @@ public class CompanyServiceImpl implements CompanyService {
     private Company dtoToEntity(CompanyDTO companyDTO) {
         return Company.builder()
                 .businessId(companyDTO.getBusinessId())
-                .comAccount(companyDTO.getComAccount())
+                .comId(companyDTO.getComId())
                 .comAdd(companyDTO.getComAdd())
                 .comEmail(companyDTO.getComEmail())
                 .comManage(companyDTO.getComManage())
@@ -58,7 +58,7 @@ public class CompanyServiceImpl implements CompanyService {
     private CompanyDTO entityToDto(Company company) {
         return CompanyDTO.builder()
                 .businessId(company.getBusinessId())
-                .comAccount(company.getComAccount())
+                .comId(company.getComId())
                 .comAdd(company.getComAdd())
                 .comEmail(company.getComEmail())
                 .comManage(company.getComManage())
@@ -91,6 +91,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .comBank(company.get().getComBank())
                 .comAccountNumber(company.get().getComAccountNumber())
                 .comEstimateList(company.get().getComEstimateList())
+                .comId(company.get().getComId())
                 .build();
     }
 
