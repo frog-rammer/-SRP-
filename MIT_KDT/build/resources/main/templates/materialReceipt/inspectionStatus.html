@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>입고검수 현황</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -80,59 +82,73 @@
 </head>
 <body>
 
-<div class="container">
-    <h1>입고검수 현황</h1>
+<div class="grid-container">
+    <!-- 헤더-->
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
 
-    <!-- 필터 -->
-    <div class="filter">
-        <label for="dateFilter">날짜: </label>
-        <input type="date" id="dateFilter">
-        <label for="statusFilter">상태: </label>
-        <select id="statusFilter">
-            <option value="all">전체</option>
-            <option value="complete">검수 완료</option>
-            <option value="pending">검수 중</option>
-            <option value="failed">검수 미완료</option>
-        </select>
-        <button class="button" onclick="filterResults()">필터링</button>
-    </div>
+    <!-- 사이드바-->
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
 
-    <!-- 입고검수 테이블 -->
-    <table id="inspectionTable">
-        <thead>
-        <tr>
-            <th>입고 일자</th>
-            <th>상품명</th>
-            <th>수량</th>
-            <th>검수 상태</th>
-            <th>상세 보기</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>2024-11-15</td>
-            <td>전기자전거 A</td>
-            <td>100</td>
-            <td class="status complete">검수 완료</td>
-            <td><button class="button" onclick="viewDetails(1)">상세 보기</button></td>
-        </tr>
-        <tr>
-            <td>2024-11-18</td>
-            <td>전기자전거 B</td>
-            <td>50</td>
-            <td class="status pending">검수 중</td>
-            <td><button class="button" onclick="viewDetails(2)">상세 보기</button></td>
-        </tr>
-        <tr>
-            <td>2024-11-19</td>
-            <td>전동퀵보드</td>
-            <td>200</td>
-            <td class="status failed">검수 미완료</td>
-            <td><button class="button" onclick="viewDetails(3)">상세 보기</button></td>
-        </tr>
-        </tbody>
-    </table>
+    <!-- 본문 -->
+    <main class="layout-main">
+        <div class="container">
+            <h1>입고검수 현황</h1>
 
+            <!-- 필터 -->
+            <div class="filter">
+                <label for="dateFilter">날짜: </label>
+                <input type="date" id="dateFilter">
+                <label for="statusFilter">상태: </label>
+                <select id="statusFilter">
+                    <option value="all">전체</option>
+                    <option value="complete">검수 완료</option>
+                    <option value="pending">검수 중</option>
+                    <option value="failed">검수 미완료</option>
+                </select>
+                <button class="button" onclick="filterResults()">필터링</button>
+            </div>
+
+            <!-- 입고검수 테이블 -->
+            <table id="inspectionTable">
+                <thead>
+                <tr>
+                    <th>입고 일자</th>
+                    <th>상품명</th>
+                    <th>수량</th>
+                    <th>검수 상태</th>
+                    <th>상세 보기</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>2024-11-15</td>
+                    <td>전기자전거 A</td>
+                    <td>100</td>
+                    <td class="status complete">검수 완료</td>
+                    <td><button class="button" onclick="viewDetails(1)">상세 보기</button></td>
+                </tr>
+                <tr>
+                    <td>2024-11-18</td>
+                    <td>전기자전거 B</td>
+                    <td>50</td>
+                    <td class="status pending">검수 중</td>
+                    <td><button class="button" onclick="viewDetails(2)">상세 보기</button></td>
+                </tr>
+                <tr>
+                    <td>2024-11-19</td>
+                    <td>전동퀵보드</td>
+                    <td>200</td>
+                    <td class="status failed">검수 미완료</td>
+                    <td><button class="button" onclick="viewDetails(3)">상세 보기</button></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
 </div>
 
 <script>

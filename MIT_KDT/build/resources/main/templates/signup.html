@@ -5,6 +5,128 @@
   <title>Title</title>
   <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
 </head>
+<style>
+  /* 기본 스타일 설정 */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  form {
+    width: 100%;
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  div {
+    margin-bottom: 15px;
+  }
+
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: inline-block;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  input[type="text"]:focus,
+  input[type="password"]:focus,
+  select:focus {
+    border-color: #4d90fe;
+    outline: none;
+  }
+
+  button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #32928E;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
+  button[type="reset"] {
+    background-color: #32928E;
+  }
+
+  button[type="submit"]:hover,
+  button[type="reset"]:hover {
+    opacity: 0.8;
+  }
+
+  #idCheckResult {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  button[type="button"] {
+    background-color: #32928E;
+    color: white;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .id-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .id-container input {
+    flex: 1;
+  }
+
+  #checkIdBtn {
+    margin-left: 10px;
+  }
+
+  /* 버튼들을 가운데로 정렬 */
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  /* 이메일 입력 필드에 관련된 스타일 */
+  input[name="emailDirect"],
+  #emailSelect {
+    display: inline-block;
+    width: 45%;
+    margin-top: 5px;
+  }
+
+  input[name="emailDirect"] {
+    margin-right: 10px;
+  }
+
+  #emailSelect {
+    width: 50%;
+  }
+</style>
 <body>
 
 <form th:action="@{/signup}" method="post">
@@ -16,8 +138,10 @@
     </div>
     <div>
       <label>아이디:</label>
-      <input class="addUser" name="memberId" type="text" id="memberId" required>
-      <button type="button" id="checkIdBtn">ID 중복 확인</button>
+      <div class="id-container">
+        <input class="addUser" name="memberId" type="text" id="memberId" required>
+        <button type="button" id="checkIdBtn">ID 중복 확인</button>
+      </div>
       <span id="idCheckResult"></span> <!-- 중복 여부 표시 -->
     </div>
     <div>
@@ -55,7 +179,7 @@
       </select>
     </div>
 
-    <div>
+    <div class="button-container">
       <button type="submit">확인</button>
       <button type="reset">취소</button>
     </div>
