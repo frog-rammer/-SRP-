@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>재고 월별 금액</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,38 +48,50 @@
     </style>
 </head>
 <body>
-<header>
-    <h1>재고 월별 금액</h1>
-</header>
 
-<div class="container">
-    <h2>연도-월-일 범위 내 재고 현황</h2>
+<div class="grid-container">
+    <!-- 헤더-->
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
 
-    <!-- 날짜 범위 선택 -->
-    <div class="form-container">
-        <input type="date" id="startDate">
-        ~
-        <input type="date" id="endDate">
-        <button onclick="filterStock()">조회</button>
-    </div>
+    <!-- 사이드바-->
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
 
-    <!-- 재고 현황 테이블 -->
-    <table>
-        <thead>
-        <tr>
-            <th>제품코드</th>
-            <th>제품명</th>
-            <th>품목코드</th>
-            <th>품목명</th>
-            <th>재고수량</th>
-            <th>입고날짜</th>
-            <th>남은 재고가격</th>
-        </tr>
-        </thead>
-        <tbody id="stockTableBody">
-        <!-- 테이블 내용은 JavaScript로 동적으로 추가됨 -->
-        </tbody>
-    </table>
+    <!-- 본문 -->
+    <main class="layout-main">
+        <div class="container">
+            <h2>연도-월-일 범위 내 재고 현황</h2>
+
+            <!-- 날짜 범위 선택 -->
+            <div class="form-container">
+                <input type="date" id="startDate">
+                ~
+                <input type="date" id="endDate">
+                <button onclick="filterStock()">조회</button>
+            </div>
+
+            <!-- 재고 현황 테이블 -->
+            <table>
+                <thead>
+                <tr>
+                    <th>제품코드</th>
+                    <th>제품명</th>
+                    <th>품목코드</th>
+                    <th>품목명</th>
+                    <th>재고수량</th>
+                    <th>입고날짜</th>
+                    <th>남은 재고가격</th>
+                </tr>
+                </thead>
+                <tbody id="stockTableBody">
+                <!-- 테이블 내용은 JavaScript로 동적으로 추가됨 -->
+                </tbody>
+            </table>
+        </div>
+    </main>
 </div>
 
 <script>
