@@ -25,7 +25,7 @@
         <!-- 아이디 필드 -->
         <div>
             <label>아이디:</label>
-            <input class="addCompany" name="comAccount" type="text" id="comAccount" required> <!-- comAccount : 아이디 -->
+            <input class="addCompany" name="comId" type="text" id="comId" required> <!-- comId : 아이디 -->
             <button type="button" id="checkIdBtn">ID 중복 확인</button>
             <span id="idCheckResult"></span> <!-- 중복 여부 표시 -->
         </div>
@@ -75,11 +75,28 @@
                 <button type="button" onclick="findPostcode()">주소 검색</button>
             </div>
         </div>
+<<<<<<< HEAD
+
+        <!-- 은행명 필드-->
+        <div>
+            <label>은행명:</label>
+            <input class="addCompany" name="comBank" type="text" required> <!-- comBank : 은행 -->
+        </div>
+
+        <!-- 회사 계좌 필드 -->
+        <div>
+            <label>계좌:</label>
+            <input class="addCompany" name="comAccountNumber" type="text" required> <!-- comAccount : 계좌  계좌 양식 111-1111-1111-11-->
+        </div>
+
+
+=======
         <div>
             <label for="detail_address">상세주소</label>
             <input type="text" id="detail_address" placeholder="상세주소를 입력하세요" oninput="updateCombinedAddress()">
         </div>
         <input type="hidden" id="combined_address" name="comAdd">
+>>>>>>> supernova
         <!-- 제출 버튼 -->
         <div>
             <button type="submit">확인</button>
@@ -114,7 +131,7 @@
 
     // 아이디 중복 확인 버튼 클릭 시
     document.getElementById("checkIdBtn").addEventListener("click", function() {
-        const memberId = document.getElementById("comAccount").value;
+        const memberId = document.getElementById("comId").value;
 
         if (!memberId) {
             alert("아이디를 입력하세요.");
@@ -141,10 +158,10 @@
     document.querySelector('form').addEventListener('submit', function(event) {
         event.preventDefault();  // 폼 제출을 막는다
 
-        const comAccount = document.querySelector('input[name=comAccount]').value;  // 업체 아이디
+        const comId = document.querySelector('input[name=comId]').value;  // 업체 아이디
         const comManage = document.querySelector('input[name=comManage]').value;  // 관리 이름
-        const password = document.querySelector('input[name=password]').value;
-        const password2 = document.querySelector('input[name=password2]').value;
+        const password = document.querySelector('input[name=password]').value;   //비밀번호
+        const password2 = document.querySelector('input[name=password2]').value; //비밀번호 확인
         const comName = document.querySelector('input[name=comName]').value;  // 업체명
         const comPhone = document.querySelector('input[name=comPhone]').value;  // 업체 연락처
         const businessId = document.querySelector('input[name=businessId]').value;  // 사업자번호
@@ -152,6 +169,8 @@
         const emailDirect = document.querySelector('input[name=emailDirect]').value; // 직접 입력된 도메인
         const emailSelect = document.querySelector('select[name=emailSelect]').value; // 선택된 도메인
         const comAdd = document.querySelector('input[name=comAdd]').value;  // 주소
+        const comBank = document.querySelector('input[name=comBank]').value; //은행
+        const comAccountNumber = document.querySelector('input[name=comAccountNumber]').value; // 계좌
 
         let Useremail = '';
 
@@ -193,8 +212,8 @@
         }
 
         // 필수 입력 확인
-        if (!comAccount || !password || !password2 || !comManage || !Useremail || !businessId || !comPhone || !comAdd) {
-            alert('아이디, 비밀번호, 이름, 이메일, 사업자번호, 연락처, 주소는 필수 입력 항목입니다.');
+        if (!comName || !comId || !password || !password2 || !comManage || !Useremail || !businessId || !comPhone || !comAdd ||!comBank || !comAccountNumber) {
+            alert('아이디, 비밀번호, 이름, 이메일, 사업자번호, 연락처, 주소, 은행, 계좌는 필수 입력 항목입니다.');
             return;
         } else if (password !== password2) {
             alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');

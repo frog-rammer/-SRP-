@@ -80,6 +80,13 @@ public class ItemServiceImpl implements ItemService {
         return item.map(this::convertEntityToDTO);
     }
 
+    // 여러 카테고리 ID로 아이템 리스트 조회
+    @Override
+    public List<ItemDTO> getItemsByCategoryIds(List<Long> categoryIds) {
+        return itemRepository.findByCategoryIdIn(categoryIds).stream()
+                .map(this::convertEntityToDTO) // Entity -> DTO 변환
+                .collect(Collectors.toList());
+    }
 
     // 제품 코드로 품목 조회
     @Override
@@ -105,7 +112,6 @@ public class ItemServiceImpl implements ItemService {
                 .drawingFile(itemDTO.getDrawingFile())
                 .isShared(itemDTO.isShared())
                 .dimensions(itemDTO.getDimensions())
-                .cost(itemDTO.getCost())
                 .build();
 
         // 카테고리 설정
@@ -126,7 +132,6 @@ public class ItemServiceImpl implements ItemService {
                 .drawingFile(item.getDrawingFile())
                 .isShared(item.isShared())
                 .dimensions(item.getDimensions())
-                .cost(item.getCost())
                 .categoryId(item.getCategory() != null ? item.getCategory().getId() : null)
                 .categoryName(item.getCategory() != null ? item.getCategory().getName() : null)
                 .build();

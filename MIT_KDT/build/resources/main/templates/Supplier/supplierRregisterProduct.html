@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>공급 물품 등록</title>
+  <title>Title</title>
+  <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -43,45 +45,61 @@
   </style>
 </head>
 <body>
-<h1>공급 물품 등록</h1>
+<div class="grid-container">
+  <header class="layout-header">
+    <div th:replace="partials/procuOneHeader :: header"></div>
+  </header>
 
-<!-- 공급 물품 등록 시작 -->
-<section class="input-section">
-  <label for="itemCount">등록할 물품 개수: </label>
-  <input type="number" id="itemCount" min="1" placeholder="예: 3">
-  <button class="btn" onclick="generateRows()">생성</button>
-  <button class="btn" onclick="uploadExcel()">엑셀로 등록하기</button>
-</section>
+  <aside class="layout-sidebar">
+    <div th:replace="partials/procuOneSide :: side"></div>
+  </aside>
+  <main class="layout-main">
 
-<!-- 동적 행을 추가하는 테이블 -->
-<form id="registrationForm">
-  <table>
-    <thead>
-    <tr>
-      <th>품목 선택</th>
-      <th>품목 코드</th>
-      <th>생산 L/T</th>
-      <th>최소 공급 단위</th>
-      <th>최소 생산 수량</th>
-      <th>단가</th>
-    </tr>
-    </thead>
-    <tbody id="itemTableBody">
-    <!-- 동적으로 생성되는 행 -->
-    </tbody>
-  </table>
-  <button type="submit" class="btn" style="margin-top: 20px;">등록</button>
-</form>
+    <h1>공급 물품 등록</h1>
+    <!-- 공급 물품 등록 시작 -->
+    <section class="input-section">
+      <label for="itemCount">등록할 물품 개수: </label>
+      <input type="number" id="itemCount" min="1" placeholder="예: 3">
+      <button class="btn" onclick="generateRows()">생성</button>
+      <button class="btn" onclick="uploadExcel()">엑셀로 등록하기</button>
+    </section>
 
-<script>
-  // 카테고리 데이터 가져오기 (샘플 데이터)
-  const categories = [
-    { id: 1, name: "프레임" },
-    { id: 2, name: "핸들바" },
-    { id: 3, name: "안장" },
-    { id: 4, name: "배터리" },
-    { id: 5, name: "모터" }
-  ];
+    <!-- 동적 행을 추가하는 테이블 -->
+    <form action="/company/saveCompanyItem" method="POST">
+      <input type="hidden" name="businessId" value="[[${businessId}]]"><!-- Business ID -->
+      <table>
+        <thead>
+        <tr>
+          <th>품목 선택</th>
+          <th>품목 코드</th>
+          <th>생산 L/T</th>
+          <th>최소 공급 단위</th>
+          <th>최소 생산 수량</th>
+          <th>단가</th>
+        </tr>
+        </thead>
+        <tbody id="itemTableBody">
+        <!-- JavaScript에서 동적으로 생성 -->
+        </tbody>
+      </table>
+      <button type="submit" class="btn">등록</button>
+    </form>
+  </main>
+
+  <footer class="layout-footer">
+
+  </footer>
+
+</div>
+
+
+<script th:inline="javascript">
+  // 서버에서 전달된 데이터
+  const categories = [[${categories}]];
+  const items = [[${items}]];
+
+  console.log("Categories:", categories);
+  console.log("Items:", items);
 
   // 행 생성 함수
   function generateRows() {
@@ -96,12 +114,34 @@
       const categoryCell = document.createElement('td');
       const categorySelect = document.createElement('select');
       categorySelect.name = `category_${i}`;
+      categorySelect.addEventListener('change', (event) => updateItemOptions(event.target, i)); // 변경 시 아이템 갱신
+
+      // 기본 "아이템 선택" 옵션 추가
+      const defaultOption = document.createElement('option');
+      defaultOption.value = "";
+      defaultOption.textContent = "아이템 선택";
+      defaultOption.disabled = true;
+      defaultOption.selected = true;
+      categorySelect.appendChild(defaultOption);
+
+      // 카테고리와 아이템 옵션 추가
       categories.forEach(category => {
-        const option = document.createElement('option');
-        option.value = category.id;
-        option.textContent = category.name;
-        categorySelect.appendChild(option);
+        const categoryOption = document.createElement('option');
+        categoryOption.value = `category-${category.id}`;
+        categoryOption.textContent = `[카테고리] ${category.name}`;
+        categoryOption.disabled = true; // 카테고리는 선택 불가
+        categorySelect.appendChild(categoryOption);
+
+        // 해당 카테고리의 아이템 추가
+        const relatedItems = items.filter(item => item.categoryId === category.id);
+        relatedItems.forEach(item => {
+          const itemOption = document.createElement('option');
+          itemOption.value = `item-${item.id}`;
+          itemOption.textContent = `- ${item.itemName}`;
+          categorySelect.appendChild(itemOption);
+        });
       });
+
       categoryCell.appendChild(categorySelect);
       row.appendChild(categoryCell);
 
@@ -156,11 +196,22 @@
       row.appendChild(costCell);
 
       tableBody.appendChild(row);
+    }
+  }
 
-      // 품목 선택 변경 이벤트
-      categorySelect.addEventListener('change', () => {
-        codeInput.value = `CODE_${categorySelect.value}_${i + 1}`; // 임의의 코드 생성
-      });
+  // 품목 선택 변경 시 품목 코드를 업데이트
+  function updateItemOptions(categorySelect, rowIndex) {
+    const selectedValue = categorySelect.value;
+    const codeInput = document.querySelector(`input[name=itemCode_${rowIndex}]`);
+    codeInput.value = ""; // 초기화
+
+    // 선택된 값이 아이템일 경우 품목 코드 업데이트
+    if (selectedValue.startsWith("item-")) {
+      const itemId = parseInt(selectedValue.split("-")[1]);
+      const selectedItem = items.find(item => item.id === itemId);
+      if (selectedItem) {
+        codeInput.value = selectedItem.productCode;
+      }
     }
   }
 
@@ -169,5 +220,6 @@
     alert("엑셀 업로드 기능 구현 예정!");
   }
 </script>
+
 </body>
 </html>

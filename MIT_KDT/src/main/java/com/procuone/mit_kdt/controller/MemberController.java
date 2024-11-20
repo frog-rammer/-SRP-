@@ -1,6 +1,7 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.MemberDTO;
+import com.procuone.mit_kdt.service.CompanyService;
 import com.procuone.mit_kdt.service.MemberService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,8 @@ public class MemberController {
 
     @Autowired
     MemberService memberService;
+    @Autowired
+    CompanyService companyService;
 
     @GetMapping({"/", "/login"})
     public String login(Model model) {
@@ -44,6 +47,14 @@ public class MemberController {
         if (ok.equals("success")) {
             // 로그인 성공 후, 사용자 정보와 타입을 세션에 저장
             String userType = memberService.getUserType(memberDTO.getMemberId()); // 회원의 타입을 서비스에서 가져옴
+            if(userType.equals("협력업체")){
+                String businessId = companyService.getCompanyBusinessIdByAccount(memberDTO.getMemberId());
+                if(businessId != null){
+                    session.setAttribute("businessId", businessId);
+                }else{
+                    System.out.println("Business ID not found!");
+                }
+            }
             session.setAttribute("username", memberDTO.getMemberId()); // 사용자 ID 세션에 저장
             session.setAttribute("userType", userType); // 사용자 타입 세션에 저장
 
@@ -55,6 +66,10 @@ public class MemberController {
         } else {
             return "redirect:/login?error=true"; // 로그인 페이지로 다시 리다이렉트
         }
+    }
+    @GetMapping("/compSignup")
+    public String compSignupPage() {
+        return "compSignup";  // 'compSignup.html'을 반환
     }
 
     @PostMapping("/signup")
