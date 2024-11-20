@@ -113,6 +113,7 @@ public class CompanyController {
         List<Long> categoryIds = leafCategories.stream()
                 .map(CategoryDTO::getId)
                 .collect(Collectors.toList());
+
         System.out.println("Category IDs: " + categoryIds);
         // 3. 해당 카테고리들의 아이템 리스트 조회
         List<ItemDTO> items = itemService.getItemsByCategoryIds(categoryIds);

@@ -1,10 +1,14 @@
 package com.procuone.mit_kdt.service.impl;
 
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
+import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.entity.BOM.Category;
+import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.repository.CategoryRepository;
+import com.procuone.mit_kdt.repository.ItemRepository;
 import com.procuone.mit_kdt.service.CategoryService;
 
+import com.procuone.mit_kdt.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    ItemRepository itemRepository;
 
     // 모든 카테고리 가져오기
     @Override
