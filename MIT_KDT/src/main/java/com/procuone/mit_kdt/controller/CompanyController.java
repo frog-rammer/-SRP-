@@ -15,7 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -101,7 +103,7 @@ public class CompanyController {
         String businessId = (String) session.getAttribute("businessId");
 
         if (businessId == null) {
-            throw new IllegalStateException("Business ID not found in session");
+            return "redirect:/login"; // 로그인 페이지로 리다이렉트
         }
 
         // 1. 모든 하위 카테고리 조회
@@ -124,9 +126,57 @@ public class CompanyController {
     }
 
     @PostMapping("/saveCompanyItem")
-    public String saveCompanyItem(
-            @ModelAttribute CompanyItemDTO companyItemDTO) {
-        companyItemService.saveCompanyItem(companyItemDTO);
+    public String saveCompanyItems(
+            @RequestParam String businessId,
+            @RequestParam Map<String, String> allParams) {
+
+        // 디버깅: 전체 파라미터 출력
+        System.out.println("=== Received Parameters ===");
+        allParams.forEach((key, value) -> System.out.println(key + ": " + value));
+
+        // DTO 생성
+        List<CompanyItemDTO> items = new ArrayList<>();
+
+        // 동적으로 itemId_0, leadTime_0 등을 파싱하여 DTO 리스트 생성
+        int index = 0;
+        while (allParams.containsKey("itemId_" + index)) {
+            try {
+                // 개별 데이터 디버깅
+                System.out.println("Processing index: " + index);
+                System.out.println("itemId: " + allParams.get("itemId_" + index));
+                System.out.println("leadTime: " + allParams.get("leadTime_" + index));
+                System.out.println("supplyUnit: " + allParams.get("supplyUnit_" + index));
+                System.out.println("productionQty: " + allParams.get("productionQty_" + index));
+                System.out.println("unitCost: " + allParams.get("unitCost_" + index));
+
+                // DTO 생성
+                CompanyItemDTO item = CompanyItemDTO.builder()
+                        .businessId(businessId)
+                        .itemId(Long.parseLong(allParams.get("itemId_" + index))) // itemId 사용
+                        .leadTime(Integer.parseInt(allParams.get("leadTime_" + index)))
+                        .supplyUnit(Integer.parseInt(allParams.get("supplyUnit_" + index)))
+                        .productionQty(Integer.parseInt(allParams.get("productionQty_" + index)))
+                        .unitCost(Integer.parseInt(allParams.get("unitCost_" + index)))
+                        .build();
+                items.add(item);
+
+                // 디버깅: 생성된 DTO 출력
+                System.out.println("Created DTO: " + item);
+            } catch (Exception e) {
+                // 디버깅: 예외 발생 시 메시지 출력
+                System.out.println("Error processing index: " + index + ", error: " + e.getMessage());
+            }
+            index++;
+        }
+
+        // 디버깅: 최종 리스트 출력
+        System.out.println("=== Final DTO List ===");
+        items.forEach(item -> System.out.println(item));
+
+        // 서비스 호출
+        companyItemService.saveCompanyItems(items);
+
         return "redirect:/company/supplierRregisterProduct";
     }
+
 }

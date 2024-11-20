@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Title</title>
+  <title>공급 물품 등록</title>
   <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
   <link rel="stylesheet" th:href="@{/css/layout.css}">
   <style>
@@ -66,7 +66,8 @@
 
     <!-- 동적 행을 추가하는 테이블 -->
     <form action="/company/saveCompanyItem" method="POST">
-      <input type="hidden" name="businessId" value="[[${businessId}]]"><!-- Business ID -->
+      <input type="hidden" name="businessId" th:value="${businessId}"> <!-- Business ID -->
+
       <table>
         <thead>
         <tr>
@@ -79,7 +80,7 @@
         </tr>
         </thead>
         <tbody id="itemTableBody">
-        <!-- JavaScript에서 동적으로 생성 -->
+        <!-- JavaScript에서 동적으로 행 생성 -->
         </tbody>
       </table>
       <button type="submit" class="btn">등록</button>
@@ -89,9 +90,7 @@
   <footer class="layout-footer">
 
   </footer>
-
 </div>
-
 
 <script th:inline="javascript">
   // 서버에서 전달된 데이터
@@ -147,12 +146,21 @@
 
       // 품목 코드 셀
       const codeCell = document.createElement('td');
+
+      // 품목 아이디 (숨김 필드로 전송)
+      const itemIdInput = document.createElement('input');
+      itemIdInput.type = "hidden";
+      itemIdInput.name = `itemId_${i}`; // 전송할 필드명
+      codeCell.appendChild(itemIdInput);
+
+      // 품목 코드 (표시용)
       const codeInput = document.createElement('input');
       codeInput.type = "text";
       codeInput.name = `itemCode_${i}`;
       codeInput.placeholder = "자동 입력됨";
       codeInput.readOnly = true; // 읽기 전용
       codeCell.appendChild(codeInput);
+
       row.appendChild(codeCell);
 
       // 생산 L/T 셀
@@ -199,18 +207,21 @@
     }
   }
 
-  // 품목 선택 변경 시 품목 코드를 업데이트
+  // 품목 선택 변경 시 품목 아이디와 품목 코드를 업데이트
   function updateItemOptions(categorySelect, rowIndex) {
     const selectedValue = categorySelect.value;
+    const itemIdInput = document.querySelector(`input[name=itemId_${rowIndex}]`);
     const codeInput = document.querySelector(`input[name=itemCode_${rowIndex}]`);
+    itemIdInput.value = ""; // 초기화
     codeInput.value = ""; // 초기화
 
-    // 선택된 값이 아이템일 경우 품목 코드 업데이트
+    // 선택된 값이 아이템일 경우 품목 아이디와 품목 코드 업데이트
     if (selectedValue.startsWith("item-")) {
       const itemId = parseInt(selectedValue.split("-")[1]);
       const selectedItem = items.find(item => item.id === itemId);
       if (selectedItem) {
-        codeInput.value = selectedItem.productCode;
+        itemIdInput.value = selectedItem.id; // itemId 설정
+        codeInput.value = selectedItem.productCode; // productCode 설정 (UI 표시용)
       }
     }
   }
