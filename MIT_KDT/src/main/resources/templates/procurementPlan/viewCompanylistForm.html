@@ -45,10 +45,15 @@
     </aside>
     <main class="layout-main">
         <div>
-            <div>
-                <input type="text" placeholder="업체명을 입력하세요">
-                <button type="submit">검색</button>
-            </div>
+            <form action="/company/search" method="get">
+                <div>
+                    <!-- 사용자 입력을 받을 텍스트 박스에 name 속성을 추가 -->
+                    <input type="text" name="searchTerm" placeholder="업체명을 입력하세요" required>
+                    <!-- 제출 버튼 -->
+                    <button type="submit">검색</button>
+                </div>
+            </form>
+
             <!-- 회사 리스트 테이블 -->
             <table>
                 <thead>
