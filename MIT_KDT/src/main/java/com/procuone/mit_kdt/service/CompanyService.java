@@ -16,5 +16,5 @@ public interface CompanyService {
     CompanyDTO getCompanyDetails(String businessId);
 
     // 아이디로 사업자번호 찾기
-    String getCompanyBusinessIdByAccount(String account);
+    String getCompanyBusinessIdBycomId(String comId);
 }
