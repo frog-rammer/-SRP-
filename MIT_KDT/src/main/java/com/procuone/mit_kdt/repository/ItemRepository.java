@@ -26,4 +26,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     // 여러 카테고리 ID로 아이템 리스트 가져오기
     List<Item> findByCategoryIdIn(List<Long> categoryIds);
+
+    List<Item> findAll(); // 모든 품목을 가져오는 기본 메서드
 }

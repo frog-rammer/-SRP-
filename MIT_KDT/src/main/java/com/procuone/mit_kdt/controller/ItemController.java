@@ -2,6 +2,8 @@ package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
+import com.procuone.mit_kdt.entity.BOM.Item;
+import com.procuone.mit_kdt.service.ContractService;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,15 @@ public class ItemController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private ContractService contractService;
+
+    // 품목 목록을 반환하는 API
+    @GetMapping("/api/items")
+    public List<Item> getAllItems() {
+        return contractService.getAllItems();  // 서비스에서 품목 목록을 가져옴
+    }
 
     // 상품 등록 폼 표시
     @GetMapping("/registerProductForm")
