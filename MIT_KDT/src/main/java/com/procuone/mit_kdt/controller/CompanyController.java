@@ -40,11 +40,11 @@ public class CompanyController {
         this.memberService = memberService;
     }
 
-    @GetMapping("/company/{id}")
+    @GetMapping("/companyDetail/{businessId}")
     public String getCompanyDetails(@PathVariable String businessId, Model model) {
         CompanyDTO companyDTO = companyService.getCompanyDetails(businessId);
         model.addAttribute("companyDTO", companyDTO);
-        return "companyDetails";  // Thymeleaf 템플릿 이름
+        return "procurementPlan/viewDetailCompany";  // 이 부분이 view의 경로를 정확히 지정해야 합니다.
     }
 
     // 업체 등록 폼
