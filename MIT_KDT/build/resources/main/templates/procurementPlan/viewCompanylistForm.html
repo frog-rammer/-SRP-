@@ -69,7 +69,7 @@
                 </thead>
                 <tbody>
                 <!-- companyList 반복문으로 리스트 출력 -->
-                <tr th:each="company : ${companyList}" data-business-id="[[${company.businessId}]]"
+                <tr th:each="company : ${companyList}" th:attr="data-business-id=${company.businessId}"
                     class="clickable-row">
                     <td th:text="${company.businessId}"></td> <!-- businessId 출력 -->
                     <td th:text="${company.comName}"></td> <!-- comName 출력 -->
@@ -80,6 +80,7 @@
                     <td th:text="${company.comId}"></td> <!-- comId 출력 -->
                 </tr>
                 </tbody>
+
             </table>
             <!-- 페이지네이션 -->
             <div>
@@ -102,7 +103,7 @@
     document.querySelectorAll('.clickable-row').forEach(function (row) {
         row.addEventListener('click', function () {
             const businessId = row.getAttribute('data-business-id');
-            window.location.href = '/companyDetail/' + businessId;  // 클릭한 행의 Business ID로 이동
+            window.location.href = '/company/companyDetail/' + businessId;  // businessId를 정확히 전달
         });
     });
 </script>

@@ -8,6 +8,7 @@
 <div>
     <!-- 업체 정보를 보여주는 폼 -->
     <form th:object="${companyDTO}" method="post">
+<!--  action= "/procurementPlan/viewDetailCompany"  -->
         <div>
             <label>회사명</label>
             <input type="text" th:value="*{comName}" readonly> <!-- 회사명 -->
