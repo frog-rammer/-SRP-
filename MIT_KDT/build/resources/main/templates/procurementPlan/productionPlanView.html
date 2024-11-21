@@ -6,10 +6,151 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/productionPlanView.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <style>
+        /* layout-main 스타일 */
+        .layout-main {
+            background-color: #f9f9f9; /* 연한 회색 배경 */
+            width: 100%;
+            padding: 30px; /* 내부 여백 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh; /* 화면 크기에 맞게 최소 높이 설정 */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+            border-radius: 8px; /* 모서리 둥글게 */
+        }
+
+        /* 컨테이너 내부의 각 섹션을 구분짓기 */
+        .container {
+            width: 100%;
+            max-width: 1200px; /* 최대 너비 설정 */
+            margin: 0 auto; /* 가운데 정렬 */
+            display: flex;
+            flex-direction: column;
+            gap: 30px; /* 섹션 간의 간격 */
+        }
+
+        /* 달력 섹션 */
+        .calendarWrap {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1); /* 달력 영역 그림자 */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            order: 2; /* 달력을 아래로 배치 (flexbox에서 순서를 바꾸는 방법) */
+        }
+
+        /* 생산 계획 목록 영역 */
+        .productionPlanListWrap {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1); /* 테이블 영역 그림자 */
+            order: 1; /* 생산 계획 목록을 위로 배치 */
+        }
+
+        .productionPlanListSearchBar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 200px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 14px;
+            background-color: #267f6d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #1f6658; /* 버튼 호버 색상 */
+        }
+
+        /* 테이블 스타일 */
+        .productionPlanList table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .productionPlanList table th,
+        .productionPlanList table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .productionPlanList table th {
+            background-color: #267f6d;
+            color: white;
+        }
+
+        .productionPlanList table tr:hover {
+            background-color: #f1f1f1; /* 행 hover 시 연한 회색 */
+        }
+
+        /* 페이지네이션 스타일 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .pagination span {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .pagination a {
+            padding: 8px 15px;
+            background-color: #267f6d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .pagination a:hover {
+            background-color: #1f6658; /* 페이지네이션 버튼 호버 색상 */
+        }
+
+        #yearSelect, #monthSelect {
+            width: 100px;
+            height: 25px;
+        }
+
+        .pagination a.current {
+            background-color: #267f6d;
+            color: white;
+            font-weight: bold;
+        }
+
+        .pagination a:hover {
+            background-color: #1f6658;
+        }
+
+
+    </style>
 </head>
 <body>
 <div class="grid-container">
-<!-- 헤더-->
+    <!-- 헤더-->
     <header class="layout-header">
         <div th:replace="partials/procuOneHeader :: header"></div>
     </header>
@@ -17,87 +158,221 @@
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
     <main class="layout-main">
-        <div class="container">
-        <!-- 달력 부분 -->
-            <section class="calendarWrap">
-                <h3>생산 달력</h3>
-                <label for="yearSelect">연도:</label>
-                <select id="yearSelect"></select>
-                <label for="monthSelect">월:</label>
-                <select id="monthSelect">
-                    <option value="0">1</option>
-                    <option value="1">2</option>
-                    <option value="2">3</option>
-                    <option value="3">4</option>
-                    <option value="4">5</option>
-                    <option value="5">6</option>
-                    <option value="6">7</option>
-                    <option value="7">8</option>
-                    <option value="8">9</option>
-                    <option value="9">10</option>
-                    <option value="10">11</option>
-                    <option value="11">12</option>
-                </select>
-                <div class="calendar" id="calendar">
-                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                </div>
-            </section>
+        <form action="/productionPlan/save" method="post" th:object="${productionPlanDTO}">
+            <div class="container">
+                <!-- 달력 부분 -->
+                <section class="calendarWrap">
+                    <h3>생산 달력</h3>
+                    <label for="yearSelect">연도:</label>
+                    <select id="yearSelect"></select>
+                    <label for="monthSelect">월:</label>
+                    <select id="monthSelect">
+                        <option value="0">1</option>
+                        <option value="1">2</option>
+                        <option value="2">3</option>
+                        <option value="3">4</option>
+                        <option value="4">5</option>
+                        <option value="5">6</option>
+                        <option value="6">7</option>
+                        <option value="7">8</option>
+                        <option value="8">9</option>
+                        <option value="9">10</option>
+                        <option value="10">11</option>
+                        <option value="11">12</option>
+                    </select>
+                    <div class="calendar" id="calendar">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                    </div>
+                </section>
 
-            <!-- 생산 계획 목록 부분 -->
-            <section class="productionPlanListWrap">
-                <div class="productionPlanListSearchBar">
-                    <input type="text" placeholder="검색어를 입력하세요">
-                    <button class="searchBtn">검색</button>
-                    <button class="detailsBtn">등록된 계획 자세히 보기</button>
-                    <button onclick="updateProgress()">진행 상황 업데이트</button>
-                </div>
-                <h3>생산 계획 목록</h3>
-                <section class="productionPlanList">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>생산 시작일</th>
-                            <th>생산 종료일</th>
-                            <th>생산계획번호</th>
-                            <th>생산제품명</th>
-                            <th>생산제품코드</th>
-                            <th>생산수량</th>
-                            <th>등록번호</th>
-                            <th>등록업체</th>
-                            <th>사업자번호</th>
-                        </tr>
-                        </thead>
-                        <tbody id="planTableBody">
-                            <tr th:each="productionplan : ${productionPlanList}">
+                <!-- 생산 계획 목록 부분 -->
+                <section class="productionPlanListWrap">
+                    <div class="productionPlanListSearchBar">
+                        <input type="text" placeholder="검색어를 입력하세요">
+                        <button class="searchBtn">검색</button>
+                        <button class="detailsBtn">등록된 계획 자세히 보기</button>
+                        <button onclick="updateProgress()">진행 상황 업데이트</button>
+                    </div>
+                    <h3>생산 계획 목록</h3>
+                    <section class="productionPlanList">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>생산 시작일</th>
+                                <th>생산 종료일</th>
+                                <th>생산계획번호</th>
+                                <th>생산제품명</th>
+                                <th>생산제품코드</th>
+                                <th>생산수량</th>
+                                <th>등록번호</th>
+                                <th>등록업체</th>
+                                <th>사업자번호</th>
+                            </tr>
+                            </thead>
+                            <tbody id="planTableBody">
+                            <tr th:each="productionplan : ${productionPlanList}" onclick="highlightDates(event)">
                                 <td th:text="${productionplan.planStartDate}"></td>
                                 <td th:text="${productionplan.planEndDate}"></td>
-                                <td th:text="${productionplan.planNo}"></td>
+                                <td th:text="${productionplan.partCode}"></td>
                                 <td th:text="${productionplan.productName}"></td>
                                 <td th:text="${productionplan.productCode}"></td>
                                 <td th:text="${productionplan.quantity}"></td>
                             </tr>
-                        <!-- 추가 데이터 행들 -->
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <!-- 페이지네이션 -->
+                    <div class="pagination">
+                        <span th:if="${currentPage > 0}">
+                            <a th:href="@{/productionPlan/view(page=${currentPage - 1})}">Previous</a>
+                        </span>
+                        <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+                            <a th:href="@{/productionPlan/view(page=${pageNum})}" th:text="${pageNum + 1}"
+                               th:classappend="${pageNum == currentPage ? 'current' : ''}"></a>
+                        </span>
+                        <span th:if="${currentPage < totalPages - 1}">
+                            <a th:href="@{/productionPlan/view(page=${currentPage + 1})}">Next</a>
+                        </span>
+                    </div>
+
                 </section>
-                <!-- 페이지네이션 -->
-                <div>
-                    <span th:if="${currentPage > 0}">
-                        <a th:href="@{/productionPlan/view(page=${currentPage - 1})}">Previous</a>
-                    </span>
-                                    <span>Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>
-                                    <span th:if="${currentPage < totalPages - 1}">
-                        <a th:href="@{/productionPlan/view(page=${currentPage + 1})}">Next</a>
-                    </span>
-                </div>
-            </section>
-        </div>
+            </div>
+        </form>
     </main>
 
-<script th:src="@{/JS/productPlanView.js}"></script>
-    <footer class="layout-footer">
-
-    </footer>
+    <script th:src="@{/JS/productPlanView.js}"></script>
+    <footer class="layout-footer"></footer>
 </div>
+<script>
+    let highlightedDates = []; // 색칠된 날짜를 저장할 배열
+    let currentMonth = new Date().getMonth(); // 현재 월 (기본값)
+    let currentYear = new Date().getFullYear(); // 현재 연도 (기본값)
+
+    // 날짜 범위의 시작과 끝을 Date 객체로 변환하고 날짜 범위에 색칠
+    function highlightDates(event) {
+        let selectedRow = event.currentTarget;
+        let startDate = selectedRow.querySelector("td:nth-child(1)").innerText;
+        let endDate = selectedRow.querySelector("td:nth-child(2)").innerText;
+
+        // 시작일과 종료일을 Date 객체로 변환
+        let start = new Date(startDate + "T00:00:00");
+        let end = new Date(endDate + "T23:59:59");
+
+        // 색칠된 날짜 배열 초기화
+        highlightedDates = [];
+
+        // 날짜 범위가 두 달에 걸쳐 있을 경우 처리
+        let currentDate = new Date(start); // 시작일부터 시작
+
+        while (currentDate <= end) {
+            const calendarDateText = currentDate.getDate().toString();
+            const month = currentDate.getMonth();
+            const year = currentDate.getFullYear();
+
+            let dateDiv = document.querySelector(`.calendar div[data-day="${calendarDateText}"]`);
+
+            if (dateDiv) {
+                dateDiv.style.backgroundColor = '#99cc99'; // 날짜 색칠
+                // 색칠된 날짜를 연도, 월, 일 기준으로 저장
+                highlightedDates.push({
+                    day: calendarDateText,
+                    month: month,
+                    year: year
+                });
+            }
+
+            // 날짜를 하루씩 증가시킴
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        // 선택된 연도와 월을 셀렉트 박스에 반영
+        document.getElementById('yearSelect').value = start.getFullYear(); // 시작 연도를 연도 셀렉트 박스에 설정
+        document.getElementById('monthSelect').value = start.getMonth();  // 시작 월을 월 셀렉트 박스에 설정
+
+        // 달력 리렌더링 (선택된 월과 연도로)
+        renderCalendar(start.getMonth(), start.getFullYear());
+    }
+
+    // 달력을 렌더링하는 함수 (해당 월, 연도에 맞는 날짜만 표시)
+    function renderCalendar(month, year) {
+        const calendar = document.querySelector("#calendar");
+        const maxDaysInMonth = new Date(year, month + 1, 0).getDate(); // 해당 월의 최대 일수 구하기
+        const firstDay = new Date(year, month, 1).getDay(); // 해당 월의 첫 번째 날이 무슨 요일인지 구하기
+        const days = Array.from({length: maxDaysInMonth}, (_, i) => i + 1); // 해당 월의 날짜들
+
+        // 기존 달력 내용 초기화
+        calendar.innerHTML = '<div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>';
+
+        // 첫 번째 날 이전의 빈 칸 만들기
+        for (let i = 0; i < firstDay; i++) {
+            const emptyDiv = document.createElement('div');
+            calendar.appendChild(emptyDiv);
+        }
+
+        // 해당 월의 날짜들을 달력에 추가
+        days.forEach(day => {
+            const dayDiv = document.createElement('div');
+            dayDiv.innerText = day;
+            dayDiv.setAttribute('data-day', day); // 각 날짜에 data-day 속성 추가
+            calendar.appendChild(dayDiv);
+        });
+
+        // 색칠된 날짜 복원
+        restoreHighlightedDates(month, year);
+    }
+
+    // 색칠된 날짜 복원 함수
+    function restoreHighlightedDates(month, year) {
+        const calendarDates = document.querySelectorAll('.calendar div');
+        calendarDates.forEach(dateDiv => {
+            let calendarDateText = dateDiv.innerText;
+            // 해당 날짜가 저장된 날짜 배열에 있고, 월과 연도가 일치하면 색칠
+            if (calendarDateText && highlightedDates.some(date => date.day == calendarDateText && date.month == month && date.year == year)) {
+                dateDiv.style.backgroundColor = '#99cc99';  // 색칠된 날짜 배경색
+            }
+        });
+    }
+
+    // 월 변경 시 달력 리렌더링 후 색칠된 날짜 복원
+    document.getElementById("monthSelect").addEventListener("change", function () {
+        currentMonth = parseInt(this.value);
+        renderCalendar(currentMonth, currentYear);
+    });
+
+    // 연도 변경 시 달력 리렌더링 후 색칠된 날짜 복원
+    document.getElementById("yearSelect").addEventListener("change", function () {
+        currentYear = parseInt(this.value);
+        renderCalendar(currentMonth, currentYear);
+    });
+
+    // 생산 계획 목록 클릭 시 날짜 범위 색칠
+    const planRows = document.querySelectorAll("tr");
+    planRows.forEach(row => {
+        row.addEventListener("click", function (event) {
+            // 클릭된 계획에 따라 색칠
+            highlightDates(event);
+
+            // 색칠된 날짜들 초기화
+            const calendarDates = document.querySelectorAll('.calendar div');
+            calendarDates.forEach(dateDiv => {
+                dateDiv.style.backgroundColor = ''; // 모든 날짜의 배경색을 초기화
+            });
+            // 새로운 계획에 맞게 색칠된 날짜만 다시 적용
+            highlightDates(event);
+        });
+    });
+
+    // 초기 달력 렌더링 (기본값: 현재 월, 현재 연도)
+    renderCalendar(currentMonth, currentYear);
+
+</script>
+
 </body>
 </html>
