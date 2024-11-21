@@ -1,278 +1,507 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>조달계획 등록 페이지</title>
-  <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
-  <link rel="stylesheet" th:href="@{/css/layout.css}">
-  <style>
-    .calendar {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-      text-align: center;
-      margin: 20px 0;
-    }
+    <meta charset="UTF-8">
+    <title>조달계획 등록 페이지</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <style>
+        /* 메인 콘텐츠 영역 스타일 */
+        .layout-main > div {
+            display: flex;
+            max-width: 100%;
+            margin-top: 20px; /* 상단 여백 추가 */
+        }
 
-    .calendar div {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+        /* 생산 계획 목록 */
+        .productionPlanListWrap {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
 
-    .calendar .highlight {
-      background-color: #0078a0;
-      color: white;
-    }
+        .productionPlanListSearchBar {
+            display: flex;
+            justify-content: flex-start; /* 버튼들을 왼쪽 정렬 */
+            gap: 10px; /* 버튼 간 간격 */
+            margin-bottom: 20px;
+        }
 
-    .calendar .disabled {
-      background-color: #f5f5f5;
-      color: #999;
-      pointer-events: none; /* 클릭 비활성화 */
-      cursor: not-allowed; /* 클릭 불가능한 커서 표시 */
-    }
+        /* 각 버튼 스타일 */
+        .productionPlanListSearchBar button {
+            padding: 8px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin: 0; /* 버튼 간 불필요한 여백 제거 */
+            height: 40px; /* 버튼 높이 조정 */
+        }
+        .productionPlanListSearchBar input {
+            padding: 8px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin: 0;
+        }
+        /* 버튼 스타일 - 기본 */
+        .productionPlanListSearchBar button {
+            background-color: #32928E; /* 버튼 색상 변경 */
+            color: white;
+            cursor: pointer;
+        }
 
-    .calendar .label {
-      font-size: 12px;
-      margin-top: 5px;
-      display: block;
-    }
+        /* 버튼 스타일 - hover */
+        .productionPlanListSearchBar button:hover {
+            background-color: #2a7c6c;
+        }
 
-    .form-container {
-      margin-top: 20px;
-    }
-  </style>
+        h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        /* 페이지네이션 */
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination a {
+            padding: 8px 12px;
+            background-color: #32928E; /* 페이지네이션 색상 변경 */
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .pagination a:hover {
+            background-color: #2a7c6c;
+        }
+
+        .pagination .active a {
+            background-color: #2a7c6c;
+        }
+
+        /* 캘린더 */
+        #calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            flex: 2; /* 달력의 크기를 늘림 */
+            min-width: 350px; /* 최소 너비 설정 */
+            max-width: 800px; /* 최대 너비 설정 */
+        }
+
+        #calendar div {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+        }
+
+        #calendar div:hover {
+            background-color: #e0f7fa;
+        }
+
+        #calendar .highlight {
+            background-color: #32928E;
+            color: white;
+        }
+
+        #calendar .disabled {
+            background-color: #f5f5f5;
+            color: #999;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        .label {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #32928E; /* 색상 변경 */
+        }
+
+        /* 폼 */
+        .form-container {
+            flex: 1;
+            min-width: 350px;
+            max-width: 600px;
+            margin-left:100px;
+            margin-top: 20px; /* 폼 영역 상단 여백 추가 */
+        }
+
+        /* 제목 위치 위로 이동 */
+        h4 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 0; /* 상단 여백 제거 */
+            margin-bottom: 20px; /* 폼과의 간격 추가 */
+            text-align: center; /* 제목 중앙 정렬 */
+        }
+
+        /* 폼 테이블 스타일 */
+        form table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+
+        form th, form td {
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        form th {
+            background-color: #f7f7f7;
+        }
+
+        form input[type="text"],
+        form input[type="date"] {
+            width: 95%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        /* 오른쪽 테이블 열 크기 조정 */
+        form td:last-child, /* '조달 수량' */
+        form td:nth-last-child(2) { /* '조달 납기일' */
+            width: 450px; /* 오른쪽 두 열의 너비를 더 넓게 설정 */
+        }
+
+        /* 버튼 영역 */
+        .form-actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-actions button {
+            background-color: #32928E; /* 색상 변경 */
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-actions button:hover {
+            background-color: #2a7c6c;
+        }
+
+        /* 두 영역을 나란히 배치 */
+        .layout-main > div {
+            display: flex;
+            justify-content: flex-start; /* 두 영역을 왼쪽으로 배치 */
+            gap: 20px; /* 캘린더와 폼 사이 간격 */
+            margin-top: 20px; /* 상단 여백 추가 */
+        }
+
+        /* 캘린더 */
+        #calendar {
+            flex: 2;
+            min-width: 350px;
+            max-width: 800px;
+        }
+
+        /* 폼 */
+        .form-container {
+            flex: 1;
+            min-width: 350px;
+            max-width: 600px;
+            margin-top: 20px; /* 폼 영역 상단 여백 추가 */
+        }
+
+        /* 조달 납기일 선정 영역 */
+        #yearSelect, #monthSelect {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+    </style>
+
+
 </head>
 <body>
 <div class="grid-container">
-  <header class="layout-header">
-    <div th:replace="partials/procuOneHeader :: header"></div>
-  </header>
-  <aside class="layout-sidebar">
-    <div th:replace="partials/procuOneSide :: side"></div>
-  </aside>
-  <main class="layout-main">
-    <!-- 생산 계획 목록 -->
-    <section class="productionPlanListWrap">
-      <div class="productionPlanListSearchBar">
-        <input type="text" placeholder="검색어를 입력하세요">
-        <button class="searchBtn">검색</button>
-        <button class="detailsBtn">등록된 계획 자세히 보기</button>
-        <button onclick="updateProgress()">진행 상황 업데이트</button>
-      </div>
-      <h3>생산 계획 목록</h3>
-      <section class="productionPlanList">
-        <table>
-          <thead>
-          <tr>
-            <th>생산 시작일</th>
-            <th>생산 종료일</th>
-            <th>생산계획번호</th>
-            <th>생산제품명</th>
-            <th>생산제품코드</th>
-            <th>생산수량</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr th:each="productionPlan : ${productionPlanList}"
-              th:attr="data-start-date=${productionPlan.planStartDate}, data-end-date=${productionPlan.planEndDate},
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+    <div class="layout-main">
+        <!-- 생산 계획 목록 -->
+        <section class="productionPlanListWrap">
+            <!-- 검색 및 버튼들 -->
+            <div class="productionPlanListSearchBar">
+                <input type="text" placeholder="검색어를 입력하세요">
+                <button class="searchBtn">검색</button>
+                <button class="detailsBtn">등록된 계획 자세히 보기</button>
+                <button onclick="updateProgress()">진행 상황 업데이트</button>
+            </div>
+            <h3>생산 계획 목록</h3>
+            <section class="productionPlanList">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>생산 시작일</th>
+                        <th>생산 종료일</th>
+                        <th>생산계획번호</th>
+                        <th>생산제품명</th>
+                        <th>생산제품코드</th>
+                        <th>생산수량</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="productionPlan : ${productionPlanList}"
+                        th:attr="data-start-date=${productionPlan.planStartDate}, data-end-date=${productionPlan.planEndDate},
                         data-product-name=${productionPlan.productName}, data-product-code=${productionPlan.productCode},
                         data-quantity=${productionPlan.quantity}"
-              onclick="onProductionPlanClick(this)">
-            <td th:text="${productionPlan.planStartDate}"></td>
-            <td th:text="${productionPlan.planEndDate}"></td>
-            <td th:text="${productionPlan.productPlanCode}"></td>
-            <td th:text="${productionPlan.productName}"></td>
-            <td th:text="${productionPlan.productCode}"></td>
-            <td th:text="${productionPlan.quantity}"></td>
-          </tr>
+                        onclick="onProductionPlanClick(this)">
+                        <td th:text="${productionPlan.planStartDate}"></td>
+                        <td th:text="${productionPlan.planEndDate}"></td>
+                        <td th:text="${productionPlan.productPlanCode}"></td>
+                        <td th:text="${productionPlan.productName}"></td>
+                        <td th:text="${productionPlan.productCode}"></td>
+                        <td th:text="${productionPlan.quantity}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(productionPlanList)}">
+                        <td colspan="6">등록된 생산 계획이 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <ul>
+                        <li th:if="${currentPage > 0}">
+                            <a th:href="@{'/procumentPlan/register'(page=${currentPage - 1}, size=10)}">&laquo; 이전</a>
+                        </li>
+                        <li th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}"
+                            th:classappend="${pageNumber - 1 == currentPage} ? 'active'">
+                            <a th:href="@{'/procumentPlan/register'(page=${pageNumber - 1}, size=10)}"
+                               th:text="${pageNumber}">1</a>
+                        </li>
+                        <li th:if="${currentPage + 1 < totalPages}">
+                            <a th:href="@{'/procumentPlan/register'(page=${currentPage + 1}, size=10)}">다음 &raquo;</a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </section>
 
-          <tr th:if="${#lists.isEmpty(productionPlanList)}">
-            <td colspan="6">등록된 생산 계획이 없습니다.</td>
-          </tr>
-          </tbody>
-        </table>
-        <div class="pagination">
-          <ul>
-            <li th:if="${currentPage > 0}">
-              <a th:href="@{'/procumentPlan/register'(page=${currentPage - 1}, size=10)}">&laquo; 이전</a>
-            </li>
-            <li th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}"
-                th:classappend="${pageNumber - 1 == currentPage} ? 'active'">
-              <a th:href="@{'/procumentPlan/register'(page=${pageNumber - 1}, size=10)}" th:text="${pageNumber}">1</a>
-            </li>
-            <li th:if="${currentPage + 1 < totalPages}">
-              <a th:href="@{'/procumentPlan/register'(page=${currentPage + 1}, size=10)}">다음 &raquo;</a>
-            </li>
-          </ul>
+        <!--캘린더 및 폼 섹션 -->
+        <div style="display: flex; justify-content: space-between; margin-top: 20px; width: 100%; gap: 20px;">
+            <!-- 왼쪽: 캘린더 -->
+            <div style="flex: 1; min-width: 350px; max-width: 50%;">  <!-- 이 부분은 그대로 두세요 -->
+                <h4>조달 납기일 선정</h4>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <select id="yearSelect" style="width: 48%; padding: 8px; font-size: 16px; border-radius: 4px; border: 1px solid #ddd;">
+                    </select>
+                    <select id="monthSelect" style="width: 48%; padding: 8px; font-size: 16px; border-radius: 4px; border: 1px solid #ddd;">
+                        <option value="0">1월</option>
+                        <option value="1">2월</option>
+                        <option value="2">3월</option>
+                        <option value="3">4월</option>
+                        <option value="4">5월</option>
+                        <option value="5">6월</option>
+                        <option value="6">7월</option>
+                        <option value="7">8월</option>
+                        <option value="8">9월</option>
+                        <option value="9">10월</option>
+                        <option value="10">11월</option>
+                        <option value="11">12월</option>
+                    </select>
+                </div>
+                <div id="calendar" class="calendar"></div>
+            </div>
+
+            <!-- 오른쪽: 폼 -->
+            <div style="flex: 1; min-width: 350px; max-width: 100%;">
+                <h4>조달계획등록</h4>
+                <div class="form-container">
+                    <form action="/submitProcurementPlan" method="POST">
+                        <table>
+                            <tr>
+                                <th>생산 시작일</th>
+                                <td><input type="text" id="startDate" name="startDate" readonly></td>
+                            </tr>
+                            <tr>
+                                <th>생산 종료일</th>
+                                <td><input type="text" id="endDate" name="endDate" readonly></td>
+                            </tr>
+                            <tr>
+                                <th>생산제품명</th>
+                                <td><input type="text" id="productName" name="productName" readonly></td>
+                            </tr>
+                            <tr>
+                                <th>생산제품코드</th>
+                                <td><input type="text" id="productCode" name="productCode" readonly></td>
+                            </tr>
+                            <tr>
+                                <th>생산 예정 수량</th>
+                                <td><input type="text" id="quantity" name="quantity" readonly></td>
+                            </tr>
+                            <tr>
+                                <th>조달 수량</th>
+                                <td><input type="text" id="procumentQuntity" name="procumentQuntity"></td>
+                            </tr>
+                            <tr>
+                                <th>조달 납기일</th>
+                                <td><input type="date" id="procurementDate" name="procurementDate" required></td>
+                            </tr>
+                        </table>
+                        <div class="form-actions">
+                            <button type="submit">조달계획 등록</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-      </section>
-    </section>
 
-    <!-- 캘린더 -->
-
-    <div>
-      <h4>조달 납기일 선정</h4>
-      <select id="yearSelect"></select>
-      <select id="monthSelect">
-        <option value="0">1월</option>
-        <option value="1">2월</option>
-        <option value="2">3월</option>
-        <option value="3">4월</option>
-        <option value="4">5월</option>
-        <option value="5">6월</option>
-        <option value="6">7월</option>
-        <option value="7">8월</option>
-        <option value="8">9월</option>
-        <option value="9">10월</option>
-        <option value="10">11월</option>
-        <option value="11">12월</option>
-      </select>
-    </div>
-    <div id="calendar" class="calendar"></div>
-
-    <!-- 조달계획 등록 폼 -->
-    <h1>조달계획등록</h1>
-    <div class="form-container">
-      <form action="/submitProcurementPlan" method="POST">
-        <table>
-          <tr>
-            <th>생산 시작일</th>
-            <td><input type="text" id="startDate" name="startDate" readonly></td>
-          </tr>
-          <tr>
-            <th>생산 종료일</th>
-            <td><input type="text" id="endDate" name="endDate" readonly></td>
-          </tr>
-          <tr>
-            <th>생산제품명</th>
-            <td><input type="text" id="productName" name="productName" readonly></td>
-          </tr>
-          <tr>
-            <th>생산제품코드</th>
-            <td><input type="text" id="productCode" name="productCode" readonly></td>
-          </tr>
-          <tr>
-            <th>생산 예정 수량</th>
-            <td><input type="text" id="quantity" name="quantity" readonly></td>
-          </tr>
-          <tr>
-            <th>조달 수량</th>
-            <td><input type="text" id="procumentQuntity" name="procumentQuntity"></td>
-          </tr>
-          <tr>
-            <th>조달 납기일</th>
-            <td><input type="date" id="procurementDate" name="procurementDate" required></td>
-          </tr>
-        </table>
-        <div class="form-actions">
-          <button type="submit">조달계획 등록</button>
-        </div>
-      </form>
-    </div>
-  </main>
-  <footer class="layout-footer"></footer>
+        <footer class="layout-footer"></footer>
 </div>
 <script>
-  const yearSelect = document.getElementById('yearSelect');
-  const monthSelect = document.getElementById('monthSelect');
-  const calendar = document.getElementById('calendar');
-  const procurementDateInput = document.getElementById('procurementDate');
-  const startDateInput = document.getElementById('startDate');
-  const endDateInput = document.getElementById('endDate');
-  const productNameInput = document.getElementById('productName');
-  const productCodeInput = document.getElementById('productCode');
-  const quantityInput = document.getElementById('quantity');
+    const yearSelect = document.getElementById('yearSelect');
+    const monthSelect = document.getElementById('monthSelect');
+    const calendar = document.getElementById('calendar');
+    const procurementDateInput = document.getElementById('procurementDate');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const productNameInput = document.getElementById('productName');
+    const productCodeInput = document.getElementById('productCode');
+    const quantityInput = document.getElementById('quantity');
 
-  let productionStartDate, productionEndDate;
+    let productionStartDate, productionEndDate;
 
-  for (let i = 2020; i <= 2030; i++) {
-    const option = document.createElement('option');
-    option.value = i;
-    option.textContent = i;
-    yearSelect.appendChild(option);
-  }
-  yearSelect.value = new Date().getFullYear();
-  monthSelect.value = new Date().getMonth();
+    for (let i = 2020; i <= 2030; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        yearSelect.appendChild(option);
+    }
+    yearSelect.value = new Date().getFullYear();
+    monthSelect.value = new Date().getMonth();
 
-  function renderCalendar(year, month) {
-    const firstDay = new Date(year, month, 1).getDay();
-    const lastDate = new Date(year, month + 1, 0).getDate();
-    calendar.innerHTML = '<div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>';
+    function renderCalendar(year, month) {
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+        calendar.innerHTML = '<div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>';
 
-    for (let i = 0; i < firstDay; i++) {
-      calendar.innerHTML += '<div></div>';
+        for (let i = 0; i < firstDay; i++) {
+            calendar.innerHTML += '<div></div>';
+        }
+
+        for (let i = 1; i <= lastDate; i++) {
+            const dateDiv = document.createElement('div');
+            const currentDate = new Date(year, month, i);
+            currentDate.setHours(0, 0, 0, 0);
+
+            dateDiv.innerHTML = `<span>${i}</span>`;
+
+            // 기존 "조달 납기일" 텍스트 제거
+            dateDiv.onclick = () => {
+                document.querySelectorAll('.calendar .label').forEach(label => label.remove()); // 모든 "조달 납기일" 제거
+                const localDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+                procurementDateInput.value = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
+                dateDiv.innerHTML += '<div class="label">조달 납기일</div>';
+            };
+
+            // 생산 시작일 이후 비활성화
+            if (productionStartDate && currentDate.getTime() >= productionStartDate.getTime()) {
+                dateDiv.classList.add('disabled');
+                dateDiv.style.pointerEvents = 'none';
+            }
+
+            // 생산 시작일 표시
+            if (productionStartDate && currentDate.getTime() === productionStartDate.getTime()) {
+                dateDiv.classList.add('highlight');
+                dateDiv.innerHTML += '<div>생산 시작일</div>';
+            }
+
+            // 생산 종료일 표시
+            if (productionEndDate && currentDate.getTime() === productionEndDate.getTime()) {
+                dateDiv.classList.add('highlight');
+                dateDiv.innerHTML += '<div>생산 종료일</div>';
+            }
+
+            calendar.appendChild(dateDiv);
+        }
     }
 
-    for (let i = 1; i <= lastDate; i++) {
-      const dateDiv = document.createElement('div');
-      const currentDate = new Date(year, month, i);
-      currentDate.setHours(0, 0, 0, 0);
+    renderCalendar(yearSelect.value, monthSelect.value);
 
-      dateDiv.innerHTML = `<span>${i}</span>`;
+    yearSelect.addEventListener('change', () => {
+        renderCalendar(parseInt(yearSelect.value), parseInt(monthSelect.value));
+    });
 
-      // 기존 "조달 납기일" 텍스트 제거
-      dateDiv.onclick = () => {
-        document.querySelectorAll('.calendar .label').forEach(label => label.remove()); // 모든 "조달 납기일" 제거
-        const localDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-        procurementDateInput.value = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
-        dateDiv.innerHTML += '<div class="label">조달 납기일</div>';
-      };
+    monthSelect.addEventListener('change', () => {
+        renderCalendar(parseInt(yearSelect.value), parseInt(monthSelect.value));
+    });
 
-      // 생산 시작일 이후 비활성화
-      if (productionStartDate && currentDate.getTime() >= productionStartDate.getTime()) {
-        dateDiv.classList.add('disabled');
-        dateDiv.style.pointerEvents = 'none';
-      }
+    function onProductionPlanClick(row) {
+        const startDate = row.getAttribute('data-start-date');
+        const endDate = row.getAttribute('data-end-date');
+        const productName = row.getAttribute('data-product-name');
+        const productCode = row.getAttribute('data-product-code');
+        const quantity = row.getAttribute('data-quantity');
 
-      // 생산 시작일 표시
-      if (productionStartDate && currentDate.getTime() === productionStartDate.getTime()) {
-        dateDiv.classList.add('highlight');
-        dateDiv.innerHTML += '<div>생산 시작일</div>';
-      }
+        productionStartDate = new Date(startDate);
+        productionEndDate = new Date(endDate);
 
-      // 생산 종료일 표시
-      if (productionEndDate && currentDate.getTime() === productionEndDate.getTime()) {
-        dateDiv.classList.add('highlight');
-        dateDiv.innerHTML += '<div>생산 종료일</div>';
-      }
+        startDateInput.value = startDate;
+        endDateInput.value = endDate;
+        productNameInput.value = productName;
+        productCodeInput.value = productCode;
+        quantityInput.value = quantity;
 
-      calendar.appendChild(dateDiv);
+        yearSelect.value = productionStartDate.getFullYear();
+        monthSelect.value = productionStartDate.getMonth();
+
+        renderCalendar(productionStartDate.getFullYear(), productionStartDate.getMonth());
     }
-  }
-
-  renderCalendar(yearSelect.value, monthSelect.value);
-
-  yearSelect.addEventListener('change', () => {
-    renderCalendar(parseInt(yearSelect.value), parseInt(monthSelect.value));
-  });
-
-  monthSelect.addEventListener('change', () => {
-    renderCalendar(parseInt(yearSelect.value), parseInt(monthSelect.value));
-  });
-
-  function onProductionPlanClick(row) {
-    const startDate = row.getAttribute('data-start-date');
-    const endDate = row.getAttribute('data-end-date');
-    const productName = row.getAttribute('data-product-name');
-    const productCode = row.getAttribute('data-product-code');
-    const quantity = row.getAttribute('data-quantity');
-
-    productionStartDate = new Date(startDate);
-    productionEndDate = new Date(endDate);
-
-    startDateInput.value = startDate;
-    endDateInput.value = endDate;
-    productNameInput.value = productName;
-    productCodeInput.value = productCode;
-    quantityInput.value = quantity;
-
-    yearSelect.value = productionStartDate.getFullYear();
-    monthSelect.value = productionStartDate.getMonth();
-
-    renderCalendar(productionStartDate.getFullYear(), productionStartDate.getMonth());
-  }
 </script>
 </body>
 </html>
