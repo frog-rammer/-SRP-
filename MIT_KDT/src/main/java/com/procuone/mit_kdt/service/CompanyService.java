@@ -20,4 +20,5 @@ public interface CompanyService {
 
     // 회사 이름으로 검색
     Page<CompanyDTO> searchCompaniesByName(String searchTerm, Pageable pageable);
+
 }

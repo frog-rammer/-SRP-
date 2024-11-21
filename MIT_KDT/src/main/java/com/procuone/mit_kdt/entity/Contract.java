@@ -52,4 +52,8 @@ public class Contract {
 
     @Column(nullable = true)
     private Integer leadTime;
+
+    @Column(nullable = false)
+    private Boolean contractStatus=false;
 }
+

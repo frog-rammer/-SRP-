@@ -4,6 +4,7 @@ import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.repository.CompanyRepository;
 import com.procuone.mit_kdt.service.CompanyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,9 @@ import java.util.Optional;
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
-    private final CompanyRepository companyRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
+
 
     public CompanyServiceImpl(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
@@ -35,38 +38,6 @@ public class CompanyServiceImpl implements CompanyService {
     public Page<CompanyDTO> getAllCompanies(Pageable pageable) {
         Page<Company> companyPage = companyRepository.findAll(pageable);
         return companyPage.map(this::entityToDto); // entityToDto 사용
-    }
-
-    // DTO -> Entity 변환
-    private Company dtoToEntity(CompanyDTO companyDTO) {
-        return Company.builder()
-                .businessId(companyDTO.getBusinessId())
-                .comId(companyDTO.getComId())
-                .comAdd(companyDTO.getComAdd())
-                .comEmail(companyDTO.getComEmail())
-                .comManage(companyDTO.getComManage())
-                .comName(companyDTO.getComName())
-                .comPhone(companyDTO.getComPhone())
-                .comPaymentInfo(companyDTO.getComPaymentInfo()) // 결제 정보
-                .comBank(companyDTO.getComBank()) // 은행
-                .comAccountNumber(companyDTO.getComAccountNumber()) // 계좌번호
-                .build();
-    }
-
-    // Entity -> DTO 변환
-    private CompanyDTO entityToDto(Company company) {
-        return CompanyDTO.builder()
-                .businessId(company.getBusinessId())
-                .comId(company.getComId())
-                .comAdd(company.getComAdd())
-                .comEmail(company.getComEmail())
-                .comManage(company.getComManage())
-                .comName(company.getComName())
-                .comPhone(company.getComPhone())
-                .comPaymentInfo(company.getComPaymentInfo()) // 결제 정보
-                .comBank(company.getComBank()) // 은행
-                .comAccountNumber(company.getComAccountNumber()) // 계좌번호
-                .build();
     }
 
     @Override
@@ -103,5 +74,39 @@ public class CompanyServiceImpl implements CompanyService {
         Page<Company> companyPage = companyRepository.findByComNameContaining(searchTerm, pageable);
         return companyPage.map(this::entityToDto); // 결과를 DTO로 변환
     }
+
+    // DTO -> Entity 변환
+    private Company dtoToEntity(CompanyDTO companyDTO) {
+        return Company.builder()
+                .businessId(companyDTO.getBusinessId())
+                .comId(companyDTO.getComId())
+                .comAdd(companyDTO.getComAdd())
+                .comEmail(companyDTO.getComEmail())
+                .comManage(companyDTO.getComManage())
+                .comName(companyDTO.getComName())
+                .comPhone(companyDTO.getComPhone())
+                .comPaymentInfo(companyDTO.getComPaymentInfo()) // 결제 정보
+                .comBank(companyDTO.getComBank()) // 은행
+                .comAccountNumber(companyDTO.getComAccountNumber()) // 계좌번호
+                .build();
+    }
+
+    // Entity -> DTO 변환
+    private CompanyDTO entityToDto(Company company) {
+        return CompanyDTO.builder()
+                .businessId(company.getBusinessId())
+                .comId(company.getComId())
+                .comAdd(company.getComAdd())
+                .comEmail(company.getComEmail())
+                .comManage(company.getComManage())
+                .comName(company.getComName())
+                .comPhone(company.getComPhone())
+                .comPaymentInfo(company.getComPaymentInfo()) // 결제 정보
+                .comBank(company.getComBank()) // 은행
+                .comAccountNumber(company.getComAccountNumber()) // 계좌번호
+                .build();
+    }
+
+
 
 }
