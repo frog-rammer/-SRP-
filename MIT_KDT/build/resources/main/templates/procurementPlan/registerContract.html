@@ -23,7 +23,9 @@
 
   <!-- 메인 영역 -->
   <main class="layout-main">
+    <form th:action>
     <div class="form-section">
+
       <h1>계약 등록</h1>
       <div class="input-group">
         <div>
@@ -75,13 +77,14 @@
 
       <!-- 등록/취소 버튼 -->
       <div class="button-container">
-        <a th:href="@{/contract/registerContract2(page=${currentPage})}"><button type="submit">등록</button></a>
+        <button type="submit">등록</button>
         <button type="button" class="cancel-button">취소</button>
       </div>
+
     </div>
 
     <div class="divider"></div>
-
+    </form>
   </main>
 
   <!-- 푸터 -->

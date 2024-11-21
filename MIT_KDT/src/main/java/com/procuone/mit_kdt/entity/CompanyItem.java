@@ -28,4 +28,6 @@ public class CompanyItem {
     private Integer supplyUnit; // 최소 공급 단위
     private Integer productionQty; // 최소 생산 수량
     private Integer unitCost; // 단가
+    @Column(nullable = false)
+    private Boolean contractStatus=false;
 }

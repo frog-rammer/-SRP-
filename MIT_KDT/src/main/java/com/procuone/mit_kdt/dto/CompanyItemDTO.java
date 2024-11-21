@@ -15,4 +15,5 @@ public class CompanyItemDTO {
     private Integer supplyUnit;   // 최소 공급 단위
     private Integer productionQty;// 최소 생산 수량
     private Integer unitCost;     // 단가
+    private Boolean contractStatus;
 }

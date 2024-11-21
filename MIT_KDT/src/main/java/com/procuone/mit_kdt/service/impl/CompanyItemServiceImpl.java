@@ -40,7 +40,9 @@ public class CompanyItemServiceImpl implements CompanyItemService {
                         companyItem.getLeadTime(),
                         companyItem.getSupplyUnit(),
                         companyItem.getProductionQty(),
-                        companyItem.getUnitCost()
+                        companyItem.getUnitCost(),
+                        companyItem.getContractStatus()
+
                 ))
                 .collect(Collectors.toList());
     }
@@ -64,7 +66,8 @@ public class CompanyItemServiceImpl implements CompanyItemService {
                 companyItem.getLeadTime(),
                 companyItem.getSupplyUnit(),
                 companyItem.getProductionQty(),
-                companyItem.getUnitCost()
+                companyItem.getUnitCost(),
+                companyItem.getContractStatus()
         );
     }
 
@@ -101,6 +104,7 @@ public class CompanyItemServiceImpl implements CompanyItemService {
                 .supplyUnit(companyItemDTO.getSupplyUnit())
                 .productionQty(companyItemDTO.getProductionQty())
                 .unitCost(companyItemDTO.getUnitCost())
+                .contractStatus(companyItemDTO.getContractStatus())
                 .build();
 
         // 저장
