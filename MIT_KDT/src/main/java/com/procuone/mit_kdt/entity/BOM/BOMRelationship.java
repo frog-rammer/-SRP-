@@ -1,9 +1,8 @@
 package com.procuone.mit_kdt.entity.BOM;
+import com.procuone.mit_kdt.entity.BOM.Item;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.io.Serializable;
 
 @Getter
 @Setter
@@ -14,25 +13,18 @@ import java.io.Serializable;
 @ToString
 public class BOMRelationship {
 
-    @EmbeddedId
-    private BOMRelationshipId id = new BOMRelationshipId();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; // 기본 키
 
     @ManyToOne
-    @MapsId("parentItemId")
-    @JoinColumn(name = "parent_item_id")
+    @JoinColumn(name = "parent_product_code", referencedColumnName = "productCode", nullable = false)
     private Item parentItem; // 상위 부품 (예: 프레임)
 
     @ManyToOne
-    @MapsId("childItemId")
-    @JoinColumn(name = "child_item_id")
+    @JoinColumn(name = "child_product_code", referencedColumnName = "productCode", nullable = false)
     private Item childItem; // 하위 부품 (예: 스틸 프레임)
 
     private Integer quantity; // 하위 부품의 수량
 }
 
-@Embeddable
-class BOMRelationshipId implements Serializable {
-
-    private Long parentItemId; // 상위 부품 ID
-    private Long childItemId;  // 하위 부품 ID
-}
