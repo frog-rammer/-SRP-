@@ -157,6 +157,21 @@
         <h1>품목등록</h1>
 
         <form th:action="@{/items/InputProduct}" method="post" enctype="multipart/form-data" onsubmit="combineDimensions()">
+            <!-- 분류 -->
+            <div id="categoryDiv">
+                <label>분류</label>
+                <div id="dynamicCategorySelects">
+                    <!-- 첫 번째 카테고리 (최상위 카테고리) -->
+                    <select id="categorySelect_0" name="categoryId" onchange="updateNextCategory(0)">
+                        <option value="">== 분류 선택 ==</option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.id}"
+                                th:text="${category.name}"
+                                th:attr="data-type=${category.type}, data-parent-id=${category.parentId != null ? category.parentId : ''}">
+                        </option>
+                    </select>
+                </div>
+            </div>
             <!-- 제품 코드 -->
             <div>
                 <label for="productCode">제품 코드</label>
@@ -177,28 +192,6 @@
                 <input type="number" id="depth" placeholder="높이(mm)" required />
                 <input type="hidden" name="dimensions" id="dimensions" />
             </div>
-
-            <div>
-                <label for="itemName">가격</label>
-                <input type="text" name="cost" id="cost" placeholder="가격을 입력하세요" required />
-            </div>
-
-            <!-- 분류 -->
-            <div id="categoryDiv">
-                <label>분류</label>
-                <div id="dynamicCategorySelects">
-                    <!-- 첫 번째 카테고리 (최상위 카테고리) -->
-                    <select id="categorySelect_0" name="categoryId" onchange="updateNextCategory(0)">
-                        <option value="">== 분류 선택 ==</option>
-                        <option th:each="category : ${categories}"
-                                th:value="${category.id}"
-                                th:text="${category.name}"
-                                th:attr="data-type=${category.type}, data-parent-id=${category.parentId != null ? category.parentId : ''}">
-                        </option>
-                    </select>
-                </div>
-            </div>
-
             <!-- 도면파일 -->
             <div>
                 <label for="file">도면파일</label>
@@ -210,6 +203,7 @@
                 <button type="submit" class="btn">확인</button>
                 <button type="button" onclick="window.history.back()" class="btn">취소</button>
             </div>
+
         </form>
     </main>
 </div>
