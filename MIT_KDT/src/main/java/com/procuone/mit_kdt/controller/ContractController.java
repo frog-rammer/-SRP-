@@ -1,5 +1,6 @@
 package com.procuone.mit_kdt.controller;
 
+import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.dto.CompanyItemDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
@@ -29,6 +30,8 @@ public class ContractController {
     private CategoryService categoryService;
     @Autowired
     private CompanyItemService companyItemService;
+    @Autowired
+    private CompanyService companyService;
 
     // 품목 목록을 타임리프 뷰에 전달
     @GetMapping("/register")
@@ -61,6 +64,24 @@ public class ContractController {
         Optional<ItemDTO> itemDTO = itemService.findByProductCode(itemId);
 
         return companyItemService.getSuppliersByItem(itemDTO.get().getId()); // 공급업체 목록 반환
+    }
+
+    @GetMapping("/contractWithCompany/{businessId}")
+    public String contractWithCompany(@PathVariable String businessId, Model model) {
+
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++businessId: " + businessId);
+
+        // businessId를 이용해서 업체 정보와 계약 정보를 DB에서 조회
+        CompanyDTO companyDTO = companyService.getCompanyDetails(businessId);
+        CompanyItemDTO companyItemDTO = companyItemService.getCompanyItemByBussinessId(businessId);
+        Optional<ItemDTO> itemDTO = itemService.getItemById(companyItemDTO.getItemId());
+
+        // 모델에 데이터를 추가하여 뷰로 전달
+        model.addAttribute("companyDTO", companyDTO);
+        model.addAttribute("companyItemDTO", companyItemDTO);
+        model.addAttribute("itemDTO", itemDTO.get());
+
+        return "procurementPlan/registerContract"; // 계약 등록 페이지로 이동
     }
 
 

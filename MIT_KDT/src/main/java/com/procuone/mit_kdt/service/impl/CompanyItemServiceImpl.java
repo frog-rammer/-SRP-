@@ -46,6 +46,29 @@ public class CompanyItemServiceImpl implements CompanyItemService {
     }
 
     @Override
+    public CompanyItemDTO getCompanyItemByBussinessId(String businessId) {
+        // businessId를 기반으로 CompanyItem을 조회
+        List<CompanyItem> companyItems = companyItemRepository.findByCompany_BusinessId(businessId);
+
+        if (companyItems.isEmpty()) {
+            throw new IllegalArgumentException("No CompanyItem found for Business ID: " + businessId);
+        }
+
+        // 첫 번째 CompanyItem을 DTO로 변환하여 반환 (여러 개의 CompanyItem이 있을 수 있음)
+        CompanyItem companyItem = companyItems.get(0);
+
+        return new CompanyItemDTO(
+                companyItem.getId(),
+                companyItem.getCompany().getBusinessId(),
+                companyItem.getItem().getId(),
+                companyItem.getLeadTime(),
+                companyItem.getSupplyUnit(),
+                companyItem.getProductionQty(),
+                companyItem.getUnitCost()
+        );
+    }
+
+    @Override
     public void saveCompanyItems(List<CompanyItemDTO> companyItemDTOs) {
         System.out.println("==============================================================" + companyItemDTOs + "===========================================================");
         for (CompanyItemDTO companyItemDTO : companyItemDTOs) {
