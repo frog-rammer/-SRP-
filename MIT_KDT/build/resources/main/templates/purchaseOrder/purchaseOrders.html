@@ -10,6 +10,183 @@
       list-style: none;
       display:inline;
     }
+    /* 테이블 스타일 */
+    table {
+      width: 100%;
+      border-collapse: collapse; /* 셀 간 경계선을 합침 */
+      margin-top: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd; /* 테두리 색상 */
+    }
+
+    th {
+      background-color: #f4f4f4; /* 헤더 배경색 */
+      font-weight: bold;
+    }
+
+    td {
+      background-color: #fff; /* 일반 셀 배경색 */
+    }
+
+    td a {
+      color: #32928E; /* 링크 색상 */
+      text-decoration: none; /* 밑줄 제거 */
+    }
+
+    td a:hover {
+      text-decoration: underline; /* 마우스 오버 시 밑줄 추가 */
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f9f9f9; /* 짝수 번째 행 배경색 */
+    }
+
+    /* 체크박스 스타일 */
+    input[type="checkbox"] {
+      transform: scale(1.2); /* 체크박스 크기 확대 */
+      margin-right: 10px; /* 체크박스와 텍스트 사이 여백 */
+    }
+
+    /* 페이지네이션 스타일 */
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .pagination ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .pagination li {
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    .pagination .page-btn {
+      padding: 5px 10px;
+      background-color: #32928E;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .pagination .page-btn:disabled {
+      background-color: #ccc;
+      pointer-events: none;
+    }
+    /* 검색바 스타일 */
+    .search-bar,
+    .keyword-search,
+    .keyword-search2 {
+      margin-bottom: 20px;
+    }
+
+    .date-search{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .date-search input[type="date"],
+    .date-search2 input[type="date"],
+    .keyword-search input[type="text"],
+    .keyword-search2 input[type="text"] {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      width: auto;
+      max-width: 180px;
+    }
+
+    .date-search button,
+    .keyword-search-btn,
+    .search-btn,
+    .keyword-search-btn2,
+    .search-btn2 {
+      padding: 8px 16px;
+      background-color: #32928E;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .search-btn{
+      position: relative; left: -6px;
+    }
+    .search-btn2{
+      position: relative; right: -2px;
+    }
+    .keyword-search-btn{
+      position: relative; left: 4px;
+    }
+    .date-search button:hover,
+    .keyword-search-btn:hover,
+    .search-btn:hover,
+    .keyword-search-btn2:hover,
+    .search-btn2:hover {
+      background-color: #278F75; /* hover 시 색상 변경 */
+    }
+
+    .date-search button:disabled,
+    .keyword-search-btn:disabled,
+    .search-btn:disabled,
+    .keyword-search-btn2:disabled,
+    .search-btn2:disabled {
+      background-color: #ccc;
+      pointer-events: none;
+    }
+
+    .keyword-search select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      background-color: white;
+    }
+    .keyword-search2 select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      background-color: white;
+    }
+
+    .keyword-search select:focus,
+    .date-search input[type="date"]:focus,
+    .keyword-search input[type="text"]:focus {
+      outline: none;
+      border-color: #32928E;
+    }
+    /* 발주, 삭제, 수정 버튼 스타일 */
+    .button {
+      padding: 6px 12px; /* 검색 버튼보다 조금 작게 */
+      background-color: #32928E;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .button:hover {
+      background-color: #278F75; /* hover 시 색상 변경 */
+    }
+
+    .button:disabled {
+      background-color: #ccc;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>

@@ -81,12 +81,13 @@
     </div>
 
     <h2>계약 비교</h2>
-    <table border="1" cellpadding="10">
+    <table border="1" cellpadding="10" id="supplierTable">
       <thead>
       <tr>
         <th>회사명</th>
         <th>품목</th>
         <th>단가</th>
+        <th>소요시간</th>
         <th>계약하기 버튼</th>
       </tr>
       </thead>
@@ -150,27 +151,42 @@
 </div>
 <script>
   function updateTable() {
-    const productCode = document.getElementById('productSelect').value;
+    var itemId = document.getElementById("productSelect").value;  // 선택된 품목 ID 가져오기
 
-    // Ajax 요청을 통해 서버에서 계약 정보 가져오기
-    fetch(`/compare?productCode=${productCode}`)
-            .then(response => response.json())
-            .then(data => {
-              const tableBody = document.getElementById('contractTableBody');
-              tableBody.innerHTML = ''; // 기존 테이블 내용 초기화
+    if (itemId) {
+      // POST 방식으로 품목 ID에 해당하는 공급업체 리스트를 서버로 전송
+      fetch('/contract/suppliers', {
+        method: 'POST', // POST 방식
+        headers: {
+          'Content-Type': 'application/json' // JSON 형식으로 보내기
+        },
+        body: JSON.stringify({ itemId: itemId }) // JSON 형식으로 전송
+      })
+              .then(response => response.json()) // 서버에서 받은 JSON 응답 처리
+              .then(data => {
+                var tableBody = document.getElementById("supplierTable").getElementsByTagName('tbody')[0];
+                tableBody.innerHTML = ""; // 기존 내용 지우기
 
-              // 계약 정보가 있을 경우 테이블에 내용 추가
-              data.forEach(companyItem => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-            <td>${companyItem.company.name}</td>
-            <td>${companyItem.item.itemName}</td>
-            <td>${companyItem.unitCost}</td>
-            <td><button class="contract-button">계약하기</button></td>
+                // 공급업체 데이터 처리
+                data.forEach(function(companyItem) {
+                  var row = tableBody.insertRow(); // 새 행 추가
+                  row.innerHTML = `
+              <td>${companyItem.businessId}</td>   <!-- 회사명 -->
+              <td>${companyItem.itemId}</td>       <!-- 품목명 -->
+              <td>${companyItem.unitCost} 원</td>  <!-- 단가 -->
+              <td>${companyItem.leadTime} 일</td>  <!-- 소요시간 -->
+              <td><button onclick="contractWithCompany('${companyItem.businessId}')">계약하기</button></td>
           `;
-                tableBody.appendChild(row);
-              });
-            });
+                });
+              })
+              .catch(error => console.error('Error fetching suppliers:', error)); // 에러 처리
+    }
+  }
+
+
+  function contractWithCompany(businessId) {
+    alert(businessId + "와 계약을 진행합니다.");
+    // 계약 진행 로직
   }
 </script>
 </body>

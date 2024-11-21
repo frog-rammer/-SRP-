@@ -3,56 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <title>업체 상세 보기</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <style>
+        /* 공통 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%; /* 페이지 높이를 100%로 설정 */
+            overflow: hidden; /* 전체 페이지에서 스크롤을 제거 */
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9; /* 페이지 배경 색상 */
+            color: #333;
+        }
+
+        /* 메인 콘텐츠 */
+        .layout-main {
+            padding: 20px;
+            background-color: #ffffff; /* 폼 배경색 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 */
+            border-radius: 8px;
+            width: 700px;
+            margin: 20px auto; /* 중앙 정렬 */
+            border: 1px solid #c2c2c2;
+            height: auto; /* 폼 높이를 자동으로 설정 */
+            max-height: none; /* 최대 높이 제한 없음 */
+        }
+
+        /* 각 p 태그 간격 */
+        form p {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* strong 태그 스타일 (항목 제목 강조) */
+        strong {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #666;
+            flex: 0 0 30%; /* 왼쪽의 strong은 고정 크기 */
+            margin-right: 20px;
+        }
+
+        /* span 태그 스타일 (값 표시) */
+        .readonly-text {
+            color: #555;
+            background-color: #f7f7f7; /* 비활성화된 입력란 배경 색 */
+            border: 1px solid #ddd; /* 테두리 추가 */
+            padding: 8px 12px;
+            border-radius: 4px;
+            flex: 1;
+            text-align: center; /* 가운데 정렬 */
+        }
+
+        /* 텍스트 필드의 hover 효과 (읽기 전용 상태에서 강조) */
+        .readonly-text:hover {
+            background-color: #ececec;
+        }
+    </style>
 </head>
 <body>
-<div>
-    <!-- 업체 정보를 보여주는 폼 -->
-    <form th:object="${companyDTO}" method="post">
-        <div>
-            <label>회사명</label>
-            <input type="text" th:value="*{comName}" readonly> <!-- 회사명 -->
-        </div>
-        <div>
-            <label>사업자 등록번호</label>
-            <input type="text" th:value="*{businessId}" readonly> <!-- 사업자 등록번호 -->
-        </div>
-        <div>
-            <label>내선번호</label>
-            <input type="text" th:value="*{comAdd}" readonly> <!-- 내선번호 -->
-        </div>
-        <div>
-            <label>주소</label>
-            <input type="text" th:value="*{comAdd}" readonly> <!-- 주소 -->
-        </div>
-        <div>
-            <label>담당자</label>
-            <input type="text" th:value="*{comManage}" readonly> <!-- 담당자 -->
-        </div>
-        <div>
-            <label>연락처</label>
-            <input type="text" th:value="*{comPhone}" readonly> <!-- 연락처 -->
-        </div>
-        <div>
-            <label>이메일</label>
-            <input type="email" th:value="*{comEmail}" readonly> <!-- 이메일 -->
-        </div>
-        <div>
-            <label>결제 정보</label>
-            <input type="text" th:value="*{comPaymentInfo}" readonly> <!-- 결제 정보 -->
-        </div>
-        <div>
-            <label>은행</label>
-            <input type="text" th:value="*{comBank}" readonly> <!-- 은행 -->
-        </div>
-        <div>
-            <label>계좌번호</label>
-            <input type="text" th:value="*{comAccountNumber}" readonly> <!-- 계좌번호 -->
-        </div>
-        <div>
-            <label>견적 목록</label>
-            <input type="text" th:value="*{comEstimateList}" readonly> <!-- 견적 목록 -->
-        </div>
-    </form>
+<div class="grid-container">
+    <!-- 헤더 -->
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+
+    <main class="layout-main">
+        <form th:object="${companyDTO}" method="post">
+            <p>
+                <strong>업체명:</strong>
+                <span th:text="*{comName}" class="readonly-text"></span> <!-- 업체명 -->
+            </p>
+            <p>
+                <strong>사업자 등록번호:</strong>
+                <span th:text="*{businessId}" class="readonly-text"></span> <!-- 사업자 등록번호 -->
+            </p>
+            <p>
+                <strong>주소:</strong>
+                <span th:text="*{comAdd}" class="readonly-text"></span> <!-- 주소 -->
+            </p>
+            <p>
+                <strong>담당자:</strong>
+                <span th:text="*{comManage}" class="readonly-text"></span> <!-- 담당자 -->
+            </p>
+            <p>
+                <strong>연락처:</strong>
+                <span th:text="*{comPhone}" class="readonly-text"></span> <!-- 연락처 -->
+            </p>
+            <p>
+                <strong>이메일:</strong>
+                <span th:text="*{comEmail}" class="readonly-text"></span> <!-- 이메일 -->
+            </p>
+<!--            <p>-->
+<!--                <strong>결제 정보:</strong>-->
+<!--                <span th:text="*{comPaymentInfo}" class="readonly-text"></span> &lt;!&ndash; 결제 정보 &ndash;&gt;-->
+<!--            </p>-->
+            <p>
+                <strong>은행:</strong>
+                <span th:text="*{comBank}" class="readonly-text"></span> <!-- 은행 -->
+            </p>
+            <p>
+                <strong>계좌번호:</strong>
+                <span th:text="*{comAccountNumber}" class="readonly-text"></span> <!-- 계좌번호 -->
+            </p>
+<!--            <p>-->
+<!--                <strong>견적 목록:</strong>-->
+<!--                <span th:text="*{comEstimateList}" class="readonly-text"></span> &lt;!&ndash; 견적 목록 &ndash;&gt;-->
+<!--            </p>-->
+        </form>
+    </main>
 </div>
 </body>
 </html>

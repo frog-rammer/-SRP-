@@ -5,6 +5,144 @@
     <title>품목등록</title>
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <style>
+        /* 공통 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%; /* 페이지 전체의 높이를 100%로 설정 */
+            overflow: auto; /* 페이지에서 스크롤이 가능하도록 설정 */
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        /* 메인 콘텐츠 */
+        .layout-main {
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 700px;
+            margin: 20px auto;
+            border: 1px solid #c2c2c2;
+            height: auto; /* 높이를 고정하지 않고 자동으로 늘어남 */
+            max-height: 800px; /* 폼의 최대 높이를 지정 */
+            overflow-y: auto; /* 폼 내용이 많을 경우 폼 내에서만 스크롤 */
+        }
+
+        /* 폼 스타일 */
+        .layout-main form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 레이블 스타일 */
+        label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        /* 입력 필드 스타일 */
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select {
+            width: 100%; /* 입력 필드 너비를 100%로 설정하여, 부모 요소의 너비에 맞게 조정 */
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #32928E; /* 포커스 시 테두리 색상 변경 */
+            outline: none;
+            background-color: #fff; /* 포커스 시 배경을 흰색으로 변경 */
+        }
+
+        /* 숨겨진 입력 필드 (규격) */
+        input[type="hidden"] {
+            display: none;
+        }
+
+        /* 버튼을 감싸는 div 가운데 정렬 */
+        .layout-main form div:last-child {
+            text-align: center; /* 버튼을 가로로 가운데 정렬 */
+        }
+
+        /* 버튼 스타일 */
+        .btn {
+            padding: 12px 20px;
+            background-color: #32928E;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 150px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #267f6d;
+        }
+
+        /* 취소 버튼 색상 */
+        button[type="button"] {
+            background-color: #32928E;
+            margin-left: 10px;
+        }
+
+        button[type="button"]:hover {
+            background-color: #267f6d;
+        }
+
+        /* 카테고리 선택 */
+        #categoryDiv {
+            margin-top: 20px;
+        }
+
+        #categoryDiv select {
+            margin-top: 10px;
+        }
+
+        /* 다이나믹 카테고리 스타일  다이나믹 카테고리 스타일 = 옵션 선택시 하위 카테고리 셀렉트박스도 적용해주는 css */
+        #dynamicCategorySelects {
+            margin-top: 10px;
+        }
+
+        #dynamicCategorySelects select {
+            margin-top: 5px;
+        }
+
+        /* 도면 파일 스타일 */
+        input[type="file"] {
+            font-size: 14px;
+            padding: 8px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* 각 항목(텍스트 입력, 숫자 입력, 파일 업로드 등)의 폼 요소들에 대한 통일된 간격 및 스타일 */
+        input, select, button {
+            margin-bottom: 15px;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -69,8 +207,8 @@
 
             <!-- 확인 및 취소 버튼 -->
             <div>
-                <button type="submit">확인</button>
-                <button type="button" onclick="window.history.back()">취소</button>
+                <button type="submit" class="btn">확인</button>
+                <button type="button" onclick="window.history.back()" class="btn">취소</button>
             </div>
         </form>
     </main>

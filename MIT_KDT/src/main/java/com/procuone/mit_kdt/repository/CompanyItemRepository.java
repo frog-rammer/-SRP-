@@ -8,4 +8,6 @@ import java.util.List;
 public interface CompanyItemRepository extends JpaRepository<CompanyItem, Long> {
     // 품목 코드에 해당하는 계약 정보를 가져오는 메서드
     List<CompanyItem> findByItemProductCode(String productCode);
+    // 품목 ID로 공급업체 리스트를 조회하는 메서드
+    List<CompanyItem> findByItemId(Long itemId);
 }
