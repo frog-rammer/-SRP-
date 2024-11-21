@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyItemServiceImpl implements CompanyItemService {
@@ -24,6 +25,25 @@ public class CompanyItemServiceImpl implements CompanyItemService {
 
     @Autowired
     private ItemRepository itemRepository;
+
+    @Override
+    public List<CompanyItemDTO> getSuppliersByItem(Long itemId) {
+        // 품목 ID를 기반으로 CompanyItem 리스트 조회
+        List<CompanyItem> companyItems = companyItemRepository.findByItemId(itemId);
+
+        // DTO로 변환하여 반환
+        return companyItems.stream()
+                .map(companyItem -> new CompanyItemDTO(
+                        companyItem.getId(),
+                        companyItem.getCompany().getBusinessId(),
+                        companyItem.getItem().getId(),
+                        companyItem.getLeadTime(),
+                        companyItem.getSupplyUnit(),
+                        companyItem.getProductionQty(),
+                        companyItem.getUnitCost()
+                ))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public void saveCompanyItems(List<CompanyItemDTO> companyItemDTOs) {
