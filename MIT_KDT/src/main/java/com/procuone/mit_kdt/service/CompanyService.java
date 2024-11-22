@@ -1,24 +1,28 @@
 package com.procuone.mit_kdt.service;
 
 import com.procuone.mit_kdt.dto.CompanyDTO;
+import com.procuone.mit_kdt.entity.Company;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CompanyService {
 
     // 회사 등록
-    public abstract void registerCompany(CompanyDTO companyDTO);
+    void registerCompany(CompanyDTO companyDTO);
 
-    // 페이징 처리된 회사 리스트 가져오기
-    public abstract Page<CompanyDTO> getAllCompanies(Pageable pageable);
+    // 모든 회사 조회 (DTO 페이징 반환)
+    Page<CompanyDTO> getAllCompanies(Pageable pageable);
 
-    // 특정 회사 상세 조회
+    // BusinessId로 회사 조회 (DTO 반환)
     CompanyDTO getCompanyDetails(String businessId);
 
-    // 아이디로 사업자번호 찾기
+    // Company 엔티티를 BusinessId로 조회
+    Company getCompanyEntityByBusinessId(String businessId);
+
+    // 계정으로 사업자 번호 조회
     String getCompanyBusinessIdBycomId(String comId);
 
-    // 회사 이름으로 검색
+    // 이름으로 회사 검색 (DTO 페이징 반환)
     Page<CompanyDTO> searchCompaniesByName(String searchTerm, Pageable pageable);
-
 }
