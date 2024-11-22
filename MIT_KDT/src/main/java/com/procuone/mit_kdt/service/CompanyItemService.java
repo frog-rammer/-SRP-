@@ -10,5 +10,5 @@ public interface CompanyItemService {
     List<CompanyItemDTO> getSuppliersByItem(Long itemId);
     CompanyItemDTO getCompanyItemByBussinessId(String bussinessId);
 
-    void updateContractStatus(Long itemId, String companyId, boolean status);
+    void updateContractStatus(Long itemId, String bussinessId, boolean status);
 }
