@@ -30,6 +30,9 @@ public class Contract {
     @Column(nullable = false)
     private Date contractDate;
 
+    @Column(nullable = false)
+    private Date contractEndDate; // 계약 종료일 추가
+
     @Column(length = 255)
     private String comName;
 

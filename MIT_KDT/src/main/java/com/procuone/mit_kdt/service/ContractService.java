@@ -26,4 +26,6 @@ public interface ContractService {
 
     // Contract 상태 업데이트
     void updateContractStatus(Long itemId, String businessId,boolean status);
+
+    void deleteExpiredContracts();
 }

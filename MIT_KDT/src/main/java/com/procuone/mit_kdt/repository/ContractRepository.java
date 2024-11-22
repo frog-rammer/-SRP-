@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,5 +23,6 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
     @Query("SELECT c FROM Contract c WHERE c.company.businessId = :businessId AND c.item.productCode = :productCode")
     Contract findContractByBusinessIdAndProductCode(String businessId, String productCode);
     Optional<Contract> findByItemIdAndCompany_BusinessId(Long itemId, String businessId);
+    void deleteByContractEndDateBefore(Date date);
 }
 

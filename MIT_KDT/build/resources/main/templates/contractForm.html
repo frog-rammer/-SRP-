@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>물품공급계약서</title>
+</head>
+<body>
+
+<h1>물품공급계약서</h1>
+
+<p>"갑"과 "을"은 아래와 같은 계약 내용을 체결한다.</p>
+
+<!-- th:object로 계약 데이터를 바인딩 -->
+<form th:object="${contract}" method="post" action="">
+
+  <div class="contract-section">
+    <h2>제 1 조 [품목 내역]</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>품목명</th>
+        <th>단가</th>
+        <th>최소공급수량</th>
+        <th>L/T일</th>
+        <th>계약 종료일</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td><span th:text="*{itemName}">품목명</span></td>
+        <td><span th:text="*{unitCost}">단가</span> 원</td>
+        <td><span th:text="*{productionQty}">최소공급수량</span> 개</td>
+        <td><span th:text="*{leadTime}">L/T</span> 일</td>
+        <td><span th:text="*{contractEndDate}">계약 종료일</span></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="contract-section">
+    <h2>제 2 조 [계약 조건]</h2>
+    <p>계약일: <span th:text="*{contractDate}">계약일</span></p>
+    <p>납품 기한: <span th:text="*{leadTime}">납품 기한</span> 일 기준</p>
+  </div>
+
+  <div class="contract-section">
+    <h2>제 3 조 [대금 지급]</h2>
+    <p>계좌 정보: <span th:text="*{accountInfo}">계좌 정보</span></p>
+    <p>"을"은 거래명세서에 따라 대금을 계약 후 60일 이내에 지급한다.</p>
+  </div>
+
+  <div class="buttons">
+    <button type="button" onclick="window.print()">인쇄</button>
+  </div>
+
+</form>
+
+</body>
+</html>
