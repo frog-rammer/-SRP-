@@ -53,7 +53,15 @@ public class Contract {
     @Column(nullable = true)
     private Integer leadTime;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private Boolean contractStatus=false;
+
+
+    @PrePersist
+    public void prePersist() {
+        if (contractStatus == null) {
+            contractStatus = false;
+        }
+    }
 }
 

@@ -18,6 +18,7 @@ public class CompanyItem {
 
     @ManyToOne
     @JoinColumn(name = "businessId", referencedColumnName = "businessId", nullable = false)
+    @ToString.Exclude // 순환 참조 방지
     private Company company;
 
     @ManyToOne
@@ -28,6 +29,15 @@ public class CompanyItem {
     private Integer supplyUnit; // 최소 공급 단위
     private Integer productionQty; // 최소 생산 수량
     private Integer unitCost; // 단가
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private Boolean contractStatus=false;
+
+
+
+    @PrePersist
+    public void prePersist() {
+        if (contractStatus == null) {
+            contractStatus = false;
+        }
+    }
 }
