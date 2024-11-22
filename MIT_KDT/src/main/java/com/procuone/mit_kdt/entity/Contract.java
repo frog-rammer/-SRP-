@@ -4,7 +4,9 @@ import com.procuone.mit_kdt.entity.BOM.Item;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
+
+
 @Getter
 @Setter
 @Entity
@@ -28,7 +30,6 @@ public class Contract {
     @JoinColumn(name = "product_code", referencedColumnName = "productCode", nullable = false)
     private Item item;
 
-    @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     private Date contractDate;
 

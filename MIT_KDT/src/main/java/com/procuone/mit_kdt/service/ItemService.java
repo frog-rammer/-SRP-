@@ -28,4 +28,7 @@ public interface ItemService {
 
     // 여러 카테고리 ID로 아이템 리스트 조회
     List<ItemDTO> getItemsByCategoryIds(List<Long> categoryIds);
+
+    //하나의 카테고리 id로 아이템 리스트 조회
+    List<ItemDTO> getItemsByCategoryId(Long categoryId);
 }

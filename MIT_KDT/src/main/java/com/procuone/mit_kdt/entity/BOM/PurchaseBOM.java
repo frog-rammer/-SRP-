@@ -10,6 +10,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"product_code", "item_id", "business_id"})
+        }
+)
 public class PurchaseBOM {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

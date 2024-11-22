@@ -7,6 +7,7 @@ import com.procuone.mit_kdt.service.ContractService;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,13 @@ public class ItemController {
         List<CategoryDTO> rootCategories = categoryService.getRootCategories();
         model.addAttribute("categories", rootCategories);
         return "procurementPlan/registerProductForm";
+    }
+
+    @GetMapping("/{categoryId}")
+    @ResponseBody
+    public ResponseEntity<List<ItemDTO>> getItemsByCategoryId(@PathVariable Long categoryId) {
+        List<ItemDTO> itemDTOS = itemService.getItemsByCategoryId(categoryId);
+        return ResponseEntity.ok(itemDTOS);
     }
 
     @GetMapping("/view")

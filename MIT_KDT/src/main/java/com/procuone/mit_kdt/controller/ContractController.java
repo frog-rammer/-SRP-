@@ -2,6 +2,7 @@ package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.dto.CompanyItemDTO;
+import com.procuone.mit_kdt.dto.ContractDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.entity.CompanyItem;
@@ -167,4 +168,13 @@ public class ContractController {
 
         return "procurementPlan/compareContracts";  // 계약 등록 완료 페이지
     }
+
+
+    // 계약된 회사 리스트 불러오기 (비동기 호출)
+    @GetMapping("/{productCode}")
+    @ResponseBody
+    public List<ContractDTO> getContractedCompaniesByProductCode(@PathVariable String productCode) {
+        return contractService.getContractsByProductCode(productCode);
+    }
+
 }
