@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -109,6 +110,16 @@ public class CompanyItemServiceImpl implements CompanyItemService {
 
         // 저장
         companyItemRepository.save(companyItem);
+    }
+
+    @Override
+    public void updateContractStatus(Long itemId, String companyId, boolean status) {
+        Optional<CompanyItem> companyItem = companyItemRepository.findByItemIdAndCompanyId(itemId, companyId);
+        if (companyItem.isPresent()) {
+            CompanyItem item = companyItem.get();
+            item.setContractStatus(status);
+            companyItemRepository.save(item);  // 상태 업데이트
+        }
     }
 
 }

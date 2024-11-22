@@ -1,8 +1,8 @@
 package com.procuone.mit_kdt.service.impl;
 
-import com.procuone.mit_kdt.dto.CompanyItemDTO;
 import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.entity.CompanyItem;
+import com.procuone.mit_kdt.entity.Contract;
 import com.procuone.mit_kdt.repository.ContractRepository;
 import com.procuone.mit_kdt.repository.ItemRepository;
 import com.procuone.mit_kdt.repository.CompanyItemRepository;
@@ -23,7 +23,12 @@ public class ContractServiceImpl implements ContractService {
 
     @Autowired
     private ContractRepository contractRepository;
-    
+
+    @Override
+    public void saveContract(Contract contract) {
+        contractRepository.save(contract);
+    }
+
     @Override
     public List<Item> getAllItems() {
         return itemRepository.findAll();  // 모든 품목 조회
