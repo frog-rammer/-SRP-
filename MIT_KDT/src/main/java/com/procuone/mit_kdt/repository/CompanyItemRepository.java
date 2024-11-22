@@ -12,5 +12,5 @@ public interface CompanyItemRepository extends JpaRepository<CompanyItem, Long> 
     // 품목 ID로 공급업체 리스트를 조회하는 메서드
     List<CompanyItem> findByItemId(Long itemId);
     List<CompanyItem> findByCompany_BusinessId(String businessId);  // businessId로 CompanyItem 조회
-    Optional<CompanyItem> findByItemIdAndCompanyId(Long itemId, String companyId);
+    Optional<CompanyItem> findByItemIdAndBusinessId(Long itemId, String businessId);
 }

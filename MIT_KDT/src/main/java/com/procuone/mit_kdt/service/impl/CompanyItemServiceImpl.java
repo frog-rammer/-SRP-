@@ -113,8 +113,8 @@ public class CompanyItemServiceImpl implements CompanyItemService {
     }
 
     @Override
-    public void updateContractStatus(Long itemId, String companyId, boolean status) {
-        Optional<CompanyItem> companyItem = companyItemRepository.findByItemIdAndCompanyId(itemId, companyId);
+    public void updateContractStatus(Long itemId, String BusinessId, boolean status) {
+        Optional<CompanyItem> companyItem = companyItemRepository.findByItemIdAndBusinessId(itemId, BusinessId);
         if (companyItem.isPresent()) {
             CompanyItem item = companyItem.get();
             item.setContractStatus(status);
