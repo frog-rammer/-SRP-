@@ -2,6 +2,7 @@ package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.dto.CompanyItemDTO;
+import com.procuone.mit_kdt.dto.ContractDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.entity.BOM.Item;
@@ -93,7 +94,8 @@ public class ContractController {
             @RequestParam String productCode,
             @RequestParam String itemName,
             @RequestParam Integer unitCost,
-            @RequestParam Integer leadTime
+            @RequestParam Integer leadTime,
+            @RequestParam Integer productionQty
     ) {
         System.out.println("업체명: " + comName);
         System.out.println("사업자 번호: " + businessId);
@@ -116,6 +118,7 @@ public class ContractController {
         contract.setItemName(itemName);        // 품목명 설정
         contract.setUnitCost(unitCost);        // 단가 설정
         contract.setLeadTime(leadTime);        // L/T 설정
+        contract.setProductionQty(productionQty);
         contract.setContractDate(new Date(System.currentTimeMillis())); // 현재 날짜 설정
         contract.setContractStatus(true);
         // Contract 저장
@@ -164,5 +167,12 @@ public class ContractController {
     @GetMapping("/registerContract2")
     public String registerContract2(RedirectAttributes redirectAttributes) {
         return "redirect:/contract/register";
+    }
+
+    // 계약된 회사 리스트 불러오기 (비동기 호출)
+    @GetMapping("/{productCode}")
+    @ResponseBody
+    public List<ContractDTO> getContractedCompaniesByProductCode(@PathVariable String productCode) {
+        return contractService.getContractsByProductCode(productCode);
     }
 }

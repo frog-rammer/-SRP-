@@ -14,18 +14,14 @@ import java.util.Date;
 public class ContractDTO {
 
     private Long id;                  // 계약 ID
-    private String conitemNo;         // 계약 항목 번호
     private String businessId;        // 사업자 번호
-    private String companyName;       // 회사명
     private String productCode;       // 품목 코드
+    private String comName;           // 회사명
     private String itemName;          // 품목명
-    private Integer contractPrice;    // 계약 가격
+    private String accountInfo;       // 계좌 정보
     private Integer unitCost;         // 단가
     private Integer leadTime;         // 소요 시간
-    private String contractFile;      // 계약서 파일 경로
-    private String contractInfo;      // 계약 정보
     private Date contractDate;        // 계약 날짜
+    private Integer productionQty;    // 최소 생산 수량
     private boolean contractStatus;   // 계약 상태 (예: 활성화/비활성화)
-
-    // 필요한 경우 생성된 DTO에 맞는 추가 메소드도 작성 가능
 }

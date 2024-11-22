@@ -88,6 +88,15 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
+    //하나의 카테고리로 아이템 리스트 가져오기
+    @Override
+    public List<ItemDTO> getItemsByCategoryId(Long categoryId) {
+        return itemRepository.findByCategoryId(categoryId).stream()
+                .map(this::convertEntityToDTO) // Entity -> DTO 변환
+                .collect(Collectors.toList());
+    }
+
+
     // 제품 코드로 품목 조회
     @Override
     public Optional<ItemDTO> findByProductCode(String productCode) {

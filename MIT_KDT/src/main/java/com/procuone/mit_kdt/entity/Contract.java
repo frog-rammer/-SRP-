@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.util.Date;
 
+
 @Getter
 @Setter
 @Entity
@@ -26,7 +27,6 @@ public class Contract {
     @JoinColumn(name = "product_code", referencedColumnName = "productCode", nullable = false)
     private Item item;
 
-
     @Column(nullable = false)
     private Date contractDate;
 
@@ -42,6 +42,9 @@ public class Contract {
     @Column(nullable = true)
     private Integer unitCost;
 
+    @Column(nullable = false)
+    private Integer productionQty; // 최소 생산 수량
+    
     @Column(nullable = true)
     private Integer leadTime;
 
