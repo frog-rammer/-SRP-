@@ -2,6 +2,7 @@ package com.procuone.mit_kdt.service.impl;
 
 import com.procuone.mit_kdt.dto.ContractDTO;
 import com.procuone.mit_kdt.entity.BOM.Item;
+import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.entity.CompanyItem;
 import com.procuone.mit_kdt.entity.Contract;
 import com.procuone.mit_kdt.repository.ContractRepository;
@@ -59,16 +60,13 @@ public class ContractServiceImpl implements ContractService {
     private ContractDTO convertEntityToDTO(Contract contract) {
         return ContractDTO.builder()
                 .id(contract.getId())
-                .conitemNo(contract.getConitemNo())
                 .businessId(contract.getCompany().getBusinessId())
-                .companyName(contract.getCompanyName())
                 .productCode(contract.getItem().getProductCode())
+                .comName(contract.getComName())
                 .itemName(contract.getItemName())
-                .contractPrice(contract.getContractPrice())
+                .accountInfo(contract.getAccountInfo())
                 .unitCost(contract.getUnitCost())
                 .leadTime(contract.getLeadTime())
-                .contractFile(contract.getContractFile())
-                .contractInfo(contract.getContractInfo())
                 .contractDate(contract.getContractDate())
                 .contractStatus(contract.getContractStatus())
                 .build();
@@ -77,15 +75,15 @@ public class ContractServiceImpl implements ContractService {
     private Contract convertDTOToEntity(ContractDTO contractDTO) {
         return Contract.builder()
                 .id(contractDTO.getId())
-                .conitemNo(contractDTO.getConitemNo())
-                .contractPrice(contractDTO.getContractPrice())
+                .company(Company.builder().businessId(contractDTO.getBusinessId()).build()) // ID 기반의 회사 설정
+                .item(Item.builder().productCode(contractDTO.getProductCode()).build()) // ID 기반의 아이템 설정
+                .comName(contractDTO.getComName())
+                .itemName(contractDTO.getItemName())
+                .accountInfo(contractDTO.getAccountInfo())
                 .unitCost(contractDTO.getUnitCost())
                 .leadTime(contractDTO.getLeadTime())
-                .contractFile(contractDTO.getContractFile())
-                .contractInfo(contractDTO.getContractInfo())
                 .contractDate(contractDTO.getContractDate())
                 .contractStatus(contractDTO.isContractStatus())
                 .build();
     }
-    
 }

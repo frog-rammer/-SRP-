@@ -167,53 +167,6 @@ public class ContractController {
         return "redirect:/contract/register";
     }
 
-    @PostMapping("/registerContract")
-    public String registerContract(
-            @RequestParam("contractFile") MultipartFile contractFile,  // 계약서 파일
-            @RequestParam("contractInfo") String contractInfo,  // 계약 정보
-            @RequestParam("contractPrice") Integer contractPrice,  // 계약 가격
-            @RequestParam("companyName") String companyName,  // 업체명
-            @RequestParam("itemName") String itemName,  // 품목명
-            @RequestParam("unitCost") Integer unitCost,  // 단가
-            @RequestParam("leadTime") Integer leadTime,  // 소요시간
-            @RequestParam("conitemNo") String conitemNo,  // 계약 아이템 번호
-            @RequestParam("companyId") String companyId,  // 회사 ID
-            @RequestParam("itemId") Long itemId,  // 품목 ID
-            Model model
-    ) throws Exception {
-
-        // 계약서 파일 저장 (파일 이름 생성 및 저장 위치 지정)
-        String fileName = contractFile.getOriginalFilename();
-        String filePath = "/path/to/save/files/" + fileName;
-        contractFile.transferTo((Path) new SslProperties.Bundles.Watch.File());
-
-        // 계약 정보 엔티티 생성
-        Contract contract = Contract.builder()
-                .conitemNo(conitemNo)
-                .contractDate((java.sql.Date) new Date(System.currentTimeMillis()))  // 계약일은 현재 날짜로 설정
-                .contractFile(filePath)  // 파일 경로 저장
-                .contractInfo(contractInfo)
-                .contractPrice(contractPrice)
-                .companyName(companyName)
-                .itemName(itemName)
-                .unitCost(unitCost)
-                .leadTime(leadTime)
-                .contractStatus(true)  // 계약 상태 true로 설정
-                .build();
-
-        // 계약 등록
-        contractService.saveContract(contract);
-
-        // CompanyItem의 contractStatus를 true로 업데이트
-        companyItemService.updateContractStatus(itemId, companyId, true);
-
-        // 뷰에 성공 메시지 전달
-        model.addAttribute("message", "계약이 성공적으로 등록되었습니다.");
-
-        return "procurementPlan/compareContracts";  // 계약 등록 완료 페이지
-    }
-
-
     // 계약된 회사 리스트 불러오기 (비동기 호출)
     @GetMapping("/{productCode}")
     @ResponseBody
