@@ -3,6 +3,9 @@ package com.procuone.mit_kdt.entity;
 import com.procuone.mit_kdt.entity.BOM.Item;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Optional;
+
 @Getter
 @Setter
 @Entity

@@ -1,5 +1,6 @@
 package com.procuone.mit_kdt.dto;
 
+import com.procuone.mit_kdt.entity.Company;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
