@@ -5,18 +5,17 @@ import com.procuone.mit_kdt.dto.CompanyItemDTO;
 import com.procuone.mit_kdt.dto.ContractDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
+import com.procuone.mit_kdt.entity.BOM.Item;
+import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.entity.CompanyItem;
 import com.procuone.mit_kdt.entity.Contract;
 import com.procuone.mit_kdt.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ssl.SslProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -85,6 +84,51 @@ public class ContractController {
 
         return filteredCompanyItemDTOs;  // 필터링된 결과 반환
     }
+
+    // 계약 등록 처리
+    @PostMapping("/registerContract")
+    public String registerContract(
+            @RequestParam String comName,
+            @RequestParam String businessId,
+            @RequestParam String comAccountNumber,
+            @RequestParam String productCode,
+            @RequestParam String itemName,
+            @RequestParam Integer unitCost,
+            @RequestParam Integer leadTime
+    ) {
+        System.out.println("업체명: " + comName);
+        System.out.println("사업자 번호: " + businessId);
+        System.out.println("계좌 정보: " + comAccountNumber);
+        System.out.println("품목코드: " + productCode);
+        System.out.println("품목명: " + itemName);
+        System.out.println("단가: " + unitCost);
+        System.out.println("L/T: " + leadTime);
+
+        // Company 및 Item 객체 조회
+        Company company = companyService.getCompanyEntityByBusinessId(businessId);
+        Item item = itemService.getItemEntityByProductCode(productCode);
+
+        // Contract 엔티티 직접 생성 및 설정
+        Contract contract = new Contract();
+        contract.setCompany(company);          // 연관된 Company 객체 설정
+        contract.setItem(item);                // 연관된 Item 객체 설정
+        contract.setComName(comName);          // 업체명 설정
+        contract.setAccountInfo(comAccountNumber); // 계좌 정보 설정
+        contract.setItemName(itemName);        // 품목명 설정
+        contract.setUnitCost(unitCost);        // 단가 설정
+        contract.setLeadTime(leadTime);        // L/T 설정
+        contract.setContractDate(new Date(System.currentTimeMillis())); // 현재 날짜 설정
+        contract.setContractStatus(true);
+        // Contract 저장
+        contractService.saveContract(contract);
+
+        // CompanyItem 상태 업데이트
+        companyItemService.updateContractStatus(item.getId(),businessId,true);
+       
+
+        return "redirect:/contract/register";
+    }
+
 
     @GetMapping("/contractWithCompany/{businessId}")
     public String contractWithCompany(@PathVariable String businessId, Model model) {
@@ -176,5 +220,4 @@ public class ContractController {
     public List<ContractDTO> getContractedCompaniesByProductCode(@PathVariable String productCode) {
         return contractService.getContractsByProductCode(productCode);
     }
-
 }

@@ -67,7 +67,7 @@
             border-radius: 4px;
         }
 
-        button {
+        .searchBtn,.detailsBtn,.updateBtn {
             padding: 10px 15px;
             font-size: 14px;
             background-color: #267f6d;
@@ -197,7 +197,7 @@
                         <input type="text" placeholder="검색어를 입력하세요">
                         <button class="searchBtn">검색</button>
                         <button class="detailsBtn">등록된 계획 자세히 보기</button>
-                        <button onclick="updateProgress()">진행 상황 업데이트</button>
+                        <button onclick="updateProgress()" class="updateBtn">진행 상황 업데이트</button>
                     </div>
                     <h3>생산 계획 목록</h3>
                     <section class="productionPlanList">

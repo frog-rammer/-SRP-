@@ -39,6 +39,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // (테스트용 H2 추가)
+    testImplementation 'com.h2database:h2'
+    implementation 'mysql:mysql-connector-java:8.0.33'// MySQL JDBC 드라이버 버전 추가
 }
 
 tasks.named('test') {

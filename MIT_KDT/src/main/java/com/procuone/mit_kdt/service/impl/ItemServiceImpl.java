@@ -112,6 +112,12 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.deleteById(id);
     }
 
+    @Override
+    public Item getItemEntityByProductCode(String productCode) {
+        return itemRepository.findByProductCode(productCode)
+                .orElseThrow(() -> new RuntimeException("Item not found with productCode: " + productCode));
+    }
+
     // DTO -> Entity 변환 메서드
     private Item convertDTOToEntity(ItemDTO itemDTO) {
         Item item = Item.builder()

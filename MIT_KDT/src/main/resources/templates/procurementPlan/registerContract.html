@@ -29,20 +29,16 @@
       <h1>계약 등록</h1>
       <div class="input-group">
         <div>
-          <label>계약서</label>
-          <input type="file">
-        </div>
-        <div>
           <label>업체명</label>
-          <input type="text" th:value="${companyDTO.comName}" readonly>
+          <input type="text" name="comName" th:value="${companyDTO.comName}" readonly>
         </div>
         <div>
           <label>사업자 번호</label>
-          <input type="text" th:value="${companyDTO.businessId}" readonly>
+          <input type="text" name="businessId" th:value="${companyDTO.businessId}" readonly>
         </div>
         <div>
           <label>계좌 정보</label>
-          <input type="text" th:value="${companyDTO.comAccountNumber}" readonly>
+          <input type="text" name="comAccountNumber" th:value="${companyDTO.comAccountNumber}" readonly>
         </div>
       </div>
     </div>
@@ -55,23 +51,19 @@
       <div class="input-group">
         <div>
           <label>품목코드</label>
-          <input type="text" th:value="${itemDTO.productCode}" readonly>
+          <input type="text" name="productCode" th:value="${itemDTO.productCode}" readonly>
         </div>
         <div>
           <label>품목명</label>
-          <input type="text" th:value="${itemDTO.itemName}" readonly>
+          <input type="text" name="itemName" th:value="${itemDTO.itemName}" readonly>
         </div>
         <div>
           <label>단가</label>
-          <input type="text"th:value="${companyItemDTO.unitCost}" readonly>
+          <input type="text" name="unitCost" th:value="${companyItemDTO.unitCost}" readonly>
         </div>
         <div>
           <label>L/T(소요시간)</label>
-          <input type="text" th:value="${companyItemDTO.leadTime}" readonly>
-        </div>
-        <div>
-          <label>세부사항</label>
-          <input type="text">
+          <input type="text" name="leadTime" th:value="${companyItemDTO.leadTime}" readonly>
         </div>
       </div>
 

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import java.util.Optional;
+
 @Service
 public class ContractServiceImpl implements ContractService {
 
@@ -27,8 +29,8 @@ public class ContractServiceImpl implements ContractService {
     private ContractRepository contractRepository;
 
     @Override
-    public void saveContract(Contract contract) {
-        contractRepository.save(contract);
+    public Contract saveContract(Contract contract) {
+        return contractRepository.save(contract); // Contract 저장
     }
 
     @Override
@@ -44,6 +46,14 @@ public class ContractServiceImpl implements ContractService {
     public List<ContractDTO> getContractsByProductCode(String productCode) {
         List<Contract> contracts = contractRepository.findByItemProductCode(productCode);
         return contracts.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
+    }
+    public void updateContractStatus(Long itemId, String businessId, boolean status) {
+        Optional<Contract> Contract =  contractRepository.findByItemIdAndCompany_BusinessId(itemId, businessId);
+        if (Contract.isPresent()) {
+            Contract con = Contract.get();
+            con.setContractStatus(status);
+            contractRepository.save(con);  // 상태 업데이트
+        }
     }
 
     private ContractDTO convertEntityToDTO(Contract contract) {
@@ -77,6 +87,5 @@ public class ContractServiceImpl implements ContractService {
                 .contractStatus(contractDTO.isContractStatus())
                 .build();
     }
-
-
+    
 }
