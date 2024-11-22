@@ -94,7 +94,8 @@ public class ContractController {
             @RequestParam String productCode,
             @RequestParam String itemName,
             @RequestParam Integer unitCost,
-            @RequestParam Integer leadTime
+            @RequestParam Integer leadTime,
+            @RequestParam Integer productionQty
     ) {
         System.out.println("업체명: " + comName);
         System.out.println("사업자 번호: " + businessId);
@@ -117,6 +118,7 @@ public class ContractController {
         contract.setItemName(itemName);        // 품목명 설정
         contract.setUnitCost(unitCost);        // 단가 설정
         contract.setLeadTime(leadTime);        // L/T 설정
+        contract.setProductionQty(productionQty);
         contract.setContractDate(new Date(System.currentTimeMillis())); // 현재 날짜 설정
         contract.setContractStatus(true);
         // Contract 저장

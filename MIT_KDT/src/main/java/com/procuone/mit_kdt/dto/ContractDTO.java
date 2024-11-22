@@ -22,5 +22,6 @@ public class ContractDTO {
     private Integer unitCost;         // 단가
     private Integer leadTime;         // 소요 시간
     private Date contractDate;        // 계약 날짜
+    private Integer productionQty;    // 최소 생산 수량
     private boolean contractStatus;   // 계약 상태 (예: 활성화/비활성화)
 }
