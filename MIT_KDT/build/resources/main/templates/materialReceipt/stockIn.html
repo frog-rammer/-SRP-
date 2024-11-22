@@ -4,8 +4,87 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+  <link rel="stylesheet" th:href="@{/css/productionPlanView.css}">
   <link rel="stylesheet" th:href="@{/css/layout.css}">
   <title>자재 입고 관리</title>
+  <style>
+    /* 메인 영역 스타일 */
+    .layout-main {
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
+    .layout-main h1 {
+      font-size: 2rem;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-weight: bold;
+      border-bottom: 2px solid #32928E;
+      padding-bottom: 10px;
+    }
+
+    .layout-main h2 {
+      font-size: 1.5rem;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    table th, table td {
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    table th {
+      background-color: #32928E;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    table tbody tr:nth-child(even) {
+      background-color: #ecf0f1;
+    }
+
+    table tbody tr:nth-child(odd) {
+      background-color: #fff;
+    }
+
+    table tbody tr:hover {
+      background-color: #f1c40f;
+    }
+
+    table td {
+      border-bottom: 1px solid #ddd;
+    }
+
+    #link {
+      display: inline-block;
+      background-color: #32928E;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+
+    #link:hover {
+      background-color:#278F75;
+    }
+
+  </style>
 </head>
 <body>
 <div class="grid-container">
@@ -114,7 +193,7 @@
     </tbody>
   </table>
 
-  <a href="../materialIssue/stockOut">출고 관리로 이동</a>
+  <a href="../materialIssue/stockOut" id="link">출고 관리로 이동</a>
   </main>
 
   <footer class="layout-footer">
