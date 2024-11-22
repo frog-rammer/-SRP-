@@ -16,7 +16,6 @@ public class ItemDTO {
     private String drawingFile; // 도면 파일 경로
     private boolean isShared; // 공유 여부
     private String dimensions; // 치수 정보
-
     private Long categoryId; // 카테고리 ID
     private String categoryName; // 카테고리 이름
 }

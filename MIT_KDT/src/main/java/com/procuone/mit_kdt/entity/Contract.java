@@ -4,7 +4,8 @@ import com.procuone.mit_kdt.entity.BOM.Item;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
+
 @Getter
 @Setter
 @Entity
@@ -17,9 +18,6 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String conitemNo;
-
     @ManyToOne
     @JoinColumn(name = "business_id", referencedColumnName = "businessId", nullable = false)
     private Company company;
@@ -28,24 +26,18 @@ public class Contract {
     @JoinColumn(name = "product_code", referencedColumnName = "productCode", nullable = false)
     private Item item;
 
-    @Temporal(TemporalType.DATE)
+
     @Column(nullable = false)
     private Date contractDate;
 
     @Column(length = 255)
-    private String contractFile;
-
-    @Column(length = 255)
-    private String contractInfo;
-
-    @Column(nullable = false)
-    private Integer contractPrice;
-
-    @Column(length = 255)
-    private String companyName;
+    private String comName;
 
     @Column(length = 255)
     private String itemName;
+
+    @Column(length = 255)
+    private String accountInfo;      // 계좌 정보
 
     @Column(nullable = true)
     private Integer unitCost;

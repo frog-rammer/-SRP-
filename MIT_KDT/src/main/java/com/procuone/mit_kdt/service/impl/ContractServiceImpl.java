@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContractServiceImpl implements ContractService {
@@ -25,8 +26,8 @@ public class ContractServiceImpl implements ContractService {
     private ContractRepository contractRepository;
 
     @Override
-    public void saveContract(Contract contract) {
-        contractRepository.save(contract);
+    public Contract saveContract(Contract contract) {
+        return contractRepository.save(contract); // Contract 저장
     }
 
     @Override
@@ -37,4 +38,16 @@ public class ContractServiceImpl implements ContractService {
     public List<CompanyItem> getCompanyItemsByProductCode(String productCode) {
         return companyItemRepository.findByItemProductCode(productCode);  // 품목 코드에 맞는 계약 정보 조회
     }
+
+    @Override
+    public void updateContractStatus(Long itemId, String businessId, boolean status) {
+        Optional<Contract> Contract =  contractRepository.findByItemIdAndCompany_BusinessId(itemId, businessId);
+        if (Contract.isPresent()) {
+            Contract con = Contract.get();
+            con.setContractStatus(status);
+            contractRepository.save(con);  // 상태 업데이트
+        }
+    }
+
+
 }

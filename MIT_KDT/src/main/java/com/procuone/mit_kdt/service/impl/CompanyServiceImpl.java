@@ -2,11 +2,11 @@ package com.procuone.mit_kdt.service.impl;
 
 import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.entity.Company;
+import com.procuone.mit_kdt.entity.CompanyItem;
 import com.procuone.mit_kdt.repository.CompanyRepository;
 import com.procuone.mit_kdt.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +18,6 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private CompanyRepository companyRepository;
-
 
     public CompanyServiceImpl(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
@@ -75,6 +74,12 @@ public class CompanyServiceImpl implements CompanyService {
         return companyPage.map(this::entityToDto); // 결과를 DTO로 변환
     }
 
+    @Override
+    public Company getCompanyEntityByBusinessId(String businessId) {
+        return companyRepository.findByBusinessId(businessId)
+                .orElseThrow(() -> new RuntimeException("Company not found with businessId: " + businessId));
+    }
+
     // DTO -> Entity 변환
     private Company dtoToEntity(CompanyDTO companyDTO) {
         return Company.builder()
@@ -106,7 +111,4 @@ public class CompanyServiceImpl implements CompanyService {
                 .comAccountNumber(company.getComAccountNumber()) // 계좌번호
                 .build();
     }
-
-
-
 }

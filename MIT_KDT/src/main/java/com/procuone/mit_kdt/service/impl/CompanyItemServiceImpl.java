@@ -122,4 +122,14 @@ public class CompanyItemServiceImpl implements CompanyItemService {
         }
     }
 
+    @Override
+    public Optional<CompanyItem> findByItemIdAndBusinessId(Long itemId, String businessId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public void update(CompanyItem companyItem) {
+
+    }
+
 }

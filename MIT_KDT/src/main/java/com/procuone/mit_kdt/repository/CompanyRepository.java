@@ -19,5 +19,4 @@ public interface CompanyRepository extends JpaRepository<Company, String> {
     //주어진 계정(comAccount)을 기반으로 회사의 비즈니스 ID를 조회합니다.
     @Query("SELECT c.businessId FROM Company c WHERE c.comId = :comId")
     String findBusinessIdByAccount(String comId);
-
 }
