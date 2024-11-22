@@ -221,6 +221,7 @@
                 <thead>
                 <tr>
                     <th>회사명</th>
+                    <th>사업자번호</th>
                     <th>L/T</th>
                     <th>단가</th>
                     <th>최소 생산 수량</th>
@@ -234,16 +235,16 @@
             <button class="btn" onclick="addToPurchaseBOM()">P-Bom 구성</button>
         </aside>
 
-        <!-- P-BOM 트리 리스트 -->
-        <div class="pbom-container">
-            <h2>P-BOM 구성 리스트</h2>
-            <div class="pbom-tree">
-                <ul id="pbomTree">
-                    <!-- 동적으로 채워질 트리 구조 -->
-                </ul>
-            </div>
-        </div>
-    </div>
+<!--        &lt;!&ndash; P-BOM 트리 리스트 &ndash;&gt;-->
+<!--        <div class="pbom-container">-->
+<!--            <h2>P-BOM 구성 리스트</h2>-->
+<!--            <div class="pbom-tree">-->
+<!--                <ul id="pbomTree">-->
+<!--                    &lt;!&ndash; 동적으로 채워질 트리 구조 &ndash;&gt;-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 
 </div>
 <script>
@@ -383,10 +384,11 @@
                     const row = document.createElement("tr");
                     row.innerHTML = `
                     <td>${company.comName}</td>
+                    <td>${company.businessId}</td>
                     <td>${company.leadTime}</td>
                     <td>${company.unitCost}</td>
                     <td>${company.productionQty}</td>
-                    <td><input type="radio" name="selectedCompany" data-company-name="${company.companyName}" data-product-code="${company.productCode}" data-lead-time="${company.leadTime}" data-unit-cost="${company.unitCost}" data-production-qty="${company.productionQty}"></td>
+                    <td><input type="radio" name="selectedCompany" data-company-name="${company.comName}" data-product-code="${company.productCode}"  data-business-Id="${company.businessId}" data-lead-time="${company.leadTime}" data-unit-cost="${company.unitCost}" data-production-qty="${company.productionQty}"></td>
                 `;
                     companyTableBody.appendChild(row);
                 });
@@ -396,8 +398,6 @@
                 alert("계약된 회사 정보를 불러오는 중 문제가 발생했습니다.");
             });
     }
-
-    // 계약된 회사 리스트에서 선택된 데이터를 기반으로 P-BOM 추가
     function addToPurchaseBOM() {
         const selectedCompanyRows = document.querySelectorAll('#companyTableBody input[type="radio"]:checked');
         if (selectedCompanyRows.length === 0) {
@@ -411,15 +411,89 @@
             const leadTime = row.dataset.leadTime;
             const unitCost = row.dataset.unitCost;
             const productionQty = row.dataset.productionQty;
+            const businessId = row.dataset.businessId;
+            const itemId = row.dataset.itemId;
 
-            const pbomList = document.getElementById("pbomTree");
-            const newItem = document.createElement("li");
-            newItem.textContent = `${productCode} - ${companyName}, 리드타임: ${leadTime}, 단가: ${unitCost}, 최소 생산 수량: ${productionQty}`;
-            pbomList.appendChild(newItem);
+            // P-BOM 등록을 위한 서버로의 요청
+            const purchaseBOMData = {
+                productCode: productCode,
+                businessId: businessId,
+                itemId: itemId,
+                leadTime: leadTime,
+                unitCost: unitCost,
+                productionQty: productionQty
+            };
+
+            fetch('/pbom/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(purchaseBOMData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('P-BOM 등록 중 문제가 발생했습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 등록된 P-BOM 정보를 트리 리스트에 추가
+                    // loadPurchaseBOMTree();
+                    alert("P-Bom 구성 등록 완료");
+                })
+                .catch(error => {
+                    console.error('Error registering P-BOM:', error);
+                    alert('P-BOM 등록 중 문제가 발생했습니다.');
+                });
         });
-
-        alert("P-Bom 구성 등록 완료");
     }
+
+    // // P-BOM 트리 데이터를 서버에서 가져와서 트리 형태로 표시하는 함수
+    // function loadPurchaseBOMTree() {
+    //     fetch('/pbom/tree')
+    //         .then(response => {
+    //             if (!response.ok) throw new Error("Failed to fetch P-BOM tree");
+    //             return response.json();
+    //         })
+    //         .then(treeData => {
+    //             console.log('P-BOM 트리 데이터:', treeData);
+    //             // 트리 형태의 P-BOM 리스트 초기화
+    //             const pbomList = document.getElementById("pbomTree");
+    //             pbomList.innerHTML = '';
+    //
+    //             // 트리 데이터를 기반으로 리스트 요소를 생성하여 화면에 추가
+    //             createTreeElement(treeData, pbomList);
+    //         })
+    //         .catch(error => {
+    //             console.error('Error fetching P-BOM tree:', error);
+    //             alert("P-BOM 트리 데이터를 불러오는 중 문제가 발생했습니다.");
+    //         });
+    // }
+    //
+    // function createTreeElement(node, parentElement) {
+    //     if (!node) return;
+    //
+    //     const newItem = document.createElement("li");
+    //     newItem.textContent = `${node.productCode} - ${node.companyName ? node.companyName : ''}, L/T: ${node.leadTime ? node.leadTime : ''}, 단가: ${node.unitCost ? node.unitCost : ''}, 최소 생산 수량: ${node.productionQty ? node.productionQty : ''}`;
+    //     parentElement.appendChild(newItem);
+    //
+    //     if (node.children && node.children.length > 0) {
+    //         const childList = document.createElement("ul");
+    //         newItem.appendChild(childList);
+    //
+    //         node.children.forEach(childNode => {
+    //             createTreeElement(childNode, childList);
+    //         });
+    //     }
+    // }
+    //
+    // // 페이지 로딩 시 P-BOM 트리 데이터 로드
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     loadPurchaseBOMTree();
+    // });
+
+
 </script>
 
 </body>
