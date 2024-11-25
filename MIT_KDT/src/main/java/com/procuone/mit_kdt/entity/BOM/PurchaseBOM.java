@@ -4,6 +4,8 @@ import com.procuone.mit_kdt.entity.Company;
 import jakarta.persistence.*;
 import lombok.*;
 
+
+@Getter
 @Setter
 @Entity
 @Builder
