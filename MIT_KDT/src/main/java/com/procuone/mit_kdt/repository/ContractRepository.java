@@ -24,5 +24,6 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
     Contract findContractByBusinessIdAndProductCode(String businessId, String productCode);
     Optional<Contract> findByItemIdAndCompany_BusinessId(Long itemId, String businessId);
     void deleteByContractEndDateBefore(Date date);
+    List<Contract> findByCompany_BusinessId(String businessId);
 }
 

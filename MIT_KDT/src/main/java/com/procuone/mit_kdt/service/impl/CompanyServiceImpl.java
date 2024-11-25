@@ -1,9 +1,12 @@
 package com.procuone.mit_kdt.service.impl;
 
 import com.procuone.mit_kdt.dto.CompanyDTO;
+import com.procuone.mit_kdt.dto.ContractDTO;
 import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.entity.CompanyItem;
+import com.procuone.mit_kdt.entity.Contract;
 import com.procuone.mit_kdt.repository.CompanyRepository;
+import com.procuone.mit_kdt.repository.ContractRepository;
 import com.procuone.mit_kdt.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,7 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -19,8 +24,22 @@ public class CompanyServiceImpl implements CompanyService {
     @Autowired
     private CompanyRepository companyRepository;
 
+    @Autowired
+    private ContractRepository contractRepository;
+
     public CompanyServiceImpl(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
+    }
+
+    @Override
+    public List<ContractDTO> getContractsByBusinessId(String businessId) {
+        // 계약된 항목을 엔티티로 조회
+        List<Contract> contracts = contractRepository.findByCompany_BusinessId(businessId);
+
+        // Contract 엔티티를 DTO로 변환하여 반환
+        return contracts.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -64,7 +83,8 @@ public class CompanyServiceImpl implements CompanyService {
     // 계정으로 사업자 번호 뽑기
     @Override
     public String getCompanyBusinessIdBycomId(String comId) {
-        return companyRepository.findBusinessIdByAccount(comId);
+        return companyRepository.findBusinessIdByAccount(comId)
+                .orElseThrow(() -> new IllegalArgumentException("Business ID not found for comId: " + comId));
     }
 
     @Override
@@ -109,6 +129,23 @@ public class CompanyServiceImpl implements CompanyService {
                 .comPaymentInfo(company.getComPaymentInfo()) // 결제 정보
                 .comBank(company.getComBank()) // 은행
                 .comAccountNumber(company.getComAccountNumber()) // 계좌번호
+                .build();
+    }
+
+    private ContractDTO convertToDTO(Contract contract) {
+        return ContractDTO.builder()
+                .id(contract.getId())
+                .businessId(contract.getCompany().getBusinessId())
+                .comName(contract.getCompany().getComName()) // 회사명
+                .productCode(contract.getItem().getProductCode()) // 품목 코드
+                .itemName(contract.getItem().getItemName()) // 품목명
+                .accountInfo(contract.getCompany().getComPaymentInfo()) // 계좌 정보
+                .unitCost(contract.getUnitCost())
+                .leadTime(contract.getLeadTime())
+                .contractDate(contract.getContractDate())
+                .contractEndDate(contract.getContractEndDate())
+                .productionQty(contract.getProductionQty())
+                .contractStatus(contract.getContractStatus())
                 .build();
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import java.util.Optional;
@@ -31,6 +32,16 @@ public class ContractServiceImpl implements ContractService {
     private ContractRepository contractRepository;
 
     @Override
+    public ContractDTO getContractById(Long id) {
+        // 계약 ID로 계약 데이터 조회
+        Contract contract = contractRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Contract not found with id: " + id));
+
+        // Contract 엔티티를 ContractDTO로 변환
+        return convertEntityToDTO(contract);
+    }
+
+    @Override
     public void deleteExpiredContracts() {
         // 현재 날짜 가져오기
         Date currentDate = new Date(System.currentTimeMillis());
@@ -39,6 +50,7 @@ public class ContractServiceImpl implements ContractService {
         contractRepository.deleteByContractEndDateBefore(currentDate);
         System.out.println("Expired contracts deleted successfully at " + new Date());
     }
+
 
     @Override
     public Contract saveContract(Contract contract) {

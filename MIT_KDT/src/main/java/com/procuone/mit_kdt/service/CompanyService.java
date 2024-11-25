@@ -1,10 +1,13 @@
 package com.procuone.mit_kdt.service;
 
 import com.procuone.mit_kdt.dto.CompanyDTO;
+import com.procuone.mit_kdt.dto.ContractDTO;
 import com.procuone.mit_kdt.entity.Company;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface CompanyService {
 
@@ -25,4 +28,6 @@ public interface CompanyService {
 
     // 이름으로 회사 검색 (DTO 페이징 반환)
     Page<CompanyDTO> searchCompaniesByName(String searchTerm, Pageable pageable);
+
+    List<ContractDTO> getContractsByBusinessId(String businessId); // 계약된 항목 조회
 }

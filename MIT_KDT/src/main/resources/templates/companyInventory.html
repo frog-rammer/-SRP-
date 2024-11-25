@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>자기 재고 입력 및 수정</title>
+</head>
+<body>
+<div class="form-container">
+  <h1>자기 재고 입력</h1>
+  <form th:action="@{/company/inventory/save}" th:object="${inventory}" method="post">
+    <div class="form-group">
+      <label for="itemId">품목</label>
+      <select id="itemId" name="itemId" required>
+        <option th:each="item : ${items}" th:value="${item.id}" th:text="${item.itemName}">
+          품목명
+        </option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="currentQuantity">현재 수량</label>
+      <input type="number" id="currentQuantity" name="currentQuantity" th:value="*{currentQuantity}" required>
+    </div>
+    <div class="form-group">
+      <label for="reservedQuantity">예약된 수량</label>
+      <input type="number" id="reservedQuantity" name="reservedQuantity" th:value="*{reservedQuantity}" required>
+    </div>
+    <div class="form-actions">
+      <button type="submit">저장</button>
+      <button type="button" onclick="window.history.back()">취소</button>
+    </div>
+  </form>
+
+  <!-- 자기 재고 확인 및 수정 -->
+  <h2>자기 재고 확인 및 수정</h2>
+  <form th:action="@{/company/inventory/update}" method="post">
+    <table border="1" cellpadding="5" cellspacing="0">
+      <thead>
+      <tr>
+        <th>품목명</th>
+        <th>현재 수량</th>
+        <th>예약된 수량</th>
+        <th>마지막 업데이트</th>
+        <th>수정</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="inventory : ${companyInventoryList}">
+        <td th:text="${inventory.itemName}">품목명</td>
+        <td>
+          <input type="number" name="currentQuantity" th:value="${inventory.currentQuantity}" required>
+        </td>
+        <td>
+          <input type="number" name="reservedQuantity" th:value="${inventory.reservedQuantity}" required>
+        </td>
+        <td th:text="${inventory.lastUpdated}">업데이트 날짜</td>
+        <td>
+          <!-- 수정 요청 시 inventory.id를 함께 전송 -->
+          <input type="hidden" name="inventoryId" th:value="${inventory.id}">
+          <button type="submit">수정</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </form>
+</div>
+</body>
+</html>

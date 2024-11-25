@@ -31,5 +31,4 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     @ToString.Exclude // 순환 참조 방지
     private Set<CompanyItem> companyItems; // 회사가 공급하는 아이템 리스트
-
 }
