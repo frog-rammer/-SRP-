@@ -10,14 +10,14 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductionPlanDTO {
+public class ProcumentPlanDTO {
     // 수정 해야함
     private String productPlanCode;       // 생산 기준정보 코드
     private String productName;       // 생산제품명
     private String productCode;       // 생산제품코드
     private LocalDate planStartDate;  // 생산 시작일
     private LocalDate planEndDate;    // 생산 종료일
-    private Integer quantity;         // 생산 수량
-    private String partCode;          // 부품 코드
-    private Long requiredProcurementQuantity; // 조달 필요 수량 (추가)
+    private Long quantity;         // 생산 수량
+    private Long procurementQuantity; // 조달수량
+    private LocalDate procurementEndDate; //조달 납기일
 }

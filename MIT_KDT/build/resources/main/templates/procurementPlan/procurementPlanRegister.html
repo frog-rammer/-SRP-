@@ -306,11 +306,12 @@
                         <th>생산제품명</th>
                         <th>생산제품코드</th>
                         <th>생산수량</th>
+                        <th>조달 필요수량</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="productionPlan : ${productionPlanList}"
-                        th:attr="data-start-date=${productionPlan.planStartDate}, data-end-date=${productionPlan.planEndDate},
+                        th:attr="data-product-plan-code=${productionPlan.productPlanCode},data-start-date=${productionPlan.planStartDate}, data-end-date=${productionPlan.planEndDate},
                         data-product-name=${productionPlan.productName}, data-product-code=${productionPlan.productCode},
                         data-quantity=${productionPlan.quantity}"
                         onclick="onProductionPlanClick(this)">
@@ -320,6 +321,7 @@
                         <td th:text="${productionPlan.productName}"></td>
                         <td th:text="${productionPlan.productCode}"></td>
                         <td th:text="${productionPlan.quantity}"></td>
+                        <td th:text="${productionPlan.requiredProcurementQuantity}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(productionPlanList)}">
                         <td colspan="6">등록된 생산 계획이 없습니다.</td>
@@ -374,39 +376,43 @@
             <div style="flex: 1; min-width: 350px; max-width: 100%;">
                 <h4>조달계획등록</h4>
                 <div class="form-container">
-                    <form action="/submitProcurementPlan" method="POST">
+                    <form action="/procumentPlan/register" method="POST" th:object="${procurementPlanDTO}" onsubmit="return validateForm()">
                         <table>
                             <tr>
+                                <th>생산 계획 번호</th>
+                                <td><input type="text" id="productPlanCode" name="productPlanCode" th:field="*{productPlanCode}" readonly></td>
+                            </tr>
+                            <tr>
                                 <th>생산 시작일</th>
-                                <td><input type="text" id="startDate" name="startDate" readonly></td>
+                                <td><input type="text" id="startDate" name="startDate" th:field="*{planStartDate}" readonly></td>
                             </tr>
                             <tr>
                                 <th>생산 종료일</th>
-                                <td><input type="text" id="endDate" name="endDate" readonly></td>
+                                <td><input type="text" id="endDate" name="endDate" th:field="*{planEndDate}" readonly></td>
                             </tr>
                             <tr>
                                 <th>생산제품명</th>
-                                <td><input type="text" id="productName" name="productName" readonly></td>
+                                <td><input type="text" id="productName" name="productName"  th:field="*{productName}" readonly></td>
                             </tr>
                             <tr>
                                 <th>생산제품코드</th>
-                                <td><input type="text" id="productCode" name="productCode" readonly></td>
+                                <td><input type="text" id="productCode" name="productCode"  th:field="*{productCode}" readonly></td>
                             </tr>
                             <tr>
                                 <th>생산 예정 수량</th>
-                                <td><input type="text" id="quantity" name="quantity" readonly></td>
+                                <td><input type="text" id="quantity" name="quantity"  th:field="*{quantity}" readonly></td>
                             </tr>
                             <tr>
                                 <th>조달 수량</th>
-                                <td><input type="text" id="procumentQuntity" name="procumentQuntity"></td>
+                                <td><input type="text" id="procurementQuantity" name="procurementQuantity" th:field="*{procurementQuantity}" ></td>
                             </tr>
                             <tr>
                                 <th>조달 납기일</th>
-                                <td><input type="date" id="procurementDate" name="procurementDate" required></td>
+                                <td><input type="date" id="procurementDate" name="procurementDate"  th:field="*{procurementEndDate}" required></td>
                             </tr>
                         </table>
                         <div class="form-actions">
-                            <button type="submit">조달계획 등록</button>
+                            <button type="submit" >조달계획 등록</button>
                         </div>
                     </form>
                 </div>
@@ -416,6 +422,56 @@
         <footer class="layout-footer"></footer>
 </div>
 <script>
+    function validateForm() {
+        // 입력 필드 값 가져오기
+        const startDateValue = document.getElementById("startDate").value.trim();
+        const endDateValue = document.getElementById("endDate").value.trim();
+        const quantityValue = document.getElementById("quantity").value.trim();
+        const procumentQuantityValue = document.getElementById("procumentQuantity").value.trim();
+        const procurementDateValue = document.getElementById("procurementDate").value.trim();
+
+        // 1. 필수 필드 확인
+        if (!startDateValue || !endDateValue || !quantityValue || !procumentQuantityValue || !procurementDateValue) {
+            alert("모든 필드를 입력해주세요.");
+            return false;
+        }
+
+        // 2. 숫자 필드 검증 (조달 수량 및 생산 예정 수량)
+        const quantity = parseInt(quantityValue, 10);
+        const procumentQuantity = parseInt(procumentQuantityValue, 10);
+
+        if (isNaN(procumentQuantity) || procumentQuantity <= 0) {
+            alert("조달 수량은 1 이상의 숫자를 입력해야 합니다.");
+            return false;
+        }
+
+        if (procumentQuantity > quantity) {
+            alert("조달 수량은 생산 예정 수량을 초과할 수 없습니다.");
+            return false;
+        }
+
+        // 3. 날짜 검증
+        const startDate = new Date(startDateValue);
+        const endDate = new Date(endDateValue);
+        const procurementDate = new Date(procurementDateValue);
+
+        // 조달 납기일이 생산 시작일 이후로 설정된 경우
+        if (procurementDate > startDate) {
+            alert("조달 납기일은 생산 시작일과 같거나 더 빠르게 설정해야 합니다.");
+            return false;
+        }
+
+        // 조달 납기일이 생산 종료일 이후로 설정된 경우
+        if (procurementDate > endDate) {
+            alert("조달 납기일은 생산 종료일을 초과할 수 없습니다.");
+            return false;
+        }
+
+        // 모든 유효성 검사를 통과한 경우 true 반환
+        return true;
+    }
+
+
     const yearSelect = document.getElementById('yearSelect');
     const monthSelect = document.getElementById('monthSelect');
     const calendar = document.getElementById('calendar');
@@ -425,7 +481,7 @@
     const productNameInput = document.getElementById('productName');
     const productCodeInput = document.getElementById('productCode');
     const quantityInput = document.getElementById('quantity');
-
+    const productPlanCodeInput = document.getElementById('productPlanCode'); // 생산계획 번호 입력 필드 추가
     let productionStartDate, productionEndDate;
 
     for (let i = 2020; i <= 2030; i++) {
@@ -494,6 +550,7 @@
     });
 
     function onProductionPlanClick(row) {
+        const productPlanCode = row.getAttribute('data-product-plan-code');
         const startDate = row.getAttribute('data-start-date');
         const endDate = row.getAttribute('data-end-date');
         const productName = row.getAttribute('data-product-name');
@@ -503,6 +560,8 @@
         productionStartDate = new Date(startDate);
         productionEndDate = new Date(endDate);
 
+        // 폼 필드 값 채우기
+        productPlanCodeInput.value = productPlanCode; // 생산계획 번호 입력
         startDateInput.value = startDate;
         endDateInput.value = endDate;
         productNameInput.value = productName;

@@ -7,7 +7,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "inventory")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,8 +35,9 @@ public class Inventory {
     @Column(name = "minimum_required", nullable = false)
     private Integer minimumRequired; // 최소 유지 수량
 
-    @Column(name = "location", length = 255)
-    private String location; // 재고 위치 (창고, 지역 등)
+    @Column(name = "CoooperationCompanyInventoryId", length = 255)
+    private String CoooperationCompanyInvertoryId; // 재고 위치 (창고, 지역 등)
+
 
     @Column(name = "last_updated", nullable = false)
     private LocalDateTime lastUpdated; // 마지막 업데이트 시간

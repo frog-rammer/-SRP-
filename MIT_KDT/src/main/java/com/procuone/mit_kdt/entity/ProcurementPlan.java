@@ -7,7 +7,6 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
-
 @Entity
 @Builder
 @NoArgsConstructor
@@ -15,7 +14,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class ProductionPlan {
+public class ProcurementPlan {
 
     @Id
     @GeneratedValue(generator = "custom-id")
@@ -23,16 +22,18 @@ public class ProductionPlan {
             name = "custom-id",
             strategy = "com.procuone.mit_kdt.customidGenerator.CustomIdGenerator",
             parameters = {
-                    @org.hibernate.annotations.Parameter(name = "prefix", value = "PdpPlan_"),
-                    @org.hibernate.annotations.Parameter(name = "tableName", value = "production_plan"),
-                    @org.hibernate.annotations.Parameter(name = "columnName", value = "product_plan_code")
+                    @org.hibernate.annotations.Parameter(name = "prefix", value = "PcPlan_"),
+                    @org.hibernate.annotations.Parameter(name = "tableName", value = "procurement_plan"),
+                    @org.hibernate.annotations.Parameter(name = "columnName", value = "procurement_plan_code")
             }
     )
+    private String procurementPlanCode;
     private String productPlanCode;
-
     private String productName;
     private String productCode;
     private LocalDate planStartDate;
     private LocalDate planEndDate;
-    private Integer quantity;
+    private Long quantity;
+    private Long procurementQuantity;
+    private LocalDate procurementEndDate;
 }

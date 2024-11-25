@@ -25,23 +25,33 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot 기본 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Thymeleaf와 Spring Security 통합
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+    // Hibernate (JPA 구현체)
+    implementation 'org.hibernate:hibernate-core:6.2.6.Final'
+
     // MariaDB JDBC Driver
-    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.7.4'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.4'
+
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    // 개발용 도구
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // 테스트 의존성
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    // (테스트용 H2 추가)
-    testImplementation 'com.h2database:h2'
-    implementation 'mysql:mysql-connector-java:8.0.33'// MySQL JDBC 드라이버 버전 추가
+    testImplementation 'com.h2database:h2' // 테스트용 H2 데이터베이스
 }
 
 tasks.named('test') {
