@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/pbom")
+@RequestMapping("/purchase")
 public class PBomController {
 
     @Autowired
@@ -21,9 +21,11 @@ public class PBomController {
     @Autowired
     ItemService itemService;
 
+    @ResponseBody
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> registerPurchaseBOM(@RequestBody PurchaseBOMDTO purchaseBOMDTO) {
         try {
+            System.out.println("Received 여기에 오나?: " + purchaseBOMDTO.toString());
             // 전달된 데이터 확인용 로그 출력
             System.out.println("Received PurchaseBOMDTO: " + purchaseBOMDTO.toString());
             purchaseBOMDTO.setItemId(itemService.findByProductCode(purchaseBOMDTO.getProductCode()).get().getId());
@@ -34,13 +36,13 @@ public class PBomController {
         }
     }
 
-    @GetMapping("/tree")
-    public ResponseEntity<List<PurchaseBOMDTO>> getPurchaseBOMTree() {
-        try {
-            List<PurchaseBOMDTO> treeData = pBomService.getPurchaseBOMTree();
-            return ResponseEntity.ok(treeData);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
-    }
+//    @GetMapping("/tree")
+//    public ResponseEntity<List<PurchaseBOMDTO>> getPurchaseBOMTree() {
+//        try {
+//            List<PurchaseBOMDTO> treeData = pBomService.getPurchaseBOMTree();
+//            return ResponseEntity.ok(treeData);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body(null);
+//        }
+//    }
 }

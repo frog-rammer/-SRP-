@@ -22,6 +22,6 @@ public class PurchaseBOMDTO {
 
 
 
-    @JsonManagedReference
-    private List<PurchaseBOMDTO> children;  // 자식 BOM 리스트 추가
+//    @JsonManagedReference
+//    private List<PurchaseBOMDTO> children;  // 자식 BOM 리스트 추가
 }

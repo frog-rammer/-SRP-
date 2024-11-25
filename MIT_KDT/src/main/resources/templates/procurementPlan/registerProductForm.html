@@ -414,6 +414,7 @@
             const businessId = row.dataset.businessId;
             const itemId = row.dataset.itemId;
 
+
             // P-BOM 등록을 위한 서버로의 요청
             const purchaseBOMData = {
                 productCode: productCode,
@@ -424,10 +425,10 @@
                 productionQty: productionQty
             };
 
-            fetch('/pbom/register', {
+            fetch('/purchase/register', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json', // 꼭 포함
                 },
                 body: JSON.stringify(purchaseBOMData)
             })
@@ -448,10 +449,10 @@
                 });
         });
     }
-
+    //
     // // P-BOM 트리 데이터를 서버에서 가져와서 트리 형태로 표시하는 함수
     // function loadPurchaseBOMTree() {
-    //     fetch('/pbom/tree')
+    //     fetch('/purchase/tree')
     //         .then(response => {
     //             if (!response.ok) throw new Error("Failed to fetch P-BOM tree");
     //             return response.json();

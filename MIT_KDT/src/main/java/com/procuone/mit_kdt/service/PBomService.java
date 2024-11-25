@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PBomService {
     void registerPurchaseBOM(PurchaseBOMDTO purchaseBOMDTO) throws Exception;
-    List<PurchaseBOMDTO> getPurchaseBOMTree() throws Exception;
+//    List<PurchaseBOMDTO> getPurchaseBOMTree() throws Exception;
 }

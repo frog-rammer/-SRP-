@@ -43,63 +43,63 @@ public class PBomServiceImpl implements PBomService {
         // 엔티티 저장
         purchaseBOMRepository.save(purchaseBOM);
     }
-
-    @Override
-    public List<PurchaseBOMDTO> getPurchaseBOMTree() throws Exception {
-        List<BOMRelationship> relationships = bomRelationshipRepository.findAll();
-        Map<String, List<PurchaseBOMDTO>> parentChildMap = new HashMap<>();
-
-        // 부모-자식 관계 매핑
-        for (BOMRelationship relationship : relationships) {
-            PurchaseBOMDTO childDTO = convertRelationshipToDTO(relationship);
-            parentChildMap.computeIfAbsent(relationship.getParentItem().getProductCode(), k -> new ArrayList<>()).add(childDTO);
-        }
-
-        // 트리 형태로 구성 (루트 노드를 찾고, 재귀적으로 구성)
-        List<PurchaseBOMDTO> tree = new ArrayList<>();
-        for (String parentProductCode : parentChildMap.keySet()) {
-            // 루트 노드를 찾기
-            if (!isChild(parentProductCode, relationships)) {
-                tree.add(buildTree(parentProductCode, parentChildMap));
-            }
-        }
-        return tree;
-    }
-
-    private boolean isChild(String productCode, List<BOMRelationship> relationships) {
-        return relationships.stream().anyMatch(rel -> rel.getChildItem().getProductCode().equals(productCode));
-    }
-
-    private PurchaseBOMDTO buildTree(String productCode, Map<String, List<PurchaseBOMDTO>> parentChildMap) {
-        PurchaseBOMDTO node = new PurchaseBOMDTO();
-        node.setProductCode(productCode);
-        node.setChildren(parentChildMap.getOrDefault(productCode, new ArrayList<>()));
-
-        for (PurchaseBOMDTO child : node.getChildren()) {
-            child.setChildren(parentChildMap.getOrDefault(child.getProductCode(), new ArrayList<>()));
-        }
-        return node;
-    }
-
-    private PurchaseBOMDTO convertRelationshipToDTO(BOMRelationship relationship) {
-        // 부모와 자식 아이템 정보를 바탕으로 DTO 생성
-        PurchaseBOMDTO dto = PurchaseBOMDTO.builder()
-                .productCode(relationship.getParentItem().getProductCode())
-                .itemId(relationship.getChildItem().getId())
-                .quantity(relationship.getQuantity())
-                .build();
-
-        // 자식 아이템들의 관계도 가져와서 트리 형태로 추가
-        List<BOMRelationship> childRelationships = bomRelationshipRepository.findByParentItemId(relationship.getChildItem().getId());
-        if (!childRelationships.isEmpty()) {
-            List<PurchaseBOMDTO> childDTOs = childRelationships.stream()
-                    .map(this::convertRelationshipToDTO)
-                    .collect(Collectors.toList());
-            dto.setChildren(childDTOs);
-        }
-
-        return dto;
-    }
+//
+//    @Override
+//    public List<PurchaseBOMDTO> getPurchaseBOMTree() throws Exception {
+//        List<BOMRelationship> relationships = bomRelationshipRepository.findAll();
+//        Map<String, List<PurchaseBOMDTO>> parentChildMap = new HashMap<>();
+//
+//        // 부모-자식 관계 매핑
+//        for (BOMRelationship relationship : relationships) {
+//            PurchaseBOMDTO childDTO = convertRelationshipToDTO(relationship);
+//            parentChildMap.computeIfAbsent(relationship.getParentItem().getProductCode(), k -> new ArrayList<>()).add(childDTO);
+//        }
+//
+//        // 트리 형태로 구성 (루트 노드를 찾고, 재귀적으로 구성)
+//        List<PurchaseBOMDTO> tree = new ArrayList<>();
+//        for (String parentProductCode : parentChildMap.keySet()) {
+//            // 루트 노드를 찾기
+//            if (!isChild(parentProductCode, relationships)) {
+//                tree.add(buildTree(parentProductCode, parentChildMap));
+//            }
+//        }
+//        return tree;
+//    }
+//
+//    private boolean isChild(String productCode, List<BOMRelationship> relationships) {
+//        return relationships.stream().anyMatch(rel -> rel.getChildItem().getProductCode().equals(productCode));
+//    }
+//
+//    private PurchaseBOMDTO buildTree(String productCode, Map<String, List<PurchaseBOMDTO>> parentChildMap) {
+//        PurchaseBOMDTO node = new PurchaseBOMDTO();
+//        node.setProductCode(productCode);
+//        node.setChildren(parentChildMap.getOrDefault(productCode, new ArrayList<>()));
+//
+//        for (PurchaseBOMDTO child : node.getChildren()) {
+//            child.setChildren(parentChildMap.getOrDefault(child.getProductCode(), new ArrayList<>()));
+//        }
+//        return node;
+//    }
+//
+//    private PurchaseBOMDTO convertRelationshipToDTO(BOMRelationship relationship) {
+//        // 부모와 자식 아이템 정보를 바탕으로 DTO 생성
+//        PurchaseBOMDTO dto = PurchaseBOMDTO.builder()
+//                .productCode(relationship.getParentItem().getProductCode())
+//                .itemId(relationship.getChildItem().getId())
+//                .quantity(relationship.getQuantity())
+//                .build();
+//
+//        // 자식 아이템들의 관계도 가져와서 트리 형태로 추가
+//        List<BOMRelationship> childRelationships = bomRelationshipRepository.findByParentItemId(relationship.getChildItem().getId());
+//        if (!childRelationships.isEmpty()) {
+//            List<PurchaseBOMDTO> childDTOs = childRelationships.stream()
+//                    .map(this::convertRelationshipToDTO)
+//                    .collect(Collectors.toList());
+//            dto.setChildren(childDTOs);
+//        }
+//
+//        return dto;
+//    }
 
     private PurchaseBOM convertDTOToEntity(PurchaseBOMDTO purchaseBOMDTO) {
         // Item 및 Company는 적절한 방식으로 찾아와야 함 (repository 등을 이용하여 조회)
