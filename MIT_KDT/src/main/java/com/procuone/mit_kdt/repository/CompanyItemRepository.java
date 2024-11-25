@@ -1,5 +1,6 @@
 package com.procuone.mit_kdt.repository;
 
+import com.procuone.mit_kdt.dto.CompanyItemDTO;
 import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.entity.CompanyItem;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +15,6 @@ public interface CompanyItemRepository extends JpaRepository<CompanyItem, Long> 
     List<CompanyItem> findByItemId(Long itemId);
     List<CompanyItem> findByCompany_BusinessId(String businessId);  // businessId로 CompanyItem 조회
     Optional<CompanyItem> findByItemIdAndCompany_BusinessId(Long itemId, String businessId);
+    Optional<CompanyItem> findByCompany_BusinessIdAndItem_Id(String businessId, Long itemId); //  사업자번호,아이템 아이디로 조회
 
 }

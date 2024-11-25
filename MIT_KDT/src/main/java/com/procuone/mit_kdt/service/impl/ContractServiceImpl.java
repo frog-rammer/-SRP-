@@ -59,6 +59,7 @@ public class ContractServiceImpl implements ContractService {
         List<Contract> contracts = contractRepository.findByItemProductCode(productCode);
         return contracts.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
     }
+
     public void updateContractStatus(Long itemId, String businessId, boolean status) {
         Optional<Contract> Contract =  contractRepository.findByItemIdAndCompany_BusinessId(itemId, businessId);
         if (Contract.isPresent()) {

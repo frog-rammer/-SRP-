@@ -134,14 +134,16 @@ public class ContractController {
     }
 
 
-    @GetMapping("/contractWithCompany/{businessId}")
-    public String contractWithCompany(@PathVariable String businessId, Model model) {
+    @GetMapping("/contractWithCompany/{businessId},{itemId}")
+    public String contractWithCompany(@PathVariable String businessId,
+                                      @PathVariable Long itemId,Model model) {
 
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++businessId: " + businessId);
 
         // businessId를 이용해서 업체 정보와 계약 정보를 DB에서 조회
         CompanyDTO companyDTO = companyService.getCompanyDetails(businessId);
-        CompanyItemDTO companyItemDTO = companyItemService.getCompanyItemByBussinessId(businessId);
+
+        CompanyItemDTO companyItemDTO = companyItemService.getCompanyItemByBussinessIdAnditemId(businessId,itemId);
         Optional<ItemDTO> itemDTO = itemService.getItemById(companyItemDTO.getItemId());
 
         // 모델에 데이터를 추가하여 뷰로 전달
@@ -161,15 +163,6 @@ public class ContractController {
         return "procurementPlan/compareContracts :: contractTable"; // 테이블 부분만 업데이트
     }
 
-    @GetMapping("/registerContract")
-    public String registerContract() {
-        return "procurementPlan/registerContract";
-    }
-
-    @GetMapping("/registerContract2")
-    public String registerContract2(RedirectAttributes redirectAttributes) {
-        return "redirect:/contract/register";
-    }
 
     // 계약된 회사 리스트 불러오기 (비동기 호출)
     @GetMapping("/{productCode}")

@@ -18,6 +18,7 @@ public interface CompanyItemService {
     // Contract 상태 업데이트
     void updateContractStatus(Long itemId, String businessId, boolean status);
 
+    CompanyItemDTO getCompanyItemByBussinessIdAnditemId(String businessId,Long itemId);
     // Item ID와 Business ID로 CompanyItem 조회
     Optional<CompanyItem> findByItemIdAndBusinessId(Long itemId, String businessId);
 

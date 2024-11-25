@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -123,6 +124,19 @@ public class CompanyItemServiceImpl implements CompanyItemService {
     }
 
     @Override
+    public CompanyItemDTO getCompanyItemByBussinessIdAnditemId(String businessId, Long itemId) {
+        // businessId와 itemId로 CompanyItem 조회
+        Optional<CompanyItem> companyItem = companyItemRepository.findByCompany_BusinessIdAndItem_Id(businessId, itemId);
+
+        if (!companyItem.isPresent()) {
+            throw new NoSuchElementException("No CompanyItem found for businessId: " + businessId + " and itemId: " + itemId);
+        }
+
+        // Entity -> DTO 변환
+        return convertToDTO(companyItem.get());
+    }
+
+    @Override
     public Optional<CompanyItem> findByItemIdAndBusinessId(Long itemId, String businessId) {
         return Optional.empty();
     }
@@ -131,5 +145,16 @@ public class CompanyItemServiceImpl implements CompanyItemService {
     public void update(CompanyItem companyItem) {
 
     }
-
+    private CompanyItemDTO convertToDTO(CompanyItem companyItem) {
+        return CompanyItemDTO.builder()
+                .id(companyItem.getId())
+                .businessId(companyItem.getCompany().getBusinessId())
+                .itemId(companyItem.getItem().getId())
+                .leadTime(companyItem.getLeadTime())
+                .supplyUnit(companyItem.getSupplyUnit())
+                .productionQty(companyItem.getProductionQty())
+                .unitCost(companyItem.getUnitCost())
+                .contractStatus(companyItem.getContractStatus())
+                .build();
+    }
 }
