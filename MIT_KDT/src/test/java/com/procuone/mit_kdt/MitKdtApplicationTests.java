@@ -1,20 +1,19 @@
 package com.procuone.mit_kdt;
 
 import com.procuone.mit_kdt.entity.BOM.CategoryTest;
+import com.procuone.mit_kdt.entity.Member;
+import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.repository.CategoryTestRepository;
+import com.procuone.mit_kdt.repository.MemberRepository;
+import com.procuone.mit_kdt.repository.CompanyRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.core.io.Resource;
-import org.springframework.beans.factory.annotation.Value;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Arrays;
+import java.util.Random;
 
 @SpringBootTest
 @ActiveProfiles("test")  // "test" 프로파일을 활성화하여 application-test.properties 설정을 사용
@@ -24,10 +23,9 @@ class MitKdtApplicationTests {
     private CategoryTestRepository categoryTestRepository;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Value("${address.file.path}")  // application-test.properties에서 경로를 동적으로 주입받음
-    private String filePath;
+    private MemberRepository memberRepository;  // Member Repository 추가
+    @Autowired
+    private CompanyRepository companyRepository; // Company Repository 추가
 
     @Test
     void testInsertCategoriesWithTestEntity() {
@@ -75,54 +73,75 @@ class MitKdtApplicationTests {
         ));
     }
 
+
+
+    // 회원 생성
     @Test
-    @Transactional
-    void testInsertAddressData() {
-        // 경로 확인: 파일 경로가 null이나 빈 문자열이 아니라면
-        String filePath = "C:/address/Gyeonggi Province.txt"; // 바꾼 파일 경로
+    void testInsertMembersAndCompanies() {
+        insertCompanies();  // Companies 먼저 생성
+        insertMembers();    // 그 후 Members 생성
+    }
 
-        if (filePath == null || filePath.isEmpty()) {
-            System.err.println("파일 경로가 설정되지 않았습니다.");
-            return;
-        }
+    // 회원 생성
+    void insertMembers() {
+        for (int i = 1; i <= 20; i++) {
+            final int companyIndex = i;  // i를 final로 선언하여 람다식에서 참조할 수 있도록 함
+            String companyId = String.valueOf(companyIndex); // i를 String으로 변환
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            int rowCount = 0;
+            Company company = companyRepository.findById(companyId)
+                    .orElseThrow(() -> new IllegalArgumentException("Company not found with ID: " + companyIndex));  // 해당 회사가 없으면 예외 처리
 
-            while ((line = br.readLine()) != null) {
-                String[] columns = line.split("\\|");
+            for (int j = 1; j <= 2; j++) {
+                String type;
 
-                // 데이터가 26개의 컬럼을 가지고 있지 않다면, 부족한 컬럼에 기본값을 채웁니다.
-                if (columns.length < 26) {
-                    columns = Arrays.copyOf(columns, 26);
-                }
-
-                // INSERT SQL을 사용하여 데이터 삽입
-                String sql = "INSERT INTO address (postal_code, province, province_english, city_district, city_district_english, " +
-                        "town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, " +
-                        "sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, " +
-                        "legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, " +
-                        "town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-                int rowsAffected = jdbcTemplate.update(sql, (Object[]) columns);
-
-                if (rowsAffected > 0) {
-                    System.out.println("데이터 삽입 완료: " + columns[0]);  // 삽입된 데이터 확인용
+                // 회사의 타입이 '협력업체'인 경우, type을 "협력업체"로 강제 설정
+                if ("협력업체".equals(company.getCompanyType())) {
+                    type = "협력업체"; // 협력업체로 고정
                 } else {
-                    System.out.println("데이터 삽입 실패: " + columns[0]);
+                    type = getRandomType();  // 부서 타입이 "구매부서", "생산부서", "자재부서" 중 하나로 랜덤 선택
                 }
 
-                rowCount++;
+                Member member = new Member(
+                        "user" + ((companyIndex - 1) * 2 + j),  // memberId (회사마다 두 명씩 생성)
+                        "회원 " + ((companyIndex - 1) * 2 + j),  // memberName
+                        "password" + ((companyIndex - 1) * 2 + j),  // password
+                        "user" + ((companyIndex - 1) * 2 + j) + "@test.com",  // email
+                        "010-1234-56" + ((companyIndex - 1) * 2 + j),  // phone
+                        type,  // 랜덤으로 생성한 type 또는 '협력업체'
+                        company  // 회사 정보 설정
+                );
+                memberRepository.save(member);  // Member 저장
             }
-
-            System.out.println("총 " + rowCount + "개의 데이터가 삽입되었습니다.");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("파일 읽기 오류 발생: " + e.getMessage());
         }
     }
 
+
+
+    // 회사 생성
+    void insertCompanies() {
+        for (int i = 1; i <= 20; i++) {
+            Company company = new Company(
+                    "company" + i,  // companyName
+                    "협력업체",  // companyType은 항상 협력업체
+                    "businessId" + i,  // businessId
+                    "company" + i + "Name",  // comName
+                    "comId" + i,  // comId (String)
+                    "address" + i,  // comAdd
+                    "company" + i + "@test.com",  // comEmail
+                    "010-1234-567" + i,  // comPhone
+                    "은행명 " + i + " 계좌번호",  // comPaymentInfo
+                    "은행명" + i,  // comBank
+                    "계좌번호" + i  // comAccountNumber
+            );
+            companyRepository.save(company);  // Company 저장
+        }
+    }
+
+    // 랜덤으로 부서 타입을 선택하는 메소드
+    private String getRandomType() {
+        String[] types = {"구매부서", "생산부서", "자재부서"};
+        Random random = new Random();
+        return types[random.nextInt(types.length)];
+    }
 }
+
