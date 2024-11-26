@@ -2,11 +2,11 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>자기 재고 입력 및 수정</title>
+  <title>자기 재고 입력</title>
 </head>
 <body>
 <div class="form-container">
-  <h1>자기 재고 입력</h1>
+  <h1>자기 재고 입력 및 수정</h1>
   <form th:action="@{/company/inventory/save}" th:object="${inventory}" method="post">
     <div class="form-group">
       <label for="itemId">품목</label>
@@ -31,7 +31,7 @@
   </form>
 
   <!-- 자기 재고 확인 및 수정 -->
-  <h2>자기 재고 확인 및 수정</h2>
+  <h2>자기 재고 확인</h2>
   <form th:action="@{/company/inventory/update}" method="post">
     <table border="1" cellpadding="5" cellspacing="0">
       <thead>
@@ -40,24 +40,18 @@
         <th>현재 수량</th>
         <th>예약된 수량</th>
         <th>마지막 업데이트</th>
-        <th>수정</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="inventory : ${companyInventoryList}">
+      <tr th:each="inventory : ${inventoryList}">
         <td th:text="${inventory.itemName}">품목명</td>
         <td>
-          <input type="number" name="currentQuantity" th:value="${inventory.currentQuantity}" required>
+          <input type="number" name="currentQuantity" th:value="${inventory.currentQuantity}" required readonly>
         </td>
         <td>
-          <input type="number" name="reservedQuantity" th:value="${inventory.reservedQuantity}" required>
+          <input type="number" name="reservedQuantity" th:value="${inventory.reservedQuantity}" required readonly>
         </td>
         <td th:text="${inventory.lastUpdated}">업데이트 날짜</td>
-        <td>
-          <!-- 수정 요청 시 inventory.id를 함께 전송 -->
-          <input type="hidden" name="inventoryId" th:value="${inventory.id}">
-          <button type="submit">수정</button>
-        </td>
       </tr>
       </tbody>
     </table>
