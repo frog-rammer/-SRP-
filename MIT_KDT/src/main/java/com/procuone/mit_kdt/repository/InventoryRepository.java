@@ -27,6 +27,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("SELECT i.minimumRequired FROM Inventory i WHERE i.item.id = :itemId")
     Integer findMinimumRequiredByItemId(@Param("itemId") Long itemId);
 
-
     Optional<Inventory> findByItemId(Long itemId);
+    Optional<Inventory> findByItem_ProductCode(String productCode);
 }
