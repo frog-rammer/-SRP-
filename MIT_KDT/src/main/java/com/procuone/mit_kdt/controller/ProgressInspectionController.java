@@ -29,7 +29,7 @@ public class ProgressInspectionController {
                                         @RequestParam(required = false) String productNameQuery,
                                         @RequestParam(required = false) String procurementPlanCodeQuery,
                                         @RequestParam(required = false) LocalDate dateStart, // 시작날짜
-                                        @RequestParam(required = false) LocalDate dateEnd// 종료 날짜
+                                        @RequestParam(required = false) LocalDate dateEnd // 종료 날짜
     ) {
         Pageable pageable = PageRequest.of(page - 1, size); // 0부터 시작하도록 조정
 
@@ -41,11 +41,14 @@ public class ProgressInspectionController {
         int currentPage = page;
 
         // 페이지네이션 범위 계산 (최대 5개 페이지 표시)
-        int startPage = Math.max(1, currentPage - 2); // 최소 페이지는 1
-        int endPage = Math.min(totalPages, startPage + 4); // 최대 페이지는 startPage + 4
+        int startPage = 1;
+        int endPage = 1;
 
-        // 페이지 범위를 조정하여 시작 페이지가 최소 범위를 초과하지 않도록 보정
-        startPage = Math.max(1, endPage - 4);
+        if (totalPages > 0) {
+            startPage = Math.max(1, currentPage - 2); // 최소 페이지는 1
+            endPage = Math.min(totalPages, startPage + 4); // 최대 페이지는 startPage + 4
+            startPage = Math.max(1, endPage - 4); // 보정
+        }
 
         // 모델에 데이터 및 페이지네이션 정보 추가
         model.addAttribute("progressInspectionList", productionPlanPage.getContent());
@@ -63,4 +66,3 @@ public class ProgressInspectionController {
         return "purchaseOrder/progressInspection";
     }
 }
-

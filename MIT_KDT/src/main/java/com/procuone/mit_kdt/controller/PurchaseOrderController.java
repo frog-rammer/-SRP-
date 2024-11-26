@@ -3,6 +3,7 @@ package com.procuone.mit_kdt.controller;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
 import com.procuone.mit_kdt.entity.PurchaseOrder;
 import com.procuone.mit_kdt.service.InventoryService;
+import com.procuone.mit_kdt.service.ProgressInspectionService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,8 @@ public class PurchaseOrderController {
     @Autowired
     private PurchaseOrderService purchaseOrderService;
 
+    @Autowired
+    private ProgressInspectionService progressInspectionService;
     @GetMapping("/purchaseOrders")
     public String purchaseOrders(
             @RequestParam(defaultValue = "0") int page,

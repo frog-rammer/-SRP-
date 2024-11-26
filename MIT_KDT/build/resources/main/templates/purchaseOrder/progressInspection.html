@@ -95,19 +95,19 @@
         <div class="search-container">
             <div class="date-search">
                 <label>
-                    <input type="date" id="date-start" th:value="${param.dateStart}">
+                    <input type="date" id="date-start" th:value="${dateStart}">
                     <span>-</span>
-                    <input type="date" id="date-end" th:value="${param.dateEnd}">
+                    <input type="date" id="date-end" th:value="${dateEnd}">
                 </label>
                 <button id="search-btn">검색</button>
             </div>
             <div class="keyword-search">
                 <label>
                     <select id="keyword-select">
-                        <option th:selected="${param.productCodeQuery != null}" value="productCode">품목코드</option>
-                        <option th:selected="${param.productNameQuery != null}" value="productName">품목명</option>
+                        <option th:selected="${productCodeQuery != null}" value="productCode">품목코드</option>
+                        <option th:selected="${productNameQuery != null}" value="productName">품목명</option>
                     </select>
-                    <input type="text" id="keyword-search" th:value="${param.keyword}" placeholder="키워드 검색">
+                    <input type="text" id="keyword-search" th:value="${productCodeQuery ?: productNameQuery}" placeholder="키워드 검색">
                     <button id="keyword-search-btn">검색</button>
                 </label>
             </div>
@@ -146,14 +146,14 @@
             <div class="pagination">
                 <ul>
                     <li th:if="${currentPage > 1}">
-                        <a th:href="@{'/progressInspection'(page=${currentPage - 1}, size=${size})}" class="page-btn">이전</a>
+                        <a th:href="@{'/progressInspection'(page=${currentPage - 1}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}" class="page-btn">이전</a>
                     </li>
                     <li th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}"
                         th:classappend="${pageNumber == currentPage} ? 'active'">
-                        <a th:href="@{'/progressInspection'(page=${pageNumber}, size=${size})}" th:text="${pageNumber}" class="page-btn"></a>
+                        <a th:href="@{'/progressInspection'(page=${pageNumber}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}" th:text="${pageNumber}" class="page-btn"></a>
                     </li>
                     <li th:if="${currentPage < totalPages}">
-                        <a th:href="@{'/progressInspection'(page=${currentPage + 1}, size=${size})}" class="page-btn">다음</a>
+                        <a th:href="@{'/progressInspection'(page=${currentPage + 1}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}" class="page-btn">다음</a>
                     </li>
                 </ul>
             </div>
