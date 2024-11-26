@@ -21,4 +21,12 @@ public class MemberDTO {
     private LocalDate creationDate = LocalDate.now();
 
 
+
+    // 매개변수를 받는 생성자
+    public MemberDTO(String username, String memberName, String userType) {
+        this.memberName = username;
+        this.memberName = memberName;
+        this.type = userType;
+    }
+
 }
