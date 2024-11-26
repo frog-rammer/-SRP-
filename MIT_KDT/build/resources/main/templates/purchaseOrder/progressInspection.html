@@ -6,88 +6,68 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
-        li{
+        li {
             list-style: none;
-            display:inline;
+            display: inline;
         }
-        /* 기본 스타일 */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
         }
-
-        /* 테이블 스타일 */
         table {
             width: 100%;
-            border-collapse: collapse; /* 셀 간 경계선을 합침 */
+            border-collapse: collapse;
             margin-top: 20px;
             background-color: white;
         }
-
         th, td {
             padding: 12px;
             text-align: center;
-            border: 1px solid #ddd; /* 연한 회색 경계선 */
+            border: 1px solid #ddd;
         }
-
         th {
-            background-color: #32928E; /* 초록색 배경 */
+            background-color: #32928E;
             color: white;
         }
-
-        /* 검색 입력 폼 */
-        input[type="text"] {
-            width: 200px;
+        input[type="text"], input[type="date"] {
             padding: 8px;
             margin: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 14px;
         }
-
-        input[type="text"]:focus {
+        input[type="text"]:focus, input[type="date"]:focus {
             border-color: #32928E;
             outline: none;
         }
-
-        /* 버튼 스타일 */
-        #search-btn,#keyword-search-btn,.plan-btn,.process-btn{
+        button {
             padding: 10px 20px;
-            background-color: #32928E; /* 초록색 배경 */
+            background-color: #32928E;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
         }
-
-        /* 페이지네이션 스타일 */
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-
         .pagination ul {
             list-style: none;
             padding: 0;
+            text-align: center;
+            margin-top: 20px;
         }
-
         .pagination li {
             display: inline-block;
             margin-right: 5px;
         }
-
         .pagination .page-btn {
             padding: 5px 10px;
             background-color: #32928E;
             color: white;
             text-decoration: none;
             border-radius: 5px;
-            transition: background-color 0.3s;
         }
-
         .pagination .page-btn:disabled {
             background-color: #ccc;
             pointer-events: none;
@@ -96,7 +76,6 @@
 </head>
 <body>
 <div class="grid-container">
-    <!-- 헤더 -->
     <header class="layout-header">
         <div th:replace="partials/procuOneHeader :: header"></div>
     </header>
@@ -105,141 +84,83 @@
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
 
-<main class="layout-main">
- <h2>진척 검수 처리 - 발주리스트</h2>
-<div class="progress">
-    <button class="plan-btn">검수계획 등록</button>
-    <button class="process-btn">검수처리</button>
-</div>
-<div class="search-container">
-    <div class="date-search">
-        <label>
-            <input type="date" id="date-start">
-            <span>-</span>
-            <input type="date" id="date-end">
-        </label>
-        <button id="search-btn">검색</button>
-    </div>
-    <div class="keyword-search">
-        <label>
-            <select id="keyword-select">
-                <option>품목코드</option>
-                <option>품목명</option>
-            </select>
-            <input type="text" id="keyword-search" placeholder="키워드 검색">
-            <button id="keyword-search-btn">검색</button>
-        </label>
-    </div>
-    <table>
-        <thead>
-         <tr>
-             <th>선택</th>
-             <th>발주번호</th>
-             <th>발주일자</th>
-             <th>입고예정일</th>
-             <th>품목코드</th>
-             <th>품목명</th>
-             <th>발주수량</th>
-             <th>검수현황</th>
-             <th>검수율</th>
-         </tr>
-        </thead>
-        <tbody>
-         <tr>
-             <td>
-                 <label>
-                     <input type="checkbox">
-                 </label>
-             </td>
-             <td>ord123</td>
-             <td>2024-12-12</td>
-             <td>2024-12-22</td>
-             <td>asd1234-001</td>
-             <td>퓨즈</td>
-             <td>100</td>
-             <td>1/1</td>
-             <td>100%</td>
-         </tr>
-         <tr>
-             <td>
-                 <label>
-                     <input type="checkbox">
-                 </label>
-             </td>
-             <td>ord123</td>
-             <td>2024-12-12</td>
-             <td>2024-12-22</td>
-             <td>asd1234-001</td>
-             <td>퓨즈</td>
-             <td>100</td>
-             <td>1/1</td>
-             <td>100%</td>
-         </tr>
-         <tr>
-             <td>
-                 <label>
-                     <input type="checkbox">
-                 </label>
-             </td>
-             <td>ord123</td>
-             <td>2024-12-12</td>
-             <td>2024-12-22</td>
-             <td>asd1234-001</td>
-             <td>퓨즈</td>
-             <td>100</td>
-             <td>1/1</td>
-             <td>100%</td>
-         </tr>
-         <tr>
-             <td>
-                 <label>
-                     <input type="checkbox">
-                 </label>
-             </td>
-             <td>ord123</td>
-             <td>2024-12-12</td>
-             <td>2024-12-22</td>
-             <td>asd1234-001</td>
-             <td>퓨즈</td>
-             <td>100</td>
-             <td>1/1</td>
-             <td>100%</td>
-         </tr>
-         <tr>
-             <td>
-                 <label>
-                     <input type="checkbox">
-                 </label>
-             </td>
-             <td>ord123</td>
-             <td>2024-12-12</td>
-             <td>2024-12-22</td>
-             <td>asd1234-001</td>
-             <td>퓨즈</td>
-             <td>100</td>
-             <td>1/1</td>
-             <td>100%</td>
-         </tr>
-        </tbody>
-    </table>
-    <div class="pagination">
-        <ul>
-            <li><a href="#" class="page-btn">1</a></li>
-            <li><a href="#" class="page-btn">2</a></li>
-            <li><a href="#" class="page-btn">3</a></li>
-            <li><a href="#" class="page-btn">4</a></li>
-            <li><a href="#" class="page-btn">5</a></li>
-            <!--  다음 페이지 링크      -->
-            <li><a href="#" class="page-btn">▶</a></li>
-        </ul>
-    </div>
-</div>
-</main>
+    <main class="layout-main">
+        <h2>진척 검수 처리 - 발주 리스트</h2>
 
-    <footer class="layout-footer">
+        <div class="progress">
+            <button class="plan-btn">검수계획 등록</button>
+            <button class="process-btn">검수처리</button>
+        </div>
 
-    </footer>
+        <div class="search-container">
+            <div class="date-search">
+                <label>
+                    <input type="date" id="date-start" th:value="${param.dateStart}">
+                    <span>-</span>
+                    <input type="date" id="date-end" th:value="${param.dateEnd}">
+                </label>
+                <button id="search-btn">검색</button>
+            </div>
+            <div class="keyword-search">
+                <label>
+                    <select id="keyword-select">
+                        <option th:selected="${param.productCodeQuery != null}" value="productCode">품목코드</option>
+                        <option th:selected="${param.productNameQuery != null}" value="productName">품목명</option>
+                    </select>
+                    <input type="text" id="keyword-search" th:value="${param.keyword}" placeholder="키워드 검색">
+                    <button id="keyword-search-btn">검색</button>
+                </label>
+            </div>
+            <table>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="select-all"></th>
+                    <th>발주번호</th>
+                    <th>발주일자</th>
+                    <th>입고예정일</th>
+                    <th>품목코드</th>
+                    <th>품목명</th>
+                    <th>발주수량</th>
+                    <th>검수현황</th>
+                    <th>검수율</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="progress : ${progressInspectionList}">
+                    <td><input type="checkbox" th:value="${progress.progressInspectionCode}"></td>
+                    <td th:text="${progress.purchaseOrderCode}"></td>
+                    <td th:text="${progress.orderDate}"></td>
+                    <td th:text="${progress.expectedArrivalDate}"></td>
+                    <td th:text="${progress.productCode}"></td>
+                    <td th:text="${progress.productName}"></td>
+                    <td th:text="${progress.totalQuantity}"></td>
+                    <td th:text="${progress.inspectedQuantity} + '/' + ${progress.totalQuantity}"></td>
+                    <td th:text="${(progress.inspectedQuantity * 100) / progress.totalQuantity} + '%'"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(progressInspectionList)}">
+                    <td colspan="9">조회된 데이터가 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
 
+            <div class="pagination">
+                <ul>
+                    <li th:if="${currentPage > 1}">
+                        <a th:href="@{'/progressInspection'(page=${currentPage - 1}, size=${size})}" class="page-btn">이전</a>
+                    </li>
+                    <li th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}"
+                        th:classappend="${pageNumber == currentPage} ? 'active'">
+                        <a th:href="@{'/progressInspection'(page=${pageNumber}, size=${size})}" th:text="${pageNumber}" class="page-btn"></a>
+                    </li>
+                    <li th:if="${currentPage < totalPages}">
+                        <a th:href="@{'/progressInspection'(page=${currentPage + 1}, size=${size})}" class="page-btn">다음</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="layout-footer"></footer>
 </div>
 </body>
 </html>
