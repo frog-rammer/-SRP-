@@ -22,25 +22,42 @@
       border: 1px solid #ddd;
     }
 
-    th, td {
+    th {
       padding: 10px;
-      text-align: left;
+      text-align: center;
+      background-color: #32928E;
+      color: #fff;
+    }
+    td{
+      padding: 10px;
+      text-align: center;
     }
 
     .btn {
       padding: 10px 15px;
-      background-color: #007bff;
+      background-color: #32928E;
       color: white;
       border: none;
       cursor: pointer;
     }
 
     .btn:hover {
-      background-color: #0056b3;
+      background-color: #278F75;
     }
-
     .input-section {
       margin-bottom: 20px;
+    }
+    h1{
+      text-align: center;
+    }
+    #btn{
+      padding: 10px 15px;
+      background-color: #32928E;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-left: 50%;
+      margin-top: 10px ;
     }
   </style>
 </head>
@@ -83,7 +100,7 @@
         <!-- JavaScript에서 동적으로 행 생성 -->
         </tbody>
       </table>
-      <button type="submit" class="btn">등록</button>
+      <button type="submit" id="btn">등록</button>
     </form>
   </main>
 

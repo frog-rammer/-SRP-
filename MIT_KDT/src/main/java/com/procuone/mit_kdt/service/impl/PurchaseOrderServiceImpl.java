@@ -1,10 +1,10 @@
 package com.procuone.mit_kdt.service.impl;
 
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
-import com.procuone.mit_kdt.dto.ItemDTOs.PurchaseBOMDTO;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
 import com.procuone.mit_kdt.entity.BOM.BOMRelationship;
+import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.entity.BOM.PurchaseBOM;
 import com.procuone.mit_kdt.entity.Inventory;
 import com.procuone.mit_kdt.entity.PurchaseOrder;
@@ -12,8 +12,11 @@ import com.procuone.mit_kdt.repository.*;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import com.procuone.mit_kdt.entity.BOM.Item;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,60 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private ItemService itemService;
     @Autowired
     private InventoryRepository inventoryRepository;
+
+    @Override
+    public Page<PurchaseOrderDTO> getOrdersByStatus(String status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 엔티티를 DTO로 변환하는 로직 포함
+        return purchaseOrderRepository.findByStatus(status, pageable)
+                .map(this::convertEntityToDTO);
+    }
+
+    @Override
+    public void completeOrders(List<String> orderIds) {
+        List<PurchaseOrder> orders = purchaseOrderRepository.findAllById(orderIds);
+        for (PurchaseOrder order : orders) {
+            // 상태 변경
+            order.setStatus("발주완료");
+            purchaseOrderRepository.save(order);
+
+            // productCode를 기반으로 ItemDTO 조회
+            Optional<ItemDTO> itemDTOOptional = itemService.findByProductCode(order.getProductCode());
+            if (itemDTOOptional.isEmpty()) {
+                throw new IllegalStateException("해당 productCode에 대한 Item을 찾을 수 없습니다: " + order.getProductCode());
+            }
+
+            // DTO -> Entity 변환
+            Item item = dtoToEntity(itemDTOOptional.get());
+
+            // Inventory 업데이트 또는 삽입
+            Inventory inventory = inventoryRepository.findByItemId(item.getId())
+                    .orElseGet(() -> {
+                        Inventory newInventory = new Inventory();
+                        newInventory.setItem(item); // 연관된 Item 설정
+                        newInventory.setItemName(item.getItemName()); // 보조 필드
+                        newInventory.setCurrentQuantity(0);
+                        newInventory.setReservedQuantity(0);
+                        newInventory.setMinimumRequired(0);
+                        return newInventory;
+                    });
+
+            // 재고 업데이트
+            inventory.setCurrentQuantity(inventory.getCurrentQuantity() + Math.toIntExact(order.getQuantity()));
+            inventory.setReservedQuantity(inventory.getReservedQuantity() + Math.toIntExact(order.getQuantity()));
+            inventoryRepository.save(inventory);
+        }
+    }
+
+    private Item dtoToEntity(ItemDTO dto) {
+        return Item.builder()
+                .id(dto.getId())
+                .productCode(dto.getProductCode())
+                .itemName(dto.getItemName())
+                .build();
+    }
+
     @Override
     public void registerPurchaseOrder(ProcumentPlanDTO procurementPlanDTO) {
         // 1. 부모 품목(생산 품목)에 대한 하위 품목 가져오기
@@ -91,7 +148,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             Long totalPrice = pricePerUnit * requiredQuantity;
 
             // 발주 상태 기본값 설정
-            purchaseOrderDTO.setStatus("자동 생성");
+            purchaseOrderDTO.setStatus("자동생성");
             // 발주서 DTO 구성
             purchaseOrderDTO.setProductPlanCode(procurementPlanDTO.getProductPlanCode());
             purchaseOrderDTO.setProcurementPlanCode(procurementPlanDTO.getProcurementPlanCode());
@@ -115,9 +172,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseOrderRepository.saveAll(purchaseOrders);
     }
 
-
-
-
     private PurchaseOrder dtoToEntity(PurchaseOrderDTO dto) {
         return PurchaseOrder.builder()
                 .purchaseOrderCode(dto.getPurchaseOrderCode())
@@ -136,5 +190,23 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 .build();
     }
 
+    // 엔티티를 DTO로 변환하는 메서드 추가
+    private PurchaseOrderDTO convertEntityToDTO(PurchaseOrder entity) {
+        return PurchaseOrderDTO.builder()
+                .purchaseOrderCode(entity.getPurchaseOrderCode())
+                .productPlanCode(entity.getProductPlanCode())
+                .procurementPlanCode(entity.getProcurementPlanCode())
+                .productCode(entity.getProductCode())
+                .businessId(entity.getBusinessId())
+                .procurementEndDate(entity.getProcurementEndDate())
+                .quantity(entity.getQuantity())
+                .Price(entity.getPrice())
+                .status(entity.getStatus())
+                .createdBy(entity.getCreatedBy())
+                .createdDate(entity.getCreatedDate())
+                .updatedBy(entity.getUpdatedBy())
+                .updatedDate(entity.getUpdatedDate())
+                .build();
+    }
 
 }

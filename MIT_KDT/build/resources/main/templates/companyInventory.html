@@ -1,67 +1,222 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>자기 재고 입력 및 수정</title>
+    <meta charset="UTF-8">
+    <title>자기 재고 입력</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
 </head>
-<body>
-<div class="form-container">
-  <h1>자기 재고 입력</h1>
-  <form th:action="@{/company/inventory/save}" th:object="${inventory}" method="post">
-    <div class="form-group">
-      <label for="itemId">품목</label>
-      <select id="itemId" name="itemId" required>
-        <option th:each="item : ${items}" th:value="${item.id}" th:text="${item.itemName}">
-          품목명
-        </option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="currentQuantity">현재 수량</label>
-      <input type="number" id="currentQuantity" name="currentQuantity" th:value="*{currentQuantity}" required>
-    </div>
-    <div class="form-group">
-      <label for="reservedQuantity">예약된 수량</label>
-      <input type="number" id="reservedQuantity" name="reservedQuantity" th:value="*{reservedQuantity}" required>
-    </div>
-    <div class="form-actions">
-      <button type="submit">저장</button>
-      <button type="button" onclick="window.history.back()">취소</button>
-    </div>
-  </form>
+<style>
+  /* layout-main만 스타일 적용 */
+  .layout-main {
+    background-color: #f4f7fc;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 1300px;
+    margin: 20px auto; /* 가운데 정렬 */
+    box-sizing: border-box;
+  }
 
-  <!-- 자기 재고 확인 및 수정 -->
-  <h2>자기 재고 확인 및 수정</h2>
-  <form th:action="@{/company/inventory/update}" method="post">
-    <table border="1" cellpadding="5" cellspacing="0">
-      <thead>
-      <tr>
-        <th>품목명</th>
-        <th>현재 수량</th>
-        <th>예약된 수량</th>
-        <th>마지막 업데이트</th>
-        <th>수정</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="inventory : ${companyInventoryList}">
-        <td th:text="${inventory.itemName}">품목명</td>
-        <td>
-          <input type="number" name="currentQuantity" th:value="${inventory.currentQuantity}" required>
-        </td>
-        <td>
-          <input type="number" name="reservedQuantity" th:value="${inventory.reservedQuantity}" required>
-        </td>
-        <td th:text="${inventory.lastUpdated}">업데이트 날짜</td>
-        <td>
-          <!-- 수정 요청 시 inventory.id를 함께 전송 -->
-          <input type="hidden" name="inventoryId" th:value="${inventory.id}">
-          <button type="submit">수정</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </form>
+  .layout-main h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .layout-main h2 {
+    margin-top: 50px;
+    font-size: 24px;
+    color: #2e3a59;
+    font-weight: 600;
+  }
+
+  /* 스타일링된 form 요소 */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+  }
+
+  select, input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-color: #fafafa;
+  }
+
+  select:focus, input[type="number"]:focus {
+    border-color: #32928e;
+    outline: none;
+  }
+
+  /* 저장, 취소 버튼 스타일 */
+  .form-actions button {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-sizing: border-box;
+
+  }
+
+  .form-actions button[type="submit"] {
+    background-color: #32928E;
+    color: white;
+    border: none;
+  }
+
+  .form-actions button[type="submit"]:hover {
+    background-color: #267f6c;
+    transform: translateY(-2px);
+  }
+
+  .form-actions button[type="button"] {
+    background-color: #32928E;
+    color: white;
+    border: none;
+  }
+
+  .form-actions button[type="button"]:hover {
+    background-color: #267f6c;
+    transform: translateY(-2px);
+  }
+  .form-actions {
+    text-align: center;
+  }
+
+
+  /* 테이블 스타일링 */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden; /* 테이블 셀의 경계가 둥글게 나오도록 */
+  }
+
+  table th, table td {
+    padding: 15px 20px;
+    text-align: left;
+    border: 1px solid #e0e0e0;
+    color: #555;
+    font-size: 14px;
+  }
+
+  table th {
+    background-color: #32928E;
+    color: white;
+    font-weight: bold;
+  }
+
+  table tr:nth-child(even) {
+    background-color: #f9f9f9; /* 짝수 행 배경색 */
+  }
+
+  table tr:hover {
+    background-color: #f1f1f1; /* 마우스 오버 시 배경색 */
+  }
+
+  table input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #e0e0e0;
+    background-color: #fafafa;
+    border-radius: 6px;
+    color: #333;
+  }
+
+  table input[type="number"] {
+    background-color: #e9ecef;
+  }
+
+</style>
+<body>
+<div class="grid-container">
+    <!-- 헤더 -->
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+
+    <main class="layout-main">
+        <div class="form-container">
+            <h1>자기 재고 입력 및 수정</h1>
+            <form th:action="@{/company/inventory/save}" th:object="${inventory}" method="post">
+                <div class="form-group">
+                    <label for="itemId">품목</label>
+                    <select id="itemId" name="itemId" required>
+                        <option th:each="item : ${items}" th:value="${item.id}" th:text="${item.itemName}">
+                            품목명
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="currentQuantity">현재 수량</label>
+                    <input type="number" id="currentQuantity" name="currentQuantity" th:value="*{currentQuantity}"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="reservedQuantity">예약된 수량</label>
+                    <input type="number" id="reservedQuantity" name="reservedQuantity" th:value="*{reservedQuantity}"
+                           required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">저장</button>
+                    <button type="button" onclick="window.history.back()">취소</button>
+                </div>
+            </form>
+
+            <!-- 자기 재고 확인 및 수정 -->
+            <h2>자기 재고 확인</h2>
+            <form th:action="@{/company/inventory/update}" method="post">
+                <table border="1" cellpadding="5" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>품목명</th>
+                        <th>현재 수량</th>
+                        <th>예약된 수량</th>
+                        <th>마지막 업데이트</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="inventory : ${inventoryList}">
+                        <td th:text="${inventory.itemName}">품목명</td>
+                        <td>
+                            <input type="number" name="currentQuantity" th:value="${inventory.currentQuantity}" required
+                                   readonly>
+                        </td>
+                        <td>
+                            <input type="number" name="reservedQuantity" th:value="${inventory.reservedQuantity}"
+                                   required readonly>
+                        </td>
+                        <td th:text="${inventory.lastUpdated}">업데이트 날짜</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </main>
 </div>
 </body>
 </html>
