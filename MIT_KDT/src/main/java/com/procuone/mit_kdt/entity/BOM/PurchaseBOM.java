@@ -34,4 +34,6 @@ public class PurchaseBOM {
     private Company company;
 
     private Integer quantity;
+
+    private Integer unitCost;
 }

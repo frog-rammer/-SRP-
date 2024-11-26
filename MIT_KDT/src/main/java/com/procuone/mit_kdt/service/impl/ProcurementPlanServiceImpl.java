@@ -19,7 +19,7 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     private ProductionPlanRepository productionPlanRepository;
 
     @Override
-    public void registerProcurementPlan(ProcumentPlanDTO dto) {
+    public ProcumentPlanDTO registerProcurementPlan(ProcumentPlanDTO dto) {
         // 1. 생산 계획 조회
         ProductionPlan productionPlan = productionPlanRepository.findById(dto.getProductPlanCode())
                 .orElseThrow(() -> new IllegalArgumentException("해당 생산 계획이 존재하지 않습니다: " + dto.getProductPlanCode()));
@@ -46,7 +46,9 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
 
         // 5. 조달 계획 저장
         ProcurementPlan entity = dtoToEntity(dto);
-        repository.save(entity);
+        ProcurementPlan savedEntity = repository.save(entity);
+
+        return entityToDto(savedEntity);
     }
 
     @Override
@@ -69,6 +71,7 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     @Override
     public ProcurementPlan dtoToEntity(ProcumentPlanDTO dto) {
         return ProcurementPlan.builder()
+                .procurementPlanCode(dto.getProcurementPlanCode())
                 .productPlanCode(dto.getProductPlanCode())
                 .productName(dto.getProductName())
                 .productCode(dto.getProductCode())
@@ -83,6 +86,7 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     @Override
     public ProcumentPlanDTO entityToDto(ProcurementPlan entity) {
         return ProcumentPlanDTO.builder()
+                .procurementPlanCode(entity.getProcurementPlanCode())
                 .productPlanCode(entity.getProductPlanCode())
                 .productName(entity.getProductName())
                 .productCode(entity.getProductCode())

@@ -60,11 +60,10 @@ public class ProcurementPlanController {
         System.out.println("===================== DTO 출력 =================" + procumentPlanDTO.toString());
 
         //1. 조달계획 테이블에 넣기
-        procurementPlanService.registerProcurementPlan(procumentPlanDTO);
+        procumentPlanDTO = procurementPlanService.registerProcurementPlan(procumentPlanDTO);
         //2. 발주서 자동생성
         purchaseOrderService.registerPurchaseOrder(procumentPlanDTO);
-
-        //3.
-        return "procumentPlan/register";
+        // 3. 저장된 조달 계획 리스트를 다시 로드하여 View에 전달
+        return "redirect:/procurementPlan/register"; // GET 메서드 호출로 리다이렉트
     }
 }
