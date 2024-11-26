@@ -1,49 +1,41 @@
 package com.procuone.mit_kdt.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "members")  // 테이블 이름을 'members'로 설정
+@Table(name = "member_test")  // 테이블 이름을 'member_test'로 설정
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // 자동 증가하는 ID
-
-    private String memberId;  // 회원 ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // 자동 증가 설정
+    private String memberId;   // 회원 ID를 String 타입으로 변경
     private String memberName; // 회원 이름
     private String password;   // 비밀번호
     private String email;      // 이메일
     private String phone;      // 전화번호
-    private String type;       // 부서 타입 (구매부서, 자재부서, 생산부서 등)
+    private String type;       // 부서 타입 (구매부서, 생산부서 등)
+    private String dno;        // 부서 번호
+    private LocalDateTime creationDate;  // 생성일
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id")  // 외래 키 (Company와의 관계 설정)
-    private Company company; // 소속된 회사
-
-    // 기본 생성자
-    public Member() {}
-
-    // 생성자
-    public Member(String memberId, String memberName, String password, String email, String phone, String type, Company company) {
-        this.memberId = memberId;
+    public Member(String memberName, String password, String email, String phone, String type, String dno) {
         this.memberName = memberName;
         this.password = password;
         this.email = email;
         this.phone = phone;
         this.type = type;
-        this.company = company;
+        this.dno = dno;
+        this.creationDate = LocalDateTime.now();  // 생성일은 현재 날짜로 설정
     }
 
-    // Getter 및 Setter 메서드
-    public Long getId() {
-        return id;
+    // 기본 생성자
+    public Member() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Member(String s, String s1, String s2, String s3, String s4, String 협력업체, String s5) {
     }
 
+    // Getter 및 Setter 메소드들
     public String getMemberId() {
         return memberId;
     }
@@ -92,28 +84,19 @@ public class Member {
         this.type = type;
     }
 
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", memberId='" + memberId + '\'' +
-                ", memberName='" + memberName + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", type='" + type + '\'' +
-                ", company=" + company +
-                '}';
+    public String getDno() {
+        return dno;
     }
 
     public void setDno(String dno) {
+        this.dno = dno;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 }
