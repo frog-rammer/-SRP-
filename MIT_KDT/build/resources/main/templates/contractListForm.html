@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>계약 목록</title>
+</head>
+<body>
+<h1>계약 목록</h1>
+<table>
+  <thead>
+  <tr>
+    <th>계약 ID</th>
+    <th>업체명</th>
+    <th>품목명</th>
+    <th>계약 시작일</th>
+    <th>계약 종료일</th>
+    <th>단가</th>
+    <th>소요 시간</th>
+    <th>생산 수량</th>
+    <th>계약 상태</th>
+    <th>계약서</th> <!-- 계약서 열 추가 -->
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="contract : ${contracts}">
+    <td th:text="${contract.id}"></td>
+    <td th:text="${contract.comName}"></td> <!-- 회사명 -->
+    <td th:text="${contract.itemName}"></td> <!-- 품목명 -->
+    <td th:text="${#dates.format(contract.contractDate, 'yyyy-MM-dd')}"></td> <!-- 계약 시작일 -->
+    <td th:text="${#dates.format(contract.contractEndDate, 'yyyy-MM-dd')}"></td> <!-- 계약 종료일 -->
+    <td th:text="${contract.unitCost}"></td> <!-- 단가 -->
+    <td th:text="${contract.leadTime}"></td> <!-- 소요 시간 -->
+    <td th:text="${contract.productionQty}"></td> <!-- 생산 수량 -->
+    <td th:text="${contract.contractStatus ? '활성' : '종료'}"></td> <!-- 계약 상태 -->
+    <td>
+      <button class="view-contract-btn">
+        <a th:href="@{'/company/contract/contractForm/' + ${contract.id}}">보기</a> <!-- 계약서 보기 링크 -->
+      </button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

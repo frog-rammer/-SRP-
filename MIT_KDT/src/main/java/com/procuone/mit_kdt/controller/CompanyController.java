@@ -1,10 +1,8 @@
 package com.procuone.mit_kdt.controller;
 
-import com.procuone.mit_kdt.dto.CompanyDTO;
-import com.procuone.mit_kdt.dto.CompanyItemDTO;
+import com.procuone.mit_kdt.dto.*;
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
-import com.procuone.mit_kdt.dto.MemberDTO;
 import com.procuone.mit_kdt.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +32,64 @@ public class CompanyController {
     CategoryService categoryService;
     @Autowired
     CompanyItemService companyItemService;
+    @Autowired
+    ContractService contractService;
+    @Autowired
+    CompanyInventoryService companyInventoryService;
 
     public CompanyController(CompanyService companyService, MemberService memberService) {
         this.companyService = companyService;
         this.memberService = memberService;
+    }
+
+    @GetMapping("/contractList")
+    public String contractList(Model model, HttpSession session) {
+        // 세션에서 로그인된 업체의 businessId 가져오기
+        String businessId = (String) session.getAttribute("businessId");
+
+        if (businessId == null) {
+            return "redirect:/login"; // 세션이 없으면 로그인 페이지로 리다이렉트
+        }
+
+        // 계약된 항목 가져오기
+        List<ContractDTO> contracts = companyService.getContractsByBusinessId(businessId);
+
+        // 모델에 계약 데이터 추가
+        model.addAttribute("contracts", contracts);
+
+        return "contractListForm"; // 계약 목록 페이지로 이동
+    }
+
+    @GetMapping("/companyInventory")
+    public String companyInventory(Model model, HttpSession session) {
+        String businessId = (String) session.getAttribute("businessId");
+        if (businessId == null) {
+            return "redirect:/login"; // 로그인 페이지로 리다이렉트
+        }
+
+        // 업체의 전체 재고 데이터 조회
+        List<CompanyInventoryDTO> inventoryList = companyInventoryService.getInventoryByBusinessId(businessId);
+        model.addAttribute("inventoryList", inventoryList); // 전체 재고 리스트
+
+        // 로그인된 업체가 공급하는 품목 리스트 조회
+        List<ItemDTO> items = companyItemService.getItemsByBusinessId(businessId);
+        model.addAttribute("items", items); // 공급 품목 리스트 추가
+
+        model.addAttribute("inventory", new CompanyInventoryDTO()); // 빈 DTO 추가 (입력용)
+
+        return "companyInventory"; // HTML 템플릿 반환
+    }
+
+    @GetMapping("/contract/contractForm/{id}")
+    public String viewContractForm(@PathVariable Long id, Model model) {
+        // 계약 데이터를 가져옴
+        ContractDTO contract = contractService.getContractById(id);
+
+        // 모델에 데이터 추가
+        model.addAttribute("contract", contract);
+
+        // 계약서 페이지로 이동
+        return "contractForm";
     }
 
     @GetMapping("/companyDetail/{businessId}")

@@ -1,6 +1,7 @@
 package com.procuone.mit_kdt.service;
 
 import com.procuone.mit_kdt.dto.CompanyItemDTO;
+import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.entity.CompanyItem;
 
 import java.util.List;
@@ -24,4 +25,6 @@ public interface CompanyItemService {
 
     // CompanyItem 업데이트
     void update(CompanyItem companyItem);
+
+    List<ItemDTO> getItemsByBusinessId(String businessId);
 }

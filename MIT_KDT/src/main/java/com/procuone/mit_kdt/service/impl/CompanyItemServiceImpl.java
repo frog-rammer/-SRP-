@@ -1,6 +1,7 @@
 package com.procuone.mit_kdt.service.impl;
 
 import com.procuone.mit_kdt.dto.CompanyItemDTO;
+import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.entity.CompanyItem;
@@ -145,6 +146,24 @@ public class CompanyItemServiceImpl implements CompanyItemService {
     public void update(CompanyItem companyItem) {
 
     }
+
+    @Override
+    public List<ItemDTO> getItemsByBusinessId(String businessId) {
+        // CompanyItemRepository를 통해 businessId로 필터링된 품목 리스트 조회
+        List<CompanyItem> companyItems = companyItemRepository.findByCompany_BusinessId(businessId);
+
+        // CompanyItem -> ItemDTO 변환
+        return companyItems.stream()
+                .map(companyItem -> {
+                    Item item = companyItem.getItem(); // CompanyItem에서 Item 객체 가져오기
+                    return ItemDTO.builder()
+                            .id(item.getId())
+                            .itemName(item.getItemName())
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
     private CompanyItemDTO convertToDTO(CompanyItem companyItem) {
         return CompanyItemDTO.builder()
                 .id(companyItem.getId())

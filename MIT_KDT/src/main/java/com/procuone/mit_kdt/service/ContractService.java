@@ -28,4 +28,6 @@ public interface ContractService {
     void updateContractStatus(Long itemId, String businessId,boolean status);
 
     void deleteExpiredContracts();
+
+    ContractDTO getContractById(Long id);
 }
