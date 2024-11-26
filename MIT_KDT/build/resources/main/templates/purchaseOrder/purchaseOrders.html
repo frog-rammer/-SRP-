@@ -265,10 +265,9 @@
         </form>
         <div class="pagination">
           <ul>
-            <li th:each="pageNum : ${#numbers.sequence(1, completedTotalPages)}">
-              <a th:href="@{/purchaseOrder/purchaseOrders(page=${pageNum - 1})}"
-                 class="page-btn"
-                 th:text="${pageNum}"></a>
+            <li th:each="pageNum : ${#numbers.sequence(1, autoTotalPages)}">
+              <a th:href="@{/purchaseOrders(page1=${pageNum - 1}, size1=${7}, page2=${completedCurrentPage}, size2=${7})}"
+                 class="page-btn" th:text="${pageNum}"></a>
             </li>
           </ul>
         </div>
@@ -331,9 +330,8 @@
         <div class="pagination">
           <ul>
             <li th:each="pageNum : ${#numbers.sequence(1, completedTotalPages)}">
-              <a th:href="@{/purchaseOrder/purchaseOrders(page=${pageNum - 1})}"
-                 class="page-btn"
-                 th:text="${pageNum}"></a>
+              <a th:href="@{/purchaseOrders(page2=${pageNum - 1}, size2=${7}, page1=${autoCurrentPage}, size1=${7})}"
+                 class="page-btn" th:text="${pageNum}"></a>
             </li>
           </ul>
         </div>
