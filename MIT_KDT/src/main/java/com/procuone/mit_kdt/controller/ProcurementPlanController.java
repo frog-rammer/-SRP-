@@ -2,11 +2,14 @@ package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
+import com.procuone.mit_kdt.entity.ProcurementPlan;
+import com.procuone.mit_kdt.repository.ProcurementPlanRepository;
 import com.procuone.mit_kdt.service.ProcurementPlanService;
 import com.procuone.mit_kdt.service.ProductionPlanService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +27,9 @@ public class ProcurementPlanController {
     ProcurementPlanService procurementPlanService;
     @Autowired
     PurchaseOrderService purchaseOrderService;
+    @Autowired
+    private ProcurementPlanRepository ProcurementPlanRepository;
+
     @GetMapping("/register")
     public String register(Model model, Pageable pageable) {
         // 페이지 네이션 된 생산계획 모델로 전달까지
@@ -51,6 +57,8 @@ public class ProcurementPlanController {
         model.addAttribute("endPage", endPage);
         model.addAttribute("procurementPlanDTO", new ProcumentPlanDTO());
 
+        List<ProcurementPlan> procurementPlanList = procurementPlanService.getAllProcurementPlans();//추가
+
         return "procurementPlan/procurementPlanRegister";
     }
 
@@ -66,4 +74,31 @@ public class ProcurementPlanController {
         // 3. 저장된 조달 계획 리스트를 다시 로드하여 View에 전달
         return "redirect:/procurementPlan/register"; // GET 메서드 호출로 리다이렉트
     }
+
+    @GetMapping("/procurementPlanView")
+    public String procurementPlanView(
+            Model model,
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "page", defaultValue = "0") int page) {
+
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        Page<ProcurementPlan> procurementPlans;
+        if (search != null && !search.isEmpty()) {
+            procurementPlans = ProcurementPlanRepository.findByProductNameContainingOrProductCodeContaining(search, search, pageable);
+        } else {
+            procurementPlans = ProcurementPlanRepository.findAll(pageable);
+        }
+
+        model.addAttribute("procurementPlanList", procurementPlans.getContent());
+        model.addAttribute("search", search);
+        model.addAttribute("currentPage", procurementPlans.getNumber());
+        model.addAttribute("totalPages", procurementPlans.getTotalPages());
+        model.addAttribute("totalItems", procurementPlans.getTotalElements());
+
+        return "purchaseOrder/procurementPlanView";
+    }
+
 }
+

@@ -7,32 +7,53 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
-        /* layout-main만 스타일 적용 */
-        .layout-main {
-            background-color: #f4f7fc; /* 밝은 배경색 */
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            max-width: 1200px;
-            margin: 20px auto;
-            box-sizing: border-box;
+        .modal {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
         }
 
-        .layout-main h1 {
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .close {
+            color: #aaa;
             font-size: 28px;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 600;
-            text-align: center;
+            font-weight: bold;
+            position: absolute;
+            top: 0;
+            right: 25px;
+            padding: 16px;
         }
 
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 기본 테이블 스타일 */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             background-color: #ffffff;
             border-radius: 8px;
-            overflow: hidden; /* 테이블 셀의 경계가 둥글게 나오도록 */
+            overflow: hidden;
         }
 
         table th, table td {
@@ -50,26 +71,12 @@
         }
 
         table tr:nth-child(even) {
-            background-color: #f9f9f9; /* 짝수 행 배경색 */
+            background-color: #f9f9f9;
         }
 
         table tr:hover {
-            background-color: #f1f1f1; /* 마우스 오버 시 배경색 */
+            background-color: #f1f1f1;
         }
-
-        button.view-contract-btn {
-            background-color: #32928E;
-            color: #fff;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            text-align: center;
-        }
-
-        button.view-contract-b
-
     </style>
 </head>
 <body>
@@ -97,29 +104,88 @@
                 <th>소요 시간</th>
                 <th>생산 수량</th>
                 <th>계약 상태</th>
-                <th>계약서</th> <!-- 계약서 열 추가 -->
+                <th>계약서</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="contract : ${contracts}">
                 <td th:text="${contract.id}"></td>
-                <td th:text="${contract.comName}"></td> <!-- 회사명 -->
-                <td th:text="${contract.itemName}"></td> <!-- 품목명 -->
-                <td th:text="${#dates.format(contract.contractDate, 'yyyy-MM-dd')}"></td> <!-- 계약 시작일 -->
-                <td th:text="${#dates.format(contract.contractEndDate, 'yyyy-MM-dd')}"></td> <!-- 계약 종료일 -->
-                <td th:text="${contract.unitCost}"></td> <!-- 단가 -->
-                <td th:text="${contract.leadTime}"></td> <!-- 소요 시간 -->
-                <td th:text="${contract.productionQty}"></td> <!-- 생산 수량 -->
-                <td th:text="${contract.contractStatus ? '활성' : '종료'}"></td> <!-- 계약 상태 -->
+                <input hidden name="id" th:value="${contract.id}">
+                <td th:text="${contract.comName}"></td>
+                <td th:text="${contract.itemName}"></td>
+                <td th:text="${#dates.format(contract.contractDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${#dates.format(contract.contractEndDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${contract.unitCost}"></td>
+                <td th:text="${contract.leadTime}"></td>
+                <td th:text="${contract.productionQty}"></td>
+                <td th:text="${contract.contractStatus ? 'O' : 'X'}"></td>
                 <td>
-                    <button class="view-contract-btn">
-                        <a th:href="@{'/company/contract/contractForm/' + ${contract.id}}">보기</a> <!-- 계약서 보기 링크 -->
-                    </button>
+                    <!-- 보기 버튼 클릭 시 모달 창 띄우기 -->
+                    <button class="view-contract-btn" id="viewContractBtn_${contract.id}" onclick="openModal('${contract.id}')">보기</button>
                 </td>
             </tr>
             </tbody>
         </table>
+
+        <!-- 모달 -->
+        <div id="contractModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>계약서 보기</h2>
+                <div id="contractDetails">
+                    <!-- 계약서 내용이 여기 표시됩니다 -->
+                </div>
+            </div>
+        </div>
     </main>
 </div>
+
+<script>
+
+    // 계약서 보기 버튼을 클릭했을 때 모달을 띄우는 함수
+    function openModal(contractId) {
+        // contractId는 이미 JavaScript에서 Long 값으로 전달됨
+        fetch('/company/contract/contractForm/' + contractId)
+            .then(response => response.text())
+            .then(data => {
+                // 모달에 계약서 내용 삽입
+                document.getElementById('contractDetails').innerHTML = data;
+                document.getElementById('contractModal').style.display = "block";
+                document.body.style.overflow = 'hidden';
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // 모달 닫기
+    function closeModal() {
+        const modal = document.getElementById('contractModal');
+        modal.style.display = "none";
+        // 모달 닫을 때 페이지 스크롤 복원
+        document.body.style.overflow = 'auto'; // 페이지 스크롤 복원
+    }
+
+    // 모달 배경을 클릭하면 모달을 닫기
+    window.onclick = function(event) {
+        const modal = document.getElementById('contractModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // ESC 키로 모달 닫기
+    window.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+    $(document).ready(function() {
+        // 페이지 새로 고침 시 모달이 열리지 않도록 제어
+        if (!sessionStorage.getItem("modalOpened")) {
+            $('#contractModal').modal('show');  // 조건에 맞으면 모달 열기
+            sessionStorage.setItem("modalOpened", true);  // 모달을 열었다는 정보 기록
+        }
+    });
+
+</script>
 </body>
 </html>
