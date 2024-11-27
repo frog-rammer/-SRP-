@@ -61,8 +61,5 @@ public class PurchaseOrderController {
         return "purchaseOrder/progressInspection";
     }
 
-    @GetMapping("/procurementPlanView")
-    public String procurementPlanView() {
-        return "purchaseOrder/procurementPlanView";
-    }
+
 }

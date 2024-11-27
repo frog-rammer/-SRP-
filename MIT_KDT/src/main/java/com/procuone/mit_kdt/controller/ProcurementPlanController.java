@@ -9,6 +9,7 @@ import com.procuone.mit_kdt.service.ProductionPlanService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -77,28 +78,27 @@ public class ProcurementPlanController {
     @GetMapping("/procurementPlanView")
     public String procurementPlanView(
             Model model,
-            Pageable pageable,
-            @RequestParam(value = "search", required = false) String search) {
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "page", defaultValue = "0") int page) {
 
-        // 검색어가 있을 경우, 해당 검색어로 데이터를 조회
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page, pageSize);
+
         Page<ProcurementPlan> procurementPlans;
-
         if (search != null && !search.isEmpty()) {
             procurementPlans = ProcurementPlanRepository.findByProductNameContainingOrProductCodeContaining(search, search, pageable);
         } else {
             procurementPlans = ProcurementPlanRepository.findAll(pageable);
         }
 
-        // 로깅으로 데이터 확인
-        System.out.println("procurementPlans size: " + procurementPlans.getTotalElements());
-        System.out.println("procurementPlans content: " + procurementPlans.getContent());
-
         model.addAttribute("procurementPlanList", procurementPlans.getContent());
         model.addAttribute("search", search);
+        model.addAttribute("currentPage", procurementPlans.getNumber());
+        model.addAttribute("totalPages", procurementPlans.getTotalPages());
+        model.addAttribute("totalItems", procurementPlans.getTotalElements());
 
         return "purchaseOrder/procurementPlanView";
     }
-
 
 }
 

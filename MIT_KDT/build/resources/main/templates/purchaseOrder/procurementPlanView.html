@@ -71,7 +71,7 @@
             font-size: 1rem;
             background-color: #fafafa;
             transition: border-color 0.3s ease;
-            margin:0 auto;
+            margin: 0 auto;
         }
 
         .search-section input[type="text"]:focus,
@@ -134,33 +134,60 @@
         tr:hover td {
             background-color: #e0f7fa;
         }
+        /* 페이지네이션 스타일 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            padding: 10px 15px;
+            margin: 0 5px;
+            text-decoration: none;
+            color: #32928E;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #32928E;
+            color: white;
+        }
+
+        .pagination .active {
+            background-color: #32928E;
+            color: white;
+        }
     </style>
 </head>
 <body>
 <div class="grid-container">
 
     <header class="layout-header">
-        <div th:replace="partials/procuOneHeader :: header"></div>
+        <div th:replace="~{partials/procuOneHeader :: header}"></div>
     </header>
     <aside class="layout-sidebar">
-        <div th:replace="partials/procuOneSide :: side"></div>
+        <div th:replace="~{partials/procuOneSide :: side}"></div>
     </aside>
     <main class="layout-main">
         <h1>조달계획 조회</h1>
         <section class="search-section">
             <h3>검색</h3>
             <form action="/procurementPlan/search" method="get">
-<!--                <label for="procurementPlanCode">조달계획 코드</label>-->
-<!--                <input type="text" id="procurementPlanCode" name="procurementPlanCode" th:value="${procurementPlanCode}" placeholder="조달계획 코드를 입력하세요">-->
+                <!--                <label for="procurementPlanCode">조달계획 코드</label>-->
+                <!--                <input type="text" id="procurementPlanCode" name="procurementPlanCode" th:value="${procurementPlanCode}" placeholder="조달계획 코드를 입력하세요">-->
 
-<!--                <label for="productPlanCode">생산계획 코드</label>-->
-<!--                <input type="text" id="productPlanCode" name="productPlanCode" th:value="${productPlanCode}" placeholder="생산계획 코드를 입력하세요">-->
+                <!--                <label for="productPlanCode">생산계획 코드</label>-->
+                <!--                <input type="text" id="productPlanCode" name="productPlanCode" th:value="${productPlanCode}" placeholder="생산계획 코드를 입력하세요">-->
 
                 <label for="productName">품목명</label>
-                <input type="text" id="productName" name="productName" th:value="${productName}" placeholder="품목명을 입력하세요">
+                <input type="text" id="productName" name="productName" th:value="${productName}"
+                       placeholder="품목명을 입력하세요">
 
-<!--                <label for="productCode">제품 코드</label>-->
-<!--                <input type="text" id="productCode" name="productCode" th:value="${productCode}" placeholder="제품 코드를 입력하세요">-->
+                <!--                <label for="productCode">제품 코드</label>-->
+                <!--                <input type="text" id="productCode" name="productCode" th:value="${productCode}" placeholder="제품 코드를 입력하세요">-->
 
                 <label for="startDate">시작일</label>
                 <input type="date" id="startDate" name="startDate" th:value="${planStartDate}">
@@ -185,11 +212,13 @@
                     <th>조달 수량</th>
                     <th>계획 시작일</th>
                     <th>계획 종료일</th>
-                    <th>조달 납기일</th>
+                    <th></th>
+<!--                    <th>조달 납기일</th>-->
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="procurementPlan : ${procurementPlanList}" th:attr="data-id=${procurementPlan.procurementPlanCode}">
+                <tr th:each="procurementPlan : ${procurementPlanList}"
+                    th:attr="data-id=${procurementPlan.procurementPlanCode}">
                     <td th:text="${procurementPlan.productPlanCode}"></td>
                     <td th:text="${procurementPlan.productName}"></td>
                     <td th:text="${procurementPlan.productCode}"></td>
@@ -198,15 +227,30 @@
                     <td th:text="${procurementPlan.planStartDate}"></td>
                     <td th:text="${procurementPlan.planEndDate}"></td>
                     <td th:text="${procurementPlan.procurementEndDate}"></td>
+                    <td><input type="button" value="수정"><input type="button" value="삭제">  </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(procurementPlanList)}">
-                <td colspan="8">No data available</td>
+                    <td colspan="8">No data available</td>
                 </tr>
                 </tbody>
             </table>
+            <!-- 페이지네이션 버튼 -->
+            <div class="pagination">
+
+                <a th:if="${currentPage > 0}"
+                   th:href="@{/procumentPlan/procurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
+
+                <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                   th:classappend="${i == currentPage} ? 'active' : ''"
+                   th:href="@{/procumentPlan/procurementPlanView(page=${i}, search=${search})}"
+                   th:text="${i + 1}">1</a>
+
+                <a th:if="${currentPage < totalPages - 1}"
+                   th:href="@{/procumentPlan/procurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
+
+            </div>
         </section>
     </main>
-
     <footer>
         <p>&copy; 2024 조달관리 시스템</p>
     </footer>
