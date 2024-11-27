@@ -2,6 +2,7 @@ package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
+import com.procuone.mit_kdt.entity.ProcurementPlan;
 import com.procuone.mit_kdt.service.ProcurementPlanService;
 import com.procuone.mit_kdt.service.ProductionPlanService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
@@ -51,6 +52,8 @@ public class ProcurementPlanController {
         model.addAttribute("endPage", endPage);
         model.addAttribute("procurementPlanDTO", new ProcumentPlanDTO());
 
+        List<ProcurementPlan> procurementPlanList = procurementPlanService.getAllProcurementPlans();//추가
+
         return "procurementPlan/procurementPlanRegister";
     }
 
@@ -66,4 +69,6 @@ public class ProcurementPlanController {
         // 3. 저장된 조달 계획 리스트를 다시 로드하여 View에 전달
         return "redirect:/procurementPlan/register"; // GET 메서드 호출로 리다이렉트
     }
+
+
 }
