@@ -77,12 +77,47 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
         return dto;
     }
 
+    @Override
+    public Page<ProgressInspectionDTO> getInspectionsByBusinessId(String businessId, Pageable pageable) {
+        Page<ProgressInspection> inspections = progressInspectionRepository.findByBusinessId(businessId, pageable);
+
+        // DTO 변환 및 반환
+        return inspections.map(this::entityToDto);
+    }
+
+    @Override
+    public void updateInspectedQuantity(String progressInspectionCode, Long newInspectionQuantity, String businessId) {
+        // 기존 데이터 조회
+        ProgressInspection inspection = progressInspectionRepository.findById(progressInspectionCode)
+                .orElseThrow(() -> new IllegalArgumentException("검수 코드가 잘못되었습니다."));
+
+        // 비즈니스 로직 검증
+        if (!inspection.getBusinessId().equals(businessId)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+        if (inspection.getInspectedQuantity() + newInspectionQuantity > inspection.getTotalQuantity()) {
+            throw new IllegalArgumentException("검수 수량이 발주 수량을 초과할 수 없습니다.");
+        }
+
+        // 데이터 업데이트
+        inspection.setInspectedQuantity(inspection.getInspectedQuantity() + newInspectionQuantity);
+        inspection.setInspectionDate(LocalDate.now());
+        if(inspection.getInspectedQuantity().equals(inspection.getTotalQuantity())) {
+            inspection.setInspectionStatus("검수완료");
+        }else{
+            inspection.setInspectionStatus("검수진행중");
+        }
+        progressInspectionRepository.save(inspection);
+    }
+
     // DTO -> Entity 변환
     @Override
     public ProgressInspection dtoToEntity(ProgressInspectionDTO dto, PurchaseOrder purchaseOrder) {
         return ProgressInspection.builder()
                 .progressInspectionCode(dto.getProgressInspectionCode())
                 .purchaseOrder(purchaseOrder) // 연관된 발주서 객체 설정
+                .businessId(purchaseOrder.getBusinessId())
+                .comName(dto.getComName())
                 .productCode(dto.getProductCode())
                 .productName(dto.getProductName())
                 .totalQuantity(dto.getTotalQuantity())
@@ -99,6 +134,8 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
         return ProgressInspectionDTO.builder()
                 .progressInspectionCode(entity.getProgressInspectionCode())
                 .purchaseOrderCode(entity.getPurchaseOrder().getPurchaseOrderCode()) // 발주서 코드 가져오기
+                .businessId(entity.getPurchaseOrder().getBusinessId())
+                .comName(entity.getComName())
                 .productCode(entity.getProductCode())
                 .productName(entity.getProductName())
                 .totalQuantity(entity.getTotalQuantity())
@@ -109,4 +146,5 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
                 .expectedArrivalDate(null) // expectedArrivalDate는 calculateExpectedArrivalDateAndConvertToDTO에서 계산
                 .build();
     }
+
 }
