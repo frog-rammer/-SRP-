@@ -199,7 +199,9 @@
                     <td th:text="${procurementPlan.planEndDate}"></td>
                     <td th:text="${procurementPlan.procurementEndDate}"></td>
                 </tr>
-
+                <tr th:if="${#lists.isEmpty(procurementPlanList)}">
+                <td colspan="8">No data available</td>
+                </tr>
                 </tbody>
             </table>
         </section>

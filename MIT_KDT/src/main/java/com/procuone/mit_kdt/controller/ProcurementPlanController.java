@@ -3,6 +3,7 @@ package com.procuone.mit_kdt.controller;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
 import com.procuone.mit_kdt.entity.ProcurementPlan;
+import com.procuone.mit_kdt.repository.ProcurementPlanRepository;
 import com.procuone.mit_kdt.service.ProcurementPlanService;
 import com.procuone.mit_kdt.service.ProductionPlanService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
@@ -25,6 +26,9 @@ public class ProcurementPlanController {
     ProcurementPlanService procurementPlanService;
     @Autowired
     PurchaseOrderService purchaseOrderService;
+    @Autowired
+    private ProcurementPlanRepository ProcurementPlanRepository;
+
     @GetMapping("/register")
     public String register(Model model, Pageable pageable) {
         // 페이지 네이션 된 생산계획 모델로 전달까지
@@ -70,5 +74,31 @@ public class ProcurementPlanController {
         return "redirect:/procurementPlan/register"; // GET 메서드 호출로 리다이렉트
     }
 
+    @GetMapping("/procurementPlanView")
+    public String procurementPlanView(
+            Model model,
+            Pageable pageable,
+            @RequestParam(value = "search", required = false) String search) {
+
+        // 검색어가 있을 경우, 해당 검색어로 데이터를 조회
+        Page<ProcurementPlan> procurementPlans;
+
+        if (search != null && !search.isEmpty()) {
+            procurementPlans = ProcurementPlanRepository.findByProductNameContainingOrProductCodeContaining(search, search, pageable);
+        } else {
+            procurementPlans = ProcurementPlanRepository.findAll(pageable);
+        }
+
+        // 로깅으로 데이터 확인
+        System.out.println("procurementPlans size: " + procurementPlans.getTotalElements());
+        System.out.println("procurementPlans content: " + procurementPlans.getContent());
+
+        model.addAttribute("procurementPlanList", procurementPlans.getContent());
+        model.addAttribute("search", search);
+
+        return "purchaseOrder/procurementPlanView";
+    }
+
 
 }
+
