@@ -1,357 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>구매 발주서 관리</title>
-  <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
-  <link rel="stylesheet" th:href="@{/css/layout.css}">
-  <style>
-    li{
-      list-style: none;
-      display:inline;
-    }
-    /* 테이블 스타일 */
-    table {
-      width: 100%;
-      border-collapse: collapse; /* 셀 간 경계선을 합침 */
-      margin-top: 20px;
-      font-family: Arial, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <title>구매 발주서 관리</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <style>
+        li {
+            list-style: none;
+            display: inline;
+        }
 
-    th, td {
-      padding: 10px;
-      text-align: center;
-      border: 1px solid #ddd; /* 테두리 색상 */
-    }
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+        }
 
-    th {
-      background-color: #32928E; /* 헤더 배경색 */
-      color: #fff;
-      font-weight: bold;
-    }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
 
-    td {
-      background-color: #fff; /* 일반 셀 배경색 */
-    }
+        th {
+            background-color: #32928E;
+            color: #fff;
+            font-weight: bold;
+        }
 
-    td a {
-      color: #32928E; /* 링크 색상 */
-      text-decoration: none; /* 밑줄 제거 */
-    }
+        tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
 
-    td a:hover {
-      text-decoration: underline; /* 마우스 오버 시 밑줄 추가 */
-    }
+        td a {
+            color: #32928E;
+            text-decoration: none;
+        }
 
-    tr:nth-child(even) td {
-      background-color: #f9f9f9; /* 짝수 번째 행 배경색 */
-    }
+        td a:hover {
+            text-decoration: underline;
+        }
 
-    /* 체크박스 스타일 */
-    input[type="checkbox"] {
-      transform: scale(1.2); /* 체크박스 크기 확대 */
-      margin-right: 10px; /* 체크박스와 텍스트 사이 여백 */
-    }
+        input[type="checkbox"] {
+            transform: scale(1.2);
+            margin-right: 10px;
+        }
 
-    /* 페이지네이션 스타일 */
-    .pagination {
-      margin-top: 20px;
-      text-align: center;
-    }
+        /* Pagination */
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
 
-    .pagination ul {
-      list-style: none;
-      padding: 0;
-    }
+        .pagination .page-btn {
+            padding: 5px 10px;
+            background-color: #32928E;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
 
-    .pagination li {
-      display: inline-block;
-      margin-right: 5px;
-    }
+        .pagination .page-btn:disabled {
+            background-color: #ccc;
+            pointer-events: none;
+        }
 
-    .pagination .page-btn {
-      padding: 5px 10px;
-      background-color: #32928E;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-    }
+        /* Search Bar */
+        .search-bar {
+            margin-bottom: 20px;
+        }
 
-    .pagination .page-btn:disabled {
-      background-color: #ccc;
-      pointer-events: none;
-    }
-    /* 검색바 스타일 */
-    .search-bar,
-    .keyword-search,
-    .keyword-search2 {
-      margin-bottom: 20px;
-    }
+        .search-bar input, select, button {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
 
-    .date-search{
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+        .search-bar button {
+            background-color: #32928E;
+            color: white;
+            cursor: pointer;
+        }
 
-    .date-search input[type="date"],
-    .date-search2 input[type="date"],
-    .keyword-search input[type="text"],
-    .keyword-search2 input[type="text"] {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 14px;
-      width: auto;
-      max-width: 180px;
-    }
+        .search-bar button:hover {
+            background-color: #278F75;
+        }
 
-    .date-search button,
-    .keyword-search-btn,
-    .search-btn,
-    .keyword-search-btn2,
-    .search-btn2 {
-      padding: 8px 16px;
-      background-color: #32928E;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .search-btn{
-      position: relative; left: -6px;
-    }
-    .search-btn2{
-      position: relative; right: -2px;
-    }
-    .keyword-search-btn{
-      position: relative; left: 4px;
-    }
-    .date-search button:hover,
-    .keyword-search-btn:hover,
-    .search-btn:hover,
-    .keyword-search-btn2:hover,
-    .search-btn2:hover {
-      background-color: #278F75; /* hover 시 색상 변경 */
-    }
+        .button {
+            padding: 6px 12px;
+            background-color: #32928E;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+        }
 
-    .date-search button:disabled,
-    .keyword-search-btn:disabled,
-    .search-btn:disabled,
-    .keyword-search-btn2:disabled,
-    .search-btn2:disabled {
-      background-color: #ccc;
-      pointer-events: none;
-    }
-
-    .keyword-search select {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 14px;
-      background-color: white;
-    }
-    .keyword-search2 select {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 14px;
-      background-color: white;
-    }
-
-    .keyword-search select:focus,
-    .date-search input[type="date"]:focus,
-    .keyword-search input[type="text"]:focus {
-      outline: none;
-      border-color: #32928E;
-    }
-    /* 발주, 삭제, 수정 버튼 스타일 */
-    .button {
-      padding: 6px 12px; /* 검색 버튼보다 조금 작게 */
-      background-color: #32928E;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .button:hover {
-      background-color: #278F75; /* hover 시 색상 변경 */
-    }
-
-    .button:disabled {
-      background-color: #ccc;
-      pointer-events: none;
-    }
-  </style>
+        .button:hover {
+            background-color: #278F75;
+        }
+    </style>
 </head>
 <body>
 <div class="grid-container">
-  <header class="layout-header">
-    <div th:replace="partials/procuOneHeader :: header"></div>
-  </header>
-
-  <aside class="layout-sidebar">
-    <div th:replace="partials/procuOneSide :: side"></div>
-  </aside>
-
-  <main class="layout-main">
-    <div id="content">
-      <!-- 위쪽 테이블: 상태가 자동생성인 항목 -->
-      <section class="procurement-plan">
-        <div class="top">
-          <h2>구매 발주서 관리</h2>
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+    <main class="layout-main">
+        <div id="content">
+            <!-- Auto-generated table -->
+            <section class="procurement-plan">
+                <div class="top">
+                    <h2>구매 발주서 관리</h2>
+                </div>
+                <div class="search-bar">
+                    <input type="date" class="date-start" placeholder="시작 날짜">
+                    <input type="date" class="date-end" placeholder="종료 날짜">
+                    <select class="keyword-type">
+                        <option value="businessId">사업자번호</option>
+                        <option value="productCode">품목명</option>
+                    </select>
+                    <input type="text" class="keyword-input" placeholder="키워드 검색">
+                    <button class="search-btn" data-table="auto">검색</button>
+                </div>
+                <form th:action="@{/purchaseOrder/order}" method="post" id="orderForm">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="select-all"/>
+                            </th>
+                            <th>조달계획번호</th>
+                            <th>관련생산계획</th>
+                            <th>사업자번호</th>
+                            <th>품목명</th>
+                            <th>구매주문수량</th>
+                            <th>조달납기일</th>
+                            <th>사업자 번호</th>
+                            <th>품목 코드</th>
+                        </tr>
+                        </thead>
+                        <tbody class="auto-orders">
+                        <tr th:each="order : ${autoOrders}">
+                            <td>
+                                <input type="checkbox" name="orderIds" th:value="${order.purchaseOrderCode}"/>
+                            </td>
+                            <td th:text="${order.procurementPlanCode}"></td>
+                            <td th:text="${order.productPlanCode}"></td>
+                            <td th:text="${order.businessId}"></td>
+                            <td th:text="${order.productCode}"></td>
+                            <td th:text="${order.quantity}"></td>
+                            <td th:text="${order.procurementEndDate}"></td>
+                            <td th:text="${order.businessId}"></td>
+                            <td th:text="${order.productCode}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <button type="submit" class="button">발주</button>
+                </form>
+                <div class="pagination">
+                    <ul>
+                        <li th:each="pageNum : ${#numbers.sequence(1, autoTotalPages)}">
+                            <a th:href="@{/purchaseOrder/purchaseOrders(page1=${pageNum - 1}, size1=${7})}"
+                               class="page-btn" th:text="${pageNum}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            <!-- Completed orders table -->
+            <section class="purchase-order">
+                <div class="top">
+                    <h2>구매 발주서 관리 - 구매 발주서 리스트</h2>
+                </div>
+                <div class="search-bar">
+                    <input type="date" class="date-start2" placeholder="시작 날짜">
+                    <input type="date" class="date-end2" placeholder="종료 날짜">
+                    <select class="keyword-type2">
+                        <option value="businessId">사업자번호</option>
+                        <option value="productCode">품목명</option>
+                    </select>
+                    <input type="text" class="keyword-input2" placeholder="키워드 검색">
+                    <button class="search-btn" data-table="completed">검색</button>
+                </div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>선택</th>
+                        <th>발주번호</th>
+                        <th>사업자번호</th>
+                        <th>품목명</th>
+                        <th>발주수량</th>
+                        <th>입고예정일</th>
+                        <th>발주일</th>
+                    </tr>
+                    </thead>
+                    <tbody class="completed-orders">
+                    <tr th:each="order : ${completedOrders}">
+                        <td>
+                            <input type="checkbox" name="orderIds2" th:value="${order.purchaseOrderCode}"/>
+                        </td>
+                        <td th:text="${order.purchaseOrderCode}"></td>
+                        <td th:text="${order.businessId}"></td>
+                        <td th:text="${order.productCode}"></td>
+                        <td th:text="${order.quantity}"></td>
+                        <td th:text="${order.procurementEndDate}"></td>
+                        <td th:text="${order.createdDate}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button class="button">삭제</button>
+                <button class="button">수정</button>
+                <div class="pagination">
+                    <ul>
+                        <li th:each="pageNum : ${#numbers.sequence(1, completedTotalPages)}">
+                            <a th:href="@{/purchaseOrder/purchaseOrders(page2=${pageNum - 1}, size2=${7})}"
+                               class="page-btn" th:text="${pageNum}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
         </div>
-        <form th:action="@{/purchaseOrder/order}" method="post">
-          <div class="search-bar"></div>
-          <div class="date-search">
-            <label>
-              <input type="date" class="date-start">
-            </label>
-            <span>-</span>
-            <label>
-              <input type="date" class="date-end">
-            </label>
-            <button class="search-btn">검색</button>
-          </div>
-          <div class="keyword-search">
-            <label>
-              <select class="keyword-type">
-                <option>업체명</option>
-                <option>품목명</option>
-              </select>
-              <input type="text" class="keyword-search" placeholder="키워드 검색">
-              <button class="keyword-search-btn">검색</button>
-            </label>
-          </div>
-          <table>
-            <thead>
-            <tr>
-              <th>
-                <input type="checkbox" id="select-all" />
-              </th>
-              <th>조달계획번호</th>
-              <th>관련생산계획</th>
-              <th>업체명</th>
-              <th>품목명</th>
-              <th>구매주문수량</th>
-              <th>조달납기일</th>
-              <th>사업자 번호</th>
-              <th>품목 코드</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="order : ${autoOrders}">
-              <td>
-                <input type="checkbox" name="orderIds" th:value="${order.purchaseOrderCode}" />
-              </td>
-              <td th:text="${order.procurementPlanCode}"></td>
-              <td th:text="${order.productPlanCode}"></td>
-              <td th:text="${order.businessId}"></td>
-              <td th:text="${order.productCode}"></td>
-              <td th:text="${order.quantity}"></td>
-              <td th:text="${order.procurementEndDate}"></td>
-              <td th:text="${order.businessId}"></td>
-              <td th:text="${order.productCode}"></td>
-            </tr>
-            </tbody>
-          </table>
-          <button type="submit" class="button">발주</button>
-        </form>
-        <div class="pagination">
-          <ul>
-            <li th:each="pageNum : ${#numbers.sequence(1, completedTotalPages)}">
-              <a th:href="@{/purchaseOrder/purchaseOrders(page=${pageNum - 1})}"
-                 class="page-btn"
-                 th:text="${pageNum}"></a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- 아래쪽 테이블: 상태가 발주완료인 항목 -->
-      <section class="purchase-order">
-        <div class="top">
-          <h2>구매 발주서 관리 - 구매 발주서 리스트</h2>
-        </div>
-        <div class="search-bar">
-          <div class="date-search">
-            <label>
-              <input type="date" class="date-start2" placeholder="시작 날짜">
-              <span>-</span>
-              <input type="date" class="date-end2" placeholder="종료 날짜">
-            </label>
-            <button class="search-btn2">검색</button>
-          </div>
-        </div>
-        <div class="keyword-search2">
-          <label>
-            <select class="keyword-type2">
-              <option>업체명</option>
-              <option>품목명</option>
-            </select>
-            <input type="text" class="keyword-search2" placeholder="키워드 검색">
-            <button class="keyword-search-btn2">검색</button>
-          </label>
-        </div>
-        <table>
-          <thead>
-          <tr>
-            <th>선택</th>
-            <th>발주번호</th>
-            <th>업체명</th>
-            <th>품목명</th>
-            <th>발주수량</th>
-            <th>입고예정일</th>
-            <th>발주일</th>
-            <th>거래명세서</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr th:each="order : ${completedOrders}">
-            <td>
-              <input type="checkbox" name="orderIds2" th:value="${order.purchaseOrderCode}" />
-            </td>
-            <td th:text="${order.purchaseOrderCode}"></td>
-            <td th:text="${order.businessId}"></td>
-            <td th:text="${order.productCode}"></td>
-            <td th:text="${order.quantity}"></td>
-            <td th:text="${order.procurementEndDate}"></td>
-            <td th:text="${order.createdDate}"></td>
-          </tr>
-          </tbody>
-        </table>
-        <button id="delete-btn" class="button">삭제</button>
-        <button id="modify-btn" class="button">수정</button>
-        <div class="pagination">
-          <ul>
-            <li th:each="pageNum : ${#numbers.sequence(1, completedTotalPages)}">
-              <a th:href="@{/purchaseOrder/purchaseOrders(page=${pageNum - 1})}"
-                 class="page-btn"
-                 th:text="${pageNum}"></a>
-            </li>
-          </ul>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <footer class="layout-footer"></footer>
+    </main>
+    <footer class="layout-footer"></footer>
 </div>
-
 <script>
-  // 전체 선택 체크박스 기능
-  document.getElementById('select-all').addEventListener('change', function () {
-    const checkboxes = document.querySelectorAll('input[name="orderIds"]');
-    checkboxes.forEach(checkbox => {
-      checkbox.checked = this.checked;
+    document.getElementById('select-all').addEventListener('change', function () {
+        const checkboxes = document.querySelectorAll('.auto-orders input[type="checkbox"]');
+        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
     });
-  });
+
+    document.querySelectorAll('.search-btn').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            const tableType = this.getAttribute('data-table');
+            const queryParams = {
+                tableType: tableType,
+                startDate: document.querySelector(`.date-start${tableType === 'completed' ? '2' : ''}`).value,
+                endDate: document.querySelector(`.date-end${tableType === 'completed' ? '2' : ''}`).value,
+                keyword: document.querySelector(`.keyword-input${tableType === 'completed' ? '2' : ''}`).value,
+                type: document.querySelector(`.keyword-type${tableType === 'completed' ? '2' : ''}`).value
+            };
+
+            fetch(`/purchaseOrder/purchaseOrders/ajax?` + new URLSearchParams(queryParams))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => updateTable(tableType, data))
+                .catch(error => console.error('Error during search:', error));
+        });
+    });
+
+    function updateTable(tableType, data) {
+        const tbody = document.querySelector(`.${tableType}-orders`);
+        tbody.innerHTML = '';
+
+        const orders = data[tableType];
+        if (orders && orders.length > 0) {
+            orders.forEach(order => {
+                const row = `
+                <tr>
+                    <td><input type="checkbox" name="orderIds" value="${order.purchaseOrderCode}"></td>
+                    <td>${order.procurementPlanCode || ''}</td>
+                    <td>${order.productPlanCode || ''}</td>
+                    <td>${order.businessId || ''}</td>
+                    <td>${order.productCode || ''}</td>
+                    <td>${order.quantity || ''}</td>
+                    <td>${tableType === 'auto' ? order.procurementEndDate : order.createdDate || ''}</td>
+                </tr>
+            `;
+                tbody.innerHTML += row;
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="9">검색 결과가 없습니다.</td></tr>';
+        }
+
+        // 검색 후 동적으로 추가된 체크박스에도 이벤트 재적용
+        document.getElementById('select-all').checked = false;
+        document.getElementById('select-all').dispatchEvent(new Event('change'));
+    }
 </script>
 </body>
 </html>
