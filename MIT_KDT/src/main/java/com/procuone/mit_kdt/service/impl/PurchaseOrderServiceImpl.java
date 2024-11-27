@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,7 +40,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public Page<PurchaseOrderDTO> getOrdersByStatus(String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-
         // 엔티티를 DTO로 변환하는 로직 포함
         return purchaseOrderRepository.findByStatus(status, pageable)
                 .map(this::convertEntityToDTO);
@@ -52,16 +52,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             // 상태 변경
             order.setStatus("발주완료");
             purchaseOrderRepository.save(order);
-
             // productCode를 기반으로 ItemDTO 조회
             Optional<ItemDTO> itemDTOOptional = itemService.findByProductCode(order.getProductCode());
             if (itemDTOOptional.isEmpty()) {
                 throw new IllegalStateException("해당 productCode에 대한 Item을 찾을 수 없습니다: " + order.getProductCode());
             }
-
             // DTO -> Entity 변환
             Item item = dtoToEntity(itemDTOOptional.get());
-
             // Inventory 업데이트 또는 삽입
             Inventory inventory = inventoryRepository.findByItemId(item.getId())
                     .orElseGet(() -> {
@@ -73,7 +70,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                         newInventory.setMinimumRequired(0);
                         return newInventory;
                     });
-
             // 재고 업데이트
             inventory.setCurrentQuantity(inventory.getCurrentQuantity() + Math.toIntExact(order.getQuantity()));
             inventory.setReservedQuantity(inventory.getReservedQuantity() + Math.toIntExact(order.getQuantity()));
@@ -208,5 +204,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 .updatedDate(entity.getUpdatedDate())
                 .build();
     }
-
+    @Override
+    public List<PurchaseOrderDTO> searchOrders(String status, String keyword, String type, LocalDate startDate, LocalDate endDate) {
+        return purchaseOrderRepository.searchOrders(status, type, keyword, startDate, endDate);
+    }
 }

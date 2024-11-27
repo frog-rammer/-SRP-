@@ -17,10 +17,24 @@ public class PurchaseOrderDTO {
     private String businessId;
     private LocalDate procurementEndDate;
     private Long quantity;
-    private Long Price;
-    private String status;
-    private String createdBy;
+    private Long Price; // 사용되지 않음
+    private String status; // 사용되지 않음
+    private String createdBy; // 사용되지 않음
     private LocalDate createdDate;
-    private String updatedBy;
-    private LocalDate updatedDate;
+    private String updatedBy; // 사용되지 않음
+    private LocalDate updatedDate; // 사용되지 않음
+
+    // JPQL 쿼리에 사용되는 생성자
+    public PurchaseOrderDTO(String purchaseOrderCode, String procurementPlanCode, String productPlanCode,
+                            String businessId, String productCode, Long quantity,
+                            LocalDate procurementEndDate, LocalDate createdDate) {
+        this.purchaseOrderCode = purchaseOrderCode;
+        this.procurementPlanCode = procurementPlanCode;
+        this.productPlanCode = productPlanCode;
+        this.businessId = businessId;
+        this.productCode = productCode;
+        this.quantity = quantity;
+        this.procurementEndDate = procurementEndDate;
+        this.createdDate = createdDate;
+    }
 }
