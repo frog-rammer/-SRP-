@@ -119,6 +119,30 @@ public class ProcurementPlanController {
         return "redirect:/procurementPlan/list"; // 수정 후 목록 페이지로 리디렉션
     }
 
+    @GetMapping("/procurementPlan/search")
+    public String searchProcurementPlans(@RequestParam(required = false) String productName,
+                                         @RequestParam(required = false) String startDate,
+                                         @RequestParam(required = false) String endDate,
+                                         @RequestParam(required = false) Long quantity,
+                                         Model model) {
+
+        // 문자열로 입력받은 날짜를 LocalDate로 변환
+        LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : null;
+        LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate) : null;
+
+        // 서비스 호출하여 결과 가져오기
+        List<ProcumentPlanDTO> result = procurementPlanService.searchProcurementPlans(productName, start, end, quantity);
+
+        // 모델에 결과를 담아 뷰로 전달
+        model.addAttribute("result", result);
+
+        return "purchaseOrder/procurementPlanView";  // 검색 결과 페이지로 이동
+    }
+
+
+
+
+}
 //    // 수정 페이지로 이동
 //    @GetMapping("/procurementPlan/edit/{procurementPlanCode}")
 //    public String editProcurementPlan(@PathVariable String procurementPlanCode, Model model) {
@@ -127,25 +151,6 @@ public class ProcurementPlanController {
 //        return "editProcurementPlan"; // 수정 폼 페이지로 이동
 //    }
 
-//    @GetMapping("/search")
-//    public String searchProcurementPlans(@RequestParam(required = false) String productName,
-//                                         @RequestParam(required = false) String startDate,
-//                                         @RequestParam(required = false) String endDate,
-//                                         @RequestParam(required = false) Long quantity,
-//                                         Model model){
-//
-//        // 문자열로 입력받은 날짜를 LocalDate로 변환
-//        LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : null;
-//        LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate) : null;
-//
-//        // 검색 조건을 Service에 전달하여 결과를 가져옵니다.
-//        List<ProcumentPlanDTO> result = procurementPlanService.searchProcurementPlans(productName, startDate, endDate, quantity);
-//
-//        // 결과를 모델에 추가하여 뷰에서 사용할 수 있도록 합니다.
-//        model.addAttribute("result", result);
-//
-//        return "purchaseOrder/procurementPlanView";  // 검색 결과 페이지로 이동
-//    }
-}
+
 
 

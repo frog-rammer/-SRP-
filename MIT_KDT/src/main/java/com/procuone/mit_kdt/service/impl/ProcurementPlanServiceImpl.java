@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,7 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
 
     @Autowired
     private ProcurementPlanRepository procurementPlanRepository;
+
 
     @Override
     public ProcumentPlanDTO registerProcurementPlan(ProcumentPlanDTO dto) {
@@ -142,5 +144,31 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     public void updateProcurementPlan(ProcurementPlan procurementPlan) {
         procurementPlanRepository.save(procurementPlan); // JPA를 사용해 데이터 저장
     }
+
+    @Override
+    public List<ProcumentPlanDTO> searchProcurementPlans(String productName, LocalDate startDate, LocalDate endDate, Long quantity) {
+        // 리포지토리의 검색 메서드 호출
+        List<ProcurementPlan> procurementPlans = procurementPlanRepository.searchProcurementPlans(productName, startDate, endDate, quantity);
+
+        // 엔티티를 DTO로 변환
+        List<ProcumentPlanDTO> result = new ArrayList<>();
+        for (ProcurementPlan plan : procurementPlans) {
+            ProcumentPlanDTO dto = new ProcumentPlanDTO();
+            dto.setProcurementPlanCode(plan.getProcurementPlanCode());
+            dto.setProductPlanCode(plan.getProductPlanCode());
+            dto.setProductName(plan.getProductName());
+            dto.setProductCode(plan.getProductCode());
+            dto.setQuantity(plan.getQuantity());
+            dto.setProcurementQuantity(plan.getProcurementQuantity());
+            dto.setPlanStartDate(plan.getPlanStartDate());
+            dto.setPlanEndDate(plan.getPlanEndDate());
+            dto.setProcurementEndDate(plan.getProcurementEndDate());
+
+            result.add(dto);
+        }
+        return result;
+    }
+
+
 }
 

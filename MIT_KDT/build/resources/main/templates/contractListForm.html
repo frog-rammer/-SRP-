@@ -148,7 +148,6 @@
             <tbody>
             <tr th:each="contract : ${contracts}">
                 <td th:text="${contract.id}"></td>
-                <input hidden name="id" th:value="${contract.id}">
                 <td th:text="${contract.comName}"></td>
                 <td th:text="${contract.itemName}"></td>
                 <td th:text="${#dates.format(contract.contractDate, 'yyyy-MM-dd')}"></td>
