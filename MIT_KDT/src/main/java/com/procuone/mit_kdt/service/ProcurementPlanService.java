@@ -15,4 +15,10 @@ public interface ProcurementPlanService {
     String search(ProcumentPlanDTO procumentPlanDTO);
 
     List<ProcurementPlan> getAllProcurementPlans(); // 모든 조달 계획 조회
+
+    // 조달계획 조회
+    ProcurementPlan getProcurementPlanByCode(String procurementPlanCode);
+
+    // 조달계획 업데이트
+    void updateProcurementPlan(ProcurementPlan procurementPlan);
 }
