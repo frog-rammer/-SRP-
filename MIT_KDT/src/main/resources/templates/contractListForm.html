@@ -7,26 +7,33 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
+        /* 모달 스타일 */
         .modal {
             position: fixed;
             z-index: 1;
             left: 0;
-            top: 0;
+            top: 10%; /* 화면의 상단에서 10% 떨어진 위치 */
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgba(0, 0, 0, 0.4); /* 배경 어두운 색 */
+            text-align: center;
         }
 
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 0% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 600px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            max-width: 800px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            top: 10%; /* 화면 상단에서 10% 떨어져 나타나게 설정 */
+            transform: translateY(0); /* 추가적으로 이동하지 않도록 설정 */
         }
 
         .close {
@@ -46,7 +53,38 @@
             cursor: pointer;
         }
 
-        /* 기본 테이블 스타일 */
+        /* 각 계약서 ID에 따른 고유 스타일 */
+        .contract-details {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-size: 16px;
+            color: #333;
+            margin: 0 auto;
+            word-wrap: break-word; /* 내용이 길어질 때 줄바꿈 */
+        }
+
+        .contract-details h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #2a3d4c;
+        }
+
+        .contract-details > * {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        /* 계약서 내용에 영향을 미치지 않도록 기본 CSS와 구분 */
+        /* 모달에서만 영향을 주는 스타일을 설정 */
+        .modal .contract-details {
+            font-family: Arial, sans-serif; /* 계약서 내용에 맞는 글꼴 설정 */
+            font-size: 14px; /* 모달 내에서 글자 크기 조정 */
+        }
+
+        /* 테이블 스타일 */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -120,72 +158,103 @@
                 <td th:text="${contract.productionQty}"></td>
                 <td th:text="${contract.contractStatus ? 'O' : 'X'}"></td>
                 <td>
-                    <!-- 보기 버튼 클릭 시 모달 창 띄우기 -->
-                    <button class="view-contract-btn" id="viewContractBtn_${contract.id}" onclick="openModal('${contract.id}')">보기</button>
+                    <!-- 계약서 보기 버튼 클릭 시 모달 창 띄우기 -->
+                    <button class="view-contract-btn" th:data-contract-id="${contract.id}">계약서 보기</button>
                 </td>
             </tr>
             </tbody>
         </table>
 
-        <!-- 모달 -->
-        <div id="contractModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <h2>계약서 보기</h2>
-                <div id="contractDetails">
-                    <!-- 계약서 내용이 여기 표시됩니다 -->
-                </div>
-            </div>
-        </div>
+        <!-- 동적으로 모달을 생성할 위치 -->
+        <div id="modal-container"></div>
     </main>
 </div>
 
 <script>
+    // 계약서 보기 버튼 클릭 시 모달 띄우기
+    function openModal(event) {
+        const contractId = event.target.getAttribute('data-contract-id'); // 동적으로 contractId 값 가져오기
 
-    // 계약서 보기 버튼을 클릭했을 때 모달을 띄우는 함수
-    function openModal(contractId) {
-        // contractId는 이미 JavaScript에서 Long 값으로 전달됨
-        fetch('/company/contract/contractForm/' + contractId)
-            .then(response => response.text())
-            .then(data => {
-                // 모달에 계약서 내용 삽입
-                document.getElementById('contractDetails').innerHTML = data;
-                document.getElementById('contractModal').style.display = "block";
-                document.body.style.overflow = 'hidden';
+        // contractId가 유효한지 체크
+        if (!contractId) {
+            console.error('Invalid contractId');
+            return;
+        }
+
+        // contractId로 URL 동적 생성
+        fetch(`/company/contract/contractForm/${contractId}`) // URL에서 contractId 동적 삽입
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+                return response.text();
             })
-            .catch(error => console.error('Error:', error));
+            .then(data => {
+                // 기존에 열린 모달을 닫기
+                const existingModal = document.getElementById(`contractModal_${contractId}`);
+                if (existingModal) {
+                    existingModal.style.display = "none";
+                }
+
+                // 동적으로 모달 생성
+                const modalContainer = document.getElementById('modal-container');
+                const modalHTML = `
+                <div id="contractModal_${contractId}" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal(${contractId})">&times;</span>
+                        <div id="contractDetails_${contractId}" class="contract-details">${data}</div>
+                    </div>
+                </div>
+            `;
+                modalContainer.innerHTML = modalHTML;  // 모달 HTML 삽입
+                document.getElementById(`contractModal_${contractId}`).style.display = "block";
+                document.body.style.overflow = 'hidden'; // 모달 띄우기 시 페이지 스크롤 비활성화
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('계약서를 불러오는 중에 오류가 발생했습니다. 다시 시도해 주세요.');
+            });
     }
+
+    // 계약서 보기 버튼에 클릭 이벤트 리스너 추가
+    document.querySelectorAll('.view-contract-btn').forEach(button => {
+        button.addEventListener('click', openModal);
+    });
 
     // 모달 닫기
-    function closeModal() {
-        const modal = document.getElementById('contractModal');
+    function closeModal(contractId) {
+        const modal = document.getElementById(`contractModal_${contractId}`);
         modal.style.display = "none";
-        // 모달 닫을 때 페이지 스크롤 복원
-        document.body.style.overflow = 'auto'; // 페이지 스크롤 복원
+        document.body.style.overflow = 'auto'; // 모달 닫을 때 페이지 스크롤 복원
     }
 
-    // 모달 배경을 클릭하면 모달을 닫기
+    // 모달 배경 클릭 시 닫기
     window.onclick = function(event) {
-        const modal = document.getElementById('contractModal');
-        if (event.target == modal) {
-            closeModal();
+        const modal = event.target.closest('.modal');
+        if (modal) {
+            const contractId = modal.id.split('_')[1];  // ID에서 contractId 추출
+            closeModal(contractId);
         }
-    }
+    };
 
     // ESC 키로 모달 닫기
     window.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeModal();
-        }
-    });
-    $(document).ready(function() {
-        // 페이지 새로 고침 시 모달이 열리지 않도록 제어
-        if (!sessionStorage.getItem("modalOpened")) {
-            $('#contractModal').modal('show');  // 조건에 맞으면 모달 열기
-            sessionStorage.setItem("modalOpened", true);  // 모달을 열었다는 정보 기록
+        const modal = document.querySelector('.modal');
+        if (modal && event.key === 'Escape') {
+            const contractId = modal.id.split('_')[1];  // ID에서 contractId 추출
+            closeModal(contractId);
         }
     });
 
+    // 페이지 새로고침 시 모달 초기화 (모달을 닫는 코드 추가)
+    window.onload = function() {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.style.display = "none"; // 모든 모달 숨기기
+        });
+        document.body.style.overflow = 'auto'; // 페이지 스크롤 복원
+    };
 </script>
+
 </body>
 </html>

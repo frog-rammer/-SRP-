@@ -9,6 +9,7 @@ import com.procuone.mit_kdt.service.ProcurementPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,9 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
 
     @Autowired
     private ProductionPlanRepository productionPlanRepository;
+
+    @Autowired
+    private ProcurementPlanRepository procurementPlanRepository;
 
     @Override
     public ProcumentPlanDTO registerProcurementPlan(ProcumentPlanDTO dto) {
@@ -125,6 +129,18 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     @Override
     public List<ProcurementPlan> getAllProcurementPlans() {
         return repository.findAll();  // 모든 조달 계획을 조회
+    }
+
+    // 조달계획 조회
+    @Override
+    public ProcurementPlan getProcurementPlanByCode(String procurementPlanCode) {
+        return procurementPlanRepository.findByProcurementPlanCode(procurementPlanCode);
+    }
+
+    // 조달계획 업데이트
+    @Override
+    public void updateProcurementPlan(ProcurementPlan procurementPlan) {
+        procurementPlanRepository.save(procurementPlan); // JPA를 사용해 데이터 저장
     }
 }
 

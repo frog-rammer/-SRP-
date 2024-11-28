@@ -171,10 +171,12 @@ public class ContractController {
         return contractService.getContractsByProductCode(productCode);
     }
 
-    @GetMapping("/contractForm/{id}")
+    @GetMapping("/company/contract/contractForm/{id}")
     public String getContractForm(@PathVariable("id") Long contractId, Model model) {
+        ContractDTO contract = contractService.getContractById(contractId);
+
         ContractDTO contractDTO = contractService.getContractById(contractId);
-        model.addAttribute("contract", contractDTO);
+        model.addAttribute("contract", contract);
         return "contractListForm";
     }
 

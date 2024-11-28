@@ -5,25 +5,191 @@
     <title>물품공급계약서</title>
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
+<!--    <style>-->
+<!--        /* 전체 레이아웃 중앙 정렬을 위한 CSS */-->
+<!--        body, html {-->
+<!--            height: 100%;-->
+<!--            margin: 0;-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            background-color: #f4f4f4;-->
+<!--        }-->
+
+<!--        .grid-container {-->
+<!--            width: 100%;-->
+<!--            max-width: 800px;-->
+<!--            padding: 20px;-->
+<!--            background-color: white;-->
+<!--            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);-->
+<!--            border-radius: 8px;-->
+<!--            box-sizing: border-box;-->
+<!--        }-->
+
+<!--        /* 계약서 제목 */-->
+<!--        h1 {-->
+<!--            text-align: center;-->
+<!--            color: #333;-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+
+<!--        .contract-section {-->
+<!--            margin-bottom: 30px;-->
+<!--        }-->
+
+<!--        .contract-section h2 {-->
+<!--            font-size: 20px;-->
+<!--            margin-bottom: 10px;-->
+<!--            color: #00796b;-->
+<!--        }-->
+
+<!--        table {-->
+<!--            width: 100%;-->
+<!--            border-collapse: collapse;-->
+<!--            margin-top: 10px;-->
+<!--        }-->
+
+<!--        table th, table td {-->
+<!--            padding: 10px;-->
+<!--            text-align: left;-->
+<!--            border: 1px solid #ddd;-->
+<!--            font-size: 14px;-->
+<!--        }-->
+
+<!--        table th {-->
+<!--            background-color: #00796b;-->
+<!--            color: white;-->
+<!--        }-->
+
+<!--        table td {-->
+<!--            background-color: #fafafa;-->
+<!--        }-->
+
+<!--        .buttons {-->
+<!--            text-align: center;-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+
+<!--        .buttons button {-->
+<!--            background-color: #00796b;-->
+<!--            color: white;-->
+<!--            padding: 10px 20px;-->
+<!--            border: none;-->
+<!--            cursor: pointer;-->
+<!--            border-radius: 5px;-->
+<!--            font-size: 16px;-->
+<!--        }-->
+
+<!--        .buttons button:hover {-->
+<!--            background-color: #004d40;-->
+<!--        }-->
+
+<!--        /* 모달 관련 스타일 */-->
+<!--        .modal {-->
+<!--            position: fixed;-->
+<!--            z-index: 1;-->
+<!--            left: 0;-->
+<!--            top: 0;-->
+<!--            width: 100%;-->
+<!--            height: 100%;-->
+<!--            overflow: auto;-->
+<!--            background-color: rgba(0, 0, 0, 0.4);-->
+<!--            margin: 0 auto;-->
+<!--        }-->
+
+<!--        /* 모달 내용 중앙 정렬 */-->
+<!--        .modal-content {-->
+<!--            background-color: #fefefe;-->
+<!--            margin: 5% auto;-->
+<!--            padding: 20px;-->
+<!--            border: 1px solid #888;-->
+<!--            width: 80%;-->
+<!--            max-width: 800px;-->
+<!--            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            align-items: center;-->
+<!--        }-->
+
+<!--        .close {-->
+<!--            color: #aaa;-->
+<!--            font-size: 28px;-->
+<!--            font-weight: bold;-->
+<!--            position: absolute;-->
+<!--            top: 0;-->
+<!--            right: 25px;-->
+<!--            padding: 16px;-->
+<!--        }-->
+
+<!--        .close:hover,-->
+<!--        .close:focus {-->
+<!--            color: black;-->
+<!--            text-decoration: none;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+
+<!--        /* 계약서 내용 스타일 */-->
+<!--        .contract-details {-->
+<!--            width: 100%;-->
+<!--            max-width: 100%;-->
+<!--            padding: 20px;-->
+<!--            text-align: center;-->
+<!--            font-size: 16px;-->
+<!--            color: #333;-->
+<!--            margin: 0 auto;-->
+<!--            background-color: #fff;-->
+<!--            border-radius: 8px;-->
+<!--            overflow-y: auto;-->
+<!--        }-->
+
+<!--        .contract-details h2 {-->
+<!--            font-size: 20px;-->
+<!--            margin-bottom: 15px;-->
+<!--            color: #2a3d4c;-->
+<!--        }-->
+
+<!--        /* 기본 테이블 스타일 (모달 내에서만 적용) */-->
+<!--        .contract-details table {-->
+<!--            width: 100%;-->
+<!--            border-collapse: collapse;-->
+<!--            margin-top: 20px;-->
+<!--            background-color: #ffffff;-->
+<!--            border-radius: 8px;-->
+<!--            overflow: hidden;-->
+<!--        }-->
+
+<!--        .contract-details table th, .contract-details table td {-->
+<!--            padding: 15px 20px;-->
+<!--            text-align: center;-->
+<!--            border: 1px solid #e0e0e0;-->
+<!--            color: #555;-->
+<!--            font-size: 14px;-->
+<!--        }-->
+
+<!--        .contract-details table th {-->
+<!--            background-color: #32928E;-->
+<!--            color: white;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        .contract-details table tr:nth-child(even) {-->
+<!--            background-color: #f9f9f9;-->
+<!--        }-->
+
+<!--        .contract-details table tr:hover {-->
+<!--            background-color: #f1f1f1;-->
+<!--        }-->
+<!--    </style>-->
 </head>
 <body>
-<div class="grid-container">
-    <!-- 헤더 -->
-    <header class="layout-header">
-        <div th:replace="partials/procuOneHeader :: header"></div>
-    </header>
-
-    <aside class="layout-sidebar">
-        <div th:replace="partials/procuOneSide :: side"></div>
-    </aside>
-
-    <main class="layout-main">
-
+<!--<div class="grid-container">-->
+<!--    <main class="layout-main">-->
         <h1>물품공급계약서</h1>
 
         <p>"갑"과 "을"은 아래와 같은 계약 내용을 체결한다.</p>
 
-        <!-- th:object로 계약 데이터를 바인딩 -->
+        <!-- 계약서 내용 표시 폼 -->
         <form th:object="${contract}" method="post" action="">
 
             <div class="contract-section">
@@ -67,7 +233,7 @@
             </div>
 
         </form>
-    </main>
-</div>
+<!--    </main>-->
+<!--</div>-->
 </body>
 </html>

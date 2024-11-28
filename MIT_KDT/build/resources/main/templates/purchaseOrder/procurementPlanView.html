@@ -160,6 +160,44 @@
             background-color: #32928E;
             color: white;
         }
+        /* 심플하고 이쁜 버튼 스타일 (크기 조정, 가로 배치) */
+        .btn {
+            padding: 8px 16px; /* 크기 줄이기 */
+            background-color: #32928E; /* 메인 색상 */
+            color: white;
+            font-size: 1rem; /* 글자 크기 조정 */
+            border: 1px solid #32928E; /* 버튼 테두리 색상 */
+            border-radius: 20px; /* 둥근 버튼 모서리 */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 전환 효과 */
+        }
+
+        .btn:hover {
+            background-color: #286f6b; /* 호버 시 색상 변화 */
+            transform: translateY(-2px); /* 호버 시 살짝 떠오르는 효과 */
+        }
+
+        .btn:focus {
+            outline: none; /* 포커스시 기본 테두리 제거 */
+            box-shadow: 0 0 5px rgba(50, 146, 142, 0.7); /* 포커스 시 부드러운 그림자 효과 */
+        }
+
+        .btn:active {
+            transform: translateY(1px); /* 클릭 시 살짝 눌리는 효과 */
+        }
+
+        /* 수정, 삭제 버튼 가로 배치 */
+        .btn-group {
+            display: flex;
+            justify-content: center; /* 버튼들을 가로로 배치 */
+            gap: 10px; /* 버튼 사이 간격 */
+        }
+
+        .btn-group .btn {
+            padding: 8px 20px; /* 버튼 크기 조정 */
+            font-size: 0.95rem; /* 글자 크기 조금 더 작게 */
+        }
+
     </style>
 </head>
 <body>
@@ -212,22 +250,30 @@
                     <th>조달 수량</th>
                     <th>계획 시작일</th>
                     <th>계획 종료일</th>
+                    <th>조달 납기일</th>
+                    <th colspan="2"></th>
                     <th></th>
-<!--                    <th>조달 납기일</th>-->
+
+
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="procurementPlan : ${procurementPlanList}"
                     th:attr="data-id=${procurementPlan.procurementPlanCode}">
-                    <td th:text="${procurementPlan.productPlanCode}"></td>
-                    <td th:text="${procurementPlan.productName}"></td>
-                    <td th:text="${procurementPlan.productCode}"></td>
-                    <td th:text="${procurementPlan.quantity}"></td>
-                    <td th:text="${procurementPlan.procurementQuantity}"></td>
-                    <td th:text="${procurementPlan.planStartDate}"></td>
-                    <td th:text="${procurementPlan.planEndDate}"></td>
-                    <td th:text="${procurementPlan.procurementEndDate}"></td>
-                    <td><input type="button" value="수정"><input type="button" value="삭제">  </td>
+                    <td th:text="${procurementPlan.procurementPlanCode}"></td> <!--조달계획 코드-->
+                    <td th:text="${procurementPlan.productPlanCode}"></td>  <!--생산계획 코드-->
+                    <td th:text="${procurementPlan.productName}"></td>      <!--품목명-->
+                    <td th:text="${procurementPlan.productCode}"></td>      <!--제품 코드-->
+                    <td th:text="${procurementPlan.quantity}"></td>          <!--계획수량-->
+                    <td th:text="${procurementPlan.procurementQuantity}"></td>  <!--조달수량-->
+                    <td th:text="${procurementPlan.planStartDate}"></td>        <!--계획 시작일-->
+                    <td th:text="${procurementPlan.planEndDate}"></td>      <!--계획 종료일-->
+                    <td th:text="${procurementPlan.procurementEndDate}"></td>       <!--조달납기일 코드-->
+                    <td>
+                        <a th:href="@{/procurementPlan/edit/{procurementPlanCode}(procurementPlanCode=${procurementPlan.procurementPlanCode})}"
+                           class="btn">수정</a>
+                        <input type="button" class="btn"value="삭제">
+                    </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(procurementPlanList)}">
                     <td colspan="8">No data available</td>
