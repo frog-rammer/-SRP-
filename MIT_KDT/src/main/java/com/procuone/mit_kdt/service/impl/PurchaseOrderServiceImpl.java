@@ -53,6 +53,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
+    public List<PurchaseOrderDTO> getCompletedOrders(String status) {
+        List<PurchaseOrder> completedOrders = purchaseOrderRepository.findByStatus("발주완료");
+        return completedOrders.stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void completeOrders(List<String> orderIds) {
         List<PurchaseOrder> orders = purchaseOrderRepository.findAllById(orderIds);
         for (PurchaseOrder order : orders) {

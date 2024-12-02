@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>납품 지시</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <style>
+        /* deliveryOrderPage 스타일 */
+        #deliveryOrderPage {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        #deliveryOrderPage h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #deliveryOrderTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+
+        #deliveryOrderTable th, #deliveryOrderTable td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+
+        #deliveryOrderTable th {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        #deliveryOrderTable tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        #deliveryOrderTable tr:hover {
+            background-color: #dfe9f3;
+            cursor: pointer;
+        }
+
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .pagination a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        #deliveryOrderForm {
+            margin: 0 auto;
+            max-width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+
+        #deliveryOrderForm label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #deliveryOrderForm input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+
+        #deliveryOrderForm button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #deliveryOrderForm button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div id="deliveryOrderPage" class="grid-container">
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+
+    <main class="layout-main">
+        <h1>납품 지시</h1>
+
+        <!-- 납품 지시 테이블 -->
+        <table id="deliveryOrderTable">
+            <thead>
+            <tr>
+                <th>관련 생산계획</th>
+                <th>발주서 코드</th>
+                <th>품목 코드</th>
+                <th>품목명</th>
+                <th>사업자 번호</th>
+                <th>회사명</th>
+                <th>납품 가능한 수량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${purchaseOrders}" th:if="${order.availableQuantity > 0}" onclick="selectDeliveryOrder(this)">
+                <td th:text="${order.productPlanCode}"></td>
+                <td th:text="${order.purchaseOrderCode}"></td>
+                <td th:text="${order.productCode}"></td>
+                <td th:text="${order.itemName}"></td>
+                <td th:text="${order.businessId}"></td>
+                <td th:text="${order.comName}"></td>
+                <td th:text="${order.availableQuantity}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(purchaseOrders)}">
+                <td colspan="7">조회된 데이터가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination">
+            <a th:if="${currentPage > 0}"
+               th:href="@{'/deliveryOrder/view'(page=${currentPage - 1}, size=${pageSize})}">이전</a>
+            <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+                <a th:href="@{'/deliveryOrder/view'(page=${pageNum}, size=${pageSize})}"
+                   th:text="${pageNum + 1}"
+                   th:classappend="${pageNum == currentPage} ? 'active' : ''"></a>
+            </span>
+            <a th:if="${currentPage < totalPages - 1}"
+               th:href="@{'/deliveryOrder/view'(page=${currentPage + 1}, size=${pageSize})}">다음</a>
+        </div>
+
+        <!-- 납품 지시 폼 -->
+        <form id="deliveryOrderForm" action="/deliveryOrder/submit" method="post" onsubmit="return validateDeliveryForm(event)">
+            <label for="purchaseOrderCode">발주서 코드:</label>
+            <input type="text" id="purchaseOrderCode" name="purchaseOrderCode" readonly required>
+
+            <label for="productCode">품목 코드:</label>
+            <input type="text" id="productCode" name="productCode" readonly required>
+
+            <label for="deliveryQuantity">납품 수량:</label>
+            <input type="number" id="deliveryQuantity" name="deliveryQuantity" required>
+
+            <input type="hidden" id="availableQuantity" name="availableQuantity">
+
+            <button type="submit">납품 지시</button>
+        </form>
+    </main>
+</div>
+
+<script>
+    function validateDeliveryForm(event) {
+        const deliveryQuantity = document.getElementById("deliveryQuantity").value;
+        const availableQuantity = document.getElementById("availableQuantity").value;
+
+        if (parseInt(deliveryQuantity) > parseInt(availableQuantity)) {
+            alert("납품 가능한 수량을 초과할 수 없습니다.");
+            event.preventDefault();
+            return false;
+        }
+        return true;
+    }
+
+    function selectDeliveryOrder(row) {
+        const purchaseOrderCode = row.querySelector("td:nth-child(2)").textContent;
+        const productCode = row.querySelector("td:nth-child(3)").textContent;
+        const availableQuantity = row.querySelector("td:nth-child(7)").textContent;
+
+        document.getElementById("purchaseOrderCode").value = purchaseOrderCode.trim();
+        document.getElementById("productCode").value = productCode.trim();
+        document.getElementById("availableQuantity").value = availableQuantity.trim();
+    }
+</script>
+</body>
+</html>

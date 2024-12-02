@@ -150,6 +150,9 @@
                 <label for="progressInspectionCode">검수 코드:</label>
                 <input type="text" id="progressInspectionCode" name="progressInspectionCode" readonly><br><br>
 
+                <label for="productCode">품목 코드:</label>
+                <input type="text" id="productCode" name="productCode" readonly><br><br>
+
                 <label for="productName">품목명:</label>
                 <input type="text" id="productName" name="productName" readonly><br><br>
 
@@ -169,26 +172,28 @@
 </div>
 <script>
     function selectInspection(row) {
-        // 이전 선택된 행 스타일 초기화
-        const previousSelectedRow = document.querySelector("tr.selected");
-        if (previousSelectedRow) {
-            previousSelectedRow.classList.remove("selected");
-        }
+            // 이전 선택된 행 스타일 초기화
+            const previousSelectedRow = document.querySelector("tr.selected");
+            if (previousSelectedRow) {
+                previousSelectedRow.classList.remove("selected");
+            }
 
-        // 선택된 행 스타일 적용
-        row.classList.add("selected");
+            // 선택된 행 스타일 적용
+            row.classList.add("selected");
 
-        // 행 데이터 추출
-        const inspectionCode = row.cells[0].innerText; // 검수 코드
-        const productName = row.cells[3].innerText; // 품목명
-        const totalQuantity = parseInt(row.cells[7].innerText); // 발주 수량
-        const inspectedQuantity = parseInt(row.cells[8].innerText); // 기존 검수된 수량
+            // 행 데이터 추출
+            const inspectionCode = row.cells[0].innerText; // 검수 코드
+            const productCode = row.cells[2].innerText; // 품목 코드
+            const productName = row.cells[3].innerText; // 품목명
+            const totalQuantity = parseInt(row.cells[7].innerText); // 발주 수량
+            const inspectedQuantity = parseInt(row.cells[8].innerText); // 기존 검수된 수량
 
-        // 폼 데이터 채우기
-        document.getElementById('progressInspectionCode').value = inspectionCode;
-        document.getElementById('productName').value = productName;
-        document.getElementById('totalQuantity').value = totalQuantity;
-        document.getElementById('inspectedQuantity').value = inspectedQuantity;
+            // 폼 데이터 채우기
+            document.getElementById('progressInspectionCode').value = inspectionCode;
+            document.getElementById('productCode').value = productCode; // 품목 코드 채우기
+            document.getElementById('productName').value = productName;
+            document.getElementById('totalQuantity').value = totalQuantity;
+            document.getElementById('inspectedQuantity').value = inspectedQuantity;
     }
 
     function validateForm() {

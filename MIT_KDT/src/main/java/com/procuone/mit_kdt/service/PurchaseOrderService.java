@@ -12,6 +12,7 @@ public interface PurchaseOrderService {
 
     Page<PurchaseOrderDTO> getOrdersByStatus(String status, int page, int size);
 
+    List<PurchaseOrderDTO> getCompletedOrders(String status); // 스태이터스 리스트형태로 뽑기
     void completeOrders(List<String> orderIds);
 
     // 새로운 검색 메서드 추가

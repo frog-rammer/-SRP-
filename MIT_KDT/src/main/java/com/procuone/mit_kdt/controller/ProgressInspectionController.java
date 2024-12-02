@@ -1,7 +1,11 @@
 package com.procuone.mit_kdt.controller;
 
+import com.procuone.mit_kdt.dto.CompanyInventoryDTO;
 import com.procuone.mit_kdt.dto.ProgressInspectionDTO;
+import com.procuone.mit_kdt.entity.CompanyInventory;
 import com.procuone.mit_kdt.entity.ProgressInspection;
+import com.procuone.mit_kdt.service.CompanyInventoryService;
+import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.ProgressInspectionService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +28,10 @@ public class ProgressInspectionController {
 
     @Autowired
     ProgressInspectionService progressInspectionService;
-
+    @Autowired
+    CompanyInventoryService companyInventoryService;
+    @Autowired
+    ItemService itemService;
     @GetMapping("/progressInspectionBoard")
     public String getProgressInspection(Model model,
                                         @RequestParam(defaultValue = "1") int page, // 사용자 요청 페이지 (1부터 시작)
@@ -102,11 +109,31 @@ public class ProgressInspectionController {
     @PostMapping("/updateInspectedQuantity")
     public String updateInspectedQuantity(@RequestParam String progressInspectionCode,
                                           @RequestParam Long newInspectionQuantity,
+                                          @RequestParam String productCode,
                                           HttpSession session,
                                           RedirectAttributes redirectAttributes) {
         try {
             String businessId = (String) session.getAttribute("businessId");
             progressInspectionService.updateInspectedQuantity(progressInspectionCode, newInspectionQuantity, businessId);
+
+            // 수정해야함 ((검수 수량 업데이트 시 협력업체 인벤토리도 업데이트))
+            Long ItemId = itemService.getItemIdByProductCode(productCode);
+            System.out.println("++++++++++++++++++++++++++++++++" +ItemId);
+            if (ItemId != null) {
+                CompanyInventoryDTO companyInventoryDTO = companyInventoryService.getInventoryByBusinessIdAndItemId(businessId, ItemId);
+                if (companyInventoryDTO != null) {
+                    companyInventoryDTO.setCurrentQuantity(companyInventoryDTO.getCurrentQuantity() + (newInspectionQuantity.intValue()));
+                    companyInventoryDTO.setLastUpdated(LocalDate.now().toString());
+                } else {
+                    companyInventoryDTO = new CompanyInventoryDTO();
+                    companyInventoryDTO.setBusinessId(businessId);
+                    companyInventoryDTO.setItemId(ItemId);
+                    companyInventoryDTO.setCurrentQuantity(newInspectionQuantity.intValue());
+                    companyInventoryDTO.setReservedQuantity(0);
+                    companyInventoryDTO.setLastUpdated(LocalDate.now().toString());
+                }
+                companyInventoryService.saveOrUpdateInventory(companyInventoryDTO);
+            }
 
             redirectAttributes.addFlashAttribute("message", "검수 수량이 성공적으로 업데이트되었습니다.");
             redirectAttributes.addFlashAttribute("messageType", "success");

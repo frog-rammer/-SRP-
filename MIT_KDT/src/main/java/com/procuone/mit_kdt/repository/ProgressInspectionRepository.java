@@ -29,4 +29,10 @@ public interface ProgressInspectionRepository extends JpaRepository<ProgressInsp
     // 비즈니스 아이디로 진척검수 처리 과정 불러오기
     @Query("SELECT pi FROM ProgressInspection pi WHERE pi.businessId = :businessId")
     Page<ProgressInspection> findByBusinessId(@Param("businessId") String businessId, Pageable pageable);
+
+
+    // inspectedQuantity가 0 이상인 데이터 검색
+    @Query("SELECT pi FROM ProgressInspection pi WHERE pi.inspectedQuantity > 0")
+    Page<ProgressInspection> findAllWithInspectedQuantityGreaterThanZero(Pageable pageable);
+
 }

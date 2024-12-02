@@ -16,10 +16,9 @@ public interface ProgressInspectionService {
     public Page<ProgressInspectionDTO> getInspectionsByBusinessId(String businessId,Pageable pageable);
     // 검수현황 업데이트 
     void updateInspectedQuantity(String progressInspectionCode, Long newInspectionQuantity, String businessId);
+    //진척 검수 0 이상 처리된 리스트 가져오기
+    Page<ProgressInspectionDTO> getAllInspectionsInspectedQuantityOverZero(Pageable pageable);
     // 엔티티 < - > DTO 간 변환 메서드
     public ProgressInspection dtoToEntity(ProgressInspectionDTO dto, PurchaseOrder purchaseOrder);
     public ProgressInspectionDTO entityToDto(ProgressInspection entity);
-
-
-
 }

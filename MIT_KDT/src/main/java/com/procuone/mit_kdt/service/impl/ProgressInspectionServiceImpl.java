@@ -23,6 +23,7 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
     @Autowired
     private ContractRepository contractRepository;
 
+
     // 진척 검수 조회
     @Override
     public Page<ProgressInspectionDTO> searchProgressInspections(String productCodeQuery,
@@ -108,6 +109,16 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
             inspection.setInspectionStatus("검수진행중");
         }
         progressInspectionRepository.save(inspection);
+
+
+
+    }
+
+    @Override
+    public Page<ProgressInspectionDTO> getAllInspectionsInspectedQuantityOverZero(Pageable pageable) {
+        Page<ProgressInspection> inspections = progressInspectionRepository.findAllWithInspectedQuantityGreaterThanZero(pageable);
+        // DTO 변환 및 반환
+        return inspections.map(this::entityToDto);
     }
 
     // DTO -> Entity 변환
