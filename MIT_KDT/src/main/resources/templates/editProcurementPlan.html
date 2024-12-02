@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>조달계획 수정</title>
+  <link rel="stylesheet" href="/css/procuOneHeader.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <style>
+    /* 전체 페이지 중앙 정렬 */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+      margin: 0;
+      flex-direction: column; /* 제목과 폼이 세로로 정렬되도록 함 */
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #32928E;
+      margin-bottom: 20px; /* 제목과 폼 사이의 간격 */
+    }
+
+    /* 폼 디자인 */
+    form {
+      width: 100%;
+      max-width: 600px; /* 최대 너비 설정 */
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin: 0 auto;
+      box-sizing: border-box; /* 패딩을 포함한 전체 크기 계산 */
+    }
+
+    /* 각 입력 항목과 버튼을 구분 */
+    label {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: #555;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+      box-sizing: border-box; /* 패딩을 포함한 전체 크기 계산 */
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="number"]:focus {
+      border-color: #32928E;
+      outline: none;
+    }
+
+    button {
+      background-color: #32928E;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #286f6b;
+    }
+
+  </style>
+</head>
+<body>
+<header>
+  <h1>조달계획 수정</h1>
+</header>
+
+<main>
+  <form action="/procurementPlan/update" method="post">
+    <input type="hidden" name="procurementPlanCode" value="${procurementPlan.procurementPlanCode}">
+
+    <!-- 품목명 수정 -->
+    <label for="productName">품목명</label>
+    <input type="text" id="productName" name="productName" value="${procurementPlan.productName}" required>
+
+    <!-- 계획 수량 수정 -->
+    <label for="quantity">계획 수량</label>
+    <input type="number" id="quantity" name="quantity" value="${procurementPlan.quantity}" required>
+
+    <!-- 조달 수량 수정 -->
+    <label for="procurementQuantity">조달 수량</label>
+    <input type="number" id="procurementQuantity" name="procurementQuantity" value="${procurementPlan.procurementQuantity}" required>
+
+    <!-- 계획 시작일 수정 -->
+    <label for="startDate">계획 시작일</label>
+    <input type="date" id="startDate" name="startDate" value="${procurementPlan.startDate}" required>
+
+    <!-- 계획 종료일 수정 -->
+    <label for="endDate">계획 종료일</label>
+    <input type="date" id="endDate" name="endDate" value="${procurementPlan.endDate}" required>
+
+    <!-- 조달 납기일 수정 -->
+    <label for="procurementEndDate">조달 납기일</label>
+    <input type="date" id="procurementEndDate" name="procurementEndDate" value="${procurementPlan.procurementEndDate}" required>
+
+    <button type="submit">수정 완료</button>
+  </form>
+</main>
+</body>
+</html>
