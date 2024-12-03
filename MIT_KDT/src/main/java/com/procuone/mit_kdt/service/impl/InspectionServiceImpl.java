@@ -50,8 +50,6 @@ public class InspectionServiceImpl implements InspectionService {
         Long defectiveQuantity = inspectionDTO.getDefectiveQuantity();
         inspection.setDefectiveQuantity(defectiveQuantity);
         inspection.setInspectionStatus(defectiveQuantity > 0 ? "검수 완료(불량)" : "검수 완료");
-        inspectionRepository.save(inspection);
-
         // Inventory 처리
         if (defectiveQuantity == 0) {
             // 모든 수량 추가
@@ -65,6 +63,22 @@ public class InspectionServiceImpl implements InspectionService {
             purchaseOrder.setStatus("긴급");
             purchaseOrderRepository.save(purchaseOrder);
         }
+        
+    }
+
+    @Override
+    public void saveInspection(InspectionDTO inspectionDto) {
+        Inspection inspection = Inspection.builder()
+                .deliveryOrder(inspectionDto.getDeliveryOrder())
+                .inspectionDate(LocalDate.now())
+                .productName(inspectionDto.getProductName())
+                .productCode(inspectionDto.getDeliveryOrder().getProductCode())
+                .busniessId(inspectionDto.getDeliveryOrder().getBusinessId())
+                .quantity(inspectionDto.getQuantity())
+                .defectiveQuantity(inspectionDto.getDefectiveQuantity())
+                .inspectionStatus("검수중")
+                .build();
+        inspectionRepository.save(inspection);
     }
 
     @Override

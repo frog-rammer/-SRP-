@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface DeliveryOrderRepository  extends JpaRepository<DeliveryOrder, String> {
     List<DeliveryOrder> findByStatus(String status);
+    List<DeliveryOrder> findByStatusAndDeliveryDate(String status, LocalDate deliveryDate); // 날짜에 따른 상태변경
 }

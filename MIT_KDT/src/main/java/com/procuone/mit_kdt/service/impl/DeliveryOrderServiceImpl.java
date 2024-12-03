@@ -3,15 +3,17 @@ package com.procuone.mit_kdt.service.impl;
 import com.procuone.mit_kdt.dto.CompanyInventoryDTO;
 import com.procuone.mit_kdt.dto.CompanyItemDTO;
 import com.procuone.mit_kdt.dto.DeliveryOrderDTO;
+import com.procuone.mit_kdt.dto.InspectionDTO;
+import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
+import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.entity.DeliveryOrder;
 import com.procuone.mit_kdt.entity.PurchaseOrder;
 import com.procuone.mit_kdt.repository.DeliveryOrderRepository;
 import com.procuone.mit_kdt.repository.PurchaseOrderRepository;
-import com.procuone.mit_kdt.service.CompanyInventoryService;
-import com.procuone.mit_kdt.service.CompanyItemService;
-import com.procuone.mit_kdt.service.DeliveryOrderService;
-import com.procuone.mit_kdt.service.ItemService;
+import com.procuone.mit_kdt.service.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -34,6 +36,8 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
     @Autowired
     DeliveryOrderRepository deliveryOrderRepository;
 
+    @Autowired
+    InspectionService inspectionService;
     @Override
     public DeliveryOrderDTO registerDeliveryOrder(DeliveryOrderDTO deliveryOrderDTO) {
         // 1. 품목 ID 가져오기
@@ -89,9 +93,41 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
         return convertEntityToDTO(savedOrder);
     }
 
+
     @Override
     public List<DeliveryOrder> findCompletedOrders() {
         return deliveryOrderRepository.findByStatus("완료");
+
+    /**
+     * 매일 자정에 실행 (cron 표현식: "0 0 0 * * *")
+     */
+    @Override
+    @Transactional
+    public void updateDeliveryStatus() {
+        LocalDate today = LocalDate.now();
+        // 운송중 상태이고 배송 날짜가 오늘인 모든 DeliveryOrder를 조회
+        // 테스트를 위해 주석처리함
+//        List<DeliveryOrder> ordersToComplete = deliveryOrderRepository.findByStatusAndDeliveryDate("운송중", today);
+        //
+        List<DeliveryOrder> ordersToComplete = deliveryOrderRepository.findAll();
+        // 상태를 "완료"로 변경
+        InspectionDTO inspectionDTO = new InspectionDTO();
+
+        for (DeliveryOrder order : ordersToComplete) {
+            order.setStatus("완료");
+            //입고 검수 테이블에 검수중으로 추가
+            inspectionDTO.setDeliveryOrder(order);
+            inspectionDTO.setQuantity(order.getDeliveryQuantity());
+            inspectionDTO.setDefectiveQuantity(0L);
+            Item item = itemService.getItemEntityByProductCode(order.getProductCode());
+            inspectionDTO.setProductName(item.getItemName());
+            inspectionService.saveInspection(inspectionDTO);
+        }
+        // 변경된 상태를 저장
+        deliveryOrderRepository.saveAll(ordersToComplete);
+
+
+        System.out.println(ordersToComplete.size() + "개의 배송 상태가 '완료'로 변경되었습니다.");
     }
 
     // 변환 메서드
