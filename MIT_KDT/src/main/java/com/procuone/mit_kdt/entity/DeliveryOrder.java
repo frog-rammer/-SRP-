@@ -32,6 +32,9 @@ public class DeliveryOrder {
     @JoinColumn(name = "purchase_order_code", nullable = false)
     private PurchaseOrder purchaseOrder; // 발주서와 연관 관계
 
+    @Column(name="business_id",nullable = false)
+    private String businessId;
+
     @Column(name = "product_code", nullable = false)
     private String productCode; // 품목 코드
 
@@ -42,7 +45,10 @@ public class DeliveryOrder {
     private LocalDate deliveryDate; // 납품일
 
     @Column(name = "status", nullable = false)
-    private String status; // 납품 상태 (예: "대기", "완료")
+    private String status; // 납품 상태 (예: "운송중", "완료")
+
+    @Column(name ="price")
+    private Long price;
 
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDate createdDate; // 생성일

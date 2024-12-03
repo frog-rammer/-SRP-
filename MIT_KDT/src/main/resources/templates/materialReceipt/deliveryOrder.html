@@ -7,44 +7,54 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
-        /* deliveryOrderPage 스타일 */
         #deliveryOrderPage {
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
             padding: 20px;
         }
 
         #deliveryOrderPage h1 {
             text-align: center;
-            color: #333;
+            color: #32666e;
             margin-bottom: 20px;
+        }
+
+        /* 메인 레이아웃 */
+        .grid {
+            display: grid;
+            grid-template-columns: 3fr 1.5fr; /* 테이블과 폼의 비율 조정 */
+            gap: 40px; /* 테이블과 폼 사이의 간격 */
+            align-items: flex-start;
+        }
+
+        /* 왼쪽 테이블 */
+        .left {
+            width: 100%;
         }
 
         #deliveryOrderTable {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #fff;
+            background-color: #ffffff;
         }
 
         #deliveryOrderTable th, #deliveryOrderTable td {
-            border: 1px solid #dee2e6;
-            padding: 12px;
+            border: 1px solid #a3d3d2;
+            padding: 15px;
             text-align: left;
         }
 
         #deliveryOrderTable th {
-            background-color: #007bff;
-            color: #fff;
+            background-color: rgb(50, 146, 142);
+            color: #ffffff;
             font-weight: bold;
         }
 
         #deliveryOrderTable tr:nth-child(even) {
-            background-color: #f8f9fa;
+            background-color: #e6f5f5;
         }
 
         #deliveryOrderTable tr:hover {
-            background-color: #dfe9f3;
+            background-color: #b5dedd;
             cursor: pointer;
         }
 
@@ -54,54 +64,66 @@
         }
 
         .pagination a {
-            color: #007bff;
+            color: rgb(50, 146, 142);
             text-decoration: none;
             margin: 0 5px;
             padding: 5px 10px;
-            border: 1px solid #dee2e6;
+            border: 1px solid #a3d3d2;
             border-radius: 4px;
             transition: all 0.3s ease;
         }
 
         .pagination a:hover {
-            background-color: #007bff;
-            color: #fff;
+            background-color: rgb(50, 146, 142);
+            color: #ffffff;
         }
 
         .pagination a.active {
-            background-color: #007bff;
-            color: #fff;
+            background-color: rgb(50, 146, 142);
+            color: #ffffff;
+        }
+
+        /* 오른쪽 폼 */
+        .right {
+            width: 100%;
         }
 
         #deliveryOrderForm {
-            margin: 0 auto;
-            max-width: 400px;
             padding: 20px;
-            background-color: #fff;
-            border: 1px solid #dee2e6;
+            background-color: #ffffff;
+            border: 1px solid #a3d3d2;
             border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #deliveryOrderForm h1 {
+            font-size: 1.5em;
+            color: #32666e;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         #deliveryOrderForm label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: bold;
-            color: #333;
+            color: #32666e;
         }
 
         #deliveryOrderForm input {
             width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #dee2e6;
+            margin-bottom: 20px;
+            border: 1px solid #a3d3d2;
             border-radius: 4px;
+            box-sizing: border-box;
         }
 
         #deliveryOrderForm button {
             width: 100%;
             padding: 10px;
-            background-color: #007bff;
-            color: #fff;
+            background-color: rgb(50, 146, 142);
+            color: #ffffff;
             border: none;
             border-radius: 4px;
             font-weight: bold;
@@ -110,9 +132,11 @@
         }
 
         #deliveryOrderForm button:hover {
-            background-color: #0056b3;
+            background-color: #277875;
         }
     </style>
+
+
 </head>
 <body>
 <div id="deliveryOrderPage" class="grid-container">
@@ -125,65 +149,75 @@
     </aside>
 
     <main class="layout-main">
-        <h1>납품 지시</h1>
+        <div class="grid">
+            <div class="left">
+                <h2>납품 가능 리스트</h2>
+                <!-- 납품 지시 테이블 -->
+                <table id="deliveryOrderTable">
+                    <thead>
+                    <tr>
+                        <th>관련 생산계획</th>
+                        <th>발주서 코드</th>
+                        <th>품목 코드</th>
+                        <th>품목명</th>
+                        <th>사업자 번호</th>
+                        <th>회사명</th>
+                        <th>납품 가능한 수량</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${purchaseOrders}" th:if="${order.availableQuantity > 0}" onclick="selectDeliveryOrder(this)">
+                        <td th:text="${order.productPlanCode}"></td>
+                        <td th:text="${order.purchaseOrderCode}"></td>
+                        <td th:text="${order.productCode}"></td>
+                        <td th:text="${order.itemName}"></td>
+                        <td th:text="${order.businessId}"></td>
+                        <td th:text="${order.comName}"></td>
+                        <td th:text="${order.availableQuantity}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(purchaseOrders)}">
+                        <td colspan="7">조회된 데이터가 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
 
-        <!-- 납품 지시 테이블 -->
-        <table id="deliveryOrderTable">
-            <thead>
-            <tr>
-                <th>관련 생산계획</th>
-                <th>발주서 코드</th>
-                <th>품목 코드</th>
-                <th>품목명</th>
-                <th>사업자 번호</th>
-                <th>회사명</th>
-                <th>납품 가능한 수량</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="order : ${purchaseOrders}" th:if="${order.availableQuantity > 0}" onclick="selectDeliveryOrder(this)">
-                <td th:text="${order.productPlanCode}"></td>
-                <td th:text="${order.purchaseOrderCode}"></td>
-                <td th:text="${order.productCode}"></td>
-                <td th:text="${order.itemName}"></td>
-                <td th:text="${order.businessId}"></td>
-                <td th:text="${order.comName}"></td>
-                <td th:text="${order.availableQuantity}"></td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(purchaseOrders)}">
-                <td colspan="7">조회된 데이터가 없습니다.</td>
-            </tr>
-            </tbody>
-        </table>
-
-        <!-- 페이지네이션 -->
-        <div class="pagination">
-            <a th:if="${currentPage > 0}"
-               th:href="@{'/deliveryOrder/view'(page=${currentPage - 1}, size=${pageSize})}">이전</a>
-            <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
-                <a th:href="@{'/deliveryOrder/view'(page=${pageNum}, size=${pageSize})}"
-                   th:text="${pageNum + 1}"
-                   th:classappend="${pageNum == currentPage} ? 'active' : ''"></a>
-            </span>
-            <a th:if="${currentPage < totalPages - 1}"
-               th:href="@{'/deliveryOrder/view'(page=${currentPage + 1}, size=${pageSize})}">다음</a>
-        </div>
-
+                <!-- 페이지네이션 -->
+                <div class="pagination">
+                    <a th:if="${currentPage > 0}"
+                       th:href="@{'/deliveryOrder/view'(page=${currentPage - 1}, size=${pageSize})}">이전</a>
+                    <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+                        <a th:href="@{'/deliveryOrder/view'(page=${pageNum}, size=${pageSize})}"
+                           th:text="${pageNum + 1}"
+                           th:classappend="${pageNum == currentPage} ? 'active' : ''"></a>
+                    </span>
+                    <a th:if="${currentPage < totalPages - 1}"
+                       th:href="@{'/deliveryOrder/view'(page=${currentPage + 1}, size=${pageSize})}">다음</a>
+                </div>
+            </div>
         <!-- 납품 지시 폼 -->
-        <form id="deliveryOrderForm" action="/deliveryOrder/submit" method="post" onsubmit="return validateDeliveryForm(event)">
-            <label for="purchaseOrderCode">발주서 코드:</label>
-            <input type="text" id="purchaseOrderCode" name="purchaseOrderCode" readonly required>
+            <div class="right">
+                <form id="deliveryOrderForm" th:action="@{/deliveryOrder/register}" method="post" th:object="${deliveryOrderDTO}"
+                      onsubmit="return validateDeliveryForm(event)">
 
-            <label for="productCode">품목 코드:</label>
-            <input type="text" id="productCode" name="productCode" readonly required>
+                    <h1>납품 지시</h1>
+                    <label for="purchaseOrderCode">발주서 코드:</label>
+                    <input type="text" id="purchaseOrderCode" name="purchaseOrderCode"  th:field="*{purchaseOrderCode}" readonly required>
 
-            <label for="deliveryQuantity">납품 수량:</label>
-            <input type="number" id="deliveryQuantity" name="deliveryQuantity" required>
+                    <label for="productCode">품목 코드:</label>
+                    <input type="text" id="productCode" name="productCode" th:field="*{productCode}" readonly required>
 
-            <input type="hidden" id="availableQuantity" name="availableQuantity">
+                    <label for="productCode">회사명:</label>
+                    <input type="text" id="comName" name="comName" readonly required>
+                    <input type="hidden" id="businessId" name="businessId" th:field="*{businessId}" readonly required>
+                    <label for="deliveryQuantity">납품 수량:</label>
+                    <input type="number" id="deliveryQuantity" name="deliveryQuantity" th:field="*{deliveryQuantity}" required>
 
-            <button type="submit">납품 지시</button>
-        </form>
+                    <input type="hidden" id="availableQuantity" name="availableQuantity">
+
+                    <button type="submit">납품 지시</button>
+                </form>
+            </div>
+        </div>
     </main>
 </div>
 
@@ -203,10 +237,15 @@
     function selectDeliveryOrder(row) {
         const purchaseOrderCode = row.querySelector("td:nth-child(2)").textContent;
         const productCode = row.querySelector("td:nth-child(3)").textContent;
+        const businessId = row.querySelector("td:nth-child(5)").textContent;
+        const comName = row.querySelector("td:nth-child(6)").textContent;
         const availableQuantity = row.querySelector("td:nth-child(7)").textContent;
 
         document.getElementById("purchaseOrderCode").value = purchaseOrderCode.trim();
         document.getElementById("productCode").value = productCode.trim();
+        document.getElementById("businessId").value = productCode.trim();
+        document.getElementById("businessId").value = businessId.trim();
+        document.getElementById("comName").value = comName.trim();
         document.getElementById("availableQuantity").value = availableQuantity.trim();
     }
 </script>

@@ -2,6 +2,7 @@ package com.procuone.mit_kdt.controller;
 
 
 import com.procuone.mit_kdt.dto.CompanyInventoryDTO;
+import com.procuone.mit_kdt.dto.DeliveryOrderDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProgressInspectionDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
@@ -13,9 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +31,9 @@ public class DeliveryOrderController {
     ItemService itemService;
     @Autowired
     CompanyService companyService;
+
+    @Autowired
+    DeliveryOrderService deliveryOrderService;
 
     @GetMapping("/view")
     public String view(@RequestParam(defaultValue = "0") int page,
@@ -60,9 +62,20 @@ public class DeliveryOrderController {
         model.addAttribute("currentPage", purchaseOrderDTOS.getNumber()); // 현재 페이지 번호
         model.addAttribute("totalPages", purchaseOrderDTOS.getTotalPages()); // 전체 페이지 수
         model.addAttribute("pageSize", size); // 페이지 크기
-
+        model.addAttribute("deliveryOrderDTO",new DeliveryOrderDTO());
 
         return "materialReceipt/deliveryOrder";
     }
+
+    @PostMapping("/register")
+    public String register(@ModelAttribute("deliveryOrderDTO") DeliveryOrderDTO deliveryOrderDTO){
+
+        DeliveryOrderDTO deliveryOrderErrorCheck = deliveryOrderService.registerDeliveryOrder(deliveryOrderDTO);
+
+
+        return "redirect:/deliveryOrder/view";
+    }
+
+
 
 }
