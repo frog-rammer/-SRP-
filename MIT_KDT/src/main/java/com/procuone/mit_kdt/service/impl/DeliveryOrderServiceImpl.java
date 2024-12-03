@@ -11,10 +11,13 @@ import com.procuone.mit_kdt.service.CompanyInventoryService;
 import com.procuone.mit_kdt.service.CompanyItemService;
 import com.procuone.mit_kdt.service.DeliveryOrderService;
 import com.procuone.mit_kdt.service.ItemService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class DeliveryOrderServiceImpl implements DeliveryOrderService {
@@ -86,6 +89,24 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 
         // 10. 저장된 엔티티를 DTO로 변환 후 반환
         return convertEntityToDTO(savedOrder);
+    }
+
+    /**
+     * 매일 자정에 실행 (cron 표현식: "0 0 0 * * *")
+     */
+    @Override
+    @Transactional
+    public void updateDeliveryStatus() {
+        LocalDate today = LocalDate.now();
+        // 운송중 상태이고 배송 날짜가 오늘인 모든 DeliveryOrder를 조회
+        List<DeliveryOrder> ordersToComplete = deliveryOrderRepository.findByStatusAndDeliveryDate("운송중", today);
+        // 상태를 "완료"로 변경
+        for (DeliveryOrder order : ordersToComplete) {
+            order.setStatus("완료");
+        }
+        // 변경된 상태를 저장
+        deliveryOrderRepository.saveAll(ordersToComplete);
+        System.out.println(ordersToComplete.size() + "개의 배송 상태가 '완료'로 변경되었습니다.");
     }
 
     // 변환 메서드

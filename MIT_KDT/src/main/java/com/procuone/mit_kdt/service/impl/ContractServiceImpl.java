@@ -9,7 +9,9 @@ import com.procuone.mit_kdt.repository.ContractRepository;
 import com.procuone.mit_kdt.repository.ItemRepository;
 import com.procuone.mit_kdt.repository.CompanyItemRepository;
 import com.procuone.mit_kdt.service.ContractService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -45,10 +47,10 @@ public class ContractServiceImpl implements ContractService {
     public void deleteExpiredContracts() {
         // 현재 날짜 가져오기
         Date currentDate = new Date(System.currentTimeMillis());
-
+        System.out.println("Expired contracts deleted successfully at " + new Date());
         // 종료일이 현재 날짜 이전인 계약 삭제
         contractRepository.deleteByContractEndDateBefore(currentDate);
-        System.out.println("Expired contracts deleted successfully at " + new Date());
+
     }
 
 

@@ -24,7 +24,8 @@ public class InspectionController {
     // 입고검수 초기 데이터 로드
     @GetMapping("/load")
     public List<DeliveryOrder> loadPendingDeliveryOrders() {
-        return deliveryOrderService.findPendingOrders(); // "운송중" 상태로 납품일이 지난 데이터
+//        return deliveryOrderService.findPendingOrders(); // "운송중" 상태로 납품일이 지난 데이터
+        return List.of();
     }
 
     // 검수 저장
