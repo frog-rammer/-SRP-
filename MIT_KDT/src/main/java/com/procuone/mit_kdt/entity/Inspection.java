@@ -39,11 +39,18 @@ public class Inspection {
     @Column(name = "product_name", nullable = false)
     private String productName; // 상품명
 
+    @Column(name="product_code", nullable = false)
+    private String productCode;
+
     @Column(name = "quantity", nullable = false)
     private Long quantity; // 납품 수량
 
     @Column(name = "defective_quantity", nullable = false)
     private Long defectiveQuantity; // 불량 수량
+
+    @Column(name="busniess_id",nullable = false)
+    private String busniessId;
+
 
     @Column(name = "inspection_status", nullable = false)
     private String inspectionStatus; // 검수 상태 ("검수 완료", "검수 중", "불량")

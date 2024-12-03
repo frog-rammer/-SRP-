@@ -23,11 +23,12 @@ public class InspectionServiceImpl implements InspectionService {
                 .deliveryOrder(inspectionDto.getDeliveryOrder())
                 .inspectionDate(LocalDate.now())
                 .productName(inspectionDto.getProductName())
+                .productCode(inspectionDto.getDeliveryOrder().getProductCode())
+                .busniessId(inspectionDto.getDeliveryOrder().getBusinessId())
                 .quantity(inspectionDto.getQuantity())
                 .defectiveQuantity(inspectionDto.getDefectiveQuantity())
-                .inspectionStatus(inspectionDto.getDefectiveQuantity() > 0 ? "검수 완료(불량)" : "검수 완료")
+                .inspectionStatus("검수중")
                 .build();
-
         inspectionRepository.save(inspection);
     }
 }
