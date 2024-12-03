@@ -97,6 +97,7 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
     @Override
     public List<DeliveryOrder> findCompletedOrders() {
         return deliveryOrderRepository.findByStatus("완료");
+    }
 
     /**
      * 매일 자정에 실행 (cron 표현식: "0 0 0 * * *")

@@ -8,6 +8,6 @@ public interface InspectionService {
     List<InspectionDTO> getAllInspections();
 
     void processInspection(InspectionDTO inspectionDTO);
-
+    void saveInspection(InspectionDTO inspectionDto);
     String generateInvoice(String inspectionId);
 }

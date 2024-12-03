@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -32,6 +33,7 @@ public class InspectionServiceImpl implements InspectionService {
         return inspectionRepository.findAll().stream()
                 .map(inspection -> new InspectionDTO(
                         inspection.getInspectionCode(),
+                        inspection.getDeliveryOrder(),
                         inspection.getDeliveryOrder().getDeliveryCode(),
                         inspection.getProductName(),
                         inspection.getQuantity(),
