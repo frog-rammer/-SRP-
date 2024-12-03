@@ -77,11 +77,11 @@
 <body>
 <div class="grid-container">
     <header class="layout-header">
-        <div th:replace="partials/procuOneHeader :: header"></div>
+        <div th:replace="~{partials/procuOneHeader :: header}"></div>
     </header>
 
     <aside class="layout-sidebar">
-        <div th:replace="partials/procuOneSide :: side"></div>
+        <div th:replace="~{partials/procuOneSide :: side}"></div>
     </aside>
 
     <main class="layout-main">
@@ -117,10 +117,12 @@
                     <th><input type="checkbox" id="select-all"></th>
                     <th>발주번호</th>
                     <th>발주일자</th>
+                    <th>협력사</th>
                     <th>입고예정일</th>
                     <th>품목코드</th>
                     <th>품목명</th>
                     <th>발주수량</th>
+                    <th>검수 진행 상태</th>
                     <th>검수현황</th>
                     <th>검수율</th>
                 </tr>
@@ -130,10 +132,12 @@
                     <td><input type="checkbox" th:value="${progress.progressInspectionCode}"></td>
                     <td th:text="${progress.purchaseOrderCode}"></td>
                     <td th:text="${progress.orderDate}"></td>
+                    <td th:text="${progress.comName}"></td>
                     <td th:text="${progress.expectedArrivalDate}"></td>
                     <td th:text="${progress.productCode}"></td>
                     <td th:text="${progress.productName}"></td>
                     <td th:text="${progress.totalQuantity}"></td>
+                    <td th:text="${progress.inspectionStatus}"></td>
                     <td th:text="${progress.inspectedQuantity} + '/' + ${progress.totalQuantity}"></td>
                     <td th:text="${(progress.inspectedQuantity * 100) / progress.totalQuantity} + '%'"></td>
                 </tr>
@@ -145,15 +149,17 @@
 
             <div class="pagination">
                 <ul>
-                    <li th:if="${currentPage > 1}">
-                        <a th:href="@{'/progressInspection'(page=${currentPage - 1}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}" class="page-btn">이전</a>
+                    <!-- Pagination 계산 -->
+                    <li th:if="${totalPages > 0}">
+                        <span th:if="${currentPage > 1}">
+                            <a th:href="@{'/progressInspection'(page=${currentPage - 1}, size=${size})}" class="page-btn">이전</a>
+                        </span>
                     </li>
-                    <li th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}"
-                        th:classappend="${pageNumber == currentPage} ? 'active'">
-                        <a th:href="@{'/progressInspection'(page=${pageNumber}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}" th:text="${pageNumber}" class="page-btn"></a>
+                    <li th:if="${totalPages > 0}" th:each="pageNumber : ${#numbers.sequence(startPage ?: 1, endPage ?: 1)}">
+                        <a th:href="@{'/progressInspection'(page=${pageNumber}, size=${size})}" th:text="${pageNumber}" class="page-btn"></a>
                     </li>
-                    <li th:if="${currentPage < totalPages}">
-                        <a th:href="@{'/progressInspection'(page=${currentPage + 1}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}" class="page-btn">다음</a>
+                    <li th:if="${totalPages > currentPage}">
+                        <a th:href="@{'/progressInspection'(page=${currentPage + 1}, size=${size})}" class="page-btn">다음</a>
                     </li>
                 </ul>
             </div>

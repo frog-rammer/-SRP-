@@ -9,6 +9,10 @@ import com.procuone.mit_kdt.service.ProcurementPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ProcurementPlanServiceImpl implements ProcurementPlanService {
 
@@ -17,6 +21,9 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
 
     @Autowired
     private ProductionPlanRepository productionPlanRepository;
+
+    @Autowired
+    private ProcurementPlanRepository procurementPlanRepository;
 
     @Override
     public ProcumentPlanDTO registerProcurementPlan(ProcumentPlanDTO dto) {
@@ -97,4 +104,43 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
                 .procurementEndDate(entity.getProcurementEndDate())
                 .build();
     }
+
+    @Override
+    public String search(ProcumentPlanDTO procurementPlanDTO) {
+        // Optional을 사용하여 값을 안전하게 가져오기
+        Optional<ProcurementPlan> optional = repository.findById(procurementPlanDTO.getProductPlanCode());
+
+        // 값을 찾은 경우
+        if (optional.isPresent()) {
+            ProcurementPlan procurementPlan = optional.get();
+            // 수량이 0보다 크면 success 반환
+            if (procurementPlan.getQuantity() > 0) {
+                return "success";  // 성공 처리
+            } else {
+                return "failure";  // 수량이 없으면 실패 처리
+            }
+        }
+
+        // 값을 찾지 못한 경우
+        return "failure";  // 계획을 찾지 못한 경우 실패 처리
+    }
+
+    // 모든 조달 계획을 반환하는 메서드 추가
+    @Override
+    public List<ProcurementPlan> getAllProcurementPlans() {
+        return repository.findAll();  // 모든 조달 계획을 조회
+    }
+
+    // 조달계획 조회
+    @Override
+    public ProcurementPlan getProcurementPlanByCode(String procurementPlanCode) {
+        return procurementPlanRepository.findByProcurementPlanCode(procurementPlanCode);
+    }
+
+    // 조달계획 업데이트
+    @Override
+    public void updateProcurementPlan(ProcurementPlan procurementPlan) {
+        procurementPlanRepository.save(procurementPlan); // JPA를 사용해 데이터 저장
+    }
 }
+

@@ -1,11 +1,13 @@
 package com.procuone.mit_kdt.service.impl;
 
+import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
 import com.procuone.mit_kdt.entity.BOM.BOMRelationship;
 import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.entity.BOM.PurchaseBOM;
+import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.entity.Inventory;
 import com.procuone.mit_kdt.entity.ProgressInspection;
 import com.procuone.mit_kdt.entity.PurchaseOrder;
@@ -39,6 +41,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private InventoryRepository inventoryRepository;
     @Autowired
     private ProgressInspectionRepository progressInspectionRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @Override
     public Page<PurchaseOrderDTO> getOrdersByStatus(String status, int page, int size) {
@@ -46,6 +50,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         // 엔티티를 DTO로 변환하는 로직 포함
         return purchaseOrderRepository.findByStatus(status, pageable)
                 .map(this::convertEntityToDTO);
+    }
+
+    @Override
+    public List<PurchaseOrderDTO> getCompletedOrders(String status) {
+        List<PurchaseOrder> completedOrders = purchaseOrderRepository.findByStatus("발주완료");
+        return completedOrders.stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -77,7 +89,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             inventory.setCurrentQuantity(inventory.getCurrentQuantity() + Math.toIntExact(order.getQuantity()));
             inventory.setReservedQuantity(inventory.getReservedQuantity() + Math.toIntExact(order.getQuantity()));
             inventoryRepository.save(inventory);
-
+            Optional<Company> companyDTO = companyRepository.findByBusinessId(order.getBusinessId());
             //진척 검수 테이블에 추가
             ProgressInspection progressInspection = new ProgressInspection();
             progressInspection.setPurchaseOrder(order);
@@ -86,6 +98,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             progressInspection.setTotalQuantity(order.getQuantity());
             progressInspection.setInspectedQuantity(0L);
             progressInspection.setInspectionStatus("검수예정");
+            progressInspection.setBusinessId(order.getBusinessId());
+            progressInspection.setComName(companyDTO.get().getComName());
             progressInspection.setInspectionDate(LocalDate.of(1000,1,1));
             progressInspection.setOrderDate(LocalDate.now());
             progressInspectionRepository.save(progressInspection);

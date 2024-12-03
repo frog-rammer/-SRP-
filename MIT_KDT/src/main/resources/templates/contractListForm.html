@@ -7,32 +7,91 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
-        /* layout-main만 스타일 적용 */
-        .layout-main {
-            background-color: #f4f7fc; /* 밝은 배경색 */
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            max-width: 1200px;
-            margin: 20px auto;
-            box-sizing: border-box;
-        }
-
-        .layout-main h1 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 600;
+        /* 모달 스타일 */
+        .modal {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 10%; /* 화면의 상단에서 10% 떨어진 위치 */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4); /* 배경 어두운 색 */
             text-align: center;
         }
 
+        .modal-content {
+            background-color: #fefefe;
+            margin: 0% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            top: 10%; /* 화면 상단에서 10% 떨어져 나타나게 설정 */
+            transform: translateY(0); /* 추가적으로 이동하지 않도록 설정 */
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 0;
+            right: 25px;
+            padding: 16px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 각 계약서 ID에 따른 고유 스타일 */
+        .contract-details {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-size: 16px;
+            color: #333;
+            margin: 0 auto;
+            word-wrap: break-word; /* 내용이 길어질 때 줄바꿈 */
+        }
+
+        .contract-details h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #2a3d4c;
+        }
+
+        .contract-details > * {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        /* 계약서 내용에 영향을 미치지 않도록 기본 CSS와 구분 */
+        /* 모달에서만 영향을 주는 스타일을 설정 */
+        .modal .contract-details {
+            font-family: Arial, sans-serif; /* 계약서 내용에 맞는 글꼴 설정 */
+            font-size: 14px; /* 모달 내에서 글자 크기 조정 */
+        }
+
+        /* 테이블 스타일 */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             background-color: #ffffff;
             border-radius: 8px;
-            overflow: hidden; /* 테이블 셀의 경계가 둥글게 나오도록 */
+            overflow: hidden;
         }
 
         table th, table td {
@@ -50,26 +109,12 @@
         }
 
         table tr:nth-child(even) {
-            background-color: #f9f9f9; /* 짝수 행 배경색 */
+            background-color: #f9f9f9;
         }
 
         table tr:hover {
-            background-color: #f1f1f1; /* 마우스 오버 시 배경색 */
+            background-color: #f1f1f1;
         }
-
-        button.view-contract-btn {
-            background-color: #32928E;
-            color: #fff;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            text-align: center;
-        }
-
-        button.view-contract-b
-
     </style>
 </head>
 <body>
@@ -97,29 +142,119 @@
                 <th>소요 시간</th>
                 <th>생산 수량</th>
                 <th>계약 상태</th>
-                <th>계약서</th> <!-- 계약서 열 추가 -->
+                <th>계약서</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="contract : ${contracts}">
                 <td th:text="${contract.id}"></td>
-                <td th:text="${contract.comName}"></td> <!-- 회사명 -->
-                <td th:text="${contract.itemName}"></td> <!-- 품목명 -->
-                <td th:text="${#dates.format(contract.contractDate, 'yyyy-MM-dd')}"></td> <!-- 계약 시작일 -->
-                <td th:text="${#dates.format(contract.contractEndDate, 'yyyy-MM-dd')}"></td> <!-- 계약 종료일 -->
-                <td th:text="${contract.unitCost}"></td> <!-- 단가 -->
-                <td th:text="${contract.leadTime}"></td> <!-- 소요 시간 -->
-                <td th:text="${contract.productionQty}"></td> <!-- 생산 수량 -->
-                <td th:text="${contract.contractStatus ? '활성' : '종료'}"></td> <!-- 계약 상태 -->
+                <input hidden name="id" th:value="${contract.id}">
+                <td th:text="${contract.comName}"></td>
+                <td th:text="${contract.itemName}"></td>
+                <td th:text="${#dates.format(contract.contractDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${#dates.format(contract.contractEndDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${contract.unitCost}"></td>
+                <td th:text="${contract.leadTime}"></td>
+                <td th:text="${contract.productionQty}"></td>
+                <td th:text="${contract.contractStatus ? 'O' : 'X'}"></td>
                 <td>
-                    <button class="view-contract-btn">
-                        <a th:href="@{'/company/contract/contractForm/' + ${contract.id}}">보기</a> <!-- 계약서 보기 링크 -->
-                    </button>
+                    <!-- 계약서 보기 버튼 클릭 시 모달 창 띄우기 -->
+                    <button class="view-contract-btn" th:data-contract-id="${contract.id}">계약서 보기</button>
                 </td>
             </tr>
             </tbody>
         </table>
+
+        <!-- 동적으로 모달을 생성할 위치 -->
+        <div id="modal-container"></div>
     </main>
 </div>
+
+<script>
+    // 계약서 보기 버튼 클릭 시 모달 띄우기
+    function openModal(event) {
+        const contractId = event.target.getAttribute('data-contract-id'); // 동적으로 contractId 값 가져오기
+
+        // contractId가 유효한지 체크
+        if (!contractId) {
+            console.error('Invalid contractId');
+            return;
+        }
+
+        // contractId로 URL 동적 생성
+        fetch(`/company/contract/contractForm/${contractId}`) // URL에서 contractId 동적 삽입
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                // 기존에 열린 모달을 닫기
+                const existingModal = document.getElementById(`contractModal_${contractId}`);
+                if (existingModal) {
+                    existingModal.style.display = "none";
+                }
+
+                // 동적으로 모달 생성
+                const modalContainer = document.getElementById('modal-container');
+                const modalHTML = `
+                <div id="contractModal_${contractId}" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal(${contractId})">&times;</span>
+                        <div id="contractDetails_${contractId}" class="contract-details">${data}</div>
+                    </div>
+                </div>
+            `;
+                modalContainer.innerHTML = modalHTML;  // 모달 HTML 삽입
+                document.getElementById(`contractModal_${contractId}`).style.display = "block";
+                document.body.style.overflow = 'hidden'; // 모달 띄우기 시 페이지 스크롤 비활성화
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('계약서를 불러오는 중에 오류가 발생했습니다. 다시 시도해 주세요.');
+            });
+    }
+
+    // 계약서 보기 버튼에 클릭 이벤트 리스너 추가
+    document.querySelectorAll('.view-contract-btn').forEach(button => {
+        button.addEventListener('click', openModal);
+    });
+
+    // 모달 닫기
+    function closeModal(contractId) {
+        const modal = document.getElementById(`contractModal_${contractId}`);
+        modal.style.display = "none";
+        document.body.style.overflow = 'auto'; // 모달 닫을 때 페이지 스크롤 복원
+    }
+
+    // 모달 배경 클릭 시 닫기
+    window.onclick = function(event) {
+        const modal = event.target.closest('.modal');
+        if (modal) {
+            const contractId = modal.id.split('_')[1];  // ID에서 contractId 추출
+            closeModal(contractId);
+        }
+    };
+
+    // ESC 키로 모달 닫기
+    window.addEventListener('keydown', function(event) {
+        const modal = document.querySelector('.modal');
+        if (modal && event.key === 'Escape') {
+            const contractId = modal.id.split('_')[1];  // ID에서 contractId 추출
+            closeModal(contractId);
+        }
+    });
+
+    // 페이지 새로고침 시 모달 초기화 (모달을 닫는 코드 추가)
+    window.onload = function() {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.style.display = "none"; // 모든 모달 숨기기
+        });
+        document.body.style.overflow = 'auto'; // 페이지 스크롤 복원
+    };
+</script>
+
 </body>
 </html>

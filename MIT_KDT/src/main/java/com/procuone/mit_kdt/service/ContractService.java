@@ -30,4 +30,6 @@ public interface ContractService {
     void deleteExpiredContracts();
 
     ContractDTO getContractById(Long id);
+
+
 }

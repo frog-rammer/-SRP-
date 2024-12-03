@@ -8,9 +8,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
@@ -28,6 +32,10 @@ public class MemberController {
     public String login(Model model) {
         model.addAttribute("memberDTO", new MemberDTO());
         return "login";
+    }
+    @GetMapping("signup")
+    public String signup(Model model) {
+        return "signup";
     }
 
     @GetMapping("/logout")
@@ -85,28 +93,23 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    // 회원가입 페이지 요청 처리
-    @GetMapping("/signup")
-    public String signupForm(Model model) {
-        model.addAttribute("memberDTO", new MemberDTO());  // 빈 MemberDTO 객체를 뷰에 전달
-        return "signup";  // 회원가입 폼을 렌더링
-    }
-
     @GetMapping("/myPage")
-    public String myPage(HttpSession session, Model model) {
-        // 세션에서 사용자 정보를 가져옵니다.
-        String username = (String) session.getAttribute("username");
-        String memberName = (String) session.getAttribute("memberName");
-        String userType = (String) session.getAttribute("userType");
+    public String showMyPage(HttpSession session, Model model) {
+        // 세션에서 user 객체를 가져옵니다.
+        User user = (User) session.getAttribute("username");
 
-        // memberDTO 객체를 생성하여 모델에 전달
-        MemberDTO memberDTO = new MemberDTO(username, memberName, userType);
+//        // 만약 세션에 user 객체가 없다면 로그인 페이지로 리다이렉트할 수 있습니다.
+//        if (user == null) {
+//            return "redirect:/login";  // 예시: 로그인 페이지로 리다이렉트
+//        }
 
-        // 모델에 값 추가
-        model.addAttribute("memberDTO", memberDTO);
+        // 모델에 user 객체를 추가하여 템플릿에 전달
+        model.addAttribute("user", user);
 
+        // myPage.html 뷰를 반환
         return "myPage";
     }
 
 
 }
+

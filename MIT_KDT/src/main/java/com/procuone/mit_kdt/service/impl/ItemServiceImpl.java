@@ -95,6 +95,12 @@ public class ItemServiceImpl implements ItemService {
                 .map(this::convertEntityToDTO) // Entity -> DTO 변환
                 .collect(Collectors.toList());
     }
+    
+    //제품코드로 아이템아이디 가져오기
+    @Override
+    public Long getItemIdByProductCode(String productCode) {
+        return itemRepository.findIdByProductCode(productCode);
+    }
 
 
     // 제품 코드로 품목 조회

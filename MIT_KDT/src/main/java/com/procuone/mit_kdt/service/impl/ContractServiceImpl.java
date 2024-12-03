@@ -112,4 +112,30 @@ public class ContractServiceImpl implements ContractService {
                 .productionQty(contractDTO.getProductionQty())
                 .build();
     }
+
+    public String generateContractHtml(Long contractId) {
+        // 계약 ID로 계약 데이터 조회
+        Contract contract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new NoSuchElementException("Contract not found with id: " + contractId));
+
+        // 계약 데이터를 HTML 형식으로 변환
+        return convertContractToHtml(contract);
+    }
+
+    private String convertContractToHtml(Contract contract) {
+        StringBuilder html = new StringBuilder();
+
+        html.append("<h3>계약서 정보</h3>")
+                .append("<p><strong>계약 ID:</strong> ").append(contract.getId()).append("</p>")
+                .append("<p><strong>업체명:</strong> ").append(contract.getComName()).append("</p>")
+                .append("<p><strong>품목명:</strong> ").append(contract.getItemName()).append("</p>")
+                .append("<p><strong>계약 시작일:</strong> ").append(contract.getContractDate()).append("</p>")
+                .append("<p><strong>계약 종료일:</strong> ").append(contract.getContractEndDate()).append("</p>")
+                .append("<p><strong>단가:</strong> ").append(contract.getUnitCost()).append("</p>")
+                .append("<p><strong>소요 시간:</strong> ").append(contract.getLeadTime()).append("</p>")
+                .append("<p><strong>생산 수량:</strong> ").append(contract.getProductionQty()).append("</p>")
+                .append("<p><strong>계약 상태:</strong> ").append(contract.getContractStatus() ? "활성" : "종료").append("</p>");
+
+        return html.toString();
+    }
 }

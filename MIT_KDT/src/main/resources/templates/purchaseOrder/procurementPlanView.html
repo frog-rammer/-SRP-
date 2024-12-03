@@ -6,159 +6,232 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
-        /* 기본 스타일 설정 */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 0;
+        /* 메인 레이아웃 구역 */
+        .layout-main {
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            transition: all 0.3s ease;
         }
 
-        h1 {
+        .layout-main h1 {
+            font-size: 2rem;
+            font-weight: bold;
             text-align: center;
             color: #333;
+            margin-bottom: 40px;
         }
 
-        form {
-            width: 100%;
-            max-width: 600px;
-            margin: 30px auto;
+        /* 검색 섹션 스타일 */
+        .search-section {
+            margin-bottom: 40px;
+            background-color: #f8f9fa;
             padding: 20px;
-            background-color: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            max-width: 700px;
+            margin: 0 auto;
         }
 
-        div {
-            margin-bottom: 15px;
+        .search-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #32928E;
+            font-weight: 600;
         }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: inline-block;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus,
-        select:focus {
-            border-color: #4d90fe;
-            outline: none;
-        }
-
-        .btn {
-            padding: 10px 15px;
-            border: none;
-            background-color: #32928E;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        button[type="reset"] {
-            background-color: #c2c2c2;
-        }
-
-        button[type="submit"]:hover,
-        button[type="reset"]:hover {
-            opacity: 0.8;
-        }
-
-        #idCheckResult {
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        button[type="button"] {
-            background-color: #32928E;
-            color: white;
-            border-radius: 4px;
-            padding: 8px 15px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        /* 아이디 입력 필드와 버튼을 가로로 배치 */
-        .id-container {
+        .search-section form {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px; /* 아이디와 버튼 사이의 간격 */
+            flex-direction: column;
         }
 
-        .id-container input {
-            flex: 1; /* 입력란이 남은 공간을 차지하도록 설정 */
+        /* 각 입력 항목을 가로로 배치 */
+        .search-section .input-group {
+            display: flex;
+            align-items: center; /* 수평 가운데 정렬 */
+            margin-bottom: 20px; /* 항목 간 간격 */
         }
 
-        /* 버튼들을 가운데로 정렬 */
-        .button-container {
+        .search-section label {
+            font-size: 1.1rem;
+            color: #555;
+            flex-shrink: 0; /* 라벨이 줄어들지 않도록 설정 */
+            width: 120px; /* 라벨의 고정된 너비 */
+        }
+
+        .search-section input[type="text"],
+        .search-section input[type="date"],
+        .search-section select {
+            width: 90%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            background-color: #fafafa;
+            transition: border-color 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .search-section input[type="text"]:focus,
+        .search-section input[type="date"]:focus,
+        .search-section select:focus {
+            border-color: #32928E;
+            outline: none;
+            background-color: #fff;
+        }
+
+        .search-section .btn {
+            padding: 12px 25px;
+            background-color: #32928E;
+            color: white;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-section .btn:hover {
+            background-color: #286f6b;
+        }
+
+        /* 결과 섹션 스타일 */
+        .results-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #32928E;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        th {
+            background-color: #32928E;
+            color: white;
+        }
+
+        td {
+            background-color: #fafafa;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+
+        tr:hover td {
+            background-color: #e0f7fa;
+        }
+        /* 페이지네이션 스타일 */
+        .pagination {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            margin-top: 20px;
         }
 
-        /* 이메일 입력 필드에 관련된 스타일 */
-        input[name="emailDirect"],
-        #emailSelect {
-            display: inline-block;
-            width: 45%;
-            margin-top: 5px;
+        .pagination a {
+            padding: 10px 15px;
+            margin: 0 5px;
+            text-decoration: none;
+            color: #32928E;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
 
-        input[name="emailDirect"] {
-            margin-right: 10px;
+        .pagination a:hover {
+            background-color: #32928E;
+            color: white;
         }
 
-        #emailSelect {
-            width: 50%;
+        .pagination .active {
+            background-color: #32928E;
+            color: white;
+        }
+        /* 심플하고 이쁜 버튼 스타일 (크기 조정, 가로 배치) */
+        .btn {
+            padding: 8px 16px; /* 크기 줄이기 */
+            background-color: #32928E; /* 메인 색상 */
+            color: white;
+            font-size: 1rem; /* 글자 크기 조정 */
+            border: 1px solid #32928E; /* 버튼 테두리 색상 */
+            border-radius: 20px; /* 둥근 버튼 모서리 */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 전환 효과 */
         }
 
-        /* 주소 필드 관련 스타일 */
-        #address {
-            width: 70%;
+        .btn:hover {
+            background-color: #286f6b; /* 호버 시 색상 변화 */
+            transform: translateY(-2px); /* 호버 시 살짝 떠오르는 효과 */
         }
 
-        /* 상세주소 입력 필드 관련 스타일 */
-        #detail_address {
-            width: 70%;
+        .btn:focus {
+            outline: none; /* 포커스시 기본 테두리 제거 */
+            box-shadow: 0 0 5px rgba(50, 146, 142, 0.7); /* 포커스 시 부드러운 그림자 효과 */
         }
+
+        .btn:active {
+            transform: translateY(1px); /* 클릭 시 살짝 눌리는 효과 */
+        }
+
+        /* 수정, 삭제 버튼 가로 배치 */
+        .btn-group {
+            display: flex;
+            justify-content: center; /* 버튼들을 가로로 배치 */
+            gap: 10px; /* 버튼 사이 간격 */
+        }
+
+        .btn-group .btn {
+            padding: 8px 20px; /* 버튼 크기 조정 */
+            font-size: 0.95rem; /* 글자 크기 조금 더 작게 */
+        }
+
     </style>
 </head>
 <body>
 <div class="grid-container">
 
     <header class="layout-header">
-        <div th:replace="partials/procuOneHeader :: header"></div>
+        <div th:replace="~{partials/procuOneHeader :: header}"></div>
     </header>
     <aside class="layout-sidebar">
-        <div th:replace="partials/procuOneSide :: side"></div>
+        <div th:replace="~{partials/procuOneSide :: side}"></div>
     </aside>
     <main class="layout-main">
         <h1>조달계획 조회</h1>
         <section class="search-section">
             <h3>검색</h3>
             <form action="/procurementPlan/search" method="get">
-                <label for="itemName">품목명:</label>
-                <input type="text" id="itemName" name="itemName" placeholder="품목명을 입력하세요">
+                <!--                <label for="procurementPlanCode">조달계획 코드</label>-->
+                <!--                <input type="text" id="procurementPlanCode" name="procurementPlanCode" th:value="${procurementPlanCode}" placeholder="조달계획 코드를 입력하세요">-->
 
-                <label for="startDate">시작일:</label>
-                <input type="date" id="startDate" name="startDate">
+                <!--                <label for="productPlanCode">생산계획 코드</label>-->
+                <!--                <input type="text" id="productPlanCode" name="productPlanCode" th:value="${productPlanCode}" placeholder="생산계획 코드를 입력하세요">-->
 
-                <label for="endDate">종료일:</label>
-                <input type="date" id="endDate" name="endDate">
+                <label for="productName">품목명</label>
+                <input type="text" id="productName" name="productName" th:value="${productName}"
+                       placeholder="품목명을 입력하세요">
+
+                <!--                <label for="productCode">제품 코드</label>-->
+                <!--                <input type="text" id="productCode" name="productCode" th:value="${productCode}" placeholder="제품 코드를 입력하세요">-->
+
+                <label for="startDate">시작일</label>
+                <input type="date" id="startDate" name="startDate" th:value="${planStartDate}">
+
+                <label for="endDate">종료일</label>
+                <input type="date" id="endDate" name="endDate" th:value="${planEndDate}">
 
                 <button type="submit" class="btn">검색</button>
             </form>
@@ -169,58 +242,61 @@
             <table>
                 <thead>
                 <tr>
-                    <th>계획 번호</th>
-                    <th>관련 생산계획 ID</th>
+                    <th>조달계획 코드</th>
+                    <th>생산계획 코드</th>
                     <th>품목명</th>
+                    <th>제품 코드</th>
                     <th>계획 수량</th>
+                    <th>조달 수량</th>
                     <th>계획 시작일</th>
                     <th>계획 종료일</th>
-                    <th>상태</th>
+                    <th>조달 납기일</th>
+                    <th colspan="2"></th>
+                    <th></th>
+
+
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>101</td>
-                    <td>전기자전거 A</td>
-                    <td>50</td>
-                    <td>2024-11-15</td>
-                    <td>2024-11-20</td>
-                    <td>진행 중</td>
+                <tr th:each="procurementPlan : ${procurementPlanList}"
+                    th:attr="data-id=${procurementPlan.procurementPlanCode}">
+                    <td th:text="${procurementPlan.procurementPlanCode}"></td> <!--조달계획 코드-->
+                    <td th:text="${procurementPlan.productPlanCode}"></td>  <!--생산계획 코드-->
+                    <td th:text="${procurementPlan.productName}"></td>      <!--품목명-->
+                    <td th:text="${procurementPlan.productCode}"></td>      <!--제품 코드-->
+                    <td th:text="${procurementPlan.quantity}"></td>          <!--계획수량-->
+                    <td th:text="${procurementPlan.procurementQuantity}"></td>  <!--조달수량-->
+                    <td th:text="${procurementPlan.planStartDate}"></td>        <!--계획 시작일-->
+                    <td th:text="${procurementPlan.planEndDate}"></td>      <!--계획 종료일-->
+                    <td th:text="${procurementPlan.procurementEndDate}"></td>       <!--조달납기일 코드-->
+                    <td>
+                        <a th:href="@{/procurementPlan/edit/{procurementPlanCode}(procurementPlanCode=${procurementPlan.procurementPlanCode})}"
+                           class="btn">수정</a>
+                        <input type="button" class="btn"value="삭제">
+                    </td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>102</td>
-                    <td>전기자전거 B</td>
-                    <td>30</td>
-                    <td>2024-11-18</td>
-                    <td>2024-11-25</td>
-                    <td>대기 중</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>103</td>
-                    <td>알루미늄 프레임</td>
-                    <td>100</td>
-                    <td>2024-11-15</td>
-                    <td>2024-11-22</td>
-                    <td>발주 완료</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>104</td>
-                    <td>브러시리스 모터</td>
-                    <td>50</td>
-                    <td>2024-11-16</td>
-                    <td>2024-11-23</td>
-                    <td>진행 중</td>
+                <tr th:if="${#lists.isEmpty(procurementPlanList)}">
+                    <td colspan="8">No data available</td>
                 </tr>
                 </tbody>
             </table>
+            <!-- 페이지네이션 버튼 -->
+            <div class="pagination">
+
+                <a th:if="${currentPage > 0}"
+                   th:href="@{/procumentPlan/procurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
+
+                <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                   th:classappend="${i == currentPage} ? 'active' : ''"
+                   th:href="@{/procumentPlan/procurementPlanView(page=${i}, search=${search})}"
+                   th:text="${i + 1}">1</a>
+
+                <a th:if="${currentPage < totalPages - 1}"
+                   th:href="@{/procumentPlan/procurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
+
+            </div>
         </section>
     </main>
-
-
     <footer>
         <p>&copy; 2024 조달관리 시스템</p>
     </footer>

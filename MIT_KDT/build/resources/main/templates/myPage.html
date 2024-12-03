@@ -18,7 +18,6 @@
             margin: 0 auto; /* 화면 가운데로 정렬 */
         }
 
-
         .layout-main h2 {
             font-size: 24px;
             text-align: center; /* 중앙 정렬 */
@@ -94,29 +93,26 @@
     </aside>
 
     <main class="layout-main">
-            <h2>회원정보 수정</h2>
-            <form action="#" method="post">
-                <form action="#" method="post">
-                    <label for="name">이름:</label>
-                    <input type="text" id="name" name="name" value="${user.name}"><br><br>
+        <h2>회원정보 수정</h2>
+        <!-- 수정된 폼: 이중 <form> 태그 제거 -->
+        <form action="#" method="post">
+            <label for="name">이름:</label>
+            <input type="text" id="name" name="name" th:value="${user.name}"><br><br>
 
-                    <label for="email">이메일 주소:</label>
-                    <input type="email" id="email" name="email" value="${user.email}"><br><br>
+            <label for="email">이메일 주소:</label>
+            <input type="email" id="email" name="email" th:value="${user.email}"><br><br>
 
-                    <label for="phone">전화번호:</label>
-                    <input type="tel" id="phone" name="phone" value="${user.phone}"><br><br>
+            <label for="phone">전화번호:</label>
+            <input type="tel" id="phone" name="phone" th:value="${user.phone}"><br><br>
 
-                    <label for="address">주소:</label>
-                    <input type="text" id="address" name="address" value="${user.address}"><br><br>
+            <label for="address">주소:</label>
+            <input type="text" id="address" name="address" th:value="${user.address}"><br><br>
 
-                    <label for="password">비밀번호:</label>
-                    <input type="password" id="password" name="password"><br><br>
+            <label for="password">비밀번호:</label>
+            <input type="password" id="password" name="password"><br><br>
 
-                    <button type="submit">수정사항 저장</button>
-                </form>
-
-            </form>
-        </section>
+            <button type="submit">수정사항 저장</button>
+        </form>
     </main>
 
     <footer>

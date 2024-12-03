@@ -36,4 +36,7 @@ public interface ItemService {
 
     //하나의 카테고리 id로 아이템 리스트 조회
     List<ItemDTO> getItemsByCategoryId(Long categoryId);
+
+    //프로덕트 코드로 아이템 아이디가져오기
+    Long getItemIdByProductCode(String productCode);
 }
