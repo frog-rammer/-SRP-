@@ -1,8 +1,6 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.InspectionDTO;
-import com.procuone.mit_kdt.entity.DeliveryOrder;
-import com.procuone.mit_kdt.service.DeliveryOrderService;
 import com.procuone.mit_kdt.service.InspectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +15,24 @@ import java.util.List;
 public class InspectionController {
 
     @Autowired
-    private final DeliveryOrderService deliveryOrderService;
-    @Autowired
     private final InspectionService inspectionService;
 
-    // 입고검수 초기 데이터 로드
     @GetMapping("/load")
-    public List<DeliveryOrder> loadPendingDeliveryOrders() {
-        return deliveryOrderService.findPendingOrders(); // "운송중" 상태로 납품일이 지난 데이터
+    public List<InspectionDTO> loadAllInspections() {
+        // Inspection 데이터를 전체 불러오기
+        return inspectionService.getAllInspections();
     }
 
-    // 검수 저장
     @PostMapping("/save")
     public ResponseEntity<String> saveInspection(@RequestBody InspectionDTO inspectionDTO) {
-        inspectionService.saveInspection(inspectionDTO);
+        System.out.println("전송된 DTO: " + inspectionDTO);
+        inspectionService.processInspection(inspectionDTO); // 검수 처리 서비스 호출
         return ResponseEntity.ok("검수 데이터가 저장되었습니다.");
+    }
+
+    @GetMapping("/invoice/{inspectionId}")
+    public String viewInvoice(@PathVariable String inspectionId) {
+        // 특정 Inspection 데이터를 기반으로 거래명세서 데이터를 조회하여 HTML 렌더링.
+        return inspectionService.generateInvoice(inspectionId);
     }
 }

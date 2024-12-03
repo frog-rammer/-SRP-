@@ -123,7 +123,23 @@
 
             </tbody>
         </table>
-</main>
+        <h1>입고마감 현황</h1>
+        <table id="">
+            <thead>
+            <tr>
+                <th>입고 일자</th>
+                <th>상품명</th>
+                <th>수량</th>
+                <th>금액</th>
+                <th>검수 상태</th>
+                <th>거래명세서</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </main>
 </div>
 <script>
     // 페이지 로드 시 데이터 불러오기
@@ -131,7 +147,6 @@
         fetch('/inspection/load')
             .then(response => response.json())
             .then(data => {
-                console.log("서버에서 받아온 데이터:", data); // 데이터를 콘솔에 출력
                 const tableBody = document.querySelector("#inspectionTable tbody");
                 tableBody.innerHTML = ""; // 초기화
                 data.forEach(order => {
@@ -143,41 +158,75 @@
                             <td><input type="number" value="0"></td>
                             <td class="status pending">검수 중</td>
                             <td>
-                                <button class="button" onclick="completeInspection(this, ${order.deliveryCode})">검수</button>
+                                <button class="button" onclick="completeInspection(this, '${order.deliveryCode}')">검수</button>
                             </td>
                         </tr>
                     `;
                     tableBody.insertAdjacentHTML('beforeend', row);
                 });
+            })
+            .catch(error => {
+                console.error("데이터 로드 실패:", error);
             });
     });
 
     // 검수 완료 처리
-    function completeInspection(button, inspectionCode) {
+    function completeInspection(button, deliveryCode) {
         const row = button.closest("tr");
         const defectiveInput = row.querySelector("input").value;
         const defectiveQuantity = parseInt(defectiveInput) || 0;
-        const inspectionStatus = defectiveQuantity > 0 ? "검수 완료(불량)" : "검수 완료";
 
         const inspectionDto = {
-            inspectionCode: inspectionCode, // 기존 검수 코드
+            deliveryCode: deliveryCode, // DeliveryOrder의 코드
             defectiveQuantity: defectiveQuantity // 불량 갯수
         };
+
+        console.log("전송 데이터:", inspectionDto); // 디버깅용 로그
 
         fetch('/inspection/save', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(inspectionDto)
-        }).then(response => {
-            if (response.ok) {
-                // 상태 업데이트
-                row.querySelector(".status").textContent = inspectionStatus;
-                row.querySelector(".status").classList.remove("pending");
-                row.querySelector(".status").classList.add("complete");
-            } else {
-                alert("검수 저장에 실패했습니다.");
-            }
-        });
+        })
+            .then(response => {
+                if (response.ok) {
+                    row.querySelector(".status").textContent = defectiveQuantity > 0 ? "검수 완료(불량)" : "검수 완료";
+                    console.log("검수 완료 처리 성공!");
+                } else {
+                    console.error("검수 저장 실패: HTTP 상태 코드:", response.status);
+                }
+            })
+            .catch(error => {
+                console.error("서버 요청 실패:", error);
+            });
+    }
+    function loadAllInspections() {
+        fetch('/inspection/load')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector("#inspectionTable tbody");
+                tableBody.innerHTML = ""; // 테이블 초기화
+                data.forEach(inspection => {
+                    const row = `
+                    <tr>
+                        <td>${inspection.deliveryDate}</td>
+                        <td>${inspection.productName}</td>
+                        <td>${inspection.quantity}</td>
+                        <td>${inspection.defectiveQuantity}</td>
+                        <td>${inspection.inspectionStatus}</td>
+                        <td>
+                            <button onclick="viewInvoice('${inspection.inspectionCode}')">거래명세서 보기</button>
+                        </td>
+                    </tr>
+                `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+            })
+            .catch(error => console.error("데이터 로드 실패:", error));
+    }
+
+    function viewInvoice(inspectionCode) {
+        window.location.href = `/inspection/invoice/${inspectionCode}`;
     }
 </script>
 </body>

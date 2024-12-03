@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class DeliveryOrderServiceImpl implements DeliveryOrderService {
@@ -86,6 +87,11 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 
         // 10. 저장된 엔티티를 DTO로 변환 후 반환
         return convertEntityToDTO(savedOrder);
+    }
+
+    @Override
+    public List<DeliveryOrder> findCompletedOrders() {
+        return deliveryOrderRepository.findByStatus("완료");
     }
 
     // 변환 메서드
