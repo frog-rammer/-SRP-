@@ -42,7 +42,7 @@ public class DeliveryOrder {
     private LocalDate deliveryDate; // 납품일
 
     @Column(name = "status", nullable = false)
-    private String status; // 납품 상태 (예: "대기", "완료")
+    private String status; // 납품 상태 (예: "운송중", "완료")
 
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDate createdDate; // 생성일

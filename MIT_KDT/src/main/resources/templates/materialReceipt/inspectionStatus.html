@@ -82,104 +82,103 @@
     </style>
 </head>
 <body>
-
 <div class="grid-container">
     <!-- 헤더-->
     <header class="layout-header">
         <div th:replace="partials/procuOneHeader :: header"></div>
     </header>
-
     <!-- 사이드바-->
     <aside class="layout-sidebar">
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
-
     <!-- 본문 -->
     <main class="layout-main">
-        <div class="container">
-            <h1>입고검수 현황</h1>
-
-            <!-- 필터 -->
-            <div class="filter">
-                <label for="dateFilter">날짜: </label>
-                <input type="date" id="dateFilter">
-                <label for="statusFilter">상태: </label>
-                <select id="statusFilter">
-                    <option value="all">전체</option>
-                    <option value="complete">검수 완료</option>
-                    <option value="pending">검수 중</option>
-                    <option value="failed">검수 미완료</option>
-                </select>
-                <button class="button" onclick="filterResults()">필터링</button>
-            </div>
-
-            <!-- 입고검수 테이블 -->
-            <table id="inspectionTable">
-                <thead>
-                <tr>
-                    <th>입고 일자</th>
-                    <th>상품명</th>
-                    <th>수량</th>
-                    <th>검수 상태</th>
-                    <th>상세 보기</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>2024-11-15</td>
-                    <td>전기자전거 A</td>
-                    <td>100</td>
-                    <td class="status complete">검수 완료</td>
-                    <td><button class="button" onclick="viewDetails(1)">상세 보기</button></td>
-                </tr>
-                <tr>
-                    <td>2024-11-18</td>
-                    <td>전기자전거 B</td>
-                    <td>50</td>
-                    <td class="status pending">검수 중</td>
-                    <td><button class="button" onclick="viewDetails(2)">상세 보기</button></td>
-                </tr>
-                <tr>
-                    <td>2024-11-19</td>
-                    <td>전동퀵보드</td>
-                    <td>200</td>
-                    <td class="status failed">검수 미완료</td>
-                    <td><button class="button" onclick="viewDetails(3)">상세 보기</button></td>
-                </tr>
-                </tbody>
-            </table>
+        <h1>입고검수 현황</h1>
+        <!-- 필터 -->
+        <div class="filter">
+            <label for="dateFilter">날짜: </label>
+            <input type="date" id="dateFilter">
+            <label for="statusFilter">상태: </label>
+            <select id="statusFilter">
+                <option value="all">전체</option>
+                <option value="complete">검수 완료</option>
+                <option value="pending">검수 중</option>
+                <option value="failed">검수 완료(불량)</option>
+            </select>
+            <button class="button" onclick="filterResults()">필터링</button>
         </div>
-    </main>
+        <!-- 입고검수 테이블 -->
+        <table id="inspectionTable">
+            <thead>
+            <tr>
+                <th>입고 일자</th>
+                <th>상품명</th>
+                <th>수량</th>
+                <th>불량 수량</th>
+                <th>검수 상태</th>
+                <th>검수 완료 버튼</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+</main>
 </div>
-
 <script>
-    function filterResults() {
-        const dateFilter = document.getElementById('dateFilter').value;
-        const statusFilter = document.getElementById('statusFilter').value;
+    // 페이지 로드 시 데이터 불러오기
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch('/inspection/load')
+            .then(response => response.json())
+            .then(data => {
+                console.log("서버에서 받아온 데이터:", data); // 데이터를 콘솔에 출력
+                const tableBody = document.querySelector("#inspectionTable tbody");
+                tableBody.innerHTML = ""; // 초기화
+                data.forEach(order => {
+                    const row = `
+                        <tr>
+                            <td>${order.deliveryDate}</td>
+                            <td>${order.productCode}</td>
+                            <td>${order.deliveryQuantity}</td>
+                            <td><input type="number" value="0"></td>
+                            <td class="status pending">검수 중</td>
+                            <td>
+                                <button class="button" onclick="completeInspection(this, ${order.deliveryCode})">검수</button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+            });
+    });
 
-        const rows = document.querySelectorAll('#inspectionTable tbody tr');
-        rows.forEach(row => {
-            const date = row.cells[0].textContent;
-            const status = row.cells[3].textContent.trim().toLowerCase();
+    // 검수 완료 처리
+    function completeInspection(button, inspectionCode) {
+        const row = button.closest("tr");
+        const defectiveInput = row.querySelector("input").value;
+        const defectiveQuantity = parseInt(defectiveInput) || 0;
+        const inspectionStatus = defectiveQuantity > 0 ? "검수 완료(불량)" : "검수 완료";
 
-            let showRow = true;
+        const inspectionDto = {
+            inspectionCode: inspectionCode, // 기존 검수 코드
+            defectiveQuantity: defectiveQuantity // 불량 갯수
+        };
 
-            if (dateFilter && !date.includes(dateFilter)) {
-                showRow = false;
+        fetch('/inspection/save', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(inspectionDto)
+        }).then(response => {
+            if (response.ok) {
+                // 상태 업데이트
+                row.querySelector(".status").textContent = inspectionStatus;
+                row.querySelector(".status").classList.remove("pending");
+                row.querySelector(".status").classList.add("complete");
+            } else {
+                alert("검수 저장에 실패했습니다.");
             }
-
-            if (statusFilter !== 'all' && !status.includes(statusFilter)) {
-                showRow = false;
-            }
-
-            row.style.display = showRow ? '' : 'none';
         });
     }
-
-    function viewDetails(id) {
-        alert("상세 정보를 확인합니다. ID: " + id);
-    }
 </script>
-
 </body>
 </html>
