@@ -1,5 +1,6 @@
 package com.procuone.mit_kdt.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.procuone.mit_kdt.entity.DeliveryOrder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class InspectionDTO {
     private String inspectionCode; // 검수 코드 (선택적으로 사용)
+    @JsonIgnore
     private DeliveryOrder deliveryOrder;
     private String deliveryCode;   // DeliveryOrder의 deliveryCode
     private String productName;    // 상품명

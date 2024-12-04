@@ -16,14 +16,14 @@ public class ContractExpirationScheduler {
     private DeliveryOrderService deliveryOrderService;
 
     // 매일 자정에 실행
-//    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(fixedRate = 6000000)
+    @Scheduled(cron = "0 0 0 * * *")
+//    @Scheduled(fixedRate = 6000000)
     public void deleteExpiredContracts() {
         contractService.deleteExpiredContracts();
     }
 
-//    @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 실행
-    @Scheduled(fixedRate = 6000000)
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 실행
+//    @Scheduled(fixedRate = 6000000)
     public void updateExpiredContracts() {
         deliveryOrderService.updateDeliveryStatus();
     }

@@ -20,7 +20,12 @@ public class InspectionController {
     @GetMapping("/load")
     public List<InspectionDTO> loadAllInspections() {
         // Inspection 데이터를 전체 불러오기
-        return inspectionService.getAllInspections();
+        List<InspectionDTO> l =
+        inspectionService.getAllInspections();
+        for (InspectionDTO dto : l) {
+            System.out.println(dto.toString());
+        }
+        return l;
     }
 
     @PostMapping("/save")
