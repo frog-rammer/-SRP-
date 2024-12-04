@@ -2,13 +2,12 @@ package com.procuone.mit_kdt.scheduler;
 
 import com.procuone.mit_kdt.service.ContractService;
 import com.procuone.mit_kdt.service.DeliveryOrderService;
-import com.procuone.mit_kdt.service.impl.DeliveryOrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ContractExpirationScheduler {
+public class SchedulerComponent {
 
     @Autowired
     private ContractService contractService;

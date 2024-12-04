@@ -116,12 +116,18 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 
         for (DeliveryOrder order : ordersToComplete) {
             order.setStatus("완료");
+
             //입고 검수 테이블에 검수중으로 추가
-            inspectionDTO.setDeliveryOrder(order);
-            inspectionDTO.setQuantity(order.getDeliveryQuantity());
-            inspectionDTO.setDefectiveQuantity(0L);
+            inspectionDTO.setDeliveryCode(order.getDeliveryCode());
+            inspectionDTO.setInspectionDate(LocalDate.of(1000,1,1));
             Item item = itemService.getItemEntityByProductCode(order.getProductCode());
             inspectionDTO.setProductName(item.getItemName());
+            inspectionDTO.setProductCode(order.getProductCode());
+            inspectionDTO.setQuantity(order.getDeliveryQuantity());
+            inspectionDTO.setDefectiveQuantity(0L);
+            inspectionDTO.setBusniessId(order.getBusinessId());
+            inspectionDTO.setDeliveryDate(order.getDeliveryDate());
+            inspectionDTO.setInspectionStatus("검수중");
             inspectionService.saveInspection(inspectionDTO);
         }
         // 변경된 상태를 저장
