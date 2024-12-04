@@ -40,7 +40,7 @@ public class Inspection {
     private String productName; // 상품명
 
     @Column(name="product_code", nullable = false)
-    private String productCode;
+    private String productCode; //상품 코드
 
     @Column(name = "quantity", nullable = false)
     private Long quantity; // 납품 수량
@@ -49,7 +49,10 @@ public class Inspection {
     private Long defectiveQuantity; // 불량 수량
 
     @Column(name="busniess_id",nullable = false)
-    private String busniessId;
+    private String busniessId;  // 사업자 번호
+
+    @Column(name="deliveryDate")
+    private LocalDate deliveryDate; // 납품일
 
 
     @Column(name = "inspection_status", nullable = false)

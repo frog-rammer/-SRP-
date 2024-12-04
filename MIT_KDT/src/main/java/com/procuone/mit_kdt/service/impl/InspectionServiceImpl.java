@@ -1,8 +1,10 @@
 package com.procuone.mit_kdt.service.impl;
 
 import com.procuone.mit_kdt.dto.InspectionDTO;
+import com.procuone.mit_kdt.entity.DeliveryOrder;
 import com.procuone.mit_kdt.entity.Inspection;
 import com.procuone.mit_kdt.entity.PurchaseOrder;
+import com.procuone.mit_kdt.repository.DeliveryOrderRepository;
 import com.procuone.mit_kdt.repository.InspectionRepository;
 import com.procuone.mit_kdt.repository.InventoryRepository;
 import com.procuone.mit_kdt.repository.PurchaseOrderRepository;
@@ -23,6 +25,8 @@ public class InspectionServiceImpl implements InspectionService {
 
     @Autowired
     private final InventoryRepository inventoryRepository;
+    @Autowired
+    private final DeliveryOrderRepository deliveryOrderRepository;
 
     @Autowired
     private final PurchaseOrderRepository purchaseOrderRepository;
@@ -31,15 +35,7 @@ public class InspectionServiceImpl implements InspectionService {
     public List<InspectionDTO> getAllInspections() {
         // 모든 Inspection 데이터를 조회하여 DTO로 변환
         return inspectionRepository.findAll().stream()
-                .map(inspection -> new InspectionDTO(
-                        inspection.getInspectionCode(),
-                        inspection.getDeliveryOrder(),
-                        inspection.getDeliveryOrder().getDeliveryCode(),
-                        inspection.getProductName(),
-                        inspection.getQuantity(),
-                        inspection.getDefectiveQuantity(),
-                        inspection.getInspectionStatus()
-                ))
+                .map(this::convertToDTO) // InspectionMapper의 convertToDTO 메서드 사용
                 .toList();
     }
 
@@ -70,16 +66,18 @@ public class InspectionServiceImpl implements InspectionService {
 
     @Override
     public void saveInspection(InspectionDTO inspectionDto) {
-        Inspection inspection = Inspection.builder()
-                .deliveryOrder(inspectionDto.getDeliveryOrder())
-                .inspectionDate(LocalDate.now())
-                .productName(inspectionDto.getProductName())
-                .productCode(inspectionDto.getDeliveryOrder().getProductCode())
-                .busniessId(inspectionDto.getDeliveryOrder().getBusinessId())
-                .quantity(inspectionDto.getQuantity())
-                .defectiveQuantity(inspectionDto.getDefectiveQuantity())
-                .inspectionStatus("검수중")
-                .build();
+        // DeliveryOrder 객체 조회 (DeliveryCode로 연관된 엔티티 가져오기)
+        DeliveryOrder deliveryOrder = deliveryOrderRepository.findById(inspectionDto.getDeliveryCode())
+                .orElseThrow(() -> new RuntimeException("DeliveryOrder not found with code: " + inspectionDto.getDeliveryCode()));
+
+        // DTO -> Entity 변환
+        Inspection inspection = convertToEntity(inspectionDto, deliveryOrder);
+
+        // 검수 상태와 날짜 설정 (기본값 처리)
+        inspection.setInspectionDate(LocalDate.now()); // 현재 날짜 설정
+        inspection.setInspectionStatus("검수중"); // 기본 상태
+
+        // Inspection 엔티티 저장
         inspectionRepository.save(inspection);
     }
 
@@ -110,5 +108,40 @@ public class InspectionServiceImpl implements InspectionService {
                 inspection.getQuantity() * inspection.getDeliveryOrder().getPrice(),
                 inspection.getInspectionStatus()
         );
+    }
+
+
+    // DTO -> Entity 변환
+    @Override
+    public Inspection convertToEntity(InspectionDTO dto, DeliveryOrder deliveryOrder) {
+        return Inspection.builder()
+                .inspectionCode(dto.getInspectionCode())
+                .deliveryOrder(deliveryOrder) // DeliveryOrder 객체를 매핑
+                .inspectionDate(dto.getInspectionDate())
+                .productName(dto.getProductName())
+                .productCode(dto.getProductCode())
+                .quantity(dto.getQuantity())
+                .defectiveQuantity(dto.getDefectiveQuantity())
+                .busniessId(dto.getBusniessId())
+                .deliveryDate(dto.getDeliveryDate())
+                .inspectionStatus(dto.getInspectionStatus())
+                .build();
+    }
+
+    // Entity -> DTO 변환
+    @Override
+    public InspectionDTO convertToDTO(Inspection entity) {
+        return InspectionDTO.builder()
+                .inspectionCode(entity.getInspectionCode())
+                .deliveryCode(entity.getDeliveryOrder() != null ? entity.getDeliveryOrder().getDeliveryCode() : null)
+                .inspectionDate(entity.getInspectionDate())
+                .productName(entity.getProductName())
+                .productCode(entity.getProductCode())
+                .quantity(entity.getQuantity())
+                .defectiveQuantity(entity.getDefectiveQuantity())
+                .busniessId(entity.getBusniessId())
+                .deliveryDate(entity.getDeliveryDate())
+                .inspectionStatus(entity.getInspectionStatus())
+                .build();
     }
 }
