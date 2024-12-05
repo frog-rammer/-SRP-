@@ -30,8 +30,8 @@ public class Shipment {
     private String shipmentId; // 출고번호
     private LocalDate requestDate; // 요청일
     private String manager; // 담당자
-    private String productPlanCode; //생산계획 코드
-    private String procurementPlanCode; // 조달계획 코드
+    private String procurementPlanCode; // 조달 계획 코드
+    private String productPlanCode; // 생산 계획 코드
     private LocalDate shipmentDate; // 출고일
     private String productCode; // 자재코드
     private String itemName; // 자재명

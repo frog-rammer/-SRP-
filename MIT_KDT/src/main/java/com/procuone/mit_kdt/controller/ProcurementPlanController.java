@@ -4,6 +4,7 @@ import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
 import com.procuone.mit_kdt.entity.ProcurementPlan;
 import com.procuone.mit_kdt.repository.ProcurementPlanRepository;
+import com.procuone.mit_kdt.service.MaterialIssueService;
 import com.procuone.mit_kdt.service.ProcurementPlanService;
 import com.procuone.mit_kdt.service.ProductionPlanService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
@@ -31,6 +32,8 @@ public class ProcurementPlanController {
     PurchaseOrderService purchaseOrderService;
     @Autowired
     private ProcurementPlanRepository ProcurementPlanRepository;
+    @Autowired
+    MaterialIssueService  materialIssueService;
 
     @GetMapping("/register")
     public String register(Model model, Pageable pageable) {
@@ -73,7 +76,11 @@ public class ProcurementPlanController {
         procumentPlanDTO = procurementPlanService.registerProcurementPlan(procumentPlanDTO);
         //2. 발주서 자동생성
         purchaseOrderService.registerPurchaseOrder(procumentPlanDTO);
-        // 3. 저장된 조달 계획 리스트를 다시 로드하여 View에 전달
+
+        //3.상태를 "대기" 상태로 출고요청에 자동생성하기
+        materialIssueService.createAndSaveShipmentsFromProcurementPlan(procumentPlanDTO); // Shipment 생성
+
+        // 4. 저장된 조달 계획 리스트를 다시 로드하여 View에 전달
         return "redirect:/procurementPlan/register"; // GET 메서드 호출로 리다이렉트
     }
 

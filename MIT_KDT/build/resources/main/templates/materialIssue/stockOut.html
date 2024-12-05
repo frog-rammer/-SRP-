@@ -172,91 +172,71 @@
       </section>
       <!-- 페이지네이션 -->
       <div class="pagination">
-                        <span th:if="${currentPage > 0}">
-                            <a th:href="@{/materialIssue/stockOut(page=${currentPage - 1})}">Previous</a>
+                        <span th:if="${currentProductionPlanPage > 0}">
+                            <a th:href="@{/materialIssue/stockOut(page=${currentProductionPlanPage - 1})}">Previous</a>
                         </span>
-        <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+        <span th:each="pageNum : ${#numbers.sequence(0, totalProductionPlanPages - 1)}">
                             <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
-                               th:classappend="${pageNum == currentPage ? 'current' : ''}"></a>
+                               th:classappend="${pageNum == currentProductionPlanPage ? 'current' : ''}"></a>
                         </span>
-        <span th:if="${currentPage < totalPages - 1}">
-                            <a th:href="@{/materialIssue/stockOut(page=${currentPage + 1})}">Next</a>
+        <span th:if="${currentProductionPlanPage < totalProductionPlanPages - 1}">
+                            <a th:href="@{/materialIssue/stockOut(page=${currentProductionPlanPage + 1})}">Next</a>
                         </span>
       </div>
 
     </section>
   <!-- 출고 대기 현황 테이블 -->
-  <h2>출고 대기 현황</h2>
-  <table border="1">
-    <thead>
-    <tr>
-      <th>선택</th>
-      <th>출고번호</th>
-      <th>요청일</th>
-      <th>담당자</th>
-      <th>조달계획코드</th>
-      <th>출고일</th>
-      <th>자재코드</th>
-      <th>자재명</th>
-      <th>현재 수량</th>
-      <th>요청 수량</th>
-      <th>등록일</th>
-      <th>수정일</th>
-      <th>출고 상태</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td><input type="checkbox" name="selectItem" value="EX000117"></td>
-      <td>EX000117</td>
-      <td>2025-01-02</td>
-      <td>N/A</td>
-      <td>P000112</td>
-      <td></td>
-      <td>MA000005</td>
-      <td>PDB30W</td>
-      <td>3851</td>
-      <td>30</td>
-      <td>2024-09-02</td>
-      <td>2024-09-02</td>
-      <td>대기</td>
-    </tr>
+    <!-- 출고 목록 -->
+    <section>
+      <h2>출고 목록</h2>
+      <table>
+        <thead>
+        <tr>
+          <th><input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes(this)"> 전체 선택</th>
+          <th>출고번호</th>
+          <th>담당자</th>
+          <th>생산계획코드</th>
+          <th>조달계획코드</th>
+          <th>자재코드</th>
+          <th>자재명</th>
+          <th>현재 수량</th>
+          <th>요청 수량</th>
+          <th>출고 상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="shipment : ${shipmentList}">
+          <td><input type="checkbox" name="selectItem" th:value="${shipment.shipmentId}"></td>
+          <td th:text="${shipment.shipmentId}"></td>
+          <td th:text="${shipment.manager}"></td>
+          <td th:text="${shipment.productPlanCode}"></td>
+          <td th:text="${shipment.procurementPlanCode}"></td>
+          <td th:text="${shipment.productCode}"></td>
+          <td th:text="${shipment.itemName}"></td>
+          <td th:text="${shipment.currentQuantity}"></td>
+          <td th:text="${shipment.requestedQuantity}"></td>
+          <td th:text="${shipment.shipmentStatus}"></td>
+        </tr>
+        </tbody>
+      </table>
 
-    <tr>
-      <td><input type="checkbox" name="selectItem" value="EX000118"></td>
-      <td>EX000118</td>
-      <td>2025-01-02</td>
-      <td>N/A</td>
-      <td>P000113</td>
-      <td></td>
-      <td>MA000023</td>
-      <td>BAT50H</td>
-      <td>14500</td>
-      <td>150</td>
-      <td>2024-09-02</td>
-      <td>2024-09-02</td>
-      <td>대기</td>
-    </tr>
+      <!-- 페이지네이션 -->
+      <div class="pagination">
+    <span th:if="${currentShipmentPage > 0}">
+      <a th:href="@{/materialIssue/stockOut(page=${currentShipmentPage - 1})}">이전</a>
+    </span>
+        <span th:each="pageNum : ${#numbers.sequence(0, totalShipmentPages - 1)}">
+      <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+         th:classappend="${pageNum == currentShipmentPage ? 'current' : ''}"></a>
+    </span>
+        <span th:if="${currentShipmentPage < totalShipmentPages - 1}">
+      <a th:href="@{/materialIssue/stockOut(page=${currentShipmentPage + 1})}">다음</a>
+    </span>
+      </div>
+    </section>
 
-    <tr>
-      <td><input type="checkbox" name="selectItem" value="EX000119"></td>
-      <td>EX000119</td>
-      <td>2024-09-29</td>
-      <td>N/A</td>
-      <td>P000114</td>
-      <td></td>
-      <td>MA000001</td>
-      <td>Sparky</td>
-      <td>197</td>
-      <td>50</td>
-      <td>2024-09-02</td>
-      <td>2024-11-13</td>
-      <td>대기</td>
-    </tr>
-    </tbody>
-  </table>
-
-  <!-- 출고 요청 버튼 --><button type="button" onclick="handleOutboundRequest()" class="btn">출고 요청</button>
+    <!-- 출고 요청 버튼 -->
+    <button type="button" onclick="handleOutboundRequest()" class="btn">출고 요청</button>
 
   <!-- 출고 현황 테이블 -->
   <h2>출고 현황</h2>
@@ -272,8 +252,6 @@
       <th>자재명</th>
       <th>현재 수량</th>
       <th>요청 수량</th>
-      <th>등록일</th>
-      <th>수정일</th>
       <th>출고 상태</th>
     </tr>
     </thead>
@@ -367,34 +345,52 @@
 </div>
 
 <script>
+
+  // 전체 선택/해제 기능
+  function toggleAllCheckboxes(selectAllCheckbox) {
+    const checkboxes = document.querySelectorAll('input[name="selectItem"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = selectAllCheckbox.checked;
+    });
+  }
+
+  // 출고 요청 처리
+  function handleOutboundRequest() {
+    const selectedCheckboxes = document.querySelectorAll('input[name="selectItem"]:checked');
+    if (selectedCheckboxes.length === 0) {
+      alert("출고 요청할 항목을 선택해주세요.");
+      return;
+    }
+
+    const selectedShipments = [];
+    selectedCheckboxes.forEach(checkbox => {
+      const row = checkbox.closest('tr'); // 현재 행
+      const shipmentId = row.cells[1].textContent; // 출고번호
+      const productName = row.cells[6].textContent; // 자재명
+      const requestedQuantity = row.cells[8].textContent; // 요청 수량
+      const shipmentStatus = row.cells[9].textContent; // 출고 상태
+
+      // 선택된 출고 항목 데이터 수집
+      selectedShipments.push({
+        shipmentId,
+        productName,
+        requestedQuantity,
+        shipmentStatus,
+      });
+    });
+
+    // 선택된 항목 출력 (백엔드 연동 시 이 부분을 서버 전송 로직으로 변경)
+    console.log("출고 요청 항목:", selectedShipments);
+
+    alert(`${selectedShipments.length}개의 출고 요청이 완료되었습니다.`);
+    // 여기에 서버로 데이터를 전송하는 AJAX 또는 폼 제출 로직을 추가 가능
+  }
+
   // 버튼 클릭 시 섹션 애니메이션 효과로 숨기기/보이기
   document.getElementById("toggleButton").addEventListener("click", function() {
     const planSection = document.getElementById("planSection");
     planSection.classList.toggle("active");
   });
-  // 출고 요청 버튼 클릭 시 선택된 항목에 대한 출고 요청 처리
-  function handleOutboundRequest() {
-    const selectedRows = document.querySelectorAll('input[name="selectItem"]:checked');  // 선택된 체크박스들 가져오기
-
-    if (selectedRows.length === 0) {
-      alert("출고 요청할 항목을 선택해 주세요.");
-      return; // 아무것도 선택되지 않으면 종료
-    }
-
-    selectedRows.forEach(row => {
-      const tr = row.closest('tr');  // 체크된 항목의 tr 가져오기
-      const outboundNumber = tr.cells[1].textContent;  // 출고번호
-      const materialName = tr.cells[7].textContent;  // 자재명
-      const requestQuantity = tr.cells[9].textContent;  // 요청 수량
-      const outboundStatus = tr.cells[11].textContent;  // 출고 상태 (대기)
-
-      // 출고 요청 처리 로직 (예: 서버로 데이터 전송 등)
-      console.log(`출고 요청: 출고번호 ${outboundNumber}, 자재명: ${materialName}, 요청 수량: ${requestQuantity}, 상태: ${outboundStatus}`);
-
-      // 알림
-      alert(`${outboundNumber} 출고 요청이 완료되었습니다.`);
-    });
-  }
 </script>
 
 </body>
