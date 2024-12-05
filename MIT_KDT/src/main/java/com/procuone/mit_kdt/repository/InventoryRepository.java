@@ -1,6 +1,7 @@
 package com.procuone.mit_kdt.repository;
 
 import com.procuone.mit_kdt.entity.Inventory;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -33,7 +34,9 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     Optional<Inventory> findByItem_ProductCode(String productCode);
 
     // 수량을 추가하는 쿼리
+    @Transactional
     @Modifying
-    @Query("UPDATE Inventory i SET i.currentQuantity = i.currentQuantity + :quantity WHERE i.item.id = :itemId")
-    void addToInventory(String itemId, Long quantity);
+    @Query("UPDATE Inventory i SET i.currentQuantity = i.currentQuantity + :quantity WHERE i.itemName = :itemName")
+    void addToInventory(@Param("itemName") String itemName, @Param("quantity") Long quantity);
+
 }

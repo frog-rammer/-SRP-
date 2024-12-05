@@ -1,15 +1,17 @@
 package com.procuone.mit_kdt.controller;
 
+import com.procuone.mit_kdt.dto.ContractDTO;
 import com.procuone.mit_kdt.dto.InspectionDTO;
 import com.procuone.mit_kdt.service.InspectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/inspection")
 @RequiredArgsConstructor
 public class InspectionController {
@@ -17,27 +19,45 @@ public class InspectionController {
     @Autowired
     private final InspectionService inspectionService;
 
-    @GetMapping("/load")
-    public List<InspectionDTO> loadAllInspections() {
-        // Inspection 데이터를 전체 불러오기
-        List<InspectionDTO> l =
-        inspectionService.getAllInspections();
-        for (InspectionDTO dto : l) {
-            System.out.println(dto.toString());
-        }
-        return l;
+    @GetMapping("/status")
+    public String getInspectionStatus(Model model) {
+        List<InspectionDTO> inspections = inspectionService.getAllInspections();
+
+        // 검수 중 또는 불량 상태 데이터
+        List<InspectionDTO> ongoingInspections = inspections.stream()
+                .filter(inspection -> "검수중".equals(inspection.getInspectionStatus())
+                        || "검수완료(불량)".equals(inspection.getInspectionStatus()))
+                .toList();
+
+        // 검수 완료 상태 데이터
+        List<InspectionDTO> completedInspections = inspections.stream()
+                .filter(inspection -> "검수완료".equals(inspection.getInspectionStatus()))
+                .toList();
+
+        model.addAttribute("inspections", ongoingInspections);
+        model.addAttribute("completedInspections", completedInspections);
+
+        return "materialReceipt/inspectionStatus";
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> saveInspection(@RequestBody InspectionDTO inspectionDTO) {
-        System.out.println("전송된 DTO: " + inspectionDTO);
-        inspectionService.processInspection(inspectionDTO); // 검수 처리 서비스 호출
-        return ResponseEntity.ok("검수 데이터가 저장되었습니다.");
+    public String saveInspection(@RequestParam String inspectionCode , @RequestParam Long defectiveQuantity) {
+        InspectionDTO inspectionDTO = inspectionService.getInspectionById(inspectionCode);
+        inspectionDTO.setDefectiveQuantity(defectiveQuantity);
+        System.out.println("Received DTO: " + inspectionDTO);
+        inspectionService.saveInspection(inspectionDTO);
+        inspectionService.processInspection(inspectionDTO);
+        return "redirect:/inspection/status";
     }
 
     @GetMapping("/invoice/{inspectionId}")
-    public String viewInvoice(@PathVariable String inspectionId) {
-        // 특정 Inspection 데이터를 기반으로 거래명세서 데이터를 조회하여 HTML 렌더링.
-        return inspectionService.generateInvoice(inspectionId);
+    public String viewInvoice(@PathVariable String inspectionId, Model model) {
+        InspectionDTO inspectionDTO = inspectionService.getInspectionById(inspectionId);
+        ContractDTO contractDTO = inspectionService.getContractByInspection(inspectionDTO);
+
+        model.addAttribute("inspection", inspectionDTO);
+        model.addAttribute("contract", contractDTO);
+
+        return "materialReceipt/invoice"; // HTML 템플릿 파일 이름
     }
 }
