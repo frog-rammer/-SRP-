@@ -84,69 +84,48 @@
 <body>
 <div class="container">
     <h1>거래 명세서</h1>
-
     <!-- 거래명세서 정보 -->
     <div class="section">
         <h2>공급자</h2>
         <table>
             <tr>
-                <td><strong>거래명세서 번호:</strong> 1</td>
-                <td><strong>발행일:</strong> 2024-11-13</td>
+                <td><strong>거래명세서 번호:</strong> <span th:text="${inspection.inspectionCode}">임의번호</span></td>
+                <td><strong>발행일:</strong> <span th:text="${inspection.inspectionDate}">발행일</span></td>
             </tr>
             <tr>
-                <td><strong>발주일:</strong> 임의날짜</td>
-                <td><strong>입고일:</strong> 임의날짜</td>
+                <td><strong>발주일:</strong> <span th:text="${contract.contractDate}">발주일</span></td>
+                <td><strong>입고일:</strong> <span th:text="${inspection.deliveryDate}">입고일</span></td>
             </tr>
             <tr>
-                <td><strong>업체명:</strong> 임의업체</td>
-                <td><strong>사업자번호:</strong> 임의번호</td>
+                <td><strong>업체명:</strong> <span th:text="${contract.comName}">업체명</span></td>
+                <td><strong>사업자번호:</strong> <span th:text="${contract.businessId}">사업자번호</span></td>
             </tr>
             <tr>
-                <td><strong>주소:</strong> 수원</td>
-                <td><strong>담당자:</strong> 홍길동</td>
+                <td><strong>주소:</strong> <span th:text="${contract.accountInfo}">주소</span></td>
+                <td><strong>담당자:</strong> <span th:text="${contract.itemName}">담당자</span></td>
             </tr>
         </table>
     </div>
-
-    <!-- 공급받는자 정보 -->
-    <div class="section">
-        <h2>공급받는자 정보</h2>
-        <table>
-            <tr>
-                <td><strong>업체명:</strong> 임의업체</td>
-                <td><strong>사업자번호:</strong> 임의번호</td>
-            </tr>
-            <tr>
-                <td><strong>주소:</strong> 경기 수원시 123</td>
-                <td><strong>담당자:</strong> test2</td>
-            </tr>
-        </table>
-    </div>
-
     <!-- 품목정보 -->
     <div class="section">
         <h2>품목정보</h2>
         <table class="items-table">
             <thead>
             <tr>
-                <th>발주번호</th>
                 <th>품목코드</th>
                 <th>품목명</th>
                 <th>수량</th>
                 <th>단가</th>
                 <th>총액</th>
-                <th>비고</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <td>2</td>
-                <td>임의코드</td>
-                <td>E/L Filling</td>
-                <td>100</td>
-                <td>₩100,000</td>
-                <td>₩10,000,000</td>
-                <td></td>
+                <td th:text="${contract.productCode}">품목코드</td>
+                <td th:text="${contract.itemName}">품목명</td>
+                <td th:text="${inspection.quantity}">수량</td>
+                <td th:text="${contract.unitCost}">단가</td>
+                <td th:text="${inspection.quantity * contract.unitCost}">총액</td>
             </tr>
             </tbody>
         </table>
