@@ -22,7 +22,7 @@ public class SchedulerComponent {
     }
 
     @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 실행
-//    @Scheduled(fixedRate = 6000000)
+//     @Scheduled(fixedRate = 60000)
     public void updateExpiredContracts() {
         deliveryOrderService.updateDeliveryStatus();
     }

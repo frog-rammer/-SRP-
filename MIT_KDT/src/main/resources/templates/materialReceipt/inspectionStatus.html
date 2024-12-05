@@ -13,7 +13,6 @@
             padding: 0;
             background-color: #f4f4f4;
         }
-
         .container {
             width: 80%;
             margin: 20px auto;
@@ -21,51 +20,43 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
-
         h1 {
             text-align: center;
         }
-
         .filter {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-
         table, th, td {
             border: 1px solid #ddd;
         }
-
         th, td {
             padding: 10px;
             text-align: center;
         }
-
         th {
             background-color: #32928E;
             color: #fff;
         }
-
         .status {
             font-weight: bold;
         }
-
         .status.complete {
             color: green;
         }
-
         .status.pending {
             color: orange;
         }
-
         .status.failed {
             color: red;
         }
-
         .button {
             padding: 10px 15px;
             background-color: #32928E;
@@ -74,71 +65,100 @@
             cursor: pointer;
             border-radius: 5px;
         }
-
         .button:hover {
-            background-color: #32928E;
+            background-color: #267e73;
         }
-
     </style>
 </head>
 <body>
 <div class="grid-container">
     <!-- 헤더-->
-    <header class="layout-header">
-        <div th:replace="partials/procuOneHeader :: header"></div>
-    </header>
-    <!-- 사이드바-->
-    <aside class="layout-sidebar">
-        <div th:replace="partials/procuOneSide :: side"></div>
-    </aside>
+    <div class="layout-header">
+        <header  th:replace="partials/procuOneHeader :: header"></header>
+    </div>
+    <!-- 사이드바 -->
+    <div class="layout-sidebar">
+        <aside  th:replace="partials/procuOneSide :: side"></aside>
+    </div>
+
+
     <!-- 본문 -->
     <main class="layout-main">
-        <h1>입고검수 현황</h1>
-        <!-- 필터 -->
-        <div class="filter">
-            <label for="dateFilter">날짜: </label>
-            <input type="date" id="dateFilter">
-            <label for="statusFilter">상태: </label>
-            <select id="statusFilter">
-                <option value="all">전체</option>
-                <option value="complete">검수 완료</option>
-                <option value="pending">검수 중</option>
-                <option value="failed">검수 완료(불량)</option>
-            </select>
-            <button class="button" onclick="filterResults()">필터링</button>
+        <div class="container">
+            <h1>입고검수 현황</h1>
+            <!-- 필터 -->
+            <div class="filter">
+                <div>
+                    <label for="dateFilter">날짜: </label>
+                    <input type="date" id="dateFilter">
+                </div>
+                <div>
+                    <label for="statusFilter">상태: </label>
+                    <select id="statusFilter">
+                        <option value="all">전체</option>
+                        <option value="complete">검수 완료</option>
+                        <option value="pending">검수 중</option>
+                        <option value="failed">검수 완료(불량)</option>
+                    </select>
+                </div>
+                <button class="button" onclick="filterResults()">필터링</button>
+            </div>
+            <!-- 입고검수 테이블 -->
+            <table id="inspectionTable">
+                <thead>
+                <tr>
+                    <th>입고 일자</th>
+                    <th>상품명</th>
+                    <th>수량</th>
+                    <th>검수 상태</th>
+                    <th>불량 수량</th>
+                    <th>검수</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="inspection : ${inspections}">
+                    <td th:text="${inspection.inspectionDate}">날짜</td>
+                    <td th:text="${inspection.productName}">상품명</td>
+                    <td th:text="${inspection.quantity}">수량</td>
+                    <td th:text="${inspection.inspectionStatus}"
+                        th:classappend="'status ' + ${inspection.inspectionStatus}"></td>
+                    <td th:text="${inspection.defectiveQuantity}"></td>
+                    <td>
+                        <form  th:action="@{/inspection/save}" method="post">
+                            <input type="number" name ="defectiveQuantity" min="0">
+                            <input type="hidden" name="inspectionCode" th:value="${inspection.inspectionCode}">
+                            <button class="button" type="submit">검수 완료</button>
+                        </form>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+
+            <h1>입고마감 현황</h1>
+            <table id="completedInspectionTable">
+                <thead>
+                <tr>
+                    <th>입고 일자</th>
+                    <th>상품명</th>
+                    <th>수량</th>
+                    <th>검수 상태</th>
+                    <th>거래명세서</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="completedInspection : ${completedInspections}">
+                    <td th:text="${completedInspection.inspectionDate}">날짜</td>
+                    <td th:text="${completedInspection.productName}">상품명</td>
+                    <td th:text="${completedInspection.quantity}">수량</td>
+                    <td th:text="${completedInspection.inspectionStatus}">검수 상태</td>
+                    <td>
+                        <a th:href="@{'/inspection/invoice/' + ${completedInspection.inspectionCode}}" class="button">보기</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <!-- 입고검수 테이블 -->
-        <table id="inspectionTable">
-            <thead>
-            <tr>
-                <th>입고 일자</th>
-                <th>상품명</th>
-                <th>수량</th>
-                <th>불량 수량</th>
-                <th>검수 상태</th>
-                <th>검수 완료 버튼</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
-        <h1>입고마감 현황</h1>
-        <table id="">
-            <thead>
-            <tr>
-                <th>입고 일자</th>
-                <th>상품명</th>
-                <th>수량</th>
-                <th>금액</th>
-                <th>검수 상태</th>
-                <th>거래명세서</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
     </main>
 </div>
 </body>
