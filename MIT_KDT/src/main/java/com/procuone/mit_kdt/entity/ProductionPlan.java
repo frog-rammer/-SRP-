@@ -1,12 +1,12 @@
 package com.procuone.mit_kdt.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -29,7 +29,6 @@ public class ProductionPlan {
             }
     )
     private String productPlanCode;
-
     private String productName;
     private String productCode;
     private LocalDate planStartDate;

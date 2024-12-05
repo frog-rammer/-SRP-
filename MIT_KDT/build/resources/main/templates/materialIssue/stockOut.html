@@ -7,6 +7,21 @@
   <link rel="stylesheet" th:href="@{/css/layout.css}">
   <title>자재 출고 관리</title>
   <style>
+    /* 숨겨진 섹션 초기 스타일 */
+    .productionPlanListWrap {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+      opacity: 0;
+    }
+
+    /* 섹션이 보이는 상태 */
+    .productionPlanListWrap.active {
+      max-height: 500px; /* 충분히 큰 값으로 설정 */
+      opacity: 1;
+    }
+
+
     /* 메인 영역 스타일 */
     .layout-main {
       padding: 30px;
@@ -120,9 +135,10 @@
   </aside>
 
   <main class="layout-main">
-    <button type="button" class="btn" >생산계획확인</button>
 
-    <section class="productionPlanListWrap">
+  <h1>자재 출고 관리</h1>
+    <button type="button" class="btn" id="toggleButton">생산계획별 확인</button>
+    <section class="productionPlanListWrap"  id="planSection">
       <div class="productionPlanListSearchBar">
         <input type="text" placeholder="검색어를 입력하세요">
         <button class="searchBtn">검색</button>
@@ -154,7 +170,6 @@
           </tbody>
         </table>
       </section>
-
       <!-- 페이지네이션 -->
       <div class="pagination">
                         <span th:if="${currentPage > 0}">
@@ -170,8 +185,6 @@
       </div>
 
     </section>
-  <h1>자재 출고 관리</h1>
-
   <!-- 출고 대기 현황 테이블 -->
   <h2>출고 대기 현황</h2>
   <table border="1">
@@ -354,6 +367,11 @@
 </div>
 
 <script>
+  // 버튼 클릭 시 섹션 애니메이션 효과로 숨기기/보이기
+  document.getElementById("toggleButton").addEventListener("click", function() {
+    const planSection = document.getElementById("planSection");
+    planSection.classList.toggle("active");
+  });
   // 출고 요청 버튼 클릭 시 선택된 항목에 대한 출고 요청 처리
   function handleOutboundRequest() {
     const selectedRows = document.querySelectorAll('input[name="selectItem"]:checked');  // 선택된 체크박스들 가져오기
