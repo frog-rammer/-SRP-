@@ -36,13 +36,14 @@ public class ProgressInspectionController {
     public String getProgressInspection(Model model,
                                         @RequestParam(defaultValue = "1") int page, // 사용자 요청 페이지 (1부터 시작)
                                         @RequestParam(defaultValue = "8") int size,
+                                        Pageable pageable,
                                         @RequestParam(required = false) String productCodeQuery,
                                         @RequestParam(required = false) String productNameQuery,
                                         @RequestParam(required = false) String procurementPlanCodeQuery,
                                         @RequestParam(required = false) LocalDate dateStart, // 시작날짜
                                         @RequestParam(required = false) LocalDate dateEnd // 종료 날짜
     ) {
-        Pageable pageable = PageRequest.of(page - 1, size); // 0부터 시작하도록 조정
+        pageable = PageRequest.of(page - 1, size); // 0부터 시작하도록 조정
 
         // 날짜 필터링 및 기타 필터 조건 추가
         Page<ProgressInspectionDTO> productionPlanPage = progressInspectionService.searchProgressInspections(

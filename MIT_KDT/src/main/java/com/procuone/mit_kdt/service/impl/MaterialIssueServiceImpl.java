@@ -35,6 +35,14 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
     @Autowired
     InventoryRepository inventoryRepository;
 
+    @Override
+    public Page<ShipmentDTO> getShipmentsByStatus(String status, Pageable pageable) {
+        return shipmentRepository.findByShipmentStatus(status, pageable).map(this::convertToDTO);
+    }
+    @Override
+    public Page<ShipmentDTO> getShipmentsByStatuses(List<String> statuses, Pageable pageable) {
+        return shipmentRepository.findByShipmentStatusIn(statuses, pageable).map(this::convertToDTO);
+    }
 
     // 저장 로직 구현
     @Override
@@ -89,15 +97,30 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
         return shipmentRepository.findAll(pageable)
                 .map(this::convertToDTO);
     }
-
-    // 현재 재고 수량 업데이트 메서드
-    public void updateInventoryFromShipments() {
+    //현재 재고 업데이트
+    @Override
+    public void updateCurrentQuantity(){
         List<Shipment> shipments = shipmentRepository.findAll();
+        for(Shipment shipment : shipments){
+            Optional<Inventory> inventory = inventoryRepository.findByItem_ProductCode(shipment.getProductCode());
+            if(inventory.isPresent()){
+                if(inventory.get().getCurrentQuantity().longValue() != shipment.getCurrentQuantity()){
+                    shipment.setCurrentQuantity(inventory.get().getCurrentQuantity().longValue());
+                    shipmentRepository.save(shipment);
+                }
+            }
+        }
+    }
 
+    //출고 진행 메서드
+    @Override
+    public void updateToOngoing(List<String> shipmentIds) {
+        List<Shipment> shipments = shipmentRepository.findAllById(shipmentIds);
         for (Shipment shipment : shipments) {
-            String productCode = shipment.getProductCode();
-            long requestedQuantity = shipment.getRequestedQuantity();
+            String productCode = shipment.getProductCode(); // 자재코드
+            long requestedQuantity = shipment.getRequestedQuantity(); // 요청 수량
 
+            // 인벤토리에서 해당 자재의 현재 수량 가져오기
             Optional<Inventory> inventoryOpt = inventoryRepository.findByItemId(
                     itemService.findByProductCode(productCode).map(ItemDTO::getId).orElse(null)
             );
@@ -106,21 +129,30 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
                 Inventory inventory = inventoryOpt.get();
                 long currentQuantity = inventory.getCurrentQuantity() != null ? inventory.getCurrentQuantity() : 0;
 
+                // 현재 재고가 요청 수량 이상인지 확인
                 if (currentQuantity >= requestedQuantity) {
+                    // 재고 차감
                     inventory.setCurrentQuantity((int) (currentQuantity - requestedQuantity));
-                    shipment.setCurrentQuantity(currentQuantity - requestedQuantity);
-                    shipment.setShipmentStatus("출고 완료");
+                    shipment.setCurrentQuantity(currentQuantity - requestedQuantity); // 출고 후 현재 수량
+                    shipment.setShipmentStatus("진행중"); // 상태 업데이트
                 } else {
-                    shipment.setShipmentStatus("재고 부족");
+                    // 재고 부족 처리
+                    shipment.setShipmentStatus("재고부족");// 상태를 "재고 부족"으로 설정
+                    // >>> 여기가 재고 부족일 때 처리되는 부분입니다 <<<
                 }
 
+                // 변경된 인벤토리와 출고 정보를 저장
                 inventoryRepository.save(inventory);
                 shipmentRepository.save(shipment);
+
             } else {
-                shipment.setShipmentStatus("재고 정보 없음");
+                // 재고 정보가 없는 경우 처리
+                shipment.setShipmentStatus("재고부족"); // 상태를 "재고 정보 없음"으로 설정
                 shipmentRepository.save(shipment);
+                // >>> 여기가 재고 정보가 없는 경우 처리되는 부분입니다 <<<
             }
         }
+        shipmentRepository.saveAll(shipments);
     }
 
     // 현재 재고 수량 조회 헬퍼 메서드

@@ -146,24 +146,33 @@
                 </tr>
                 </tbody>
             </table>
-
+        </div>
             <div class="pagination">
                 <ul>
-                    <!-- Pagination 계산 -->
-                    <li th:if="${totalPages > 0}">
-                        <span th:if="${currentPage > 1}">
-                            <a th:href="@{'/progressInspection'(page=${currentPage - 1}, size=${size})}" class="page-btn">이전</a>
-                        </span>
+                    <!-- 이전 페이지 버튼 -->
+                    <li th:if="${currentPage > 1}">
+                        <a th:href="@{'/progressInspection/progressInspectionBoard'(page=${currentPage - 1}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, procurementPlanCodeQuery=${procurementPlanCodeQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
+                           class="page-btn">이전</a>
                     </li>
-                    <li th:if="${totalPages > 0}" th:each="pageNumber : ${#numbers.sequence(startPage ?: 1, endPage ?: 1)}">
-                        <a th:href="@{'/progressInspection'(page=${pageNumber}, size=${size})}" th:text="${pageNumber}" class="page-btn"></a>
+
+                    <!-- 페이지 번호 -->
+                    <li th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}">
+                        <a th:href="@{'/progressInspection/progressInspectionBoard'(page=${pageNumber}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, procurementPlanCodeQuery=${procurementPlanCodeQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
+                           th:text="${pageNumber}"
+                           th:classappend="${pageNumber == currentPage ? 'current' : ''}"
+                           class="page-btn">
+                        </a>
                     </li>
-                    <li th:if="${totalPages > currentPage}">
-                        <a th:href="@{'/progressInspection'(page=${currentPage + 1}, size=${size})}" class="page-btn">다음</a>
+
+                    <!-- 다음 페이지 버튼 -->
+                    <li th:if="${currentPage < totalPages}">
+                        <a th:href="@{'/progressInspection/progressInspectionBoard'(page=${currentPage + 1}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, procurementPlanCodeQuery=${procurementPlanCodeQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
+                           class="page-btn">다음</a>
                     </li>
                 </ul>
             </div>
-        </div>
+
+
     </main>
 
     <footer class="layout-footer"></footer>

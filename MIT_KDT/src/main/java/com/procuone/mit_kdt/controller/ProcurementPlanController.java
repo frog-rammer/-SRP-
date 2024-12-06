@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/procumentPlan")
+@RequestMapping("/procurementPlan")
 public class ProcurementPlanController {
     @Autowired
     ProductionPlanService productionPlanService;
