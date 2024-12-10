@@ -1,138 +1,224 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* 컨테이너 */
 .container {
     display: flex;
-    gap: 20px;
-    padding: 20px;
+    gap: 20px; /* 달력과 폼 사이 간격 */
     box-sizing: border-box;
+    justify-content: center; /* 중앙 정렬 */
+    align-items: flex-start; /* 상단 정렬 */
 }
-.calendarWrap, .productPlanInputWrap, .productionPlanListWrap {
-    display: inline-block;
-    vertical-align: top;
+
+/* 달력 영역 */
+.calendarWrap {
+    width: 50%; /* 달력 크기 */
+}
+
+.calendarWrap h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color:#32928E;
+    text-align: center; /* 중앙 정렬 */
+    margin-bottom: 20px;
+}
+.selectWrap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px; /* 셀렉트 간격 */
+}
+
+/* 년도/월 셀렉트 스타일 */
+.calendarWrap select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+    width: 120px; /* 셀렉트 박스 너비 조정 */
+}
+
+.calendarSelect select:focus {
+    border-color: #32928E;
+    outline: none;
+}
+
+.calendarSelect label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #32928E;
 }
 .calendarWrap {
-    width: 60%;
+    width: 50%;
 }
+
 .productPlanInputWrap {
-    width: 35%;
-    background-color: #f9f9f9;
+    margin-top: 12%;
+    height: 70%;
+    background-color: #ffffff; /* 배경색을 흰색으로 설정 */
     padding: 20px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
 }
-.header {
+.productPlanInputWrapHeader {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+    gap: 700px;
 }
 .productPlanInputWrap h3 {
-    margin: 0;
+    font-size: 1.4rem;
+    color: #32928E;
+    font-weight: bold;
 }
 .excelUploadBtn {
-    padding: 8px 12px;
-    background-color: #4CAF50;
+    margin-top: 20px;
+    background-color: #32928E;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.excelUploadBtn:hover {
+    background-color: #28726E;
+}
+
+.productPlanInputWrap input, .productPlanInputWrap select, .productPlanInputWrap button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.productPlanInputWrap input:focus, .productPlanInputWrap select:focus, .productPlanInputWrap button:focus {
+    border-color: #32928E;
+    outline: none;
+}
+
+.productPlanInputWrap button {
+    background-color: #32928E;
     color: white;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
-.productPlanInputWrap input, .productPlanInputWrap select, .productPlanInputWrap button {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
+
+.productPlanInputWrap button:hover {
+    background-color: #28726E;
 }
+
 .calendar {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    text-align: center;
+    grid-template-columns: repeat(7, 1fr); /* 7개의 열 */
+    gap: 5px; /* 셀 간격 */
+    width: 90%;
+    max-width: 800px; /* 달력 최대 너비 */
+    margin: 20px auto; /* 중앙 정렬 */
+    background-color: #ffffff;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .calendar div {
-    padding: 15px;
+    aspect-ratio: 1 / 1; /* 정사각형 셀 */
     border: 1px solid #ddd;
     cursor: pointer;
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background-color: #ffffff;
+    padding: 10px;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     position: relative;
 }
+
+.calendar div:hover {
+    background-color: #f2f2f2; /* 셀 호버 효과 */
+    transform: scale(1.05);
+}
+
 .calendar .header {
     grid-column: span 7;
     text-align: center;
-}
-.productionPlanListWrap {
-    width: 100%;
-    padding-top: 20px;
-}
-.productionPlanListSearchBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-.productionPlanListSearchBar input[type="text"] {
-    width: 60%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-}
-.detailsBtn {
-    padding: 8px 12px;
-    background-color: #008CBA;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-.productionPlanList table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.productionPlanList table, .productionPlanList th, .productionPlanList td {
-    border: 1px solid #ddd;
-}
-.productionPlanList th, .productionPlanList td {
-    padding: 8px;
-    text-align: center;
-}
-.productionPlanListPagenation {
-    text-align: center;
-    padding-top: 10px;
-}
-.label {
-    font-size: 12px;
-    color: red;
-    position: absolute;
-    top: 5px;
-    right: 5px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #2c3e50;
 }
 
-/* 추가된 스타일 */
-/* 비활성화된 날짜 스타일 */
+.calendar div .label {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: blue;
+    background-color: white;
+    padding: 2px 5px;
+    border-radius: 4px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.calendar div .label.end {
+    color: red;
+}
+
 .calendar .disabled {
     color: #bbb;
-    background-color: #f0f0f0;
+    background-color: #f8f8f8;
     pointer-events: none;
     cursor: not-allowed;
 }
 
-/* 선택된 날짜 스타일 */
 .calendar .highlight {
-    background-color: #ffeb3b; /* 강조 색상 */
+    background-color: #ffeb3b;
     color: black;
     font-weight: bold;
 }
 
-/* 반응형 레이아웃 */
+.calendarSelect {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.calendarSelect select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+}
+
+.calendarSelect select:focus {
+    border-color: #32928E;
+    outline: none;
+}
+
+.calendarSelect label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #32928E;
+}
+
+/* 반응형 디자인 */
 @media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-    .calendarWrap, .productPlanInputWrap {
+    .calendar {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 3px;
         width: 100%;
     }
-    .productionPlanListSearchBar input[type="text"] {
-        width: 100%;
-        margin-bottom: 10px;
+
+    .calendar div {
+        padding: 5px;
     }
 }

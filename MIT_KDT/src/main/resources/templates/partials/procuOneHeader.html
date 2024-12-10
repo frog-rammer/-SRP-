@@ -19,18 +19,16 @@
         <button>입/출고</button>
         <button>생산계획</button>
         <button>업무현황</button>
-        <button>상세보기</button>
     </div>
 
     <!-- 설정 아이콘 -->
-    <div>
-        <span th:if="${session.userType}">
-            환영합니다, <span th:text="${session.userType}">Usertype</span>
-        </span>
-        <span th:if="${session.username}">
-            <a th:href="@{'/myPage?username=' + ${session.username}}" th:text="${session.username}">Username</a>님
-        </span>
-
+    <div class="sessionBox">
+        <a  th:if="${session.username}" th:href="@{'/myPage?username=' + ${session.username}}">
+            <span th:if="${session.userType}">
+                환영합니다, <span th:text="${session.userType}">Usertype</span>
+            </span>
+            <span th:text="${session.username}">Username</span> 님
+        </a>
         <form action="/logout" method="get">
             <button type="submit">로그아웃</button>
         </form>
