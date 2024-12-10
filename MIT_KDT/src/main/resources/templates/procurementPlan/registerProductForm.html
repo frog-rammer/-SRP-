@@ -139,6 +139,15 @@
         .pbom-tree ul li {
             margin-left: 20px;
         }
+        #drawingWrap{
+            width: 60%;
+            height: 100%;
+            margin: 0 auto;
+        }
+        #drawingWrap > img{
+            max-width: 100%;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -149,12 +158,10 @@
     <aside class="layout-sidebar">
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
-
     <div class="main-container">
         <!-- 품목등록 영역 -->
         <main class="layout-main">
             <h1>품목등록</h1>
-
             <form th:action="@{/items/InputProduct}" method="post" enctype="multipart/form-data" onsubmit="combineDimensions()">
                 <!-- 상위 제품군 선택 -->
                 <div id="productGroupDiv">
@@ -187,7 +194,6 @@
                     <label for="productCode">제품 코드</label>
                     <select id="productCode" name="productCode" required>
                         <option value="">== 제품 코드 선택 ==</option>
-                        <!-- 여기서 JavaScript를 통해 동적으로 아이템들을 추가합니다. -->
                     </select>
                 </div>
                 <!-- 품목명 -->
@@ -206,8 +212,10 @@
                 </div>
                 <!-- 도면파일 -->
                 <div>
-                    <label for="drawingPreview">도면파일</label>
-                    <img id="drawingPreview" alt="도면 파일 미리보기" style="max-width: 200px; margin-top: 10px;">
+                    <label for="drawingWrap">도면파일</label>
+                    <div id="drawingWrap">
+                        <img id="drawingPreview" alt="도면 파일 미리보기" >
+                    </div>
                 </div>
 
 
@@ -234,18 +242,6 @@
             </table>
             <button class="btn" onclick="addToPurchaseBOM()">P-Bom 구성</button>
         </aside>
-
-<!--        &lt;!&ndash; P-BOM 트리 리스트 &ndash;&gt;-->
-<!--        <div class="pbom-container">-->
-<!--            <h2>P-BOM 구성 리스트</h2>-->
-<!--            <div class="pbom-tree">-->
-<!--                <ul id="pbomTree">-->
-<!--                    &lt;!&ndash; 동적으로 채워질 트리 구조 &ndash;&gt;-->
-<!--                </ul>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
 </div>
 <script>
     function updateNextCategory(level) {
@@ -493,7 +489,6 @@
     // document.addEventListener("DOMContentLoaded", () => {
     //     loadPurchaseBOMTree();
     // });
-
 
 </script>
 

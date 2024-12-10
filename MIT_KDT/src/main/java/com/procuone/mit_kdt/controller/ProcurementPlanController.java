@@ -1,13 +1,13 @@
 package com.procuone.mit_kdt.controller;
 
+import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
+import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
 import com.procuone.mit_kdt.entity.ProcurementPlan;
 import com.procuone.mit_kdt.repository.ProcurementPlanRepository;
-import com.procuone.mit_kdt.service.MaterialIssueService;
-import com.procuone.mit_kdt.service.ProcurementPlanService;
-import com.procuone.mit_kdt.service.ProductionPlanService;
-import com.procuone.mit_kdt.service.PurchaseOrderService;
+import com.procuone.mit_kdt.service.*;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -34,6 +36,9 @@ public class ProcurementPlanController {
     private ProcurementPlanRepository ProcurementPlanRepository;
     @Autowired
     MaterialIssueService  materialIssueService;
+
+    @Autowired
+    CompanyService companyService;
 
     @GetMapping("/register")
     public String register(Model model, Pageable pageable) {
@@ -80,6 +85,7 @@ public class ProcurementPlanController {
         //3.상태를 "대기" 상태로 출고요청에 자동생성하기
         materialIssueService.createAndSaveShipmentsFromProcurementPlan(procumentPlanDTO); // Shipment 생성
 
+
         // 4. 저장된 조달 계획 리스트를 다시 로드하여 View에 전달
         return "redirect:/procurementPlan/register"; // GET 메서드 호출로 리다이렉트
     }
@@ -89,7 +95,6 @@ public class ProcurementPlanController {
             Model model,
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "page", defaultValue = "0") int page) {
-
         int pageSize = 10;
         Pageable pageable = PageRequest.of(page, pageSize);
 
@@ -99,7 +104,6 @@ public class ProcurementPlanController {
         } else {
             procurementPlans = ProcurementPlanRepository.findAll(pageable);
         }
-
         model.addAttribute("procurementPlanList", procurementPlans.getContent());
         model.addAttribute("search", search);
         model.addAttribute("currentPage", procurementPlans.getNumber());
@@ -107,6 +111,46 @@ public class ProcurementPlanController {
         model.addAttribute("totalItems", procurementPlans.getTotalElements());
 
         return "purchaseOrder/procurementPlanView";
+    }
+
+    @GetMapping("/comProcurementPlanView")
+    public String comProcurementPlanView(
+            Model model,
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            Pageable pageable,
+            HttpSession session) {
+
+        String businessId = session.getAttribute("businessId").toString();
+        if(businessId == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+        pageable = PageRequest.of(page, size);
+
+        Page<ProcurementPlan> comProcurementPlans;
+
+        if (search != null && !search.isEmpty()) {
+            comProcurementPlans = ProcurementPlanRepository.findByProductNameContainingOrProductCodeContaining(search, search, pageable);
+        } else {
+            List<PurchaseOrderDTO> pDTO  =purchaseOrderService.getCompletedOrdersBybusinessId(businessId);
+            List<String> uniqueProcurementCodes = pDTO.stream()
+                    .map(PurchaseOrderDTO::getProcurementPlanCode) // Extract procurement_plan_code
+                    .distinct() // Remove duplicates
+                    .collect(Collectors.toList());
+            comProcurementPlans = ProcurementPlanRepository.findByProcurementPlanCodeIn(uniqueProcurementCodes, pageable);
+        }
+        CompanyDTO companyDTO= companyService.getCompanyDetails(businessId);
+        model.addAttribute("companyDTO", companyDTO);
+        model.addAttribute("procurementPlanList", comProcurementPlans.getContent());
+        model.addAttribute("search", search);
+        model.addAttribute("currentPage", comProcurementPlans.getNumber());
+        model.addAttribute("totalPages", comProcurementPlans.getTotalPages());
+        model.addAttribute("totalItems", comProcurementPlans.getTotalElements());
+
+        return "companyProcumentPlanView";
     }
 
     // 수정 폼을 띄울 때

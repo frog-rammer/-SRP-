@@ -191,6 +191,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         purchaseOrderRepository.saveAll(purchaseOrders);
     }
+    @Override
+    public List<PurchaseOrderDTO> getCompletedOrdersBybusinessId(String businessId) {
+        return purchaseOrderRepository.findByBusinessId(businessId).stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
+    }
 
     private PurchaseOrder dtoToEntity(PurchaseOrderDTO dto) {
         return PurchaseOrder.builder()
@@ -233,10 +239,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return purchaseOrderRepository.searchOrders(status, type, keyword, startDate, endDate);
     }
 
+<<<<<<< Updated upstream
     @Override
     public PurchaseOrderDTO getpurchaseOrderById(String purchaseOrderCode) {
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderCode)
                 .orElseThrow(() -> new RuntimeException("PurchaseOrder 데이터를 찾을 수 없습니다."));
         return convertEntityToDTO(purchaseOrder);
     }
+=======
+
+>>>>>>> Stashed changes
 }
