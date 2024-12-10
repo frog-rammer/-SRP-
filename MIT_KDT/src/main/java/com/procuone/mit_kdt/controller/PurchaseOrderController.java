@@ -1,5 +1,7 @@
 package com.procuone.mit_kdt.controller;
 
+import com.procuone.mit_kdt.dto.ContractDTO;
+import com.procuone.mit_kdt.dto.InspectionDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
 import com.procuone.mit_kdt.service.ProgressInspectionService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
@@ -110,5 +112,14 @@ public class PurchaseOrderController {
         model.addAttribute("endDate", endDate);
 
         return "purchaseOrder/purchaseOrders";
+    }
+
+    @GetMapping("/purchaseOrder/{purchaseOrderCode}")
+    public String viewPurchaseOrder(@PathVariable String purchaseOrderCode, Model model) {
+        PurchaseOrderDTO purchaseOrderDTO = purchaseOrderService.getpurchaseOrderById(purchaseOrderCode);
+
+        model.addAttribute("purchaseOrder", purchaseOrderDTO);
+
+        return "purchaseOrder"; // HTML 템플릿 파일 이름
     }
 }

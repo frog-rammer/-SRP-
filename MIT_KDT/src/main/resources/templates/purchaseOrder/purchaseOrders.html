@@ -116,7 +116,7 @@
             <!-- Auto-generated table -->
             <section class="procurement-plan">
                 <div class="top">
-                    <h2>구매 발주서 관리</h2>
+                    <h2>구매 발주 목록</h2>
                 </div>
                 <div class="search-bar">
                     <input type="date" class="date-start" placeholder="시작 날짜">
@@ -175,7 +175,7 @@
             <!-- Completed orders table -->
             <section class="purchase-order">
                 <div class="top">
-                    <h2>구매 발주서 관리 - 구매 발주서 리스트</h2>
+                    <h2>구매 발주서 관리</h2>
                 </div>
                 <div class="search-bar">
                     <input type="date" class="date-start2" placeholder="시작 날짜">
@@ -197,6 +197,7 @@
                         <th>발주수량</th>
                         <th>입고예정일</th>
                         <th>발주일</th>
+                        <th>발주서</th>
                     </tr>
                     </thead>
                     <tbody class="completed-orders">
@@ -210,6 +211,9 @@
                         <td th:text="${order.quantity}"></td>
                         <td th:text="${order.procurementEndDate}"></td>
                         <td th:text="${order.createdDate}"></td>
+                        <td>
+                            <a th:href="@{'/purchaseOrder/purchaseOrder/' + ${order.purchaseOrderCode}}" class="button">보기</a>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

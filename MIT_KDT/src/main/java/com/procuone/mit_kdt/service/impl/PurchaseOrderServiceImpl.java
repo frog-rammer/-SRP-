@@ -1,16 +1,12 @@
 package com.procuone.mit_kdt.service.impl;
 
-import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
+import com.procuone.mit_kdt.entity.*;
 import com.procuone.mit_kdt.entity.BOM.BOMRelationship;
 import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.entity.BOM.PurchaseBOM;
-import com.procuone.mit_kdt.entity.Company;
-import com.procuone.mit_kdt.entity.Inventory;
-import com.procuone.mit_kdt.entity.ProgressInspection;
-import com.procuone.mit_kdt.entity.PurchaseOrder;
 import com.procuone.mit_kdt.repository.*;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
@@ -19,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -236,5 +231,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public List<PurchaseOrderDTO> searchOrders(String status, String keyword, String type, LocalDate startDate, LocalDate endDate) {
         return purchaseOrderRepository.searchOrders(status, type, keyword, startDate, endDate);
+    }
+
+    @Override
+    public PurchaseOrderDTO getpurchaseOrderById(String purchaseOrderCode) {
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderCode)
+                .orElseThrow(() -> new RuntimeException("PurchaseOrder 데이터를 찾을 수 없습니다."));
+        return convertEntityToDTO(purchaseOrder);
     }
 }

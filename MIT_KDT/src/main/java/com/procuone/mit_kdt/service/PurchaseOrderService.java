@@ -17,4 +17,6 @@ public interface PurchaseOrderService {
 
     // 새로운 검색 메서드 추가
     List<PurchaseOrderDTO> searchOrders(String status, String keyword, String type, LocalDate startDate, LocalDate endDate);
+
+    PurchaseOrderDTO getpurchaseOrderById(String purchaseOrderCode);
 }
