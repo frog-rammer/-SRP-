@@ -5,7 +5,7 @@
     <title>생산 계획 관리</title>
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/productPlanInput.css}">
-    <link rel="stylesheet" th:href="@{/css/processDiagram.css}">
+<!--    <link rel="stylesheet" th:href="@{/css/processDiagram.css}">-->
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <style>
@@ -30,7 +30,7 @@
     </aside>
 
     <main class="layout-main">
-        <div th:replace="partials/diagram/orderingPlan :: myDiagram"></div>
+<!--        <div th:replace="partials/diagram/orderingPlan :: myDiagram"></div>-->
         <div class="aaa">
             <!-- 달력 부분 -->
             <section class="calendarWrap">
@@ -53,13 +53,13 @@
                     <option value="11">12</option>
                 </select>
                 <div class="calendar" id="calendar">
-                    <div>Sun</div>
-                    <div>Mon</div>
-                    <div>Tue</div>
-                    <div>Wed</div>
-                    <div>Thu</div>
-                    <div>Fri</div>
-                    <div>Sat</div>
+<!--                    <div>Sun</div>-->
+<!--                    <div>Mon</div>-->
+<!--                    <div>Tue</div>-->
+<!--                    <div>Wed</div>-->
+<!--                    <div>Thu</div>-->
+<!--                    <div>Fri</div>-->
+<!--                    <div>Sat</div>-->
                 </div>
             </section>
             <form class="inputForm" th:action="@{/productionPlan/save}" th:object="${productionPlanDTO}" method="post">
@@ -152,7 +152,7 @@
 </div>
 
 
-<script th:src="@{/JS/diagram.js}"></script>
+<!--<script th:src="@{/JS/diagram.js}"></script>-->
 <script th:src="@{/JS/productPlanInput.js}"></script>
 </body>
 </html>

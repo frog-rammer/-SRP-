@@ -331,15 +331,15 @@
                 <div class="pagination">
                     <ul>
                         <li th:if="${currentPage > 0}">
-                            <a th:href="@{'/procumentPlan/register'(page=${currentPage - 1}, size=10)}">&laquo; 이전</a>
+                            <a th:href="@{'/procurementPlan/register'(page=${currentPage - 1}, size=10)}">&laquo; 이전</a>
                         </li>
                         <li th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}"
                             th:classappend="${pageNumber - 1 == currentPage} ? 'active'">
-                            <a th:href="@{'/procumentPlan/register'(page=${pageNumber - 1}, size=10)}"
+                            <a th:href="@{'/procurementPlan/register'(page=${pageNumber - 1}, size=10)}"
                                th:text="${pageNumber}">1</a>
                         </li>
                         <li th:if="${currentPage + 1 < totalPages}">
-                            <a th:href="@{'/procumentPlan/register'(page=${currentPage + 1}, size=10)}">다음 &raquo;</a>
+                            <a th:href="@{'/procurementPlan/register'(page=${currentPage + 1}, size=10)}">다음 &raquo;</a>
                         </li>
                     </ul>
                 </div>
@@ -376,7 +376,7 @@
             <div style="flex: 1; min-width: 350px; max-width: 100%;">
                 <h4>조달계획등록</h4>
                 <div class="form-container">
-                    <form action="/procumentPlan/register" method="POST" th:object="${procurementPlanDTO}" onsubmit="return validateForm()">
+                    <form action="/procurementPlan/register" method="POST" th:object="${procurementPlanDTO}" onsubmit="return validateForm()">
                         <table>
                             <tr>
                                 <th>생산 계획 번호</th>

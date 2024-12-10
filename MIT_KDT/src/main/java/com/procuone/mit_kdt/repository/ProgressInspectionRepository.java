@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -24,4 +25,14 @@ public interface ProgressInspectionRepository extends JpaRepository<ProgressInsp
                                              LocalDate dateStart,
                                              LocalDate dateEnd,
                                              Pageable pageable);
+
+    // 비즈니스 아이디로 진척검수 처리 과정 불러오기
+    @Query("SELECT pi FROM ProgressInspection pi WHERE pi.businessId = :businessId")
+    Page<ProgressInspection> findByBusinessId(@Param("businessId") String businessId, Pageable pageable);
+
+
+    // inspectedQuantity가 0 이상인 데이터 검색
+    @Query("SELECT pi FROM ProgressInspection pi WHERE pi.inspectedQuantity > 0")
+    Page<ProgressInspection> findAllWithInspectedQuantityGreaterThanZero(Pageable pageable);
+
 }

@@ -27,4 +27,8 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, St
             @Param("keyword") String keyword,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+
+
+    @Query("SELECT po FROM PurchaseOrder po WHERE po.status = :status")
+    List<PurchaseOrder> findByStatus(@Param("status") String status);
 }

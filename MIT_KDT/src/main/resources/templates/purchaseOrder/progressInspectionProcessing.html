@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>진척 검수 처리</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+        th, td {
+            text-align: center;
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #32928E;
+            color: white;
+        }
+        tr:hover {
+            cursor: pointer; /* 손가락 모양 */
+            background-color: #f0f8ff; /* 행 호버 시 색상 */
+        }
+        tr.selected {
+            background-color: #ffebcd; /* 클릭된 행의 색상 */
+        }
+        button {
+            background-color: #32928E;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #updateFormContainer {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            text-decoration: none;
+            padding: 8px 12px;
+            margin: 0 5px;
+            background-color: #32928E;
+            color: white;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, cursor 0.3s ease;
+            cursor: pointer; /* 기본 마우스 포인터 */
+        }
+        .pagination a:hover {
+            background-color: #267570; /* 호버 시 색상 변경 */
+            cursor: pointer; /* 호버 시 마우스 포인터 변경 */
+        }
+        .pagination a.disabled {
+            background-color: #ccc;
+            color: #666;
+            pointer-events: none;
+            cursor: not-allowed; /* 비활성화 시 마우스 포인터 변경 */
+        }
+        .pagination a.active {
+            background-color: #32928E; /* 현재 페이지 색상 */
+            font-weight: bold;
+            cursor: default; /* 현재 페이지는 클릭 불가능 */
+        }
+    </style>
+</head>
+<body>
+<div class="grid-container">
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+    <main class="layout-main">
+        <h1>진척 검수 처리</h1>
+        <table id="inspectionTable">
+            <thead>
+            <tr>
+                <th>검수 코드</th>
+                <th>발주서 코드</th>
+                <th>품목 코드</th>
+                <th>품목명</th>
+                <th>사업자 ID</th>
+                <th>회사명</th>
+                <th>입고 예정일</th>
+                <th>발주 수량</th>
+                <th>검수된 수량</th>
+                <th>검수 상태</th>
+                <th>검수 일자</th>
+                <th>발주 일자</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="inspection : ${progressInspectionList}" onclick="selectInspection(this)">
+                <td th:text="${inspection.progressInspectionCode}"></td>
+                <td th:text="${inspection.purchaseOrderCode}"></td>
+                <td th:text="${inspection.productCode}"></td>
+                <td th:text="${inspection.productName}"></td>
+                <td th:text="${inspection.businessId}"></td>
+                <td th:text="${inspection.comName}"></td>
+                <td th:text="${inspection.expectedArrivalDate}"></td>
+                <td th:text="${inspection.totalQuantity}"></td>
+                <td th:text="${inspection.inspectedQuantity}"></td>
+                <td th:text="${inspection.inspectionStatus}"></td>
+                <td th:text="${inspection.inspectionDate}"></td>
+                <td th:text="${inspection.orderDate}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(progressInspectionList)}">
+                <td colspan="12">조회된 데이터가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <a th:if="${currentPage > 1}"
+               th:href="@{'/progressInspectionProcessingBoard'(page=${currentPage - 1})}">이전</a>
+            <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+                <a th:href="@{'/progressInspectionProcessingBoard'(page=${pageNum})}"
+                   th:text="${pageNum}"
+                   th:classappend="${pageNum == currentPage} ? 'active' : ''"></a>
+            </span>
+            <a th:if="${currentPage < totalPages}"
+               th:href="@{'/progressInspectionProcessingBoard'(page=${currentPage + 1})}">다음</a>
+        </div>
+
+        <div id="updateFormContainer">
+            <h3>검수 진행 현황 등록</h3>
+            <form id="updateForm" th:action="@{/progressInspection/updateInspectedQuantity}" method="post" onsubmit="return validateForm()">
+                <label for="progressInspectionCode">검수 코드:</label>
+                <input type="text" id="progressInspectionCode" name="progressInspectionCode" readonly><br><br>
+
+                <label for="productCode">품목 코드:</label>
+                <input type="text" id="productCode" name="productCode" readonly><br><br>
+
+                <label for="productName">품목명:</label>
+                <input type="text" id="productName" name="productName" readonly><br><br>
+
+                <label for="totalQuantity">발주 수량:</label>
+                <input type="number" id="totalQuantity" name="totalQuantity" readonly><br><br>
+
+                <label for="inspectedQuantity">현재까지 검수된 수량:</label>
+                <input type="number" id="inspectedQuantity" name="inspectedQuantity" readonly><br><br>
+
+                <label for="newInspectionQuantity">검수 수량:</label>
+                <input type="number" id="newInspectionQuantity" name="newInspectionQuantity" min="0" required><br><br>
+
+                <button type="submit">등록</button>
+            </form>
+        </div>
+    </main>
+</div>
+<script>
+    function selectInspection(row) {
+            // 이전 선택된 행 스타일 초기화
+            const previousSelectedRow = document.querySelector("tr.selected");
+            if (previousSelectedRow) {
+                previousSelectedRow.classList.remove("selected");
+            }
+
+            // 선택된 행 스타일 적용
+            row.classList.add("selected");
+
+            // 행 데이터 추출
+            const inspectionCode = row.cells[0].innerText; // 검수 코드
+            const productCode = row.cells[2].innerText; // 품목 코드
+            const productName = row.cells[3].innerText; // 품목명
+            const totalQuantity = parseInt(row.cells[7].innerText); // 발주 수량
+            const inspectedQuantity = parseInt(row.cells[8].innerText); // 기존 검수된 수량
+
+            // 폼 데이터 채우기
+            document.getElementById('progressInspectionCode').value = inspectionCode;
+            document.getElementById('productCode').value = productCode; // 품목 코드 채우기
+            document.getElementById('productName').value = productName;
+            document.getElementById('totalQuantity').value = totalQuantity;
+            document.getElementById('inspectedQuantity').value = inspectedQuantity;
+    }
+
+    function validateForm() {
+        const totalQuantity = parseInt(document.getElementById('totalQuantity').value);
+        const inspectedQuantity = parseInt(document.getElementById('inspectedQuantity').value);
+        const newInspectionQuantity = parseInt(document.getElementById('newInspectionQuantity').value);
+
+        // 발주 수량과 검수 수량의 합이 발주 수량을 초과하는지 검사
+        if (inspectedQuantity + newInspectionQuantity > totalQuantity) {
+            alert("추가 검수 수량은 발주 수량을 초과할 수 없습니다.");
+            return false; // 폼 제출 중단
+        }
+
+        return true; // 유효하면 폼 제출 진행
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const message = /*[[${message}]]*/ '';
+        const messageType = /*[[${messageType}]]*/ '';
+
+        if (message) {
+            if (messageType === 'success') {
+                alert("✅ " + message); // 성공 메시지
+            } else if (messageType === 'error') {
+                alert("❌ " + message); // 에러 메시지
+            }
+        }
+    });
+</script>
+</body>
+</html>

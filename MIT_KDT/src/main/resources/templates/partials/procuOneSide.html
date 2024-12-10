@@ -82,42 +82,45 @@
     <body id="sideNav-body">
     <nav id="sideNav">
         <ul>
-            <li th:if="${session.userType == '구매부서'}">
+            <li th:if="${session.userType == '구매부서' || session.userType == '관리자'}">
                 <a href="#" class="sideNav-link">구매</a>
                 <ul>
                     <li><a href="/items/registerProductForm" class="sideNav-link">품목정보등록</a></li>
-                    <li><a href="/purchaseOrder/purchaseOrders" class="sideNav-link">구매발주서 관리</a></li>
                     <li><a href="/contract/register" class="sideNav-link">계약관리</a></li>
-                    <li><a href="/purchaseOrder/progressInspection" class="sideNav-link">진척검수</a></li>
                     <li><a href="/company/viewCompanyList" class="sideNav-link">업체리스트</a></li>
-                    <li><a href="/procumentPlan/register" class="sideNav-link">조달계획등록</a></li>
-                    <li><a href="/procumentPlan/procurementPlanView" class="sideNav-link">조달계획 조회</a></li>
+                    <li><a href="/procurementPlan/register" class="sideNav-link">조달계획등록</a></li>
+                    <li><a href="/procurementPlan/procurementPlanView" class="sideNav-link">조달계획 조회</a></li>
+                    <li><a href="/progressInspection/progressInspectionBoard" class="sideNav-link">진척검수</a></li>
+                    <li><a href="/purchaseOrder/purchaseOrders" class="sideNav-link">구매발주서 관리</a></li>
+                    <li><a href="/deliveryOrder/view" class="sideNav-link">납품 지시</a></li>
                 </ul>
             </li>
-            <li th:if="${session.userType == '생산부서'}">
+            <li th:if="${session.userType == '생산부서' || session.userType == '관리자' }">
                 <a href="#" class="sideNav-link">생산</a>
                 <ul>
                     <li><a href="/productionPlan/input" class="sideNav-link">생산계획 등록</a></li>
                     <li><a href="/productionPlan/view" class="sideNav-link">생산계획 조회</a></li>
+                    <li><a href="/materialIssue/stockOut" class="sideNav-link">출고 요청 및 확인</a></li>
                 </ul>
             </li>
-            <li th:if="${session.userType == '자재부서'}">
+            <li th:if="${session.userType == '자재부서' || session.userType == '관리자' }">
                 <a href="#" class="sideNav-link">자재</a>
                 <ul>
-                    <li><a href="/materialReceipt/inspectionStatus" class="sideNav-link">입고검수현황</a></li>
+                    <li><a href="/inspection/status" class="sideNav-link">입고검수현황</a></li>
                     <li><a href="/materialIssue/stockOut" class="sideNav-link">자재출고관리</a></li>
                     <li><a href="/materialReceipt/prodCosts" class="sideNav-link">재고금액관리</a></li>
                     <li><a href="/materialReceipt/stockIn" class="sideNav-link">자재입고관리</a></li>
                     <li><a href="/materialIssue/stock" class="sideNav-link">재고(산출)</a></li>
                 </ul>
             </li>
-            <li th:if="${session.userType == '협력업체'}">
+            <li th:if="${session.userType == '협력업체' || session.userType == '관리자' }">
                 <a href="#" class="sideNav-link">업체</a>
                 <ul>
                     <li><a href="/company/supplierRregisterProduct" class="sideNav-link">공급물품등록</a></li>
                     <li><a href="/company/companyInventory" class="sideNav-link">자기재고입력</a></li>
                     <li><a href="/company/stockList" class="sideNav-link">재고</a></li>
                     <li><a href="/company/contractList" class="sideNav-link">계약현황</a></li>
+                    <li><a href="/progressInspection/progressInspectionProcessingBoard" class="sideNav-link">진 척 검 수 처 리</a></li>
                 </ul>
             </li>
         </ul>

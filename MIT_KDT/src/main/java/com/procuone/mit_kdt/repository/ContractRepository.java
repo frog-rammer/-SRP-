@@ -2,6 +2,7 @@ package com.procuone.mit_kdt.repository;
 
 
 import com.procuone.mit_kdt.dto.CompanyItemDTO;
+import com.procuone.mit_kdt.dto.ContractDTO;
 import com.procuone.mit_kdt.entity.CompanyItem;
 
 import com.procuone.mit_kdt.entity.Contract;
@@ -16,7 +17,6 @@ import java.util.Optional;
 
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, Long> {
-
     // Item 엔티티의 productCode를 기준으로 계약 목록을 조회하는 쿼리 메서드
     List<Contract> findByItemProductCode(String productCode);
     // 특정 업체와 품목 코드로 계약 정보 조회
@@ -25,6 +25,5 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
     Optional<Contract> findByItemIdAndCompany_BusinessId(Long itemId, String businessId);
     void deleteByContractEndDateBefore(Date date);
     List<Contract> findByCompany_BusinessId(String businessId);
-
 }
 

@@ -7,6 +7,61 @@
   <link rel="stylesheet" th:href="@{/css/layout.css}">
   <title>자재 출고 관리</title>
   <style>
+    /* 페이지네이션 스타일 */
+    .pagination {
+      display: flex;
+      justify-content: center; /* 중앙 정렬 */
+      margin-top: 20px;
+      font-size: 1rem;
+      gap: 5px; /* 버튼 사이 간격 */
+    }
+
+    .pagination a {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #f4f4f4; /* 기본 배경색 */
+      color: #2c3e50; /* 기본 텍스트 색 */
+      text-decoration: none;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .pagination a:hover {
+      background-color: #32928E; /* 호버 시 배경색 */
+      color: white; /* 호버 시 텍스트 색 */
+    }
+
+    .pagination a.current {
+      background-color: #32928E; /* 현재 페이지 배경색 */
+      color: white; /* 현재 페이지 텍스트 색 */
+      pointer-events: none; /* 클릭 불가 */
+      font-weight: bold; /* 강조 */
+    }
+
+    .pagination span {
+      display: inline-block;
+      padding: 8px 16px;
+      color: #999; /* 비활성화된 상태 텍스트 색 */
+      border-radius: 5px;
+      pointer-events: none; /* 클릭 불가 */
+    }
+
+    /* 숨겨진 섹션 초기 스타일 */
+    .productionPlanListWrap {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+      opacity: 0;
+    }
+
+    /* 섹션이 보이는 상태 */
+    .productionPlanListWrap.active {
+      max-height: 500px; /* 충분히 큰 값으로 설정 */
+      opacity: 1;
+    }
+
+
     /* 메인 영역 스타일 */
     .layout-main {
       padding: 30px;
@@ -75,7 +130,7 @@
     }
 
     /* 버튼 스타일 */
-    #btn {
+    .btn {
       background-color: #32928E;  /* 버튼 배경색 */
       color: white;
       padding: 10px 20px;
@@ -86,7 +141,7 @@
       transition: background-color 0.3s ease;
     }
 
-    #btn:hover {
+    .btn:hover {
       background-color: #267c6f;  /* 버튼 hover 상태 */
     }
 
@@ -122,179 +177,192 @@
   <main class="layout-main">
 
   <h1>자재 출고 관리</h1>
+    <button type="button" class="btn" id="toggleButton">생산계획별 확인</button>
+    <section class="productionPlanListWrap"  id="planSection">
+      <div class="productionPlanListSearchBar">
+        <input type="text" placeholder="검색어를 입력하세요">
+        <button class="searchBtn">검색</button>
+        <button class="detailsBtn">등록된 계획 자세히 보기</button>
+        <button onclick="updateProgress()" class="updateBtn">진행 상황 업데이트</button>
+      </div>
+      <h3>생산 계획 목록</h3>
+      <section class="productionPlanList">
+        <table>
+          <thead>
+          <tr>
+            <th>생산 시작일</th>
+            <th>생산 종료일</th>
+            <th>생산계획번호</th>
+            <th>생산제품명</th>
+            <th>생산제품코드</th>
+            <th>생산수량</th>
+          </tr>
+          </thead>
+          <tbody id="planTableBody">
+          <tr th:each="productionplan : ${productionPlanList}" onclick="highlightDates(event)">
+            <td th:text="${productionplan.planStartDate}"></td>
+            <td th:text="${productionplan.planEndDate}"></td>
+            <td th:text="${productionplan.productPlanCode}"></td>
+            <td th:text="${productionplan.productName}"></td>
+            <td th:text="${productionplan.productCode}"></td>
+            <td th:text="${productionplan.quantity}"></td>
+          </tr>
+          </tbody>
+        </table>
+      </section>
+      <!-- 페이지네이션 -->
+      <div class="pagination">
+                        <span th:if="${currentProductionPlanPage > 0}">
+                            <a th:href="@{/materialIssue/stockOut(page=${currentProductionPlanPage - 1})}">Previous</a>
+                        </span>
+        <span th:each="pageNum : ${#numbers.sequence(0, totalProductionPlanPages - 1)}">
+                            <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+                               th:classappend="${pageNum == currentProductionPlanPage ? 'current' : ''}"></a>
+                        </span>
+        <span th:if="${currentProductionPlanPage < totalProductionPlanPages - 1}">
+                            <a th:href="@{/materialIssue/stockOut(page=${currentProductionPlanPage + 1})}">Next</a>
+                        </span>
+      </div>
 
+    </section>
   <!-- 출고 대기 현황 테이블 -->
-  <h2>출고 대기 현황</h2>
-  <table border="1">
-    <thead>
-    <tr>
-      <th>선택</th>
-      <th>출고번호</th>
-      <th>요청일</th>
-      <th>담당자</th>
-      <th>조달계획코드</th>
-      <th>출고일</th>
-      <th>자재코드</th>
-      <th>자재명</th>
-      <th>현재 수량</th>
-      <th>요청 수량</th>
-      <th>등록일</th>
-      <th>수정일</th>
-      <th>출고 상태</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td><input type="checkbox" name="selectItem" value="EX000117"></td>
-      <td>EX000117</td>
-      <td>2025-01-02</td>
-      <td>N/A</td>
-      <td>P000112</td>
-      <td></td>
-      <td>MA000005</td>
-      <td>PDB30W</td>
-      <td>3851</td>
-      <td>30</td>
-      <td>2024-09-02</td>
-      <td>2024-09-02</td>
-      <td>대기</td>
-    </tr>
+    <!-- 출고 목록 -->
+    <section>
+      <h2>출고 목록</h2>
+      <table>
+        <thead>
+        <tr>
+          <th><input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes(this)"> 전체 선택</th>
+          <th>출고번호</th>
+          <th>담당자</th>
+          <th>생산계획코드</th>
+          <th>조달계획코드</th>
+          <th>자재코드</th>
+          <th>자재명</th>
+          <th>현재 수량</th>
+          <th>요청 수량</th>
+          <th>출고 상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="shipment : ${waitingShipmentList}">
+          <td><input type="checkbox" name="selectItem" th:value="${shipment.shipmentId}"></td>
+          <td th:text="${shipment.shipmentId}"></td>
+          <td th:text="${shipment.manager}"></td>
+          <td th:text="${shipment.productPlanCode}"></td>
+          <td th:text="${shipment.procurementPlanCode}"></td>
+          <td th:text="${shipment.productCode}"></td>
+          <td th:text="${shipment.itemName}"></td>
+          <td th:text="${shipment.currentQuantity}"></td>
+          <td th:text="${shipment.requestedQuantity}"></td>
+          <td th:text="${shipment.shipmentStatus}"></td>
+        </tr>
+        </tbody>
+      </table>
 
-    <tr>
-      <td><input type="checkbox" name="selectItem" value="EX000118"></td>
-      <td>EX000118</td>
-      <td>2025-01-02</td>
-      <td>N/A</td>
-      <td>P000113</td>
-      <td></td>
-      <td>MA000023</td>
-      <td>BAT50H</td>
-      <td>14500</td>
-      <td>150</td>
-      <td>2024-09-02</td>
-      <td>2024-09-02</td>
-      <td>대기</td>
-    </tr>
+      <!-- 페이지네이션 -->
+      <div class="pagination">
+    <span th:if="${currentWaitingPage > 0}">
+      <a th:href="@{/materialIssue/stockOut(page=${currentWaitingPage - 1})}">이전</a>
+    </span>
+        <span th:each="pageNum : ${#numbers.sequence(0, totalWaitingPages - 1)}">
+      <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+         th:classappend="${pageNum == currentWaitingPage ? 'current' : ''}"></a>
+    </span>
+        <span th:if="${currentWaitingPage < totalWaitingPages - 1}">
+      <a th:href="@{/materialIssue/stockOut(page=${currentWaitingPage + 1})}">다음</a>
+    </span>
+      </div>
+    </section>
 
-    <tr>
-      <td><input type="checkbox" name="selectItem" value="EX000119"></td>
-      <td>EX000119</td>
-      <td>2024-09-29</td>
-      <td>N/A</td>
-      <td>P000114</td>
-      <td></td>
-      <td>MA000001</td>
-      <td>Sparky</td>
-      <td>197</td>
-      <td>50</td>
-      <td>2024-09-02</td>
-      <td>2024-11-13</td>
-      <td>대기</td>
-    </tr>
-    </tbody>
-  </table>
-
-  <!-- 출고 요청 버튼 -->
-  <button type="button" onclick="handleOutboundRequest()" id="btn">출고 요청</button>
+    <!-- 출고 요청 버튼 -->
+    <button type="button" onclick="handleOutboundRequest()" class="btn">출고 요청</button>
 
   <!-- 출고 현황 테이블 -->
-  <h2>출고 현황</h2>
-  <table border="1">
-    <thead>
-    <tr>
-      <th>출고번호</th>
-      <th>요청일</th>
-      <th>담당자</th>
-      <th>조달계획코드</th>
-      <th>출고일</th>
-      <th>자재코드</th>
-      <th>자재명</th>
-      <th>현재 수량</th>
-      <th>요청 수량</th>
-      <th>등록일</th>
-      <th>수정일</th>
-      <th>출고 상태</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td>EX000120</td>
-      <td>2024-09-01</td>
-      <td>N/A</td>
-      <td>P000115</td>
-      <td>2024-09-02</td>
-      <td>MA000006</td>
-      <td>ARM-2.6</td>
-      <td>100</td>
-      <td>100</td>
-      <td>2024-09-01</td>
-      <td>2024-09-02</td>
-      <td>진행중</td>
-    </tr>
+    <section>
+      <h2>출고 현황</h2>
+      <table>
+        <thead>
+        <tr>
+          <th>출고번호</th>
+          <th>담당자</th>
+          <th>생산계획코드</th>
+          <th>조달계획코드</th>
+          <th>자재코드</th>
+          <th>자재명</th>
+          <th>현재 수량</th>
+          <th>요청 수량</th>
+          <th>출고 상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="shipment : ${ongoingOrShortageShipmentList}">
+          <td th:text="${shipment.shipmentId}"></td>
+          <td th:text="${shipment.manager}"></td>
+          <td th:text="${shipment.productPlanCode}"></td>
+          <td th:text="${shipment.procurementPlanCode}"></td>
+          <td th:text="${shipment.productCode}"></td>
+          <td th:text="${shipment.itemName}"></td>
+          <td th:text="${shipment.currentQuantity}"></td>
+          <td th:text="${shipment.requestedQuantity}"></td>
+          <td th:text="${shipment.shipmentStatus}"></td>
+        </tr>
+        </tbody>
+      </table>
 
-    <tr>
-      <td>EX000121</td>
-      <td>2024-09-05</td>
-      <td>홍길동</td>
-      <td>P000116</td>
-      <td>2024-09-06</td>
-      <td>MA000007</td>
-      <td>SteelX</td>
-      <td>500</td>
-      <td>500</td>
-      <td>2024-09-05</td>
-      <td>2024-09-06</td>
-      <td>진행중</td>
-    </tr>
-    </tbody>
-  </table>
+      <!-- 페이지네이션 -->
+      <div class="pagination">
+    <span th:if="${currentOngoingPage > 0}">
+      <a th:href="@{/materialIssue/stockOut(page=${currentOngoingPage - 1})}">이전</a>
+    </span>
+        <span th:each="pageNum : ${#numbers.sequence(0, totalOngoingPages - 1)}">
+      <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+         th:classappend="${pageNum == currentOngoingPage ? 'current' : ''}"></a>
+    </span>
+        <span th:if="${currentOngoingPage < totalOngoingPages - 1}">
+      <a th:href="@{/materialIssue/stockOut(page=${currentOngoingPage + 1})}">다음</a>
+    </span>
+      </div>
+    </section>
 
   <!-- 출고 내역 테이블 -->
-  <h2>출고 내역</h2>
-  <table border="1">
-    <thead>
-    <tr>
-      <th>출고번호</th>
-      <th>출고일</th>
-      <th>자재명</th>
-      <th>요청 수량</th>
-      <th>상태코드</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td>EX000117</td>
-      <td>2024-09-01</td>
-      <td>PDB30W</td>
-      <td>30</td>
-      <td>자동 생성됨</td>
-    </tr>
+    <section>
+      <h2>출고 내역 (상태: 출고완료)</h2>
+      <table>
+        <thead>
+        <tr>
+          <th>출고번호</th>
+          <th>출고일</th>
+          <th>자재명</th>
+          <th>요청 수량</th>
+          <th>상태코드</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="shipment : ${completedShipmentList}">
+          <td th:text="${shipment.shipmentId}"></td>
+          <td th:text="${shipment.shipmentDate}"></td>
+          <td th:text="${shipment.itemName}"></td>
+          <td th:text="${shipment.requestedQuantity}"></td>
+          <td th:text="${shipment.shipmentStatus}"></td>
+        </tr>
+        </tbody>
+      </table>
 
-    <tr>
-      <td>EX000118</td>
-      <td>2024-09-05</td>
-      <td>BAT50H</td>
-      <td>150</td>
-      <td>자동 생성됨</td>
-    </tr>
-
-    <tr>
-      <td>EX000119</td>
-      <td>2024-09-09</td>
-      <td>Sparky</td>
-      <td>50</td>
-      <td>자동 생성됨</td>
-    </tr>
-
-    <tr>
-      <td>EX000120</td>
-      <td>2024-09-12</td>
-      <td>ARM-2.6</td>
-      <td>100</td>
-      <td>자동 생성됨</td>
-    </tr>
-    </tbody>
-  </table>
+      <!-- 페이지네이션 -->
+      <div class="pagination">
+    <span th:if="${currentCompletedPage > 0}">
+      <a th:href="@{/materialIssue/stockOut(page=${currentCompletedPage - 1})}">이전</a>
+    </span>
+        <span th:each="pageNum : ${#numbers.sequence(0, totalCompletedPages - 1)}">
+      <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+         th:classappend="${pageNum == currentCompletedPage ? 'current' : ''}"></a>
+    </span>
+        <span th:if="${currentCompletedPage < totalCompletedPages - 1}">
+      <a th:href="@{/materialIssue/stockOut(page=${currentCompletedPage + 1})}">다음</a>
+    </span>
+      </div>
+    </section>
 
   <a href="../materialReceipt/stockIn" id="link">입고 관리로 이동</a>
   </main>
@@ -306,29 +374,76 @@
 </div>
 
 <script>
-  // 출고 요청 버튼 클릭 시 선택된 항목에 대한 출고 요청 처리
-  function handleOutboundRequest() {
-    const selectedRows = document.querySelectorAll('input[name="selectItem"]:checked');  // 선택된 체크박스들 가져오기
 
-    if (selectedRows.length === 0) {
-      alert("출고 요청할 항목을 선택해 주세요.");
-      return; // 아무것도 선택되지 않으면 종료
-    }
-
-    selectedRows.forEach(row => {
-      const tr = row.closest('tr');  // 체크된 항목의 tr 가져오기
-      const outboundNumber = tr.cells[1].textContent;  // 출고번호
-      const materialName = tr.cells[7].textContent;  // 자재명
-      const requestQuantity = tr.cells[9].textContent;  // 요청 수량
-      const outboundStatus = tr.cells[11].textContent;  // 출고 상태 (대기)
-
-      // 출고 요청 처리 로직 (예: 서버로 데이터 전송 등)
-      console.log(`출고 요청: 출고번호 ${outboundNumber}, 자재명: ${materialName}, 요청 수량: ${requestQuantity}, 상태: ${outboundStatus}`);
-
-      // 알림
-      alert(`${outboundNumber} 출고 요청이 완료되었습니다.`);
+  // 전체 선택/해제 기능
+  function toggleAllCheckboxes(selectAllCheckbox) {
+    const checkboxes = document.querySelectorAll('input[name="selectItem"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = selectAllCheckbox.checked;
     });
   }
+
+  // 출고 요청 처리
+  function handleOutboundRequest() {
+    const selectedCheckboxes = document.querySelectorAll('input[name="selectItem"]:checked');
+    if (selectedCheckboxes.length === 0) {
+      alert("출고 요청할 항목을 선택해주세요.");
+      return;
+    }
+
+    const selectedShipments = [];
+    selectedCheckboxes.forEach(checkbox => {
+      const row = checkbox.closest('tr'); // 현재 행
+      const shipmentId = row.cells[1].textContent; // 출고번호
+      const productName = row.cells[6].textContent; // 자재명
+      const requestedQuantity = row.cells[8].textContent; // 요청 수량
+      const shipmentStatus = row.cells[9].textContent; // 출고 상태
+
+      // 선택된 출고 항목 데이터 수집
+      selectedShipments.push({
+        shipmentId,
+        productName,
+        requestedQuantity,
+        shipmentStatus,
+      });
+    });
+    const selectedShipmentIds = selectedShipments.map(shipment => shipment.shipmentId);
+
+    fetch('/materialIssue/stockOut', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ shipments: selectedShipmentIds }),
+    })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('출고 요청 처리 중 오류가 발생했습니다.');
+              }
+              return response.text();
+            })
+            .then(message => {
+              alert(message); // 성공 메시지 출력
+              alert(`${selectedShipments.length}개의 출고 요청이 완료되었습니다.`);
+              location.reload(); // 페이지 새로고침
+            })
+            .catch(error => {
+              console.error('출고 요청 처리 중 오류:', error);
+              alert('출고 요청 처리 중 오류가 발생했습니다.');
+            });
+
+    // 선택된 항목 출력 (백엔드 연동 시 이 부분을 서버 전송 로직으로 변경)
+    console.log("출고 요청 항목:", selectedShipments);
+
+
+    // 여기에 서버로 데이터를 전송하는 AJAX 또는 폼 제출 로직을 추가 가능
+  }
+
+  // 버튼 클릭 시 섹션 애니메이션 효과로 숨기기/보이기
+  document.getElementById("toggleButton").addEventListener("click", function() {
+    const planSection = document.getElementById("planSection");
+    planSection.classList.toggle("active");
+  });
 </script>
 
 </body>

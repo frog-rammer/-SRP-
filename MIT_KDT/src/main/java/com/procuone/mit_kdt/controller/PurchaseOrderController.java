@@ -1,8 +1,6 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
-import com.procuone.mit_kdt.entity.PurchaseOrder;
-import com.procuone.mit_kdt.service.InventoryService;
 import com.procuone.mit_kdt.service.ProgressInspectionService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;

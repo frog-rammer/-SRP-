@@ -33,6 +33,12 @@ public class ProgressInspection {
     private PurchaseOrder purchaseOrder; // 발주서 연계 객체
 
     @Column(nullable = false)
+    private String businessId;
+
+    @Column(nullable = false)
+    private String comName;
+
+    @Column(nullable = false)
     private String productCode; // DB에 저장할 품목 코드
 
     @Column(nullable = false)
