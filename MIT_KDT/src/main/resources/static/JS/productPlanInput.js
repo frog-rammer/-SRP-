@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let dateClicked = 0;
     let startDateCell = null;
     let endDateCell = null;
+    let selectedStartDate = null; // 시작일 저장
+    let selectedEndDate = null; // 종료일 저장
 
     // 연도와 월 초기화
     for (let i = 2020; i <= 2030; i++) {
@@ -32,8 +34,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const dateDiv = document.createElement('div');
             dateDiv.textContent = i;
             dateDiv.addEventListener('click', async () => await selectDate(year, month, i, dateDiv));
-            dateDiv.classList.remove('disabled'); // 비활성화 클래스 제거
             calendar.appendChild(dateDiv);
+
+            // 상태 복원
+            if (selectedStartDate && selectedStartDate.year == year && selectedStartDate.month == month && selectedStartDate.day == i) {
+                dateDiv.insertAdjacentHTML('beforeend', '<span class="label">시작일</span>');
+                startDateCell = dateDiv;
+            }
+
+            if (selectedEndDate && selectedEndDate.year == year && selectedEndDate.month == month && selectedEndDate.day == i) {
+                dateDiv.insertAdjacentHTML('beforeend', '<span class="label end">종료일</span>');
+                endDateCell = dateDiv;
+            }
         }
     }
 
@@ -42,44 +54,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (dateClicked % 2 === 0) { // 시작일 선택
             if (startDateCell) startDateCell.querySelector('.label')?.remove();
-            startDateInput.value = selectedDate; // 시작일 입력란 업데이트
-
+            startDateInput.value = selectedDate;
             startDateCell = cell;
+            selectedStartDate = { year, month, day }; // 상태 저장
             cell.insertAdjacentHTML('beforeend', '<span class="label">시작일</span>');
-
-            // 시작일 선택 후 이전 날짜 비활성화
             disableDatesBefore(day);
-
         } else { // 종료일 선택
             if (endDateCell) endDateCell.querySelector('.label')?.remove();
-            endDateInput.value = selectedDate; // 종료일 입력란 업데이트
+            endDateInput.value = selectedDate;
             endDateCell = cell;
-            cell.insertAdjacentHTML('beforeend', '<span class="label">종료일</span>');
-
-            // 종료일 선택 후 모든 날짜 활성화
+            selectedEndDate = { year, month, day }; // 상태 저장
+            cell.insertAdjacentHTML('beforeend', '<span class="label end">종료일</span>');
             enableAllDates();
         }
         dateClicked++;
     }
 
-    // 시작일 선택 후 해당 날짜 이전의 날짜 비활성화
     function disableDatesBefore(startDay) {
         const dateCells = calendar.querySelectorAll('div');
-        dateCells.forEach((cell, index) => {
+        dateCells.forEach((cell) => {
             const day = parseInt(cell.textContent);
             if (!isNaN(day) && day < startDay) {
                 cell.classList.add('disabled');
-                cell.style.pointerEvents = 'none'; // 클릭 비활성화
+                cell.style.pointerEvents = 'none';
             }
         });
     }
 
-    // 모든 날짜 활성화
     function enableAllDates() {
         const dateCells = calendar.querySelectorAll('div');
-        dateCells.forEach(cell => {
+        dateCells.forEach((cell) => {
             cell.classList.remove('disabled');
-            cell.style.pointerEvents = 'auto'; // 클릭 활성화
+            cell.style.pointerEvents = 'auto';
         });
     }
 
@@ -88,16 +94,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (endDateCell) endDateCell.querySelector('.label')?.remove();
         startDateInput.value = '';
         endDateInput.value = '';
+        selectedStartDate = null;
+        selectedEndDate = null;
         dateClicked = 0;
-        enableAllDates(); // 모든 날짜 활성화
+        enableAllDates();
     }
 
     yearSelect.addEventListener('change', async () => await renderCalendar(yearSelect.value, monthSelect.value));
     monthSelect.addEventListener('change', async () => await renderCalendar(yearSelect.value, monthSelect.value));
 
-    const resetButton = document.getElementById('resetDatesButton'); // id로 정확한 버튼 선택
+    const resetButton = document.getElementById('resetDatesButton');
     if (resetButton) {
-        resetButton.addEventListener('click', resetDates); // 이벤트 리스너 추가
+        resetButton.addEventListener('click', resetDates);
     }
 
     // 초기 달력 렌더링

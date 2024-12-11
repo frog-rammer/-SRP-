@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
+  <title>발주서</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+    h2 {
+      text-align: center; /* h2 제목도 가운데 정렬 */
+      color: #333;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;  /* 기본적으로 왼쪽 정렬 */
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    td {
+      text-align: left;
+    }
+    .header-table td {
+      text-align: left;
+      border: none;
+    }
+    .section {
+      margin-bottom: 30px;
+      border: 2px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .button-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+
+    /* 품목정보 테이블에만 가운데 정렬 적용 */
+    .items-table th, .items-table td {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>발주서</h1>
+  <!-- 거래명세서 정보 -->
+  <div class="section">
+    <h2>공급자</h2>
+    <table>
+      <tr>
+        <td><strong>발주 코드:</strong> <span th:text="${purchaseOrder.purchaseOrderCode}">임의번호</span></td>
+        <td><strong>발행일:</strong> <span th:text="${purchaseOrder.createdDate}">발행일</span></td>
+      </tr>
+      <tr>
+        <td><strong>발주일:</strong> <span th:text="${purchaseOrder.createdDate}">발주일</span></td>
+        <td><strong>입고일:</strong> <span th:text="${purchaseOrder.procurementEndDate}">입고일</span></td>
+      </tr>
+      <tr>
+        <td><strong>업체명:</strong> <span th:text="${purchaseOrder.comName}">업체명</span></td>
+        <td><strong>사업자번호:</strong> <span th:text="${purchaseOrder.businessId}">사업자번호</span></td>
+      </tr>
+      <tr>
+        <td><strong>담당자:</strong> <span th:text="${purchaseOrder.createdBy}">담당자</span></td>
+      </tr>
+    </table>
+  </div>
+  <!-- 품목정보 -->
+  <div class="section">
+    <h2>품목정보</h2>
+    <table class="items-table">
+      <thead>
+      <tr>
+        <th>품목코드</th>
+        <th>품목명</th>
+        <th>수량</th>
+        <th>총액</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td th:text="${purchaseOrder.productCode}">품목코드</td>
+        <td th:text="${purchaseOrder.itemName}">품목명</td>
+        <td th:text="${purchaseOrder.quantity}">수량</td>
+        <td th:text="${purchaseOrder.price}">총액</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 버튼 -->
+  <div class="button-container">
+    <button onclick="window.print()">인쇄</button>
+    <button onclick="alert('PDF로 저장 기능은 구현되지 않았습니다.')">PDF로 저장</button>
+  </div>
+</div>
+</body>
+</html>

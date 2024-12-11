@@ -4,8 +4,6 @@ import com.procuone.mit_kdt.entity.ProcurementPlan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,18 +21,17 @@ public interface ProcurementPlanRepository extends JpaRepository<ProcurementPlan
 
     ProcurementPlan findByProcurementPlanCode(String procurementPlanCode);
 
-    // 예시 1: JPA 메서드 이름을 이용한 검색
-    List<ProcurementPlan> findByProductNameContainingAndPlanStartDateGreaterThanEqualAndPlanEndDateLessThanEqualAndQuantityGreaterThan(
-            String productName, LocalDate startDate, LocalDate endDate, Long quantity);
+    // 다중 ProcurementPlanCode를 사용한 데이터 조회 (페이징 지원)
+    Page<ProcurementPlan> findByProcurementPlanCodeIn(List<String> procurementPlanCodes, Pageable pageable);
 
-    // 예시 2: @Query를 사용한 검색
-    @Query("SELECT p FROM ProcurementPlan p WHERE " +
-            "(p.productName LIKE %:productName% OR :productName IS NULL) AND " +
-            "(p.planStartDate >= :startDate OR :startDate IS NULL) AND " +
-            "(p.planEndDate <= :endDate OR :endDate IS NULL) AND " +
-            "(p.quantity >= :quantity OR :quantity IS NULL)")
-    List<ProcurementPlan> searchProcurementPlans(@Param("productName") String productName,
-                                                 @Param("startDate") LocalDate startDate,
-                                                 @Param("endDate") LocalDate endDate,
-                                                 @Param("quantity") Long quantity);
+
+//    // 품목명으로 검색 (대소문자 구분 없이 포함된 내용 검색)
+//    List<ProcurementPlan> findByproductNameContaining(String productName);
+//
+//    // 시작일과 종료일 사이의 날짜로 검색
+//    List<ProcurementPlan> findByStartDateBetween(LocalDate startDate, LocalDate endDate);
+//
+//    // 수량으로 검색
+//    List<ProcurementPlan> findByQuantity(Long quantity);
+//}
 }

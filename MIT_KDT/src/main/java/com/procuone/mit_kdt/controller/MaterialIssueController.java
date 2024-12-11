@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -35,10 +36,11 @@ public class MaterialIssueController {
     public String stockOut(
             Model model,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            Pageable pageable
     ) {
         // 페이지 정보 생성
-        Pageable pageable = PageRequest.of(page, size);
+        pageable = PageRequest.of(page, size);
 
         // 생산 계획 페이지 가져오기
         Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(pageable);
@@ -49,16 +51,11 @@ public class MaterialIssueController {
 
         // 인벤토리에서 현재 수량 업데이트  (시간 많이 잡아먹을 수 있으니 업데이트 최적화 필요)
         materialIssueService.updateCurrentQuantity();
-
-        // 전체 출고 데이터 페이징
-        Page<ShipmentDTO> shipmentPage = materialIssueService.getAllShipments(pageable);
-
         // 상태별 데이터 필터링 및 페이지네이션
         Page<ShipmentDTO> waitingShipments = materialIssueService.getShipmentsByStatus("대기", pageable);
         Page<ShipmentDTO> ongoingOrShortageShipments = materialIssueService.getShipmentsByStatuses(
-                List.of("진행중", "재고부족", "출고완료"), pageable);
+                List.of("진행중", "재고부족"), pageable);
         Page<ShipmentDTO> completedShipments = materialIssueService.getShipmentsByStatus("출고완료", pageable);
-
         // 출고 목록 (대기 상태)
         model.addAttribute("waitingShipmentList", waitingShipments.getContent());
         model.addAttribute("currentWaitingPage", waitingShipments.getNumber());
@@ -81,6 +78,49 @@ public class MaterialIssueController {
         return "materialIssue/stockOut";
     }
 
+    @GetMapping("/stockOutOnProductionPart")
+    public String stockOutOnProductionPart(
+            Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+            ,Pageable pageable
+    ) {
+        // 페이지 정보 생성
+        pageable = PageRequest.of(page, size);
+        // 인벤토리에서 현재 수량 업데이트  (시간 많이 잡아먹을 수 있으니 업데이트 최적화 필요)
+        materialIssueService.updateCurrentQuantity();
+        // 상태별 데이터 필터링 및 페이지네이션
+        Page<ShipmentDTO> ongoingOrShortageShipments = materialIssueService.getShipmentsByStatus("진행중", pageable);
+        Page<ShipmentDTO> completedShipments = materialIssueService.getShipmentsByStatus("출고완료", pageable);
+        // 출고 학인 (진행중 상태)
+        model.addAttribute("ongoingOrShortageShipmentList", ongoingOrShortageShipments.getContent());
+        model.addAttribute("currentOngoingPage", ongoingOrShortageShipments.getNumber());
+        model.addAttribute("totalOngoingPages", ongoingOrShortageShipments.getTotalPages());
+        model.addAttribute("totalOngoingItems", ongoingOrShortageShipments.getTotalElements());
+        // 출고 내역 (출고완료 상태)
+        model.addAttribute("completedShipmentList", completedShipments.getContent());
+        model.addAttribute("currentCompletedPage", completedShipments.getNumber());
+        model.addAttribute("totalCompletedPages", completedShipments.getTotalPages());
+        model.addAttribute("totalCompletedItems", completedShipments.getTotalElements());
+        return "materialIssue/shipmentConfirmation";
+    }
+
+    @PostMapping("/confirmReceipt")
+    public String confirmReceipt(
+            @RequestParam(value = "selectedShipments", required = false) List<String> shipmentIds,
+            RedirectAttributes redirectAttributes
+    ) {
+        // 선택된 출고번호를 처리
+        if (shipmentIds != null && !shipmentIds.isEmpty()) {
+            materialIssueService.confirmReceipt(shipmentIds); // 수령 확인 처리
+            redirectAttributes.addFlashAttribute("message", "선택된 출고 요청이 성공적으로 확인되었습니다.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "수령 확인할 출고 요청이 선택되지 않았습니다.");
+        }
+
+        // 다시 출고 확인 페이지로 리다이렉트
+        return "redirect:/materialIssue/stockOutOnProductionPart";
+    }
 
     @PostMapping("/stockOut")
     @ResponseBody
@@ -92,8 +132,7 @@ public class MaterialIssueController {
         if (shipmentIds == null || shipmentIds.isEmpty()) {
             return "출고 요청 항목이 없습니다.";
         }
-// 출고 상태를 "진행중"으로 업데이트
-
+        // 출고 상태를 "진행중"으로 업데이트
         materialIssueService.updateToOngoing(shipmentIds);
         return "선택된 항목의 상태가 '진행중'으로 업데이트되었습니다.";
     }

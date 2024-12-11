@@ -31,4 +31,7 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, St
 
     @Query("SELECT po FROM PurchaseOrder po WHERE po.status = :status")
     List<PurchaseOrder> findByStatus(@Param("status") String status);
+    
+    // 사업자 번호로 검색
+    List<PurchaseOrder> findByBusinessId(String businessId);
 }

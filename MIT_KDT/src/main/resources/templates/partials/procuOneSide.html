@@ -11,71 +11,109 @@
                 font-weight: 400;
                 font-style: normal;
             }
+            /* 전체 레이아웃 */
+            .layout-sidebar {
+                background-color: rgb(50, 146, 142); /* 메인 배경색 */
+                color: white; /* 기본 텍스트 색상 */
+                height: 100%;
+                padding: 15px 0; /* 위아래 간격 */
+                overflow-y: auto;
+                border-right: 2px solid rgba(0, 0, 0, 0.1); /* 부드러운 테두리 */
+            }
 
-            /* 기본 스타일 */
+            /* 기본 폰트 설정 */
             #sideNav-body {
                 font-family: Pretendard-Regular, sans-serif;
                 margin: 0;
                 padding: 0;
             }
 
-            /* 기본 사이드바 레이아웃 */
-            .layout-sidebar {
-                background-color: #ffffff;
-                border-right: 1px solid #575757;
-                height: 100%;
-                padding: 10px;
-                overflow-y: auto;
-            }
-
-            /* 사이드바 네비게이션 스타일 */
-            #sideNav {
-                width: 100%; /* 사이드바 전체 너비 */
-                background-color: #ffffff;
-            }
-
+            /* 사이드바 네비게이션 */
             #sideNav ul {
                 list-style-type: none;
                 padding: 0;
+                margin: 0;
             }
 
             #sideNav li {
                 position: relative;
             }
+            #sideNav > ul >li > ul {
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
 
+            /* 최상위 메뉴 스타일 */
             #sideNav a {
                 display: block;
-                padding: 15px;
-                color: #000000;
+                padding: 18px 25px; /* 텍스트와 버튼 간격 */
+                color: white; /* 기본 텍스트 색상 */
                 text-decoration: none;
-                background-color: #ffffff;
-                cursor: pointer;
+                font-size: 1.3rem; /* 글자 크기 */
+                font-weight: bolder; /* 굵게 */
+                transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+                border-radius: 5px; /* 둥근 테두리 */
+                margin: 5px 10px; /* 메뉴 간격 */
             }
 
             #sideNav a:hover {
-                background-color: #575757;
-                color: white;
+                background-color: rgb(40, 116, 112); /* 호버 시 배경색 */
+                color: white; /* 호버 시 텍스트 색상 */
+                transform: scale(1.03); /* 호버 시 약간 확대 */
             }
 
             /* 드롭다운 메뉴 스타일 */
             #sideNav ul ul {
                 display: none;
-                padding-left: 15px;
+                background-color: rgb(236, 240, 241); /* 드롭다운 배경색 */
+                padding-left: 20px;
+                border-left: 3px solid rgb(40, 116, 112); /* 드롭다운 강조 */
+                margin-top: 5px;
+                margin-bottom: 5px;
             }
 
             #sideNav ul ul a {
-                padding: 10px 15px;
-                background-color: #f8f8f8;
+                color: rgb(50, 146, 142); /* 드롭다운 텍스트 색상 */
+                padding: 12px 20px; /* 드롭다운 간격 */
+                font-size: 1.1rem; /* 드롭다운 글자 크기 */
+                font-weight: bolder; /* 보통 굵기 */
+                border-radius: 5px;
+                margin: 3px 10px; /* 드롭다운 메뉴 간격 */
             }
 
             #sideNav ul ul a:hover {
-                background-color: #575757;
-                color: white;
+                background-color: rgb(50, 146, 142); /* 드롭다운 호버 배경 */
+                color: white; /* 드롭다운 호버 텍스트 */
             }
 
-            /* 펼쳐진 메뉴 */
+            /* 펼쳐진 드롭다운 */
             #sideNav ul li.open > ul {
                 display: block;
+            }
+
+            /* 활성화된 최상위 메뉴 */
+            #sideNav li.open > a {
+                background-color: rgb(40, 116, 112); /* 활성화 배경 */
+                color: white; /* 활성화 텍스트 */
+                border-left: 5px solid white; /* 강조선 */
+                font-weight: 700; /* 더 굵게 */
+            }
+
+            /* 반응형 디자인 */
+            @media (max-width: 768px) {
+                .layout-sidebar {
+                    padding: 10px 0;
+                }
+
+                #sideNav a {
+                    font-size: 1rem; /* 글자 크기 축소 */
+                    padding: 12px 20px;
+                }
+
+                #sideNav ul ul a {
+                    font-size: 0.9rem; /* 드롭다운 글자 크기 축소 */
+                    padding: 10px 15px;
+                }
             }
         </style>
     </head>
@@ -83,7 +121,7 @@
     <nav id="sideNav">
         <ul>
             <li th:if="${session.userType == '구매부서' || session.userType == '관리자'}">
-                <a href="#" class="sideNav-link">구매</a>
+                <a href="#" class="sideNav-link">구매업무</a>
                 <ul>
                     <li><a href="/items/registerProductForm" class="sideNav-link">품목정보등록</a></li>
                     <li><a href="/contract/register" class="sideNav-link">계약관리</a></li>
@@ -91,20 +129,20 @@
                     <li><a href="/procurementPlan/register" class="sideNav-link">조달계획등록</a></li>
                     <li><a href="/procurementPlan/procurementPlanView" class="sideNav-link">조달계획 조회</a></li>
                     <li><a href="/progressInspection/progressInspectionBoard" class="sideNav-link">진척검수</a></li>
-                    <li><a href="/purchaseOrder/purchaseOrders" class="sideNav-link">구매발주서 관리</a></li>
+                    <li><a href="/purchaseOrder/purchaseOrders" class="sideNav-link">구매발주</a></li>
                     <li><a href="/deliveryOrder/view" class="sideNav-link">납품 지시</a></li>
                 </ul>
             </li>
             <li th:if="${session.userType == '생산부서' || session.userType == '관리자' }">
-                <a href="#" class="sideNav-link">생산</a>
+                <a href="#" class="sideNav-link">생산업무</a>
                 <ul>
                     <li><a href="/productionPlan/input" class="sideNav-link">생산계획 등록</a></li>
                     <li><a href="/productionPlan/view" class="sideNav-link">생산계획 조회</a></li>
-                    <li><a href="/materialIssue/stockOut" class="sideNav-link">출고 요청 및 확인</a></li>
+                    <li><a href="/materialIssue/stockOutOnProductionPart" class="sideNav-link">출고 요청 및 확인</a></li>
                 </ul>
             </li>
             <li th:if="${session.userType == '자재부서' || session.userType == '관리자' }">
-                <a href="#" class="sideNav-link">자재</a>
+                <a href="#" class="sideNav-link">자재관련업무</a>
                 <ul>
                     <li><a href="/inspection/status" class="sideNav-link">입고검수현황</a></li>
                     <li><a href="/materialIssue/stockOut" class="sideNav-link">자재출고관리</a></li>
@@ -114,13 +152,14 @@
                 </ul>
             </li>
             <li th:if="${session.userType == '협력업체' || session.userType == '관리자' }">
-                <a href="#" class="sideNav-link">업체</a>
+                <a href="#" class="sideNav-link">협력업체</a>
                 <ul>
                     <li><a href="/company/supplierRregisterProduct" class="sideNav-link">공급물품등록</a></li>
-                    <li><a href="/company/companyInventory" class="sideNav-link">자기재고입력</a></li>
+                    <li><a href="/company/companyInventory" class="sideNav-link">재고</a></li>
+                    <li><a href="/procurementPlan/comProcurementPlanView" class="sideNav-link">조달계획</a></li>
                     <li><a href="/company/stockList" class="sideNav-link">재고</a></li>
                     <li><a href="/company/contractList" class="sideNav-link">계약현황</a></li>
-                    <li><a href="/progressInspection/progressInspectionProcessingBoard" class="sideNav-link">진 척 검 수 처 리</a></li>
+                    <li><a href="/progressInspection/progressInspectionProcessingBoard" class="sideNav-link">진척검수 처리</a></li>
                 </ul>
             </li>
         </ul>

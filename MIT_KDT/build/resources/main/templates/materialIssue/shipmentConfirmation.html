@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+</head>
+<style>
+    /* 페이지네이션 스타일 */
+    .pagination {
+        display: flex;
+        justify-content: center; /* 중앙 정렬 */
+        margin-top: 20px;
+        font-size: 1rem;
+        gap: 5px; /* 버튼 사이 간격 */
+    }
+
+    .pagination a {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #f4f4f4; /* 기본 배경색 */
+        pointer-events: auto; /* 클릭 허용 */
+        color: #2c3e50; /* 기본 텍스트 색 */
+        text-decoration: none;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .pagination a:hover {
+        background-color: #32928E; /* 호버 시 배경색 */
+        color: white; /* 호버 시 텍스트 색 */
+    }
+
+    .pagination a.current {
+        background-color: #32928E; /* 현재 페이지 배경색 */
+        color: white; /* 현재 페이지 텍스트 색 *
+      font-weight: bold; /* 강조 */
+    }
+
+    .pagination span {
+        display: inline-block;
+        padding: 8px 16px;
+        color: #999; /* 비활성화된 상태 텍스트 색 */
+        border-radius: 5px;
+        pointer-events: none; /* 클릭 불가 */
+    }
+
+    /* 숨겨진 섹션 초기 스타일 */
+    .productionPlanListWrap {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+        opacity: 0;
+    }
+
+    /* 섹션이 보이는 상태 */
+    .productionPlanListWrap.active {
+        max-height: 500px; /* 충분히 큰 값으로 설정 */
+        opacity: 1;
+    }
+
+
+    /* 메인 영역 스타일 */
+    .layout-main {
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    .layout-main h1 {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-weight: bold;
+        border-bottom: 2px solid #32928E;
+        padding-bottom: 10px;
+    }
+
+    .layout-main h2 {
+        font-size: 1.5rem;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+
+    /* 테이블 스타일 */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    table th, table td {
+        padding: 12px 20px;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    table th {
+        background-color: #32928E;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    table tbody tr:nth-child(even) {
+        background-color: #ecf0f1;
+    }
+
+    table tbody tr:nth-child(odd) {
+        background-color: #fff;
+    }
+
+    table tbody tr:hover {
+        background-color: #f1c40f;
+    }
+
+    table td {
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* 체크박스 및 버튼 스타일 */
+    input[type="checkbox"] {
+        transform: scale(1.2);
+    }
+
+    /* 버튼 스타일 */
+    .btn {
+        background-color: #32928E;  /* 버튼 배경색 */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #267c6f;  /* 버튼 hover 상태 */
+    }
+
+    /*"출고 관리로 이동" 링크 스타일 */
+    #link {
+        display: inline-block;
+        background-color: #32928E;
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    #link:hover {
+        background-color: #278F75;
+    }
+</style>
+<body>
+<div class="grid-container">
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+    <main class="layout-main">
+        <!-- 출고 현황 테이블 -->
+        <section>
+            <h2>출고 확인</h2>
+            <form id="confirmReceiptForm" method="post" th:action="@{/materialIssue/confirmReceipt}">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
+                            <!-- 전체 선택 체크박스 -->
+                        </th>
+                        <th>출고번호</th>
+                        <th>담당자</th>
+                        <th>생산계획코드</th>
+                        <th>조달계획코드</th>
+                        <th>자재코드</th>
+                        <th>자재명</th>
+                        <th>현재 수량</th>
+                        <th>요청 수량</th>
+                        <th>출고 상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="shipment : ${ongoingOrShortageShipmentList}">
+                        <td>
+                            <input type="checkbox" th:value="${shipment.shipmentId}" name="selectedShipments">
+                        </td>
+                        <td th:text="${shipment.shipmentId}"></td>
+                        <td th:text="${shipment.manager}"></td>
+                        <td th:text="${shipment.productPlanCode}"></td>
+                        <td th:text="${shipment.procurementPlanCode}"></td>
+                        <td th:text="${shipment.productCode}"></td>
+                        <td th:text="${shipment.itemName}"></td>
+                        <td th:text="${shipment.currentQuantity}"></td>
+                        <td th:text="${shipment.requestedQuantity}"></td>
+                        <td th:text="${shipment.shipmentStatus}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- 수령 확인 버튼 -->
+                <button type="submit">수령 확인</button>
+            </form>
+            <!-- 페이지네이션 -->
+            <div class="pagination">
+                <span th:if="${currentOngoingPage > 0}">
+                  <a th:href="@{/materialIssue/stockOut(page=${currentOngoingPage - 1})}">이전</a>
+                </span>
+                            <span th:each="pageNum : ${#numbers.sequence(0, totalOngoingPages - 1)}">
+                  <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+                     th:classappend="${pageNum == currentOngoingPage ? 'current' : ''}"></a>
+                </span>
+                            <span th:if="${currentOngoingPage < totalOngoingPages - 1}">
+                  <a th:href="@{/materialIssue/stockOut(page=${currentOngoingPage + 1})}">다음</a>
+                </span>
+            </div>
+        </section>
+        <!-- 출고 내역 테이블 -->
+        <section>
+            <h2>출고 내역 (상태: 출고완료)</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>출고번호</th>
+                    <th>출고일</th>
+                    <th>자재명</th>
+                    <th>요청 수량</th>
+                    <th>상태코드</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="shipment : ${completedShipmentList}">
+                    <td th:text="${shipment.shipmentId}"></td>
+                    <td th:text="${shipment.shipmentDate}"></td>
+                    <td th:text="${shipment.itemName}"></td>
+                    <td th:text="${shipment.requestedQuantity}"></td>
+                    <td th:text="${shipment.shipmentStatus}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 페이지네이션 -->
+            <div class="pagination">
+    <span th:if="${currentCompletedPage > 0}">
+      <a th:href="@{/materialIssue/stockOut(page=${currentCompletedPage - 1})}">이전</a>
+    </span>
+                <span th:each="pageNum : ${#numbers.sequence(0, totalCompletedPages - 1)}">
+      <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+         th:classappend="${pageNum == currentCompletedPage ? 'current' : ''}"></a>
+    </span>
+                <span th:if="${currentCompletedPage < totalCompletedPages - 1}">
+      <a th:href="@{/materialIssue/stockOut(page=${currentCompletedPage + 1})}">다음</a>
+    </span>
+            </div>
+        </section>
+
+    </main>
+    <footer class="layout-footer">
+
+    </footer>
+</div>
+<script>
+    // 전체 선택/해제 기능
+    function toggleSelectAll(source) {
+        const checkboxes = document.querySelectorAll('input[name="selectedShipments"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = source.checked;
+        });
+    }
+</script>
+</body>
+</html>

@@ -90,17 +90,16 @@
         <table>
             <tr>
                 <td><strong>거래명세서 번호:</strong> <span th:text="${inspection.inspectionCode}">임의번호</span></td>
+                <td><strong>발주 코드:</strong> <span th:text="${inspection.deliveryCode}"></span></td>
                 <td><strong>발행일:</strong> <span th:text="${inspection.inspectionDate}">발행일</span></td>
             </tr>
             <tr>
                 <td><strong>발주일:</strong> <span th:text="${contract.contractDate}">발주일</span></td>
                 <td><strong>입고일:</strong> <span th:text="${inspection.deliveryDate}">입고일</span></td>
-            </tr>
-            <tr>
                 <td><strong>업체명:</strong> <span th:text="${contract.comName}">업체명</span></td>
-                <td><strong>사업자번호:</strong> <span th:text="${contract.businessId}">사업자번호</span></td>
             </tr>
             <tr>
+                <td><strong>사업자번호:</strong> <span th:text="${contract.businessId}">사업자번호</span></td>
                 <td><strong>주소:</strong> <span th:text="${contract.accountInfo}">주소</span></td>
                 <td><strong>담당자:</strong> <span th:text="${contract.itemName}">담당자</span></td>
             </tr>

@@ -125,6 +125,7 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
                     itemService.findByProductCode(productCode).map(ItemDTO::getId).orElse(null)
             );
 
+
             if (inventoryOpt.isPresent()) {
                 Inventory inventory = inventoryOpt.get();
                 long currentQuantity = inventory.getCurrentQuantity() != null ? inventory.getCurrentQuantity() : 0;
@@ -162,6 +163,21 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
                         .map(Inventory::getCurrentQuantity)
                         .orElse(0))
                 .orElse(0);
+    }
+
+    @Override
+    public void confirmReceipt(List<String> shipmentIds) {
+        // 출고번호에 해당하는 데이터 조회
+        List<Shipment> shipments = shipmentRepository.findAllById(shipmentIds);
+
+        // 상태를 "수령 확인됨"으로 업데이트
+        for (Shipment shipment : shipments) {
+            shipment.setShipmentDate(LocalDate.now());
+            shipment.setShipmentStatus("출고완료");
+        }
+
+        // 변경된 데이터 저장
+        shipmentRepository.saveAll(shipments);
     }
 
     // 엔티티 -> DTO 변환

@@ -7,17 +7,11 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
-        #deliveryOrderPage {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-
         #deliveryOrderPage h1 {
             text-align: center;
             color: #32666e;
             margin-bottom: 20px;
         }
-
         /* 메인 레이아웃 */
         .grid {
             display: grid;
@@ -135,8 +129,6 @@
             background-color: #277875;
         }
     </style>
-
-
 </head>
 <body>
 <div id="deliveryOrderPage" class="grid-container">
@@ -157,7 +149,7 @@
                     <thead>
                     <tr>
                         <th>관련 생산계획</th>
-                        <th>발주서 코드</th>
+                        <th>발주 코드</th>
                         <th>품목 코드</th>
                         <th>품목명</th>
                         <th>사업자 번호</th>
@@ -200,7 +192,7 @@
                       onsubmit="return validateDeliveryForm(event)">
 
                     <h1>납품 지시</h1>
-                    <label for="purchaseOrderCode">발주서 코드:</label>
+                    <label for="purchaseOrderCode">발주 코드:</label>
                     <input type="text" id="purchaseOrderCode" name="purchaseOrderCode"  th:field="*{purchaseOrderCode}" readonly required>
 
                     <label for="productCode">품목 코드:</label>

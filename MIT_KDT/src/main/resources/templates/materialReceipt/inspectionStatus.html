@@ -110,9 +110,9 @@
                     <th>입고 일자</th>
                     <th>상품명</th>
                     <th>수량</th>
-                    <th>검수 상태</th>
+                    <th>검수 결과</th>
                     <th>불량 수량</th>
-                    <th>검수</th>
+                    <th>검수 현황</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -120,16 +120,17 @@
                     <td th:text="${inspection.inspectionDate}">날짜</td>
                     <td th:text="${inspection.productName}">상품명</td>
                     <td th:text="${inspection.quantity}">수량</td>
-                    <td th:text="${inspection.inspectionStatus}"
-                        th:classappend="'status ' + ${inspection.inspectionStatus}"></td>
-                    <td th:text="${inspection.defectiveQuantity}"></td>
                     <td>
                         <form  th:action="@{/inspection/save}" method="post">
                             <input type="number" name ="defectiveQuantity" min="0">
                             <input type="hidden" name="inspectionCode" th:value="${inspection.inspectionCode}">
-                            <button class="button" type="submit">검수 완료</button>
+                            <button class="button" type="submit">검수</button>
                         </form>
                     </td>
+                    <td th:text="${inspection.defectiveQuantity}"></td>
+
+                    <td th:text="${inspection.inspectionStatus}"
+                        th:classappend="'status ' + ${inspection.inspectionStatus}"></td>
 
                 </tr>
                 </tbody>
