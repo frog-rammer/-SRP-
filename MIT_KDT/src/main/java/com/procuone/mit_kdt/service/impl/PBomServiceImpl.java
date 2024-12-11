@@ -106,6 +106,8 @@ public class PBomServiceImpl implements PBomService {
                 .company(company)
                 .quantity(purchaseBOMDTO.getQuantity())
                 .unitCost(purchaseBOMDTO.getUnitCost()) // 단가 포함
+                .supplyUnit(purchaseBOMDTO.getSupplyUnit())
+                .productionQty(purchaseBOMDTO.getProductionQty())
                 .build();
     }
 
@@ -117,6 +119,8 @@ public class PBomServiceImpl implements PBomService {
                 .businessId(purchaseBOM.getCompany().getBusinessId())
                 .quantity(purchaseBOM.getQuantity())
                 .unitCost(purchaseBOM.getUnitCost()) // 단가 포함
+                .supplyUnit(purchaseBOM.getSupplyUnit())
+                .productionQty(purchaseBOM.getProductionQty())
                 .build();
     }
 }

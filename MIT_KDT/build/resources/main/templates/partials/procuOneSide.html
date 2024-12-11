@@ -128,8 +128,8 @@
                     <li><a href="/company/viewCompanyList" class="sideNav-link">업체리스트</a></li>
                     <li><a href="/procurementPlan/register" class="sideNav-link">조달계획등록</a></li>
                     <li><a href="/procurementPlan/procurementPlanView" class="sideNav-link">조달계획 조회</a></li>
-                    <li><a href="/progressInspection/progressInspectionBoard" class="sideNav-link">진척검수</a></li>
                     <li><a href="/purchaseOrder/purchaseOrders" class="sideNav-link">구매발주</a></li>
+                    <li><a href="/progressInspection/progressInspectionBoard" class="sideNav-link">진척검수</a></li>
                     <li><a href="/deliveryOrder/view" class="sideNav-link">납품 지시</a></li>
                 </ul>
             </li>
@@ -142,7 +142,7 @@
                 </ul>
             </li>
             <li th:if="${session.userType == '자재부서' || session.userType == '관리자' }">
-                <a href="#" class="sideNav-link">자재관련업무</a>
+                <a href="#" class="sideNav-link">자재업무</a>
                 <ul>
                     <li><a href="/inspection/status" class="sideNav-link">입고검수현황</a></li>
                     <li><a href="/materialIssue/stockOut" class="sideNav-link">자재출고관리</a></li>
@@ -157,7 +157,6 @@
                     <li><a href="/company/supplierRregisterProduct" class="sideNav-link">공급물품등록</a></li>
                     <li><a href="/company/companyInventory" class="sideNav-link">재고</a></li>
                     <li><a href="/procurementPlan/comProcurementPlanView" class="sideNav-link">조달계획</a></li>
-                    <li><a href="/company/stockList" class="sideNav-link">재고</a></li>
                     <li><a href="/company/contractList" class="sideNav-link">계약현황</a></li>
                     <li><a href="/progressInspection/progressInspectionProcessingBoard" class="sideNav-link">진척검수 처리</a></li>
                 </ul>

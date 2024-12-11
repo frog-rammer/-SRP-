@@ -1,5 +1,6 @@
 package com.procuone.mit_kdt.dto;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,5 +25,6 @@ public class ContractDTO {
     private Date contractDate;        // 계약 날짜
     private Date contractEndDate;     // 계약 종료일 추가
     private Integer productionQty;    // 최소 생산 수량
+    private Integer supplyUnit;      // 최소 공급 수량
     private boolean contractStatus;   // 계약 상태 (예: 활성화/비활성화)
 }

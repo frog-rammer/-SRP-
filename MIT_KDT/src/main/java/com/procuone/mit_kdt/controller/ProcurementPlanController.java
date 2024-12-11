@@ -1,9 +1,11 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.CompanyDTO;
+import com.procuone.mit_kdt.dto.ItemDTOs.PurchaseBOMDTO;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
+import com.procuone.mit_kdt.entity.BOM.PurchaseBOM;
 import com.procuone.mit_kdt.entity.ProcurementPlan;
 import com.procuone.mit_kdt.repository.ProcurementPlanRepository;
 import com.procuone.mit_kdt.service.*;
@@ -12,15 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -71,7 +72,6 @@ public class ProcurementPlanController {
 
         return "procurementPlan/procurementPlanRegister";
     }
-
     @PostMapping("/register")
     public String procurementInput(@ModelAttribute ProcumentPlanDTO procumentPlanDTO) {
 
