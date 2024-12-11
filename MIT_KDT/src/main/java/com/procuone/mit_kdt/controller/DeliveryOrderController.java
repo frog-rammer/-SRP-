@@ -6,7 +6,10 @@ import com.procuone.mit_kdt.dto.DeliveryOrderDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProgressInspectionDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
+import com.procuone.mit_kdt.entity.DeliveryOrder;
 import com.procuone.mit_kdt.entity.ProgressInspection;
+import com.procuone.mit_kdt.entity.Shipment;
+import com.procuone.mit_kdt.repository.DeliveryOrderRepository;
 import com.procuone.mit_kdt.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -75,7 +78,12 @@ public class DeliveryOrderController {
 
         return "redirect:/deliveryOrder/view";
     }
+    @GetMapping("/delivery-orders")
+    public String getDeliveryOrders(Model model) {
+        List<DeliveryOrder> deliveryOrders = deliveryOrderService.getAllDeliveryOrders();
 
+        model.addAttribute("deliveryOrders", deliveryOrders);
 
-
+        return "materialReceipt/stockIn";
+    }
 }

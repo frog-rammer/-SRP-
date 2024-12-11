@@ -98,6 +98,7 @@
   </aside>
 
   <main class="layout-main">
+    <form action="deliveryOrder/delivery-orders" method="post" enctype="multipart/form-data">
   <h1>자재 입고 관리</h1>
 
   <!-- 입고 대기 현황 테이블 -->
@@ -165,35 +166,23 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
-      <td>S11223</td>
-      <td>2024-10-07</td>
-      <td>이영희</td>
-      <td>O23456</td>
-      <td>M67890</td>
-      <td>강철</td>
-      <td>500</td>
-      <td>600</td>
-      <td>300</td>
-      <td>진행중</td>
-    </tr>
-
-    <tr>
-      <td>S33445</td>
-      <td>2024-10-10</td>
-      <td>정수민</td>
-      <td>O76543</td>
-      <td>M23456</td>
-      <td>알루미늄</td>
-      <td>150</td>
-      <td>200</td>
-      <td>150</td>
-      <td>진행중</td>
+    <tr th:each="deliveryOrder : ${deliveryOrders}" th:attr="data-order-id=${deliveryOrder.deliveryCode}">
+      <td th:text="${deliveryOrder.deliveryCode}"></td>
+      <td th:text="${deliveryOrder.deliveryDate}"></td>
+      <td th:text="${deliveryOrder.company.comManage}"></td>
+      <td th:text="${deliveryOrder.businessId}"></td>
+      <td th:text="${deliveryOrder.productCode}"></td>
+      <td th:text="${deliveryOrder.contract.itemName}"></td>
+      <td th:text="${deliveryOrder.deliveryQuantity}"></td>
+      <td th:text="${deliveryOrder.progressInsepction.totalQuantity}"></td>
+      <td th:text="${deliveryOrder.}"></td>
+      <td th:text="${deliveryOrder.status}"></td>
     </tr>
     </tbody>
   </table>
 
   <a href="../materialIssue/stockOut" id="link">출고 관리로 이동</a>
+    </form>
   </main>
 
   <footer class="layout-footer">

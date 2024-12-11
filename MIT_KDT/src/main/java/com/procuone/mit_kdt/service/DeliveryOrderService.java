@@ -12,4 +12,5 @@ public interface DeliveryOrderService {
     DeliveryOrderDTO convertEntityToDTO(DeliveryOrder deliveryOrder); // 엔티티 -> DTO 변환 메서드
     DeliveryOrder convertDTOToEntity(DeliveryOrderDTO dto, PurchaseOrder purchaseOrder); // DTO -> 엔티티
     List<DeliveryOrder> findCompletedOrders();
+    List<DeliveryOrder> getAllDeliveryOrders();
 }

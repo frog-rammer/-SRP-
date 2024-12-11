@@ -167,4 +167,10 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
                 .createdDate(dto.getCreatedDate() != null ? dto.getCreatedDate() : LocalDate.now()) // 생성일
                 .build();
     }
+
+    @Override
+    public List<DeliveryOrder> getAllDeliveryOrders() {
+        // DB에서 모든 DeliveryOrder를 가져오는 로직
+        return deliveryOrderRepository.findAll();
+    }
 }
