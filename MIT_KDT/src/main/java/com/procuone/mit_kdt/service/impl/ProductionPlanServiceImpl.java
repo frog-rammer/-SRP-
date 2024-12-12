@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,5 +82,24 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
                 .map(id -> Integer.parseInt(id.substring(8)) + 1)
                 .orElse(1);
         return prefix + String.format("%03d", nextId);
+    }
+
+    public Page<ProductionPlanDTO> searchPlans(String searchType, String searchKeyword, String startDate, String endDate, Pageable pageable) {
+        LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : null;
+        LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate) : null;
+
+        Page<ProductionPlan> productionPlanPage; // 변수 선언
+
+        // 검색 조건에 따라 다른 쿼리 실행
+        if (start != null && end != null) {
+            productionPlanPage = productionPlanRepository.findByDateRangeAndKeyword(searchType, searchKeyword, start, end, pageable);
+        } else if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            productionPlanPage = productionPlanRepository.findByKeyword(searchType, searchKeyword, pageable);
+        } else {
+            productionPlanPage = productionPlanRepository.findAll(pageable); // 검색 조건이 없으면 전체 조회
+        }
+
+        // ProductionPlan 엔티티를 DTO로 변환하여 반환
+        return productionPlanPage.map(this::entityToDto);
     }
 }

@@ -75,4 +75,31 @@ public class ProductionPlanController {
         return "redirect:/productionPlan/input";  // 저장 후 "view" 페이지로 리다이렉트
     }
 
+    @PostMapping("/search")
+    public String searchPlans(
+            @RequestParam(required = false) String searchType, // 검색 기준
+            @RequestParam(required = false) String searchKeyword, // 검색 키워드
+            @RequestParam(required = false) String startDate, // 시작 날짜
+            @RequestParam(required = false) String endDate, // 종료 날짜
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 서비스에서 검색 처리
+        Page<ProductionPlanDTO> productionPlanPage = productionPlanService.searchPlans(
+                searchType, searchKeyword, startDate, endDate, pageable);
+
+        model.addAttribute("productionPlanList", productionPlanPage.getContent());
+        model.addAttribute("currentPage", productionPlanPage.getNumber());
+        model.addAttribute("totalPages", productionPlanPage.getTotalPages());
+        model.addAttribute("totalItems", productionPlanPage.getTotalElements());
+        model.addAttribute("searchType", searchType);
+        model.addAttribute("searchKeyword", searchKeyword);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
+        return "procurementPlan/productionPlanView"; // 결과를 보여줄 뷰
+    }
 }
