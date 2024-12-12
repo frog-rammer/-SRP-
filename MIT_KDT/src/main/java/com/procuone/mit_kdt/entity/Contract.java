@@ -48,7 +48,7 @@ public class Contract {
     @Column(nullable = false)
     private Integer productionQty; // 최소 생산 수량
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Integer supplyUnit;
     
     @Column(nullable = true)

@@ -92,6 +92,7 @@ public class ContractController {
             @RequestParam Integer unitCost,
             @RequestParam Integer leadTime,
             @RequestParam Integer productionQty,
+            @RequestParam Integer supplyUnit,
             @RequestParam String contractEndDate // 종료일 추가
     ) {
         System.out.println("업체명: " + comName);
@@ -116,6 +117,7 @@ public class ContractController {
         contract.setUnitCost(unitCost);        // 단가 설정
         contract.setLeadTime(leadTime);        // L/T 설정
         contract.setProductionQty(productionQty);
+        contract.setSupplyUnit(supplyUnit);
         contract.setContractDate(new Date(System.currentTimeMillis())); // 현재 날짜 설정
         contract.setContractEndDate(java.sql.Date.valueOf(contractEndDate)); // 종료일 설정
         contract.setContractStatus(true);
