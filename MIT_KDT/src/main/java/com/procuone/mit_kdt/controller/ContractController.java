@@ -39,24 +39,20 @@ public class ContractController {
     public String register(Model model) {
         // 1. 모든 하위 카테고리 조회
         List<CategoryDTO> leafCategories = categoryService.getAllLeafCategories();
-
         // 2. 하위 카테고리 ID만 추출
         List<Long> categoryIds = leafCategories.stream()
                 .map(CategoryDTO::getId)
                 .collect(Collectors.toList());
-
         System.out.println("Category IDs: " + categoryIds);
-
         // 3. 해당 카테고리들의 아이템 리스트 조회
         List<ItemDTO> items = itemService.getItemsByCategoryIds(categoryIds);
         System.out.println("Items: " + items);
         // 4. 모델에 데이터 추가
         model.addAttribute("items", items);
-
         // 5. 뷰 렌더링
         return "procurementPlan/compareContracts"; // 뷰 이름을 수정하지 않음 // 품목 목록을 뷰에 전달
-
     }
+
     //
     @PostMapping("/suppliers")
     @ResponseBody

@@ -419,7 +419,7 @@
             </div>
         </div>
 
-        <footer class="layout-footer"></footer>
+</div>
 </div>
 <script>
     function validateForm() {
@@ -549,6 +549,7 @@
         renderCalendar(parseInt(yearSelect.value), parseInt(monthSelect.value));
     });
 
+    // 생산계획 클릭시 작동하는 함수
     function onProductionPlanClick(row) {
         const productPlanCode = row.getAttribute('data-product-plan-code');
         const startDate = row.getAttribute('data-start-date');
@@ -572,6 +573,49 @@
         monthSelect.value = productionStartDate.getMonth();
 
         renderCalendar(productionStartDate.getFullYear(), productionStartDate.getMonth());
+
+        // 비동기 요청 추가
+        fetchAdditionalDataByProductCode(productCode);
+    }
+
+
+    // 비동기 요청 함수
+    async function fetchAdditionalDataByProductCode(productCode) {
+        try {
+            const response = await fetch(`/procurementPlan/${productCode}`, {
+                method: 'POST', // 요청 방식 (GET, POST 등)
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`서버 오류: ${response.status}`);
+            }
+            const data = await response.json();
+            // 서버에서 받은 데이터를 폼 또는 UI에 반영
+            handleAdditionalData(data);
+        } catch (error) {
+            console.error('비동기 요청 중 오류 발생:', error);
+            alert('데이터를 불러오는 중 오류가 발생했습니다.');
+        }
+    }
+
+    // 서버에서 받은 데이터 처리 함수
+    function handleAdditionalData(data) {
+        console.log('서버에서 받은 데이터:', data);
+
+        // 예시: UI에 반영
+        if (data.supplierName) {
+            const supplierNameElement = document.getElementById('supplierName');
+            supplierNameElement.textContent = `공급자: ${data.supplierName}`;
+        }
+
+        if (data.inventoryCount) {
+            const inventoryCountElement = document.getElementById('inventoryCount');
+            inventoryCountElement.textContent = `현재 재고: ${data.inventoryCount}`;
+        }
+
+        // 필요한 다른 동작 추가
     }
 </script>
 </body>

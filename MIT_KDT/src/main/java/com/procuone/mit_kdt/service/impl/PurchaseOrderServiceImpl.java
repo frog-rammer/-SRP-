@@ -238,7 +238,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public List<PurchaseOrderDTO> searchOrders(String status, String keyword, String type, LocalDate startDate, LocalDate endDate) {
         return purchaseOrderRepository.searchOrders(status, type, keyword, startDate, endDate);
     }
-
     @Override
     public PurchaseOrderDTO getpurchaseOrderById(String purchaseOrderCode) {
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderCode)

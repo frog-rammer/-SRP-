@@ -17,11 +17,10 @@ public class PurchaseBOMDTO {
     private Long itemId;   // Item 엔티티 대신 ID 사용
     private String businessId; // Company 엔티티 대신 businessId 사용 (String 타입)
     private Integer quantity;
-    private Integer leadTime;  // Lead Time
     private Integer unitCost;  // 단가
-
-
-
+    private Integer leadTime;
+    private Integer productionQty;
+    private Integer supplyUnit;
 //    @JsonManagedReference
 //    private List<PurchaseBOMDTO> children;  // 자식 BOM 리스트 추가
 }

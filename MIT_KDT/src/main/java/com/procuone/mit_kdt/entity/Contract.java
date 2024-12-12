@@ -47,6 +47,9 @@ public class Contract {
 
     @Column(nullable = false)
     private Integer productionQty; // 최소 생산 수량
+
+    @Column(nullable = false)
+    private Integer supplyUnit;
     
     @Column(nullable = true)
     private Integer leadTime;
