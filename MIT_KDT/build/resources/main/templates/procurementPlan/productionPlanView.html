@@ -158,7 +158,7 @@
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
     <main class="layout-main">
-        <form action="/productionPlan/save" method="post" th:object="${productionPlanDTO}">
+        <form action="/productionPlan/search" method="post" th:object="${productionPlanDTO}">
             <div class="container">
                 <!-- 달력 부분 -->
                 <section class="calendarWrap">
@@ -194,10 +194,20 @@
                 <!-- 생산 계획 목록 부분 -->
                 <section class="productionPlanListWrap">
                     <div class="productionPlanListSearchBar">
-                        <input type="text" placeholder="검색어를 입력하세요">
-                        <button class="searchBtn">검색</button>
-                        <button class="detailsBtn">등록된 계획 자세히 보기</button>
-                        <button onclick="updateProgress()" class="updateBtn">진행 상황 업데이트</button>
+                        <select name="searchType">
+                            <option value="productPlanCode">생산계획번호</option>
+                            <option value="productName">생산제품명</option>
+                            <option value="productCode">생산제품코드</option>
+                        </select>
+                        <input type="text" name="searchKeyword" placeholder="검색어를 입력하세요">
+
+                        <label for="startDate">시작일:</label>
+                        <input type="date" name="startDate" id="startDate">
+
+                        <label for="endDate">종료일:</label>
+                        <input type="date" name="endDate" id="endDate">
+
+                        <button type="submit" class="searchBtn">검색</button>
                     </div>
                     <h3>생산 계획 목록</h3>
                     <section class="productionPlanList">
@@ -216,7 +226,7 @@
                             <tr th:each="productionplan : ${productionPlanList}" onclick="highlightDates(event)">
                                 <td th:text="${productionplan.planStartDate}"></td>
                                 <td th:text="${productionplan.planEndDate}"></td>
-                                <td th:text="${productionplan.partCode}"></td>
+                                <td th:text="${productionplan.productPlanCode}"></td>
                                 <td th:text="${productionplan.productName}"></td>
                                 <td th:text="${productionplan.productCode}"></td>
                                 <td th:text="${productionplan.quantity}"></td>
