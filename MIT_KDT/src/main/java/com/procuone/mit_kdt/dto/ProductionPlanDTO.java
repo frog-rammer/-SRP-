@@ -18,6 +18,5 @@ public class ProductionPlanDTO {
     private LocalDate planStartDate;  // 생산 시작일
     private LocalDate planEndDate;    // 생산 종료일
     private Integer quantity;         // 생산 수량
-    private String partCode;          // 부품 코드
     private Long requiredProcurementQuantity; // 조달 필요 수량 (추가)
 }

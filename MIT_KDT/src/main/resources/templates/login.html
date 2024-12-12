@@ -56,6 +56,7 @@
   button[type="submit"] {
     width: 100%;
     padding: 10px;
+    margin-top: 40px ;
     background-color: #32928E; /* 버튼 배경 색 */
     color: white;
     border: none;
@@ -67,29 +68,42 @@
   /* 링크 스타일 (회원가입과 업체 회원가입) */
   a {
     text-decoration: none;
-    color: #007bff;
+    color: #333333;
     font-size: 14px;
     margin-right: 20px;
   }
-
+  .image-wrap{
+    width: fit-content;
+    display: flex;
+    margin: 0 auto;
+  }
   /* 로고 이미지 스타일 */
-  img {
+  .image-wrap img {
     max-width: 300px; /* 로고 크기 제한 */
     margin-bottom: 20px;
   }
+  .loginBoxFooterWrap{
+    width: fit-content;
+    margin: 0 auto;
+    display: flex;
+  }
+
 </style>
 <body>
 <div>
-  <img src="/images/logo.png" alt="ProcuOne 로고">
+
   <form th:object="${memberDTO}" action="/login" method="post">
-    <div>
+    <div class="image-wrap">
+      <img src="/images/logo.png" alt="ProcuOne 로고">
+    </div>
+    <div class="loginFieldWrap">
       <label>아이디</label>
       <input type="text" name="memberId" th:field="*{memberId}">
       <label>비밀번호</label>
       <input type="password" name="password"  th:field="*{password}">
       <button type="submit">로그인</button>
     </div>
-    <div>
+    <div class="loginBoxFooterWrap">
       <a href="signup">회원가입</a>
       <a href="compSignup">업체 회원가입</a>
     </div>

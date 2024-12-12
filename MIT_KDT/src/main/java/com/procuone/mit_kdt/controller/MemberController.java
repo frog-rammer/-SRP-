@@ -33,6 +33,7 @@ public class MemberController {
         model.addAttribute("memberDTO", new MemberDTO());
         return "login";
     }
+
     @GetMapping("signup")
     public String signup(Model model) {
         return "signup";

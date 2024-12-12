@@ -31,9 +31,7 @@
 }
 .menu {
     flex: 1;
-
     display: flex;
-    justify-content: center;
     gap: 1px;
 }
 .menu button {
