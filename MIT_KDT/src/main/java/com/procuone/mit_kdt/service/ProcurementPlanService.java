@@ -3,6 +3,7 @@ package com.procuone.mit_kdt.service;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.entity.ProcurementPlan;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ProcurementPlanService {
@@ -23,4 +24,5 @@ public interface ProcurementPlanService {
     void updateProcurementPlan(ProcurementPlan procurementPlan);
 
 
+    List<ProcumentPlanDTO> searchProcurementPlans(String productName, LocalDate start, LocalDate end, Long quantity);
 }

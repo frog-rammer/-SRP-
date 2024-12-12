@@ -33,5 +33,6 @@ public interface ProcurementPlanRepository extends JpaRepository<ProcurementPlan
 //
 //    // 수량으로 검색
 //    List<ProcurementPlan> findByQuantity(Long quantity);
-//}
+
+    List<ProcurementPlan> searchProcurementPlans(String productName, LocalDate startDate, LocalDate endDate, Long quantity);
 }
