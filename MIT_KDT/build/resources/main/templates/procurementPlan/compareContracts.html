@@ -33,20 +33,73 @@
     tr:nth-child(even) td {
       background-color: #f2f2f2;
     }
+    header h1 {
+      color: rgb(50, 146, 142); /* 제목 색상 */
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
 
-    /*button {*/
-    /*  background-color: rgb(50, 146, 142); !* 버튼 색상 *!*/
-    /*  color: white;*/
-    /*  border: none;*/
-    /*  padding: 8px 16px;*/
-    /*  cursor: pointer;*/
-    /*  font-size: 14px;*/
-    /*}*/
+    header p {
+      color: #555;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
 
-    /*button:hover {*/
-    /*  background-color: rgb(40, 126, 122); !* 버튼 hover 색상 *!*/
-    /*}*/
+    /* 품목 선택 */
+    #productSelectWrapper {
+      margin-bottom: 20px; /* 아래쪽 간격 */
+      display: flex;
+      align-items: center; /* 수평 정렬 */
+      gap: 12px; /* 텍스트와 셀렉트 박스 간격 */
+    }
 
+    #productSelectWrapper p {
+      margin: 0; /* 여백 제거 */
+      font-size: 16px;
+      font-weight: bold; /* 강조 */
+      color: rgb(50, 146, 142); /* 텍스트 색상 */
+    }
+
+    /* 셀렉트 박스 스타일 */
+    .productSelect {
+      width: 250px; /* 너비 */
+      padding: 10px 12px; /* 안쪽 여백 */
+      border: 1px solid #ccc; /* 테두리 */
+      border-radius: 5px; /* 둥근 모서리 */
+      font-size: 16px;
+      background-color: white; /* 배경색 */
+      color: #333;
+      appearance: none; /* 기본 브라우저 화살표 제거 */
+      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="rgb(50,146,142)" d="M2 0L0 2h4z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 12px center; /* 화살표 위치 */
+      background-size: 12px;
+    }
+
+    .productSelect:hover {
+      border-color: rgb(50, 146, 142);
+    }
+
+    .productSelect:focus {
+      border-color: rgb(40, 90, 89);
+      box-shadow: 0 0 5px rgba(40, 90, 89, 0.5);
+    }
+
+    /* 버튼 스타일 */
+    button {
+      background-color: rgb(50, 146, 142); /* 버튼 배경색 */
+      color: white; /* 글자 색상 */
+      border: none;
+      padding: 10px 16px; /* 버튼 크기 */
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 5px;
+      transition: background-color 0.3s ease; /* 부드러운 전환 효과 */
+    }
+
+    button:hover {
+      background-color: rgb(40, 126, 122);
+    }
     .contract-button {
       text-decoration: none;
     }
@@ -70,8 +123,8 @@
     </header>
 
     <div id="productSelectWrapper">
-      <label for="productSelect">품목 선택: </label>
-      <select id="productSelect" onchange="updateTable()">
+      <p>품목 선택  : </p>
+      <select id="productSelect" class="productSelect" onchange="updateTable()">
         <option value="">품목을 선택하세요</option>
         <!-- 품목을 동적으로 셀렉트 박스에 추가 -->
         <option th:each="item : ${items}"
@@ -145,9 +198,6 @@
 <!--    </div>-->
   </main>
 
-  <footer>
-    <p>&copy; 2024 계약 비교 서비스</p>
-  </footer>
 </div>
 <script>
   function updateTable() {

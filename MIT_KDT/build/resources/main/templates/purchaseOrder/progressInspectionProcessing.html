@@ -81,6 +81,68 @@
             font-weight: bold;
             cursor: default; /* 현재 페이지는 클릭 불가능 */
         }
+        /* 폼 컨테이너 스타일 */
+        #updateFormContainer {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 */
+        }
+
+        #updateFormContainer h3 {
+            margin-bottom: 20px;
+            color: #32928E; /* 제목 색상 */
+        }
+
+        /* 입력 필드 스타일 */
+        #updateFormContainer label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333; /* 라벨 색상 */
+            display: block; /* 블록으로 배치 */
+            margin-bottom: 8px; /* 라벨과 필드 간격 */
+        }
+
+        #updateFormContainer input[type="text"],
+        #updateFormContainer input[type="number"] {
+            width: 100%; /* 입력 필드 너비 */
+            padding: 10px;
+            margin-bottom: 20px; /* 아래 여백 */
+            border: 1px solid #ccc; /* 테두리 */
+            border-radius: 4px; /* 둥근 모서리 */
+            box-sizing: border-box; /* 박스 크기 계산 */
+            font-size: 14px;
+            background-color: #f9f9f9; /* 배경색 */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease; /* 부드러운 효과 */
+        }
+
+        #updateFormContainer input[type="text"]:focus,
+        #updateFormContainer input[type="number"]:focus {
+            border-color: #32928E; /* 포커스 시 테두리 색상 */
+            box-shadow: 0 0 5px rgba(50, 146, 142, 0.5); /* 포커스 시 그림자 */
+            outline: none; /* 기본 포커스 제거 */
+        }
+
+        /* 버튼 스타일 */
+        #updateFormContainer button {
+            background-color: #32928E;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* 호버 시 부드러운 전환 효과 */
+            display: block; /* 버튼을 블록으로 배치 */
+            width: 100%; /* 버튼 너비 */
+            box-sizing: border-box;
+        }
+
+        #updateFormContainer button:hover {
+            background-color: #267570; /* 호버 시 버튼 색상 */
+        }
     </style>
 </head>
 <body>
@@ -103,7 +165,6 @@
                 <th>품목명</th>
                 <th>사업자 ID</th>
                 <th>회사명</th>
-                <th>입고 예정일</th>
                 <th>발주 수량</th>
                 <th>검수된 수량</th>
                 <th>검수 상태</th>
@@ -119,7 +180,6 @@
                 <td th:text="${inspection.productName}"></td>
                 <td th:text="${inspection.businessId}"></td>
                 <td th:text="${inspection.comName}"></td>
-                <td th:text="${inspection.expectedArrivalDate}"></td>
                 <td th:text="${inspection.totalQuantity}"></td>
                 <td th:text="${inspection.inspectedQuantity}"></td>
                 <td th:text="${inspection.inspectionStatus}"></td>
@@ -185,9 +245,8 @@
             const inspectionCode = row.cells[0].innerText; // 검수 코드
             const productCode = row.cells[2].innerText; // 품목 코드
             const productName = row.cells[3].innerText; // 품목명
-            const totalQuantity = parseInt(row.cells[7].innerText); // 발주 수량
-            const inspectedQuantity = parseInt(row.cells[8].innerText); // 기존 검수된 수량
-
+            const totalQuantity = parseInt(row.cells[6].innerText); // 발주 수량
+            const inspectedQuantity = parseInt(row.cells[7].innerText); // 기존 검수된 수량
             // 폼 데이터 채우기
             document.getElementById('progressInspectionCode').value = inspectionCode;
             document.getElementById('productCode').value = productCode; // 품목 코드 채우기

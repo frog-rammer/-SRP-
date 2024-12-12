@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>업체회원가입</title>
-    <script type="text/javascript" src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script> <!-- Daum 주소 검색 API 로드 -->
-    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <style>
         /* 기본 스타일 설정 */
         body {
@@ -85,15 +83,6 @@
             font-weight: bold;
         }
 
-        button[type="button"] {
-            background-color: #32928E;
-            color: white;
-            border-radius: 4px;
-            padding: 8px 15px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
         .id-container {
             display: flex;
             justify-content: space-between;
@@ -124,6 +113,12 @@
 
         input[name="emailDirect"] {
             margin-right: 10px;
+            background-color: #f9f9f9; /* 비활성화 시 배경 */
+        }
+
+        input[name="emailDirect"]:disabled {
+            background-color: #e9ecef; /* 비활성화 상태 배경 */
+            cursor: not-allowed; /* 커서 비활성화 */
         }
 
         #emailSelect {
@@ -160,20 +155,20 @@
         <!-- 이름 필드 -->
         <div>
             <label>이름:</label>
-            <input class="addCompany" name="comManage" type="text" required> <!-- comManage : 관리자가 될 이름 -->
+            <input class="addCompany" name="comManage" type="text" required>
         </div>
 
         <!-- 업체명 필드 -->
         <div>
             <label>업체명:</label>
-            <input class="addCompany" name="comName" type="text" required> <!-- comName : 업체명 -->
+            <input class="addCompany" name="comName" type="text" required>
         </div>
 
         <!-- 아이디 필드 -->
         <div>
             <label>아이디:</label>
             <div class="id-container">
-                <input class="addCompany" name="comId" type="text" id="comId" required> <!-- comId : 아이디 -->
+                <input class="addCompany" name="comId" type="text" id="comId" required>
                 <button type="button" id="checkIdBtn">ID 중복 확인</button>
             </div>
             <span id="idCheckResult"></span> <!-- 중복 여부 표시 -->
@@ -194,40 +189,42 @@
         <!-- 이메일 필드 -->
         <div>
             <label>이메일</label>
-            <input class="addCompany" name="comEmail" type="text" placeholder="이메일 아이디" required> <!-- comEmail : 이메일 -->
-            <input class="addCompany" name="emailDirect" id="emailDirect" placeholder="직접 입력" type="text">
+            <input class="addCompany" name="comEmail" type="text" placeholder="이메일 아이디" required>
+            <input class="addCompany" name="emailDirect" id="emailDirect" placeholder="직접 입력" type="text" disabled>
             <select name="emailSelect" id="emailSelect">
                 <option selected value="none">도메인 선택</option>
                 <option value="naver.com">naver.com</option>
-                <option value="gamil.com">gamil.com</option>
+                <option value="gmail.com">gmail.com</option>
                 <option value="daum.net">daum.net</option>
+                <option value="custom">직접 입력</option>
             </select>
         </div>
 
         <!-- 업체 연락처 필드 -->
         <div>
             <label>업체연락처</label>
-            <input class="addCompany" name="comPhone" type="text" required> <!-- comPhone : 업체 연락처 -->
+            <input class="addCompany" name="comPhone" type="text" required>
         </div>
 
         <!-- 사업자 번호 필드 -->
         <div>
             <label>사업자 번호:</label>
-            <input class="addCompany" name="businessId" type="text" required> <!-- businessId : 사업자 번호 -->
+            <input class="addCompany" name="businessId" type="text" required>
         </div>
 
         <!-- 은행명 필드-->
         <div>
             <label>은행명:</label>
-            <input class="addCompany" name="comBank" type="text" required> <!-- comBank : 은행 -->
+            <input class="addCompany" name="comBank" type="text" required>
         </div>
 
         <!-- 회사 계좌 필드 -->
         <div>
             <label>계좌:</label>
-            <input class="addCompany" name="comAccountNumber" type="text" required> <!-- comAccount : 계좌 -->
+            <input class="addCompany" name="comAccountNumber" type="text" required>
         </div>
 
+        <!-- 주소 필드 -->
         <div>
             <label for="address">주소</label>
             <div style="display: flex; align-items: center;">
@@ -251,17 +248,31 @@
 </form>
 
 <script>
+    // 이메일 선택 시 직접입력 활성화 처리
+    document.getElementById('emailSelect').addEventListener('change', function () {
+        const emailDirect = document.getElementById('emailDirect');
+        if (this.value === 'custom') {
+            emailDirect.disabled = false;
+            emailDirect.focus();
+        } else {
+            emailDirect.disabled = true;
+            emailDirect.value = ''; // 직접 입력 필드 초기화
+        }
+    });
+
     function findPostcode() {
         window.open('/addresses/address', '주소 검색', 'width=600,height=400');
     }
+
     function updateCombinedAddress() {
         const address = document.getElementById('address').value;
         const detailAddress = document.getElementById('detail_address').value;
         const combinedAddress = address + ' ' + detailAddress;
         document.getElementById('combined_address').value = combinedAddress.trim();
     }
+
     // 아이디 중복 확인 버튼 클릭 시
-    document.getElementById("checkIdBtn").addEventListener("click", function() {
+    document.getElementById("checkIdBtn").addEventListener("click", function () {
         const memberId = document.getElementById("comId").value;
 
         if (!memberId) {
@@ -286,7 +297,7 @@
             });
     });
 
-    document.querySelector('form').addEventListener('submit', function(event) {
+    document.querySelector('form').addEventListener('submit', function (event) {
         event.preventDefault();  // 폼 제출을 막는다
 
         const comId = document.querySelector('input[name=comId]').value;  // 업체 아이디
@@ -305,27 +316,20 @@
 
         let Useremail = '';
 
-        // 이메일 결합 로직: emailDirect와 emailSelect 둘 중 하나만 사용해야 함
+        // 이메일 결합 로직
         if (emailDirect && emailSelect !== 'none') {
-            // 둘 다 입력될 수 없으므로 경고 메시지 표시
             alert('이메일 아이디와 도메인은 하나만 입력해야 합니다.');
-            event.preventDefault();
             return;
         } else if (emailDirect) {
-            // emailDirect만 입력된 경우, 이메일 아이디 + 도메인 결합
             Useremail = `${comEmail}@${emailDirect}`;
         } else if (emailSelect !== 'none') {
-            // emailSelect만 선택된 경우, email 필드에 입력된 아이디와 결합
             if (!comEmail) {
                 alert('이메일 아이디를 입력해주세요.');
-                event.preventDefault();
                 return;
             }
             Useremail = `${comEmail}@${emailSelect}`;
         } else {
-            // emailDirect와 emailSelect가 모두 비어있을 경우
             alert('이메일 아이디 또는 도메인을 선택해주세요.');
-            event.preventDefault();
             return;
         }
 
@@ -335,28 +339,22 @@
             return regex.test(email);
         }
 
-        // 이메일 형식 검사
         if (!validateEmail(Useremail)) {
             alert('유효하지 않은 이메일 주소입니다.');
-            event.preventDefault();
             return;
         }
 
         // 필수 입력 확인
-        if (!comName || !comId || !password || !password2 || !comManage || !Useremail || !businessId || !comPhone || !comAdd ||!comBank || !comAccountNumber) {
+        if (!comName || !comId || !password || !password2 || !comManage || !Useremail || !businessId || !comPhone || !comAdd || !comBank || !comAccountNumber) {
             alert('아이디, 비밀번호, 이름, 이메일, 사업자번호, 연락처, 주소, 은행, 계좌는 필수 입력 항목입니다.');
             return;
         } else if (password !== password2) {
             alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
-            event.preventDefault();
             return;
         }
 
-        // **email 필드에 생성된 이메일 주소 값을 설정**
-        document.querySelector('input[name="comEmail"]').value = Useremail; // 이메일을 comEmail 필드에 설정
-
-        // 모든 조건을 통과하면 폼 제출
-        this.submit();
+        document.querySelector('input[name="comEmail"]').value = Useremail; // 이메일 필드 설정
+        this.submit(); // 모든 조건 통과 시 폼 제출
     });
 </script>
 </body>

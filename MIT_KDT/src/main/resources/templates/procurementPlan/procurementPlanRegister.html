@@ -223,20 +223,20 @@
             text-align: center;
             margin-top: 20px;
         }
-
         .form-actions button {
-            background-color: #32928E; /* 색상 변경 */
+            background-color: #32928E; /* 기존과 동일 */
             color: #fff;
-            padding: 10px 20px;
+            padding: 8px 15px; /* 기존 검색 버튼과 비슷하게 조정 */
             font-size: 16px;
-            border: none;
+            border: 1px solid #ddd; /* 검색 버튼과 동일하게 추가 */
             border-radius: 4px;
             cursor: pointer;
+            height: 40px; /* 검색 버튼과 동일한 높이 */
             margin-left: 40px;
         }
 
         .form-actions button:hover {
-            background-color: #2a7c6c;
+            background-color: #2a7c6c; /* 기존 hover 색상 유지 */
         }
 
         /* 두 영역을 나란히 배치 */
@@ -273,9 +273,52 @@
             border: 1px solid #ddd;
             margin-bottom: 20px;
         }
+
+        /* 검색 섹션 스타일 */
+        .search-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-container input[type="text"],
+        .search-container input[type="date"] {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 200px;
+            box-sizing: border-box;
+        }
+
+        .search-container input:focus {
+            border-color: #32928E;
+            outline: none;
+        }
+
+        .search-container button {
+            padding: 10px 15px;
+            font-size: 14px;
+            background-color: #32928E;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-container button:hover {
+            background-color: #267570;
+        }
+
     </style>
-
-
 </head>
 <body>
 <div class="grid-container">
@@ -288,14 +331,18 @@
     <div class="layout-main">
         <!-- 생산 계획 목록 -->
         <section class="productionPlanListWrap">
+
             <!-- 검색 및 버튼들 -->
-            <div class="productionPlanListSearchBar">
-                <input type="text" placeholder="검색어를 입력하세요">
-                <button class="searchBtn">검색</button>
-                <button class="detailsBtn">등록된 계획 자세히 보기</button>
-                <button onclick="updateProgress()">진행 상황 업데이트</button>
-            </div>
-            <h3>생산 계획 목록</h3>
+            <section class="search-container">
+                <h3>생산 계획 목록</h3>
+                <form action="/procurementPlan/search" method="get" >
+                    <input type="text" name="productName" placeholder="생산제품명 입력">
+                    <input type="date" name="startDate" placeholder="시작일">
+                    <input type="date" name="endDate" placeholder="종료일">
+                    <button type="submit">검색</button>
+                </form>
+            </section>
+
             <section class="productionPlanList">
                 <table>
                     <thead>
@@ -313,7 +360,7 @@
                     <tr th:each="productionPlan : ${productionPlanList}"
                         th:attr="data-product-plan-code=${productionPlan.productPlanCode},data-start-date=${productionPlan.planStartDate}, data-end-date=${productionPlan.planEndDate},
                         data-product-name=${productionPlan.productName}, data-product-code=${productionPlan.productCode},
-                        data-quantity=${productionPlan.quantity}"
+                        data-quantity=${productionPlan.quantity},data-required-quantity=${productionPlan.requiredProcurementQuantity}"
                         onclick="onProductionPlanClick(this)">
                         <td th:text="${productionPlan.planStartDate}"></td>
                         <td th:text="${productionPlan.planEndDate}"></td>
@@ -324,7 +371,7 @@
                         <td th:text="${productionPlan.requiredProcurementQuantity}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(productionPlanList)}">
-                        <td colspan="6">등록된 생산 계획이 없습니다.</td>
+                        <td colspan="7">등록된 생산 계획이 없습니다.</td>
                     </tr>
                     </tbody>
                 </table>
@@ -349,7 +396,7 @@
         <!--캘린더 및 폼 섹션 -->
         <div style="display: flex; justify-content: space-between; margin-top: 20px; width: 100%; gap: 20px;">
             <!-- 왼쪽: 캘린더 -->
-            <div style="flex: 1; min-width: 350px; max-width: 50%;">  <!-- 이 부분은 그대로 두세요 -->
+            <div style="flex: 1; min-width: 350px; max-width: 50%;">
                 <h4>조달 납기일 선정</h4>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                     <select id="yearSelect" style="width: 48%; padding: 8px; font-size: 16px; border-radius: 4px; border: 1px solid #ddd;">
@@ -411,6 +458,7 @@
                                 <td><input type="date" id="procurementDate" name="procurementDate"  th:field="*{procurementEndDate}" required></td>
                             </tr>
                         </table>
+                        <input type="hidden" id="requiredProcurementQuantity" name="requiredProcurementQuantity"  readonly>
                         <div class="form-actions">
                             <button type="submit" >조달계획 등록</button>
                         </div>
@@ -419,7 +467,7 @@
             </div>
         </div>
 
-</div>
+    </div>
 </div>
 <script>
     function validateForm() {
@@ -427,25 +475,38 @@
         const startDateValue = document.getElementById("startDate").value.trim();
         const endDateValue = document.getElementById("endDate").value.trim();
         const quantityValue = document.getElementById("quantity").value.trim();
-        const procumentQuantityValue = document.getElementById("procumentQuantity").value.trim();
+        const procurementQuantityValue = document.getElementById("procurementQuantity").value.trim();
         const procurementDateValue = document.getElementById("procurementDate").value.trim();
+        const requiredProcurementQuantityValue = document.getElementById("requiredProcurementQuantity").value.trim();
 
         // 1. 필수 필드 확인
-        if (!startDateValue || !endDateValue || !quantityValue || !procumentQuantityValue || !procurementDateValue) {
+        if (!startDateValue || !endDateValue || !quantityValue || !procurementQuantityValue || !procurementDateValue) {
             alert("모든 필드를 입력해주세요.");
             return false;
         }
 
-        // 2. 숫자 필드 검증 (조달 수량 및 생산 예정 수량)
+        // 2. 숫자 필드 검증
         const quantity = parseInt(quantityValue, 10);
-        const procumentQuantity = parseInt(procumentQuantityValue, 10);
+        const procurementQuantity = parseInt(procurementQuantityValue, 10);
+        const requiredProcurementQuantity = parseInt(requiredProcurementQuantityValue, 10);
 
-        if (isNaN(procumentQuantity) || procumentQuantity <= 0) {
+        if (isNaN(procurementQuantity) || procurementQuantity <= 0) {
             alert("조달 수량은 1 이상의 숫자를 입력해야 합니다.");
             return false;
         }
 
-        if (procumentQuantity > quantity) {
+        if (isNaN(quantity) || quantity <= 0) {
+            alert("생산 예정 수량은 유효한 숫자를 입력해야 합니다.");
+            return false;
+        }
+
+        // 조달 필요수량 및 생산 예정 수량 비교
+        if (procurementQuantity > requiredProcurementQuantity) {
+            alert("조달 수량은 조달 필요수량을 초과할 수 없습니다.");
+            return false;
+        }
+
+        if (procurementQuantity > quantity) {
             alert("조달 수량은 생산 예정 수량을 초과할 수 없습니다.");
             return false;
         }
@@ -455,19 +516,21 @@
         const endDate = new Date(endDateValue);
         const procurementDate = new Date(procurementDateValue);
 
-        // 조달 납기일이 생산 시작일 이후로 설정된 경우
+        if (startDate > endDate) {
+            alert("생산 시작일은 생산 종료일 이후일 수 없습니다.");
+            return false;
+        }
+
+        // 납기일 검증 (생산 시작일 이상, 생산 종료일 이하)
         if (procurementDate > startDate) {
             alert("조달 납기일은 생산 시작일과 같거나 더 빠르게 설정해야 합니다.");
             return false;
         }
-
-        // 조달 납기일이 생산 종료일 이후로 설정된 경우
         if (procurementDate > endDate) {
             alert("조달 납기일은 생산 종료일을 초과할 수 없습니다.");
             return false;
         }
 
-        // 모든 유효성 검사를 통과한 경우 true 반환
         return true;
     }
 
@@ -481,7 +544,8 @@
     const productNameInput = document.getElementById('productName');
     const productCodeInput = document.getElementById('productCode');
     const quantityInput = document.getElementById('quantity');
-    const productPlanCodeInput = document.getElementById('productPlanCode'); // 생산계획 번호 입력 필드 추가
+    const productPlanCodeInput = document.getElementById('productPlanCode');
+    const requiredProcurementQuantityInput = document.getElementById('requiredProcurementQuantity');
     let productionStartDate, productionEndDate;
 
     for (let i = 2020; i <= 2030; i++) {
@@ -557,6 +621,7 @@
         const productName = row.getAttribute('data-product-name');
         const productCode = row.getAttribute('data-product-code');
         const quantity = row.getAttribute('data-quantity');
+        const requiredQuantity = row.getAttribute('data-required-quantity'); // 조달 필요수량 획득
 
         productionStartDate = new Date(startDate);
         productionEndDate = new Date(endDate);
@@ -568,18 +633,16 @@
         productNameInput.value = productName;
         productCodeInput.value = productCode;
         quantityInput.value = quantity;
+        requiredProcurementQuantityInput.value = requiredQuantity; // 조달 필요수량 설정
 
         yearSelect.value = productionStartDate.getFullYear();
         monthSelect.value = productionStartDate.getMonth();
 
         renderCalendar(productionStartDate.getFullYear(), productionStartDate.getMonth());
-
-        // 비동기 요청 추가
-        fetchAdditionalDataByProductCode(productCode);
     }
 
 
-    // 비동기 요청 함수
+    // 비동기 요청 함수 (필요 시)
     async function fetchAdditionalDataByProductCode(productCode) {
         try {
             const response = await fetch(`/procurementPlan/${productCode}`, {
@@ -600,7 +663,7 @@
         }
     }
 
-    // 서버에서 받은 데이터 처리 함수
+    // 서버에서 받은 데이터 처리 함수 (필요 시)
     function handleAdditionalData(data) {
         console.log('서버에서 받은 데이터:', data);
 

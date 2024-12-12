@@ -33,4 +33,13 @@ public interface ProductionPlanRepository extends JpaRepository<ProductionPlan, 
                                                    @Param("startDate") LocalDate startDate,
                                                    @Param("endDate") LocalDate endDate,
                                                    Pageable pageable);
+    @Query("SELECT p FROM ProductionPlan p WHERE " +
+            "(:productName IS NULL OR p.productName LIKE %:productName%) AND " +
+            "(:startDate IS NULL OR p.planStartDate >= :startDate) AND " +
+            "(:endDate IS NULL OR p.planEndDate <= :endDate)")
+    Page<ProductionPlan> findByProductNameAndPlanStartDateBetween(
+            @Param("productName") String productName,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            Pageable pageable);
 }

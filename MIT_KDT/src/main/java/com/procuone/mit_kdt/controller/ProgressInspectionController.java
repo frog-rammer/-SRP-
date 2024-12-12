@@ -90,6 +90,7 @@ public class ProgressInspectionController {
         Pageable pageable = PageRequest.of(0, 8);
         Page<ProgressInspectionDTO> productionPlanPage = progressInspectionService.getInspectionsByBusinessId(businessId, pageable);
 
+
         // 페이지네이션 관련 정보
         int currentPage = productionPlanPage.getNumber() + 1; // 현재 페이지 (0-based를 1-based로 변환)
         int totalPages = productionPlanPage.getTotalPages();  // 총 페이지 수

@@ -5,6 +5,7 @@ import com.procuone.mit_kdt.entity.ProductionPlan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ProductionPlanService{
@@ -15,4 +16,8 @@ public interface ProductionPlanService{
     public abstract Page<ProductionPlanDTO> getAllPlans(Pageable pageable);
     // 검색 메서드
     Page<ProductionPlanDTO> searchPlans(String searchType, String searchKeyword, String startDate, String endDate, Pageable pageable);
+
+
+    // 추가적인 검색 메서드 (제품명 및 기간 기반)
+    Page<ProductionPlanDTO> searchProductionPlans(String productName, LocalDate startDate, LocalDate endDate, Pageable pageable);
 }

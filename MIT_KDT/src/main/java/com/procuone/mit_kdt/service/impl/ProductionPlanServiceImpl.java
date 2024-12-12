@@ -102,4 +102,12 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         // ProductionPlan 엔티티를 DTO로 변환하여 반환
         return productionPlanPage.map(this::entityToDto);
     }
+
+    @Override
+    public Page<ProductionPlanDTO> searchProductionPlans(String productName, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        Page<ProductionPlan> productionPlans = productionPlanRepository.findByProductNameAndPlanStartDateBetween(
+                productName, startDate, endDate, pageable);
+
+        return productionPlans.map(this::entityToDto);
+    }
 }

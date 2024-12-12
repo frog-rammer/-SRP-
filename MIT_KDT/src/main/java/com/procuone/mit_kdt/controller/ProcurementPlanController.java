@@ -72,6 +72,47 @@ public class ProcurementPlanController {
 
         return "procurementPlan/procurementPlanRegister";
     }
+    @GetMapping("/search")
+    public String searchProductionPlans(
+            @RequestParam(required = false) String productName,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            Model model,
+            Pageable pageable) {
+
+        // 날짜 파싱 및 기본값 설정
+        LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : null;
+        LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate) : null;
+
+        // 검색 결과 가져오기
+        Page<ProductionPlanDTO> searchResults = productionPlanService.searchProductionPlans(productName, start, end, pageable);
+
+        // 각 생산 계획에 대해 조달 필요 수량 계산
+        List<ProductionPlanDTO> productionPlanList = searchResults.getContent().stream().map(plan -> {
+            long requiredQuantity = procurementPlanService.getRequiredProcurementQuantity(plan.getProductPlanCode());
+            plan.setRequiredProcurementQuantity(requiredQuantity); // 조달 필요 수량 설정
+            return plan;
+        }).collect(Collectors.toList());
+
+        // 페이징 정보 추가
+        int totalPages = searchResults.getTotalPages();
+        int currentPage = searchResults.getNumber();
+
+        // 페이징 버튼 범위 계산 (최대 5개)
+        int startPage = Math.max(1, currentPage - 2);        // 최소 페이지
+        int endPage = Math.min(totalPages, currentPage + 3); // 최대 페이지
+
+        // 모델에 데이터 추가
+        model.addAttribute("productionPlanList", productionPlanList);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        model.addAttribute("procurementPlanDTO", new ProcumentPlanDTO());
+
+        return "procurementPlan/procurementPlanRegister"; // 검색 결과 페이지
+    }
+
     @PostMapping("/register")
     public String procurementInput(@ModelAttribute ProcumentPlanDTO procumentPlanDTO) {
 
@@ -121,7 +162,6 @@ public class ProcurementPlanController {
             @RequestParam(value = "size", defaultValue = "10") int size,
             Pageable pageable,
             HttpSession session) {
-
         String businessId = session.getAttribute("businessId").toString();
         if(businessId == null) {
             session.invalidate();
@@ -170,15 +210,8 @@ public class ProcurementPlanController {
         return "redirect:/procurementPlan/list"; // 수정 후 목록 페이지로 리디렉션
     }
 
-//    // 수정 페이지로 이동
-//    @GetMapping("/procurementPlan/edit/{procurementPlanCode}")
-//    public String editProcurementPlan(@PathVariable String procurementPlanCode, Model model) {
-//        ProcurementPlan procurementPlan = procurementPlanService.getProcurementPlanByCode(procurementPlanCode);
-//        model.addAttribute("procurementPlan", procurementPlan);
-//        return "editProcurementPlan"; // 수정 폼 페이지로 이동
-//    }
 
-//    @GetMapping("/search")
+//    @GetMapping("/viewSearch")
 //    public String searchProcurementPlans(@RequestParam(required = false) String productName,
 //                                         @RequestParam(required = false) String startDate,
 //                                         @RequestParam(required = false) String endDate,

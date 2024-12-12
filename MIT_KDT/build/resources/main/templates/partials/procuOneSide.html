@@ -123,9 +123,9 @@
             <li th:if="${session.userType == '구매부서' || session.userType == '관리자'}">
                 <a href="#" class="sideNav-link">구매업무</a>
                 <ul>
-                    <li><a href="/items/registerProductForm" class="sideNav-link">품목정보등록</a></li>
                     <li><a href="/contract/register" class="sideNav-link">계약관리</a></li>
                     <li><a href="/company/viewCompanyList" class="sideNav-link">업체리스트</a></li>
+                    <li><a href="/items/registerProductForm" class="sideNav-link">품목정보등록</a></li>
                     <li><a href="/procurementPlan/register" class="sideNav-link">조달계획등록</a></li>
                     <li><a href="/procurementPlan/procurementPlanView" class="sideNav-link">조달계획 조회</a></li>
                     <li><a href="/purchaseOrder/purchaseOrders" class="sideNav-link">구매발주</a></li>
@@ -146,9 +146,8 @@
                 <ul>
                     <li><a href="/inspection/status" class="sideNav-link">입고검수현황</a></li>
                     <li><a href="/materialIssue/stockOut" class="sideNav-link">자재출고관리</a></li>
-                    <li><a href="/materialReceipt/prodCosts" class="sideNav-link">재고금액관리</a></li>
                     <li><a href="/materialReceipt/stockIn" class="sideNav-link">자재입고관리</a></li>
-                    <li><a href="/materialIssue/stock" class="sideNav-link">재고(산출)</a></li>
+<!--                    <li><a href="/materialIssue/stock" class="sideNav-link">재고(산출)</a></li>-->
                 </ul>
             </li>
             <li th:if="${session.userType == '협력업체' || session.userType == '관리자' }">
