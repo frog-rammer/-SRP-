@@ -8,12 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -77,60 +81,36 @@ public class ProductionPlanController {
         return "redirect:/productionPlan/input";  // 저장 후 "input" 페이지로 리다이렉트
     }
 
-    // 생산 계획 수정
     @PostMapping("/update")
-    public String updatePlan(@ModelAttribute("productionPlanDTO") ProductionPlanDTO productionPlanDTO,
-                             BindingResult result, Model model,
-                             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        if (result.hasErrors()) {
-            return "procurementPlan/productionPlanInput";  // 유효성 검사 실패 시 입력 폼으로 돌아가기
-        }
-
-        // 엔티티 업데이트
-        Optional<ItemDTO> itemDTO = itemService.findByProductCode(productionPlanDTO.getProductCode());
-        itemDTO.ifPresent(item -> productionPlanDTO.setProductName(item.getItemName()));
-        productionPlanService.savePlan(productionPlanDTO);  // 수정된 DTO를 서비스에 전달
-
-        // 페이지네이션 처리
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(pageable);
-
-        // 성공 메시지 추가
-        model.addAttribute("successMessage", "생산 계획이 성공적으로 수정되었습니다.");
-        model.addAttribute("productionPlanList", productionPlanPage.getContent()); // 생산 계획 목록
-        model.addAttribute("currentPage", productionPlanPage.getNumber());  // 현재 페이지
-        model.addAttribute("totalPages", productionPlanPage.getTotalPages());  // 총 페이지 수
-        model.addAttribute("totalItems", productionPlanPage.getTotalElements()); // 전체 아이템 수
-
-        return "redirect:/productionPlan/view?page=" + page + "&size=" + size;
-    }
-
-    // 생산 계획 삭제
-    @PostMapping("/delete")
-    public String deletePlan(@RequestParam("planNum") String planNum,
-                             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
-                             Model model) {
+    public ResponseEntity<Map<String, Object>> updatePlan(@RequestBody ProductionPlanDTO productionPlanDTO) {
         try {
-            productionPlanService.deletePlan(planNum);  // 생산 계획 삭제
-            model.addAttribute("successMessage", "생산 계획이 성공적으로 삭제되었습니다.");
+            // 기존 데이터를 업데이트 하는 메서드로 변경해야 함
+            productionPlanService.updatePlan(productionPlanDTO);  // DB에서 수정
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "삭제 중 오류가 발생했습니다.");
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-
-        // 페이지네이션 처리
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(pageable);
-
-        model.addAttribute("productionPlanList", productionPlanPage.getContent()); // 생산 계획 목록
-        model.addAttribute("currentPage", productionPlanPage.getNumber());  // 현재 페이지
-        model.addAttribute("totalPages", productionPlanPage.getTotalPages());  // 총 페이지 수
-        model.addAttribute("totalItems", productionPlanPage.getTotalElements()); // 전체 아이템 수
-
-        // 삭제 후 페이지네이션을 포함하여 리다이렉트
-        return "redirect:/productionPlan/view?page=" + page + "&size=" + size;
-
     }
 
+    @PostMapping("/delete")
+    public ResponseEntity<Map<String, Object>> deletePlan(@RequestBody Map<String, String> request) {
+        String productPlanCode = request.get("productPlanCode");
+
+        try {
+            productionPlanService.deletePlan(productPlanCode);  // DB에서 삭제
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
     // 생산 계획 검색
     @PostMapping("/search")
     public String searchPlans(

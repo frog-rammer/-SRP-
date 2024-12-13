@@ -408,7 +408,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         const planTableBody = document.getElementById("planTableBody");
     });
-    // 수정 버튼 클릭 시 수정모드로 전환
+    // 수정 버튼 클릭 시
     const editBtns = document.querySelectorAll('.editBtn');
     editBtns.forEach(editBtn => {
         editBtn.addEventListener('click', function () {
@@ -416,7 +416,7 @@
             const saveBtn = row.querySelector('.saveBtn');
             const editInputs = row.querySelectorAll('.edit-input');
 
-            // 입력 필드 보이기, 기존 텍스트 숨기기
+            // 기존 텍스트 숨기고, 입력 필드 보이기
             editInputs.forEach(input => {
                 input.style.display = 'inline-block';
                 const sibling = input.previousElementSibling;
@@ -429,24 +429,26 @@
         });
     });
 
-    // 저장 버튼 클릭 시 저장 여부 확인
+    // 저장 버튼 클릭 시
     const saveBtns = document.querySelectorAll('.saveBtn');
     saveBtns.forEach(saveBtn => {
         saveBtn.addEventListener('click', function () {
             const row = saveBtn.closest('tr');
+            const productPlanCode = row.querySelector('td:nth-child(3)').innerText;  // 생산계획번호
             const startDate = row.querySelector('input[name="planStartDate"]').value;
             const endDate = row.querySelector('input[name="planEndDate"]').value;
             const quantity = row.querySelector('input[name="quantity"]').value;
 
-            const confirmSave = confirm('저장하시겠습니까?');
+            const confirmSave = confirm('수정 내용을 저장하시겠습니까?');
             if (confirmSave) {
-                // 서버로 데이터를 보내는 로직 추가 (예시로 fetch 사용)
-                fetch('/productionPlan/save', {
+                // Ajax 요청으로 서버에 수정된 데이터 전송
+                fetch('/productionPlan/update', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
+                        productPlanCode: productPlanCode,
                         planStartDate: startDate,
                         planEndDate: endDate,
                         quantity: quantity
@@ -454,36 +456,69 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        alert('저장되었습니다!');
-                        // 저장 후 수정 필드 숨기기 및 텍스트 다시 보이게
-                        const editInputs = row.querySelectorAll('.edit-input');
-                        editInputs.forEach(input => {
-                            input.style.display = 'none';  // input 숨기기
-                            const sibling = input.previousElementSibling;
-                            if (sibling) sibling.style.display = 'inline-block';  // 텍스트로 표시
-                        });
+                        if (data.success) {
+                            // 수정된 값으로 화면 업데이트
+                            row.querySelector('.planStartDateText').innerText = startDate;
+                            row.querySelector('.planEndDateText').innerText = endDate;
+                            row.querySelector('.quantityText').innerText = quantity;
 
-                        // 저장 버튼 숨기기, 수정 버튼 보이기
-                        saveBtn.style.display = 'none';
-                        row.querySelector('.editBtn').style.display = 'inline-block';
+                            // 수정 필드 숨기고, 텍스트 보이기
+                            const editInputs = row.querySelectorAll('.edit-input');
+                            editInputs.forEach(input => {
+                                input.style.display = 'none';
+                                const sibling = input.previousElementSibling;
+                                if (sibling) sibling.style.display = 'inline-block';
+                            });
+
+                            // 수정 버튼 보이기, 저장 버튼 숨기기
+                            saveBtn.style.display = 'none';
+                            row.querySelector('.editBtn').style.display = 'inline-block';
+                            alert('수정되었습니다.');
+                        } else {
+                            alert('수정에 실패했습니다. 다시 시도해 주세요.');
+                        }
                     })
                     .catch(error => {
-                        console.error('저장 중 오류 발생:', error);
-                        alert('저장에 실패했습니다. 다시 시도해 주세요.');
+                        console.error('수정 중 오류 발생:', error);
+                        alert('수정에 실패했습니다. 다시 시도해 주세요.');
                     });
             }
         });
     });
-    // 삭제 버튼 클릭 시 삭제 여부 확인
+
+    // 삭제 버튼 클릭 시
     const deleteBtns = document.querySelectorAll('.deleteBtn');
     deleteBtns.forEach(deleteBtn => {
         deleteBtn.addEventListener('click', function () {
             const row = deleteBtn.closest('tr');
-            const confirmDelete = confirm('정말로 삭제하시겠습니까?');
+            const productPlanCode = row.querySelector('td:nth-child(3)').innerText;  // 생산계획번호
 
+            const confirmDelete = confirm('정말로 삭제하시겠습니까?');
             if (confirmDelete) {
-                row.remove();  // 해당 행 삭제
-                alert('삭제되었습니다');
+                // Ajax 요청으로 서버에 삭제 요청
+                fetch('/productionPlan/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productPlanCode: productPlanCode })  // 삭제할 생산계획번호 전달
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // 삭제된 항목을 테이블에서 제거
+                            row.remove();
+                            alert('삭제되었습니다.');
+                            // 페이지를 새로 고침하여 최신 목록을 가져옴
+                            location.reload();
+                        } else {
+                            alert('삭제에 실패했습니다. 다시 시도해 주세요.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('삭제 중 오류 발생:', error);
+                        alert('삭제에 실패했습니다. 다시 시도해 주세요.');
+                    });
             }
         });
     });
