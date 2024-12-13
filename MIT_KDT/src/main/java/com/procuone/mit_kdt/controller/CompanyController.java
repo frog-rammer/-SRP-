@@ -3,6 +3,7 @@ package com.procuone.mit_kdt.controller;
 import com.procuone.mit_kdt.dto.*;
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
+import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,18 @@ public class CompanyController {
         return "contractListForm"; // 계약 목록 페이지
     }
 
+    @GetMapping("/contract/contractForm/{id}")
+    public String getContractForm(@PathVariable("id") Long contractId, Model model) {
+        ContractDTO contract = contractService.getContractById(contractId);
+
+        ContractDTO contractDTO = contractService.getContractById(contractId);
+        CompanyDTO companyDTO =companyService.getCompanyDetails(contractDTO.getBusinessId());
+
+        model.addAttribute("contract", contract);
+        model.addAttribute("company", companyDTO);
+        return "contractForm";
+    }
+
     // 업체 재고 관리 페이지
     @GetMapping("/companyInventory")
     public String companyInventory(Model model, HttpSession session) {
@@ -64,14 +77,6 @@ public class CompanyController {
         model.addAttribute("items", items);
         model.addAttribute("inventory", new CompanyInventoryDTO());
         return "companyInventory"; // 템플릿 이름
-    }
-
-    // 계약 상세 보기
-    @GetMapping("/contract/contractForm/{id}")
-    public String viewContractForm(@PathVariable Long id, Model model) {
-        ContractDTO contract = contractService.getContractById(id);
-        model.addAttribute("contract", contract);
-        return "contractForm";
     }
 
     // 업체 상세 정보 보기
@@ -130,7 +135,7 @@ public class CompanyController {
     }
 
     // 업체가 제품 등록하는 페이지
-    @GetMapping("/supplierRregisterProduct")
+    @GetMapping("/supplierRegisterProduct")
     public String supplierRegisterProduct(Model model, HttpSession session) {
         String businessId = getBusinessIdFromSession(session);
         if (businessId == null) return "redirect:/login";
@@ -142,7 +147,7 @@ public class CompanyController {
         model.addAttribute("categories", leafCategories);
         model.addAttribute("items", items);
         model.addAttribute("businessId", businessId);
-        return "supplier/supplierRregisterProduct";
+        return "supplier/supplierRegisterProduct";
     }
 
     // 재고 저장

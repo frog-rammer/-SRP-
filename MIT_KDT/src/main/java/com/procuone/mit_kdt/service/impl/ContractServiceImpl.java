@@ -95,6 +95,7 @@ public class ContractServiceImpl implements ContractService {
                 .leadTime(contract.getLeadTime())
                 .supplyUnit(contract.getSupplyUnit())
                 .contractDate(contract.getContractDate())
+                .contractEndDate(contract.getContractEndDate())
                 .productionQty(contract.getProductionQty())
                 .contractStatus(contract.getContractStatus())
                 .build();
@@ -112,6 +113,7 @@ public class ContractServiceImpl implements ContractService {
                 .leadTime(contractDTO.getLeadTime())
                 .supplyUnit(contractDTO.getSupplyUnit())
                 .contractDate(contractDTO.getContractDate())
+                .contractEndDate(contractDTO.getContractEndDate())
                 .contractStatus(contractDTO.isContractStatus())
                 .productionQty(contractDTO.getProductionQty())
                 .build();

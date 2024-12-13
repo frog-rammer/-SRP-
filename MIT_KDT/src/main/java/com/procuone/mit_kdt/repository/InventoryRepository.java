@@ -39,4 +39,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("UPDATE Inventory i SET i.currentQuantity = i.currentQuantity + :quantity WHERE i.itemName = :itemName")
     void addToInventory(@Param("itemName") String itemName, @Param("quantity") Long quantity);
 
+
+
 }

@@ -17,7 +17,6 @@ public interface ProductionPlanService{
     // 검색 메서드
     Page<ProductionPlanDTO> searchPlans(String searchType, String searchKeyword, String startDate, String endDate, Pageable pageable);
 
-
     // 추가적인 검색 메서드 (제품명 및 기간 기반)
     Page<ProductionPlanDTO> searchProductionPlans(String productName, LocalDate startDate, LocalDate endDate, Pageable pageable);
 }

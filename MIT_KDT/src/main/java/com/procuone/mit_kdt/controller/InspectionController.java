@@ -40,6 +40,7 @@ public class InspectionController {
         return "materialReceipt/inspectionStatus";
     }
 
+
     @PostMapping("/save")
     public String saveInspection(@RequestParam String inspectionCode , @RequestParam(required = false) Long defectiveQuantity) {
         InspectionDTO inspectionDTO = inspectionService.getInspectionById(inspectionCode);
@@ -53,6 +54,7 @@ public class InspectionController {
         inspectionService.processInspection(inspectionDTO);
         return "redirect:/inspection/status";
     }
+
 
     @GetMapping("/invoice/{inspectionId}")
     public String viewInvoice(@PathVariable String inspectionId, Model model) {
