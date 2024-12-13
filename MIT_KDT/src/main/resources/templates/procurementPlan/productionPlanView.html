@@ -144,7 +144,34 @@
         .pagination a:hover {
             background-color: #1f6658;
         }
+        /* 수정, 삭제 버튼 스타일 */
+        button.editBtn, button.deleteBtn {
+            padding: 8px 12px;
+            font-size: 14px;
+            background-color: #32928E; /* 요청하신 색상 */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px; /* 버튼 간 간격 */
+        }
 
+        /* 수정 버튼 hover 효과 */
+        button.editBtn:hover {
+            background-color: #287a72; /* hover 시 색상 */
+        }
+
+        /* 삭제 버튼 hover 효과 */
+        button.deleteBtn:hover {
+            background-color: #267f6d; /* hover 시 색상 */
+        }
+
+        /* 수정, 삭제 버튼 비활성화 시 스타일 */
+        button[disabled] {
+            background-color: #d3d3d3;
+            cursor: not-allowed;
+        }
 
     </style>
 </head>
@@ -220,6 +247,7 @@
                                 <th>생산제품명</th>
                                 <th>생산제품코드</th>
                                 <th>생산수량</th>
+                                <th>작업</th>
                             </tr>
                             </thead>
                             <tbody id="planTableBody">
