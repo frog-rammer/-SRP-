@@ -30,8 +30,8 @@
 
         /* 모달 스타일 */
         .modal {
-            position: fixed;
-            z-index: 1;
+            position: absolute;
+            z-index: 9999;
             left: 0;
             top: 10%; /* 화면의 상단에서 10% 떨어진 위치 */
             width: 100%;
@@ -39,6 +39,10 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.4); /* 배경 어두운 색 */
             text-align: center;
+        }
+        .layout-sidebar {
+            z-index: 1; /* 사이드 바의 z-index를 상대적으로 낮게 설정하여 모달 아래에 배치 */
+            position: relative; /* 사이드 바가 모달과 겹치지 않도록 상대적인 위치 설정 */
         }
 
         .modal-content {
@@ -84,7 +88,6 @@
             margin: 0 auto;
             word-wrap: break-word; /* 내용이 길어질 때 줄바꿈 */
         }
-
         .contract-details h2 {
             font-size: 20px;
             margin-bottom: 15px;
@@ -289,7 +292,7 @@
             <tbody>
             <tr th:each="contract : ${contracts}">
                 <td th:text="${contract.id}"></td>
-                <input hidden name="id" th:value="${contract.id}">
+<!--                <input hidden name="id" th:value="${contract.id}">-->
                 <td th:text="${contract.comName}"></td>
                 <td th:text="${contract.itemName}"></td>
                 <td th:text="${#dates.format(contract.contractDate, 'yyyy-MM-dd')}"></td>
@@ -340,13 +343,13 @@
                 // 동적으로 모달 생성 (인쇄 버튼은 contractForm 페이지 내에 있음)
                 const modalContainer = document.getElementById('modal-container');
                 const modalHTML = `
-                <div id="contractModal_${contractId}" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal(${contractId})">&times;</span>
-                        <div id="contractDetails_${contractId}" class="contract-details">${data}</div>
-                    </div>
+            <div id="contractModal_${contractId}" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal(${contractId})">&times;</span>
+                    <div id="contractDetails_${contractId}" class="contract-details">${data}</div>
                 </div>
-            `;
+            </div>
+        `;
                 modalContainer.innerHTML = modalHTML;  // 모달 HTML 삽입
                 document.getElementById(`contractModal_${contractId}`).style.display = "block";
                 document.body.style.overflow = 'hidden'; // 모달 띄우기 시 페이지 스크롤 비활성화
@@ -386,6 +389,7 @@
             closeModal(contractId);
         }
     });
+
 
     // 페이지 새로고침 시 모달 초기화 (모달을 닫는 코드 추가)
     window.onload = function() {

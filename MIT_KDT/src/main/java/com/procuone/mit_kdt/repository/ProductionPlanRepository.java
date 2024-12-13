@@ -42,4 +42,8 @@ public interface ProductionPlanRepository extends JpaRepository<ProductionPlan, 
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             Pageable pageable);
+
+    // productPlanCode로 생산계획 조회
+    ProductionPlan findByProductPlanCode(String productPlanCode);
+
 }
