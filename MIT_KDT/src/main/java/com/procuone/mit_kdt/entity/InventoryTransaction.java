@@ -27,12 +27,17 @@ public class InventoryTransaction {
     )
     private String transactionCode;
 
+    @Column(nullable = false)
+    private String procurementCode;
     @ManyToOne
     @JoinColumn(name = "inventory_id", nullable = false)
     private Inventory inventory;
 
     @Column(unique = true,nullable = false)
     private String productCode;
+
+    @Column(nullable = false)
+    private String businessId;
 
     @Column(name = "transaction_type", nullable = false)
     private String transactionType; // "입고", "출고", "불량품"
