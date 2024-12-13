@@ -104,7 +104,6 @@ public class MaterialIssueController {
         model.addAttribute("totalCompletedItems", completedShipments.getTotalElements());
         return "materialIssue/shipmentConfirmation";
     }
-
     @PostMapping("/confirmReceipt")
     public String confirmReceipt(
             @RequestParam(value = "selectedShipments", required = false) List<String> shipmentIds,

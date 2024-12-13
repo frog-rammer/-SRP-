@@ -13,6 +13,8 @@ import com.procuone.mit_kdt.repository.PurchaseOrderRepository;
 import com.procuone.mit_kdt.service.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -97,6 +99,11 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
     @Override
     public List<DeliveryOrder> findCompletedOrders() {
         return deliveryOrderRepository.findByStatus("완료");
+    }
+
+    @Override
+    public Page<DeliveryOrderDTO> findbystatus(String status, Pageable pageable) {
+        return null;
     }
 
     /**
