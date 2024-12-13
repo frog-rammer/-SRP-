@@ -86,17 +86,14 @@
     <header class="layout-header">
         <div th:replace="partials/procuOneHeader :: header"></div>
     </header>
-
     <!-- 사이드바-->
     <aside class="layout-sidebar">
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
-
     <!-- 본문 -->
     <main class="layout-main">
         <div class="container">
             <h2>연도-월-일 범위 내 재고 현황</h2>
-
             <!-- 날짜 범위 선택 -->
             <div class="form-container">
                 <input type="date" id="startDate">
@@ -104,7 +101,6 @@
                 <input type="date" id="endDate">
                 <button onclick="filterStock()" class="btn">조회</button>
             </div>
-
             <!-- 재고 현황 테이블 -->
             <table>
                 <thead>

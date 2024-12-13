@@ -15,15 +15,12 @@ import java.util.List;
 @Controller
 @RequestMapping("/addresses")
 public class AddressController {
-
     @Autowired
     private AddressRepository addressRepository;
-
     @GetMapping("/address")
     public String address() {
         return "address"; // address.html
     }
-
     @GetMapping("/search")
     public String searchAddresses(@RequestParam String query, Model model) {
         List<Address> results = new ArrayList<>();
