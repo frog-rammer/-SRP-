@@ -78,7 +78,11 @@
       <label for="itemCount">등록할 물품 개수: </label>
       <input type="number" id="itemCount" min="1" placeholder="예: 3">
       <button class="btn" onclick="generateRows()">생성</button>
-      <button class="btn" onclick="uploadExcel()">엑셀로 등록하기</button>
+      <!-- 엑셀 업로드 -->
+      <div>
+        <button type="button" class="btn" onclick="document.getElementById('excelFile').click()">엑셀로 등록하기</button>
+        <input type="file" id="excelFile" style="display: none;" onchange="uploadExcel()" accept=".xlsx,.xls">
+      </div>
     </section>
 
     <!-- 동적 행을 추가하는 테이블 -->
@@ -245,7 +249,26 @@
 
   // 엑셀로 등록하기
   function uploadExcel() {
-    alert("엑셀 업로드 기능 구현 예정!");
+    const fileInput = document.getElementById('excelFile');
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    fetch("/company/uploadExcel", {
+      method: 'POST',
+      body: formData
+    })
+            .then(response => {
+              if (response.ok) {
+                alert('엑셀 파일이 성공적으로 업로드되었습니다.');
+                location.reload();
+              } else {
+                alert('엑셀 업로드에 실패했습니다.');
+              }
+            })
+            .catch(error => {
+              console.error('Error uploading Excel file:', error);
+              alert('업로드 중 오류가 발생했습니다.');
+            });
   }
 </script>
 

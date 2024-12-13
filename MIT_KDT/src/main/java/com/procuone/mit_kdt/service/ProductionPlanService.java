@@ -4,6 +4,7 @@ import com.procuone.mit_kdt.dto.ProductionPlanDTO;
 import com.procuone.mit_kdt.entity.ProductionPlan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface ProductionPlanService{
     public abstract Page<ProductionPlanDTO> getAllPlans(Pageable pageable);
     // 검색 메서드
     Page<ProductionPlanDTO> searchPlans(String searchType, String searchKeyword, String startDate, String endDate, Pageable pageable);
+    // 엑셀 파일 처리 메서드
+    void processExcelFile(MultipartFile file) throws Exception;
 }

@@ -3,6 +3,7 @@ package com.procuone.mit_kdt.service;
 import com.procuone.mit_kdt.dto.CompanyItemDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.entity.CompanyItem;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,4 +28,6 @@ public interface CompanyItemService {
     void update(CompanyItem companyItem);
 
     List<ItemDTO> getItemsByBusinessId(String businessId);
+
+    void processExcelFile(MultipartFile file) throws Exception;
 }

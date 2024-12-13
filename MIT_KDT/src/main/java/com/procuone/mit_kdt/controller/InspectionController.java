@@ -41,8 +41,12 @@ public class InspectionController {
     }
 
     @PostMapping("/save")
-    public String saveInspection(@RequestParam String inspectionCode , @RequestParam Long defectiveQuantity) {
+    public String saveInspection(@RequestParam String inspectionCode , @RequestParam(required = false) Long defectiveQuantity) {
         InspectionDTO inspectionDTO = inspectionService.getInspectionById(inspectionCode);
+        // defectiveQuantity가 null이면 0으로 설정
+        if (defectiveQuantity == null) {
+            defectiveQuantity = 0L; // 기본값 0으로 설정
+        }
         inspectionDTO.setDefectiveQuantity(defectiveQuantity);
         System.out.println("Received DTO: " + inspectionDTO);
         inspectionService.saveInspection(inspectionDTO);
