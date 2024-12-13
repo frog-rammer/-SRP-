@@ -148,7 +148,8 @@
                     <li><a href="/inspection/status" class="sideNav-link">입고검수현황</a></li>
                     <li><a href="/materialIssue/stockOut" class="sideNav-link">자재출고관리</a></li>
                     <li><a href="/materialReceipt/stockIn" class="sideNav-link">자재입고관리</a></li>
-<!--                    <li><a href="/materialIssue/stock" class="sideNav-link">재고(산출)</a></li>-->
+                    <li><a href="/materialReceipt/m" class="sideNav-link">재고금액관리</a></li>
+                    <li><a href="/materialIssue/stock" class="sideNav-link">재고(산출)</a></li>
                 </ul>
             </li>
             <li th:if="${session.userType == '협력업체' || session.userType == '관리자' }">
