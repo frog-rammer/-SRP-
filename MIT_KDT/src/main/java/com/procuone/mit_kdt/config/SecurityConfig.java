@@ -2,6 +2,7 @@ package com.procuone.mit_kdt.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +21,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST, "/productionPlan/uploadExcel").permitAll()
                         .anyRequest().permitAll() // 모든 요청 허용
                 )
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화 (개발 중에만 사용)
@@ -33,7 +35,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("http://your-frontend-domain.com"); // 허용할 도메인
+        configuration.addAllowedOrigin("http://localhost:9010"); // 허용할 도메인
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
 

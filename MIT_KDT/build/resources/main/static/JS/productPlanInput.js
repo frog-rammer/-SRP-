@@ -111,3 +111,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // 초기 달력 렌더링
     renderCalendar(yearSelect.value, monthSelect.value);
 });
+
+function uploadExcel() {
+    const fileInput = document.getElementById('excelFile');
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    fetch("/productionPlan/uploadExcel", {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('엑셀 파일이 성공적으로 업로드되었습니다.');
+                location.reload();
+            } else {
+                alert('엑셀 업로드에 실패했습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading Excel file:', error);
+            alert('업로드 중 오류가 발생했습니다.');
+        });
+}
