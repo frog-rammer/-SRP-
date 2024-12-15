@@ -104,11 +104,15 @@ public class MaterialIssueController {
         model.addAttribute("totalCompletedItems", completedShipments.getTotalElements());
         return "materialIssue/shipmentConfirmation";
     }
+
     @PostMapping("/confirmReceipt")
     public String confirmReceipt(
             @RequestParam(value = "selectedShipments", required = false) List<String> shipmentIds,
             RedirectAttributes redirectAttributes
     ) {
+
+
+
         // 선택된 출고번호를 처리
         if (shipmentIds != null && !shipmentIds.isEmpty()) {
             materialIssueService.confirmReceipt(shipmentIds); // 수령 확인 처리

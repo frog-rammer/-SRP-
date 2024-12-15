@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface InventoryRepository extends JpaRepository<Inventory, Long> {
+public interface InventoryRepository extends JpaRepository<Inventory, String> {
 
     /**
      * 특정 Item ID에 대한 현재 재고 수량을 가져오기
@@ -32,13 +32,5 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     Optional<Inventory> findByItemId(Long itemId);
 
     Optional<Inventory> findByItem_ProductCode(String productCode);
-
-    // 수량을 추가하는 쿼리
-    @Transactional
-    @Modifying
-    @Query("UPDATE Inventory i SET i.currentQuantity = i.currentQuantity + :quantity WHERE i.itemName = :itemName")
-    void addToInventory(@Param("itemName") String itemName, @Param("quantity") Long quantity);
-
-
 
 }

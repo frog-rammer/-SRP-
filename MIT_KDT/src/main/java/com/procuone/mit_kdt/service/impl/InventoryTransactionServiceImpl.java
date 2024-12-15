@@ -27,7 +27,7 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
      */
     @Override
     public InventoryTransactionDTO createTransaction(InventoryTransactionDTO dto) {
-        Inventory inventory = inventoryRepository.findById(dto.getInventoryId())
+        Inventory inventory = inventoryRepository.findById(dto.getInventoryCode())
                 .orElseThrow(() -> new IllegalArgumentException("Inventory not found"));
 
         InventoryTransaction entity = toEntity(dto, inventory);
@@ -68,8 +68,8 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
 
         // inventory 갱신 로직 (DTO에 inventoryId가 있을 경우)
         Inventory inventory = null;
-        if (dto.getInventoryId() != null) {
-            inventory = inventoryRepository.findById(dto.getInventoryId())
+        if (dto.getInventoryCode() != null) {
+            inventory = inventoryRepository.findById(dto.getInventoryCode())
                     .orElseThrow(() -> new IllegalArgumentException("Inventory not found"));
         }
 
@@ -103,8 +103,8 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
                 .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
 
         Inventory inventory = null;
-        if (dto.getInventoryId() != null) {
-            inventory = inventoryRepository.findById(dto.getInventoryId())
+        if (dto.getInventoryCode() != null) {
+            inventory = inventoryRepository.findById(dto.getInventoryCode())
                     .orElseThrow(() -> new IllegalArgumentException("Inventory not found"));
         }
 
@@ -150,6 +150,7 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
 
         return InventoryTransaction.builder()
                 .transactionCode(dto.getTransactionCode())
+                .procurementCode(dto.getProcurementCode())
                 .inventory(inventory)
                 .productCode(dto.getProductCode())
                 .businessId(dto.getBusinessId())
@@ -176,6 +177,7 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
 
         InventoryTransactionDTO.InventoryTransactionDTOBuilder builder = InventoryTransactionDTO.builder()
                 .transactionCode(entity.getTransactionCode())
+                .procurementCode(entity.getProcurementCode())
                 .productCode(entity.getProductCode())
                 .transactionType(entity.getTransactionType())
                 .businessId(entity.getBusinessId())
@@ -185,7 +187,7 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
                 .relatedOrderCode(entity.getRelatedOrderCode());
 
         if (entity.getInventory() != null) {
-            builder.inventoryId(entity.getInventory().getId());
+            builder.inventoryCode(entity.getInventory().getInventoryCode());
         }
 
         return builder.build();

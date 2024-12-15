@@ -2,12 +2,16 @@ package com.procuone.mit_kdt.service.impl;
 
 import com.procuone.mit_kdt.dto.ContractDTO;
 import com.procuone.mit_kdt.dto.InspectionDTO;
+import com.procuone.mit_kdt.dto.InventoryDTO;
 import com.procuone.mit_kdt.entity.*;
 import com.procuone.mit_kdt.repository.*;
 import com.procuone.mit_kdt.service.InspectionService;
+import com.procuone.mit_kdt.service.InventoryService;
+import com.procuone.mit_kdt.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +24,11 @@ public class InspectionServiceImpl implements InspectionService {
     private final InspectionRepository inspectionRepository;
 
     @Autowired
-    private final InventoryRepository inventoryRepository;
+    private ItemService itemService;
+
+    @Autowired
+    private InventoryService inventoryService;
+
     @Autowired
     private final DeliveryOrderRepository deliveryOrderRepository;
 
@@ -71,6 +79,7 @@ public class InspectionServiceImpl implements InspectionService {
     }
 
     @Override
+    @Transactional
     public void processInspection(InspectionDTO inspectionDTO) {
         // Inspection 데이터 조회
         Inspection inspection = inspectionRepository.findById(inspectionDTO.getInspectionCode())
@@ -82,14 +91,20 @@ public class InspectionServiceImpl implements InspectionService {
         inspection.setInspectionStatus(defectiveQuantity > 0 ? "검수완료(불량)" : "검수완료");
 
         // 재고 처리
-        if (defectiveQuantity == 0) {
-            // 불량 수량이 없는 경우 전체 수량 추가
-            inventoryRepository.addToInventory(inspection.getProductName(), inspection.getQuantity());
-        } else {
-            // 불량 수량 제외 후 재고에 추가
-            inventoryRepository.addToInventory(inspection.getProductName(), inspection.getQuantity() - defectiveQuantity);
+        Long Itemid = itemService.getItemIdByProductCode(inspectionDTO.getProductCode());
+        InventoryDTO inventoryDTO = InventoryDTO.builder()
+                .itemId(Itemid) // 제품 코드 (Item ID)
+                .itemName(inspection.getProductName()) // 제품 이름
+                .currentQuantity(Math.toIntExact(inspection.getQuantity() - defectiveQuantity)) // 추가할 수량 (불량 제외)
+                .reservedQuantity(0) // 예약된 수량 (기본값 0)
+                .minimumRequired(0) // 최소 유지 수량 (기본값 0)
+                .coooperationCompanyInvertoryId(null) // 협력사 재고 위치 정보 (필요 시 설정)
+                .build();
 
-            // Defect 테이블에 불량 정보 저장
+        inventoryService.addToInventory(inventoryDTO);
+
+        // 불량 수량이 있는 경우 Defect 테이블에 저장
+        if (defectiveQuantity > 0) {
             Defect defect = Defect.builder()
                     .businessCode(inspection.getBusniessId()) // 비즈니스 코드
                     .defectiveQuantity(defectiveQuantity) // 불량 수량

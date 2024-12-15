@@ -12,8 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class InventoryDTO {
-
-    private Long id; // 재고 고유 ID
+    private String InventoryCode; //재고 코드
     private Long itemId; // Item 테이블의 ID
     private String itemName; // 아이템 이름
     private Integer currentQuantity; // 현재 재고 수량

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -21,8 +22,8 @@ public class InventoryTransaction {
             strategy = "com.procuone.mit_kdt.customidGenerator.CustomIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "prefix", value = "transaction_"),
-                    @org.hibernate.annotations.Parameter(name = "tableName", value = "inventoryTransaction"),
-                    @org.hibernate.annotations.Parameter(name = "columnName", value = "transaction_Code")
+                    @org.hibernate.annotations.Parameter(name = "tableName", value = "inventory_transaction"),
+                    @org.hibernate.annotations.Parameter(name = "columnName", value = "transaction_code")
             }
     )
     private String transactionCode;
@@ -30,7 +31,7 @@ public class InventoryTransaction {
     @Column(nullable = false)
     private String procurementCode;
     @ManyToOne
-    @JoinColumn(name = "inventory_id", nullable = false)
+    @JoinColumn(name = "inventory_code", nullable = false)
     private Inventory inventory;
 
     @Column(unique = true,nullable = false)
@@ -46,7 +47,7 @@ public class InventoryTransaction {
     private Long quantity;
 
     @Column(name = "transaction_date", nullable = false)
-    private LocalDateTime transactionDate;
+    private LocalDate transactionDate;
 
     @Column(name = "transaction_value")
     private Double transactionValue; // 입출고 금액 (선택적)

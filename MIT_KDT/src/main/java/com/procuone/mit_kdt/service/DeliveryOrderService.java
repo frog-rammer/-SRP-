@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface DeliveryOrderService {
     DeliveryOrderDTO registerDeliveryOrder(DeliveryOrderDTO deliveryOrderDTO); //납품 지시 테이블에 세이브
+    DeliveryOrderDTO getDeliveryOrder(DeliveryOrderDTO deliveryOrderDTO);
     void updateDeliveryStatus(); // "완료"로 상태 변경
     DeliveryOrderDTO convertEntityToDTO(DeliveryOrder deliveryOrder); // 엔티티 -> DTO 변환 메서드
     DeliveryOrder convertDTOToEntity(DeliveryOrderDTO dto, PurchaseOrder purchaseOrder); // DTO -> 엔티티
