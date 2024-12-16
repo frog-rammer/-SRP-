@@ -5,6 +5,7 @@ import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.entity.CompanyItem;
+import com.procuone.mit_kdt.repository.BOMRelationshipRepository;
 import com.procuone.mit_kdt.repository.CompanyItemRepository;
 import com.procuone.mit_kdt.repository.CompanyRepository;
 import com.procuone.mit_kdt.repository.ItemRepository;
@@ -20,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +38,52 @@ public class CompanyItemServiceImpl implements CompanyItemService {
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    private BOMRelationshipRepository bomRelationshipRepository;
+
+    @Override
+    public List<CompanyItem> findItemsByItemId(Long itemId) {
+        return companyItemRepository.findItemsByItemId(itemId);
+    }
+
+    @Override
+    public List<CompanyItemDTO> getAvailableCompanyItems(String parentProductCode) {
+        List<String> childProductCodes = bomRelationshipRepository.findChildProductCodesByParentCode(parentProductCode);
+        System.out.println("Child Product Codes: " + childProductCodes);
+
+        // child_product_code -> item_id 추출
+        List<Long> itemIds = childProductCodes.stream()
+                .map(productCode -> {
+                    Long id = itemRepository.findIdByProductCode(productCode);
+                    System.out.println("Product Code: " + productCode + ", Item ID: " + id);
+                    return id;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        System.out.println("Item IDs: " + itemIds);
+
+        // CompanyItem에서 계약 상태가 false인 데이터 조회
+        List<CompanyItem> companyItems = itemIds.stream()
+                .flatMap(itemId -> companyItemRepository.findByItemIdAndContractStatusFalse(itemId).stream())
+                .collect(Collectors.toList());
+        System.out.println("Company Items: " + companyItems.size());
+
+        return companyItems.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // 특정 카테고리 이름에 해당하며 계약 상태가 false인 업체 리스트
+    @Override
+    public List<CompanyItemDTO> getSuppliersByCategoryName(String categoryName) {
+        List<CompanyItem> companyItems = companyItemRepository.findByCategoryNameAndContractStatusFalse(categoryName);
+        System.out.println("Fetched Company Items: " + companyItems); // 결과 로그 추가
+        return companyItems.stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
+    }
+
     @Override
     public List<CompanyItemDTO> getSuppliersByItem(Long itemId) {
         List<CompanyItem> companyItems = companyItemRepository.findByItemId(itemId);
@@ -233,5 +277,18 @@ public class CompanyItemServiceImpl implements CompanyItemService {
             }
             default -> 0;
         };
+    }
+
+    // Entity -> DTO 변환 메서드
+    private CompanyItemDTO convertEntityToDTO(CompanyItem companyItem) {
+        return CompanyItemDTO.builder()
+                .businessId(companyItem.getCompany().getBusinessId())
+                .itemId(companyItem.getItem().getId())
+                .unitCost(companyItem.getUnitCost())
+                .leadTime(companyItem.getLeadTime())
+                .supplyUnit(companyItem.getSupplyUnit())
+                .productionQty(companyItem.getProductionQty())
+                .contractStatus(companyItem.getContractStatus())
+                .build();
     }
 }
