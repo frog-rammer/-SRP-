@@ -38,6 +38,8 @@ public interface InventoryTransactionService{
     // 주별 출고량 통계
     Map<String, Long> getWeeklyOutboundStatsByProductCode(String productCode);
 
+    //제품 코드에 해당하는 월별 입고 금액 통계를 반환
+    Map<String, Long> getMonthlyInboundPriceStatsByProductCode(String productCode);
 
     // 월별 거래 내역 집계 (입고량/출고량)
     Map<String, Long> getMonthlyTransactionStatsByProductCode(String productCode);

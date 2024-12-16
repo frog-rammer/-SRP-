@@ -160,6 +160,24 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
         return aggregateByWeek(transactions);
     }
 
+    @Override
+    public Map<String, Long> getMonthlyInboundPriceStatsByProductCode(String productCode) {
+        // '입고' 거래 유형의 데이터만 가져옵니다.
+        List<InventoryTransaction> transactions = inventoryTransactionRepository
+                .findByTransactionTypeAndProductCode("입고", productCode);
+
+        // 월별 입고 금액을 집계합니다.
+        Map<String, Long> monthlyPriceStats = new HashMap<>();
+        for (InventoryTransaction transaction : transactions) {
+            String month = transaction.getTransactionDate().getMonth().toString(); // 영문 월 이름 예: JANUARY
+            Double transactionValue = Optional.ofNullable(transaction.getTransactionValue()).orElse(0.0);
+            monthlyPriceStats.put(month, monthlyPriceStats.getOrDefault(month, 0L) + transactionValue.longValue());
+        }
+
+        return monthlyPriceStats;
+    }
+
+
     private Map<String, Long> aggregateByMonth(List<InventoryTransaction> transactions) {
         Map<String, Long> monthlyStats = new HashMap<>();
         for (InventoryTransaction transaction : transactions) {

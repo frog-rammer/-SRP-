@@ -50,6 +50,7 @@ public class MaterialIssueController {
 
         // 1. 완제품 리스트 가져오기
         List<ItemDTO> finishedProducts = itemService.getItemsByCategoryId(1L);
+        System.out.println("Step 1 - Finished Products: " + finishedProducts);
         model.addAttribute("finishedProducts", finishedProducts);
 
         // 2. 완제품 하위 부품 리스트 가져오기
@@ -63,6 +64,7 @@ public class MaterialIssueController {
                 childItemOpt.ifPresent(childItems::add);
             }
             finishedProductChildItems.put(product.getProductCode(), childItems);
+            System.out.println("Step 2 - Product: " + product.getProductCode() + ", Child Items: " + childItems);
         }
         model.addAttribute("finishedProductChildItems", finishedProductChildItems);
 
@@ -78,6 +80,7 @@ public class MaterialIssueController {
                 childStats.put("inbound", inboundStats);
                 childStats.put("outbound", outboundStats);
                 productStats.put(childItem.getProductCode(), childStats);
+                System.out.println("Step 3 - Monthly Stats for " + childItem.getProductCode() + " - Inbound: " + inboundStats + ", Outbound: " + outboundStats);
             }
             monthlyStats.put(product.getProductCode(), productStats);
         }
@@ -95,6 +98,7 @@ public class MaterialIssueController {
                 childStats.put("inbound", inboundStats);
                 childStats.put("outbound", outboundStats);
                 productStats.put(childItem.getProductCode(), childStats);
+                System.out.println("Step 4 - Weekly Stats for " + childItem.getProductCode() + " - Inbound: " + inboundStats + ", Outbound: " + outboundStats);
             }
             weeklyStats.put(product.getProductCode(), productStats);
         }
@@ -109,59 +113,56 @@ public class MaterialIssueController {
                 Double childCostStats = inventoryTransactionService
                         .getCostStatsByProductCode(childItem.getProductCode());
                 productCostStats.put(childItem.getProductCode(), childCostStats);
+                System.out.println("Step 5 - Cost Stats for " + childItem.getProductCode() + ": " + childCostStats);
             }
             costStats.put(product.getProductCode(), productCostStats);
         }
         model.addAttribute("costStats", costStats);
 
         // 6. 월별 목표 금액 설정
-        Map<Integer, Long> monthlyInboundValues = new HashMap<>(); // Long으로 변경 (소수점 제거)
-        Map<Integer, String> monthlyStatus = new HashMap<>();      // 목표 달성 여부
-        long monthlyTarget = 5000000L; // 예: 월별 목표 금액 (5백만 원) -> Long 타입
-
+        Map<Integer, Long> monthlyInboundValues = new HashMap<>();
+        Map<Integer, String> monthlyStatus = new HashMap<>();
+        long monthlyTarget = 5000000000L;
+        long totalInbound = 0L;
         for (int month = 1; month <= 12; month++) {
-            long totalInbound = 0L; // 초기값도 Long으로 설정
+            String monthKey = getMonthName(month); // 월 숫자를 영문 월 이름으로 변환
 
             for (ItemDTO product : finishedProducts) {
                 List<ItemDTO> childItems = finishedProductChildItems.get(product.getProductCode());
 
                 for (ItemDTO childItem : childItems) {
-                    // 월별 입고 금액 가져오기
-                    Map<String, Long> inboundStats = inventoryTransactionService.getMonthlyInboundStatsByProductCode(childItem.getProductCode());
-                    totalInbound += inboundStats.getOrDefault(String.valueOf(month), 0L);
+                    Map<String, Long> inboundStats = inventoryTransactionService.getMonthlyInboundPriceStatsByProductCode(childItem.getProductCode());
+                    // 영문 월 이름 키로 데이터 가져오기
+                    long inboundForMonth = inboundStats.getOrDefault(monthKey, 0L);
+                    System.out.println("ChildItem: " + childItem.getProductCode() + ", Month: " + monthKey + ", Inbound: " + inboundForMonth);
+
+                    totalInbound += inboundForMonth;
                 }
             }
 
-            // 월별 입고 금액 저장
             monthlyInboundValues.put(month, totalInbound);
+            monthlyStatus.put(month, totalInbound >= monthlyTarget ? "달성" : "미달");
 
-            // 목표 금액 이하 여부 확인
-            if (totalInbound <= monthlyTarget) {
-                monthlyStatus.put(month, "달성");
-            } else {
-                monthlyStatus.put(month, "미달");
-            }
+            System.out.println("Step 6 - Month: " + monthKey + ", Total Inbound: " + totalInbound + ", Status: " + monthlyStatus.get(month));
         }
-
-        // 모델에 추가
+        System.out.println("=============ㄴㅁ어ㅏㅁ로ㅑ매노려ㅑㅐㅁ노야ㅐㅁ노야ㅐ=======" + monthlyInboundValues);
         model.addAttribute("monthlyTarget", monthlyTarget);
         model.addAttribute("monthlyInboundValues", monthlyInboundValues);
         model.addAttribute("monthlyStatus", monthlyStatus);
-        System.out.println("Monthly Inbound Values: " + monthlyInboundValues);
-        System.out.println("Monthly Status: " + monthlyStatus);
-        System.out.println("Monthly Target: " + monthlyTarget);
 
-    // 7. 입고 상태 트랜잭션 가져오기
-    Page<InventoryTransactionDTO> inboundTransactions = inventoryTransactionService
-            .getPagedTransactionsByStatus("입고", pageable);
+        // 7. 입고 상태 트랜잭션 가져오기
+        Page<InventoryTransactionDTO> inboundTransactions = inventoryTransactionService
+                .getPagedTransactionsByStatus("입고", pageable);
+        System.out.println("Step 7 - Inbound Transactions: " + inboundTransactions.getContent());
         model.addAttribute("inboundTransactions", inboundTransactions.getContent());
 
-    // 8. 출고 상태 트랜잭션 가져오기
-    Page<InventoryTransactionDTO> outboundTransactions = inventoryTransactionService
-            .getPagedTransactionsByStatus("출고", pageable);
+        // 8. 출고 상태 트랜잭션 가져오기
+        Page<InventoryTransactionDTO> outboundTransactions = inventoryTransactionService
+                .getPagedTransactionsByStatus("출고", pageable);
+        System.out.println("Step 8 - Outbound Transactions: " + outboundTransactions.getContent());
         model.addAttribute("outboundTransactions", outboundTransactions.getContent());
 
-    // 9. 페이징 정보 추가
+        // 9. 페이징 정보 추가
         model.addAttribute("currentInboundPage", inboundTransactions.getNumber());
         model.addAttribute("totalInboundPages", inboundTransactions.getTotalPages());
         model.addAttribute("totalInboundItems", inboundTransactions.getTotalElements());
@@ -170,11 +171,18 @@ public class MaterialIssueController {
         model.addAttribute("totalOutboundPages", outboundTransactions.getTotalPages());
         model.addAttribute("totalOutboundItems", outboundTransactions.getTotalElements());
 
-
         return "materialIssue/stock";
     }
 
 
+    // 숫자 월을 영문 월 이름으로 변환하는 메서드
+    private String getMonthName(int month) {
+        String[] monthNames = {
+                "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+                "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+        };
+        return monthNames[month - 1];
+    }
 
 
     @GetMapping("/stockOut")

@@ -2,151 +2,161 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>자기 재고 입력</title>
+    <title>재고</title>
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
 </head>
 <style>
-  /* layout-main만 스타일 적용 */
-  .layout-main {
-    background-color: #f4f7fc;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    width: 100%;
-    max-width: 1300px;
-    margin: 20px auto; /* 가운데 정렬 */
-    box-sizing: border-box;
-  }
+    /* 메인 컨테이너 스타일 */
+    .layout-main {
+        background-color: #f4f7fc;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 1200px;
+        margin: 20px auto;
+        box-sizing: border-box;
+    }
 
-  .layout-main h1 {
-    font-size: 28px;
-    color: #333;
-    margin-bottom: 20px;
-    font-weight: 600;
-    text-align: center;
-  }
+    .layout-main h1 {
+        font-size: 28px;
+        color: #333;
+        margin-bottom: 20px;
+        font-weight: bold;
+        text-align: center;
 
-  .layout-main h2 {
-    margin-top: 50px;
-    font-size: 24px;
-    color: #2e3a59;
-    font-weight: 600;
-  }
+        padding-bottom: 10px;
+    }
 
-  /* 스타일링된 form 요소 */
-  .form-group {
-    margin-bottom: 20px;
-  }
+    .layout-main h2 {
+        margin-top: 40px;
+        font-size: 24px;
+        color: #2e3a59;
+        font-weight: 600;
+    }
 
-  label {
-    display: block;
-    font-size: 16px;
-    color: #555;
-    margin-bottom: 8px;
-  }
+    /* 폼 요소 스타일 */
+    .form-group {
+        margin-bottom: 20px;
+    }
 
-  select, input[type="number"] {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-    background-color: #fafafa;
-  }
+    label {
+        display: block;
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 8px;
+    }
 
-  select:focus, input[type="number"]:focus {
-    border-color: #32928e;
-    outline: none;
-  }
+    select, input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        color: #333;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+        background-color: #fafafa;
+    }
 
-  /* 저장, 취소 버튼 스타일 */
-  .form-actions button {
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-sizing: border-box;
+    select:focus, input[type="number"]:focus {
+        border-color: #32928E;
+        outline: none;
+    }
 
-  }
+    /* 버튼 스타일 */
+    .form-actions {
+        text-align: center;
+    }
 
-  .form-actions button[type="submit"] {
-    background-color: #32928E;
-    color: white;
-    border: none;
-  }
+    .form-actions button {
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 10px 5px;
+        transition: background-color 0.3s, transform 0.2s;
+        border: none;
+    }
 
-  .form-actions button[type="submit"]:hover {
-    background-color: #267f6c;
-    transform: translateY(-2px);
-  }
+    .form-actions button[type="submit"] {
+        background-color: #32928E;
+        color: white;
+    }
 
-  .form-actions button[type="button"] {
-    background-color: #32928E;
-    color: white;
-    border: none;
-  }
+    .form-actions button[type="submit"]:hover {
+        background-color: #267f6c;
+        transform: translateY(-2px);
+    }
 
-  .form-actions button[type="button"]:hover {
-    background-color: #267f6c;
-    transform: translateY(-2px);
-  }
-  .form-actions {
-    text-align: center;
-  }
+    .form-actions button[type="button"] {
+        background-color: #bdc3c7;
+        color: white;
+    }
 
+    .form-actions button[type="button"]:hover {
+        background-color: #95a5a6;
+        transform: translateY(-2px);
+    }
 
-  /* 테이블 스타일링 */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    overflow: hidden; /* 테이블 셀의 경계가 둥글게 나오도록 */
-  }
+    /* 테이블 스타일 */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+    }
 
-  table th, table td {
-    padding: 15px 20px;
-    text-align: left;
-    border: 1px solid #e0e0e0;
-    color: #555;
-    font-size: 14px;
-  }
+    table th, table td {
+        padding: 15px 20px;
+        text-align: left;
+        border: 1px solid #e0e0e0;
+        color: #555;
+        font-size: 14px;
+    }
 
-  table th {
-    background-color: #32928E;
-    color: white;
-    font-weight: bold;
-  }
+    table th {
+        background-color: #32928E;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+    }
 
-  table tr:nth-child(even) {
-    background-color: #f9f9f9; /* 짝수 행 배경색 */
-  }
+    table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
 
-  table tr:hover {
-    background-color: #f1f1f1; /* 마우스 오버 시 배경색 */
-  }
+    table tr:hover {
+        background-color: #f1f1f1;
+    }
 
-  table input[type="number"] {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #e0e0e0;
-    background-color: #fafafa;
-    border-radius: 6px;
-    color: #333;
-  }
+    table input[type="number"] {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        background-color: #e9ecef;
+    }
 
-  table input[type="number"] {
-    background-color: #e9ecef;
-  }
+    /* 스크롤 가능한 테이블 */
+    .table-container {
+        max-height: 400px;
+        overflow-y: auto;
+        margin-top: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #ffffff;
+    }
 
+    thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
 </style>
 <body>
 <div class="grid-container">
@@ -161,7 +171,7 @@
 
     <main class="layout-main">
         <div class="form-container">
-            <h1>자기 재고 입력 및 수정</h1>
+            <h1>재고 입력 및 수정</h1>
             <form th:action="@{/company/inventory/save}" th:object="${inventory}" method="post">
                 <div class="form-group">
                     <label for="itemId">품목</label>
@@ -188,7 +198,7 @@
             </form>
 
             <!-- 자기 재고 확인 및 수정 -->
-            <h2>자기 재고 확인</h2>
+            <h2>재고 리스트</h2>
             <form th:action="@{/company/inventory/update}" method="post">
                 <table border="1" cellpadding="5" cellspacing="0">
                     <thead>

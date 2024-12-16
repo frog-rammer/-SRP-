@@ -220,7 +220,10 @@
 
         <section>
             <!-- 토글 버튼 -->
-            <button type="button" class="btn" style="width: 80% ; margin-left: 10%" id="toggleMonthlySection">월별 입고 금액 보기</button>
+            <button type="button" class="btn" style="width: 80%; margin-left: 10%;" id="toggleMonthlySection">
+                월별 입고 금액 보기
+            </button>
+
             <!-- 월별 입고 금액 섹션 -->
             <div id="monthlySection" style="display: none;">
                 <h2>월별 입고 금액 및 목표 달성 여부</h2>
@@ -237,16 +240,13 @@
                     <tr th:each="month : ${#numbers.sequence(1, 12)}">
                         <!-- 월 표시 -->
                         <td th:text="${month} + '월'"></td>
-
-                        <!-- 입고 금액 (null이면 0 표시) -->
-                        <td th:text="${monthlyInboundValues[month] != null ? monthlyInboundValues[month] : 0} + ' 원'"></td>
-
-                        <!-- 목표 금액 (null이면 0 표시) -->
-                        <td th:text="${monthlyTarget != null ? monthlyTarget : 0} + ' 원'"></td>
-
-                        <!-- 달성 여부 (null이면 '미달') -->
-                        <td th:text="${monthlyStatus[month] != null ? monthlyStatus[month] : '미달'}"
-                            th:classappend="${monthlyStatus[month] == '달성'} ? 'achieved' : 'not-achieved'">
+                        <!-- 입고 금액 (Key를 문자열로 변환해서 가져오기) -->
+                        <td th:text="${monthlyInboundValues[__${month}__] != null ? #numbers.formatInteger(monthlyInboundValues[__${month}__], 1, 'COMMA') : 0} + ' 원'"></td>
+                        <!-- 목표 금액 -->
+                        <td th:text="${monthlyTarget != null ? #numbers.formatInteger(monthlyTarget, 1, 'COMMA') : 0} + ' 원'"></td>
+                        <!-- 달성 여부 -->
+                        <td th:text="${monthlyInboundValues[__${month}__] != null && monthlyInboundValues[__${month}__] >= monthlyTarget ? '달성' : '미달'}"
+                            th:classappend="${monthlyInboundValues[__${month}__] != null && monthlyInboundValues[__${month}__] >= monthlyTarget} ? 'achieved' : 'not-achieved'">
                         </td>
                     </tr>
                     </tbody>
@@ -329,168 +329,176 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Thymeleaf 데이터 전달 -->
 <script th:inline="javascript">
+    // Thymeleaf로 전달된 데이터 (서버 측에서 넘어오는 데이터)
     const finishedProductChildItems = /*[[${finishedProductChildItems}]]*/ {};
     const monthlyStats = /*[[${monthlyStats}]]*/ {};
     const weeklyStats = /*[[${weeklyStats}]]*/ {};
     const costStats = /*[[${costStats}]]*/ {};
-</script>
 
-<script>
+    console.log("finishedProductChildItems:", finishedProductChildItems);
+    console.log("monthlyStats:", monthlyStats);
+    console.log("weeklyStats:", weeklyStats);
+    console.log("costStats:", costStats);
+
     document.addEventListener("DOMContentLoaded", function () {
         const toggleButton = document.getElementById('toggleMonthlySection');
         const monthlySection = document.getElementById('monthlySection');
 
+        // 월별 섹션 토글
         toggleButton.addEventListener("click", function () {
-            // 토글 섹션의 상태를 변경
-            if (monthlySection.style.display === "none" || monthlySection.style.display === "") {
-                monthlySection.style.display = "block";
-                toggleButton.textContent = "월별 입고 금액 숨기기";
-            } else {
-                monthlySection.style.display = "none";
-                toggleButton.textContent = "월별 입고 금액 보기";
-            }
+            monthlySection.style.display = (monthlySection.style.display === "none" || monthlySection.style.display === "") ? "block" : "none";
+            toggleButton.textContent = monthlySection.style.display === "block" ? "월별 입고 금액 숨기기" : "월별 입고 금액 보기";
         });
     });
+
     document.addEventListener("DOMContentLoaded", () => {
         const ctx = document.getElementById('inventoryChart').getContext('2d');
         let inventoryChart;
 
         const initializeChart = (labels, datasets) => {
-        if (inventoryChart) inventoryChart.destroy();
+            if (inventoryChart) inventoryChart.destroy();
+            inventoryChart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            title: { display: true, text: '수량' },
+                            ticks: { callback: value => value.toLocaleString() }
+                        },
+                        y1: {
+                            position: 'right',
+                            title: { display: true, text: '금액 (단위: 천 원)' },
+                            grid: { drawOnChartArea: false },
+                            ticks: { callback: value => (value / 1000).toLocaleString() + 'K' }
+                        }
+                    }
+                }
+            });
+        };
 
-        inventoryChart = new Chart(ctx, {
-        type: 'bar',
-        data: {labels, datasets},
-        options: {
-        responsive: true,
-        scales: {
-        y: {
-        title: {display: true, text: '수량'},
-        ticks: {callback: value => value.toLocaleString()}
-    },
-        y1: {
-        position: 'right',
-        title: {display: true, text: '금액 (단위: 천 원)'},
-        grid: {drawOnChartArea: false},
-        ticks: {callback: value => (value / 1000).toLocaleString() + 'K'}
-    }
-    }
-    }
-    });
-    };
+        const getMonthName = (month) => [
+            "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+            "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+        ][month - 1];
+        // ISO 주차 번호 반환 함수
+        const updateWeeks = (selectedMonth) => {
+            const weekSelect = document.getElementById('weekSelect');
+            const currentYear = new Date().getFullYear();
+            weekSelect.innerHTML = '<option value="">전체</option>';
 
-        const updateWeeks = (month) => {
-        const weekSelect = document.getElementById('weekSelect');
-        weekSelect.disabled = !month;
+            // 누적 주차 계산에 서버 주차 오프셋 추가
+            const weeks = [];
+            let serverOffset = 1; // 서버 기준과 클라이언트 기준의 오프셋 조정값
+            const firstDay = new Date(currentYear, selectedMonth - 1, 1);
+            const lastDay = new Date(currentYear, selectedMonth, 0);
 
-        if (!month) return;
+            let currentDate = firstDay;
+            while (currentDate <= lastDay) {
+                const weekNumber = getISOWeekNumber(currentDate, serverOffset);
+                const startOfWeek = new Date(currentDate);
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(endOfWeek.getDate() + 6);
 
-        const weeks = getWeeksForMonth(month);
-        weekSelect.innerHTML = '<option value="">전체</option>';
-        weeks.forEach((week, index) => {
-        const option = document.createElement('option');
-        option.value = index + 1;
-        option.textContent = `${index + 1}주차 (${week.start} ~ ${week.end})`;
-        weekSelect.appendChild(option);
-    });
-    };
+                if (endOfWeek > lastDay) endOfWeek.setTime(lastDay.getTime());
 
-        const getWeeksForMonth = (month) => {
-        const year = new Date().getFullYear();
-        const firstDay = new Date(year, month - 1, 1);
-        const lastDay = new Date(year, month, 0);
+                weeks.push({
+                    label: `Week ${weekNumber}`,
+                    range: `${startOfWeek.toISOString().split('T')[0]} ~ ${endOfWeek.toISOString().split('T')[0]}`
+                });
+                currentDate.setDate(currentDate.getDate() + 7);
+            }
 
-        const weeks = [];
-        let currentDate = firstDay;
+            // 주차 데이터 셀렉트 박스 채우기
+            weeks.forEach(week => {
+                const option = document.createElement('option');
+                option.value = week.label;
+                option.textContent = `${week.label} (${week.range})`;
+                weekSelect.appendChild(option);
+            });
 
-        while (currentDate <= lastDay) {
-        const startOfWeek = new Date(currentDate);
-        currentDate.setDate(currentDate.getDate() + 6);
-        const endOfWeek = currentDate > lastDay ? lastDay : currentDate;
+            weekSelect.disabled = weeks.length === 0; // 데이터가 없으면 비활성화
+        };
 
-        weeks.push({
-        start: startOfWeek.toISOString().split('T')[0],
-        end: endOfWeek.toISOString().split('T')[0],
-    });
-        currentDate.setDate(currentDate.getDate() + 1);
-    }
-        return weeks;
-    };
+        const getISOWeekNumber = (date, offset = 0) => {
+            const target = new Date(date);
+            const dayNumber = (target.getDay() + 6) % 7;
+            target.setDate(target.getDate() - dayNumber + 3);
+            const firstThursday = new Date(target.getFullYear(), 0, 4);
+            firstThursday.setDate(firstThursday.getDate() - (firstThursday.getDay() + 6) % 7);
+            const weekNumber = Math.ceil(((target - firstThursday) / 86400000 + 1) / 7);
+            return weekNumber + offset; // 서버 기준과 맞추기 위해 오프셋 적용
+        };
+
 
         const filterData = (productCode, month, week, showCost) => {
-        if (!productCode) {
-        alert("완제품을 선택해주세요.");
-        return;
-    }
+            if (!productCode) return alert("완제품을 선택해주세요.");
 
-        const labels = [];
-        const inboundQuantities = [];
-        const outboundQuantities = [];
-        const totalCosts = [];
+            const labels = [];
+            const inboundQuantities = [];
+            const outboundQuantities = [];
+            const totalCosts = [];
 
-        const childItems = finishedProductChildItems[productCode] || [];
-        childItems.forEach(childItem => {
-        const childCode = childItem.productCode;
-        const stats = month
-        ? (weeklyStats[productCode]?.[childCode]?.[week] || {inbound: 0, outbound: 0})
-        : (monthlyStats[productCode]?.[childCode]?.[month] || {inbound: 0, outbound: 0});
-        const costs = costStats[productCode]?.[childCode] || 0;
+            const monthName = getMonthName(month);
+            const weekKey = week || null;
 
-        labels.push(childItem.itemName);
-        inboundQuantities.push(stats.inbound || 0);
-        outboundQuantities.push(stats.outbound || 0);
-        totalCosts.push(costs);
-    });
+            const childItems = finishedProductChildItems?.[productCode] || [];
+            childItems.forEach(childItem => {
+                const childCode = childItem.productCode;
+                const stats = weekKey
+                    ? (weeklyStats?.[productCode]?.[childCode]?.inbound?.[weekKey] || 0)
+                    : (monthlyStats?.[productCode]?.[childCode]?.inbound?.[monthName] || 0);
+                const costs = costStats?.[productCode]?.[childCode] || 0;
 
-        const datasets = [
-    {label: '입고량', data: inboundQuantities, backgroundColor: 'rgba(75, 192, 192, 0.7)'},
-    {label: '출고량', data: outboundQuantities, backgroundColor: 'rgba(192, 75, 75, 0.7)'}
-        ];
+                labels.push(childItem.itemName);
+                inboundQuantities.push(stats);
+                outboundQuantities.push(0);
+                totalCosts.push(costs);
+            });
 
-        if (showCost) {
-        datasets.push({
-        label: '총 금액',
-        data: totalCosts,
-        type: 'line',
-        yAxisID: 'y1',
-        borderColor: 'rgba(255, 165, 0, 1)',
-        borderWidth: 2
-    });
-    }
+            const datasets = [
+                { label: '입고량', data: inboundQuantities, backgroundColor: 'rgba(75, 192, 192, 0.7)' },
+                { label: '출고량', data: outboundQuantities, backgroundColor: 'rgba(192, 75, 75, 0.7)' }
+            ];
 
-        initializeChart(labels, datasets);
-    };
+            if (showCost) {
+                datasets.push({
+                    label: '총 금액',
+                    data: totalCosts,
+                    type: 'line',
+                    yAxisID: 'y1',
+                    borderColor: 'rgba(255, 165, 0, 1)',
+                    borderWidth: 2
+                });
+            }
+            initializeChart(labels, datasets);
+        };
 
-        // 초기 상태 설정
         const today = new Date();
         const currentMonth = today.getMonth() + 1;
         document.getElementById('monthSelect').value = currentMonth;
         updateWeeks(currentMonth);
 
-        // 전기자전거 A를 기본 선택
         const productSelect = document.getElementById('productSelect');
-        const defaultProductCode = "EBA-MDL-0001"; // 전기자전거 A의 productCode
+        const defaultProductCode = "EBA-MDL-0001";
         productSelect.value = defaultProductCode;
-
-        // 초기 차트 렌더링
         filterData(defaultProductCode, currentMonth, "", false);
 
-        // 필터 적용 버튼 이벤트
         document.getElementById('applyFilter').addEventListener('click', () => {
-        const productCode = productSelect.value;
-        const month = document.getElementById('monthSelect').value;
-        const week = document.getElementById('weekSelect').value;
-        const showCost = document.getElementById('toggleCost').checked;
+            const productCode = productSelect.value;
+            const month = document.getElementById('monthSelect').value;
+            const week = document.getElementById('weekSelect').value;
+            const showCost = document.getElementById('toggleCost').checked;
+            filterData(productCode, month, week, showCost);
+        });
 
-        filterData(productCode, month, week, showCost);
-    });
-
-        // 월 변경 시 주차 업데이트
-        document.getElementById('monthSelect').addEventListener('change', (e) => {
-        updateWeeks(e.target.value);
-    });
+        document.getElementById('monthSelect').addEventListener('change', (e) => updateWeeks(e.target.value));
     });
 </script>
+
+
+
 
 </body>
 </html>
