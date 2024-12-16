@@ -59,25 +59,20 @@ public class ContractController {
     public List<CompanyItemDTO> getSuppliersByItem(@RequestBody Map<String, String> requestBody) {
         String itemId = requestBody.get("itemId"); // JSON 본문에서 itemId 추출
         Optional<ItemDTO> itemDTO = itemService.findByProductCode(itemId);
-
         // 아이템이 없으면 빈 리스트 반환
         if (!itemDTO.isPresent()) {
             return new ArrayList<>();
         }
-
         // 품목 ID에 해당하는 모든 공급업체 목록을 가져옴 (CompanyItemDTO 형태로 반환됨)
         List<CompanyItemDTO> companyItemDTOs = companyItemService.getSuppliersByItem(itemDTO.get().getId());
-
         // contractStatus가 false인 항목만 필터링
         List<CompanyItemDTO> filteredCompanyItemDTOs = new ArrayList<>();
-
         // CompanyItemDTO에서 contractStatus가 false인 항목만 필터링
         for (CompanyItemDTO companyItemDTO : companyItemDTOs) {
             if (companyItemDTO.getContractStatus() == null || !companyItemDTO.getContractStatus()) {
                 filteredCompanyItemDTOs.add(companyItemDTO); // contractStatus가 false인 것만 추가
             }
         }
-
         return filteredCompanyItemDTOs;  // 필터링된 결과 반환
     }
 
@@ -102,11 +97,9 @@ public class ContractController {
         System.out.println("품목명: " + itemName);
         System.out.println("단가: " + unitCost);
         System.out.println("L/T: " + leadTime);
-
         // Company 및 Item 객체 조회
         Company company = companyService.getCompanyEntityByBusinessId(businessId);
         Item item = itemService.getItemEntityByProductCode(productCode);
-
         // Contract 엔티티 직접 생성 및 설정
         Contract contract = new Contract();
         contract.setCompany(company);          // 연관된 Company 객체 설정
@@ -123,11 +116,8 @@ public class ContractController {
         contract.setContractStatus(true);
         // Contract 저장
         contractService.saveContract(contract);
-
         // CompanyItem 상태 업데이트
         companyItemService.updateContractStatus(item.getId(),businessId,true);
-       
-
         return "redirect:/contract/register";
     }
 
@@ -135,20 +125,15 @@ public class ContractController {
     @GetMapping("/contractWithCompany/{businessId},{itemId}")
     public String contractWithCompany(@PathVariable String businessId,
                                       @PathVariable Long itemId,Model model) {
-
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++businessId: " + businessId);
-
         // businessId를 이용해서 업체 정보와 계약 정보를 DB에서 조회
         CompanyDTO companyDTO = companyService.getCompanyDetails(businessId);
-
         CompanyItemDTO companyItemDTO = companyItemService.getCompanyItemByBussinessIdAnditemId(businessId,itemId);
         Optional<ItemDTO> itemDTO = itemService.getItemById(companyItemDTO.getItemId());
-
         // 모델에 데이터를 추가하여 뷰로 전달
         model.addAttribute("companyDTO", companyDTO);
         model.addAttribute("companyItemDTO", companyItemDTO);
         model.addAttribute("itemDTO", itemDTO.get());
-
         return "procurementPlan/registerContract"; // 계약 등록 페이지로 이동
     }
 
@@ -160,8 +145,6 @@ public class ContractController {
         model.addAttribute("companyItems", companyItems);
         return "procurementPlan/compareContracts :: contractTable"; // 테이블 부분만 업데이트
     }
-
-
     // 계약된 회사 리스트 불러오기 (비동기 호출)
     @GetMapping("/{productCode}")
     @ResponseBody

@@ -16,11 +16,13 @@ public class MaterialReceiptController {
 
     @GetMapping("/stockIn")
     public String stockIn() {
-
-        
         return "materialReceipt/stockIn";
     }
 
+    @GetMapping("m")
+    public String m() {
+        return "materialReceipt/prodCosts";
+    }
 
 
 }

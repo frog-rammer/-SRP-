@@ -13,10 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping("/company")
 public class CompanyItemController {
-
     @Autowired
     private CompanyItemService companyItemService;
-
     @PostMapping("/uploadExcel")
     @ResponseBody
     public ResponseEntity<?> uploadExcel(@RequestParam("file") MultipartFile file) {

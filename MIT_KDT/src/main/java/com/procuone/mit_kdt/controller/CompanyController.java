@@ -78,7 +78,6 @@ public class CompanyController {
         model.addAttribute("inventory", new CompanyInventoryDTO());
         return "companyInventory"; // 템플릿 이름
     }
-
     // 업체 상세 정보 보기
     @GetMapping("/companyDetail/{businessId}")
     public String getCompanyDetails(@PathVariable String businessId, Model model) {
@@ -86,14 +85,12 @@ public class CompanyController {
         model.addAttribute("companyDTO", companyDTO);
         return "procurementPlan/viewDetailCompany";
     }
-
     // 업체 등록 폼
     @GetMapping("/register")
     public String showCompanyRegisterForm(Model model) {
         model.addAttribute("companyDTO", new CompanyDTO());
         return "procurementPlan/registerCompanyForm";
     }
-
     // 업체 등록 처리
     @PostMapping("/register")
     public String registerCompany(@ModelAttribute CompanyDTO companyDTO, @RequestParam String password) {
@@ -102,7 +99,6 @@ public class CompanyController {
         memberService.signup(memberDTO);
         return "redirect:/";
     }
-
     // 업체 목록 보기 (페이징)
     @GetMapping("/viewCompanyList")
     public String viewCompanyList(Model model, @RequestParam(defaultValue = "0") int page,
@@ -116,7 +112,6 @@ public class CompanyController {
         model.addAttribute("totalItems", companyPage.getTotalElements());
         return "procurementPlan/viewCompanylistForm";
     }
-
     // 업체 검색
     @GetMapping("/search")
     public String searchCompanies(@RequestParam("searchTerm") String searchTerm,
@@ -133,7 +128,6 @@ public class CompanyController {
         model.addAttribute("totalItems", companyPage.getTotalElements());
         return "procurementPlan/viewCompanylistForm";
     }
-
     // 업체가 제품 등록하는 페이지
     @GetMapping("/supplierRegisterProduct")
     public String supplierRegisterProduct(Model model, HttpSession session) {
@@ -263,6 +257,6 @@ public class CompanyController {
         // 서비스 호출
         companyItemService.saveCompanyItems(items);
 
-        return "redirect:/company/supplierRregisterProduct";
+        return "redirect:/company/supplierRegisterProduct";
     }
 }

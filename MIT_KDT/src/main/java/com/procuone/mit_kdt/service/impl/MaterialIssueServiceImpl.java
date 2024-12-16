@@ -1,5 +1,6 @@
 package com.procuone.mit_kdt.service.impl;
 
+import com.procuone.mit_kdt.dto.InventoryTransactionDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.ShipmentDTO;
@@ -9,6 +10,7 @@ import com.procuone.mit_kdt.entity.Shipment;
 import com.procuone.mit_kdt.repository.BOMRelationshipRepository;
 import com.procuone.mit_kdt.repository.InventoryRepository;
 import com.procuone.mit_kdt.repository.ShipmentRepository;
+import com.procuone.mit_kdt.service.InventoryTransactionService;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.MaterialIssueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
     @Autowired
     InventoryRepository inventoryRepository;
 
+    @Autowired
+    InventoryTransactionService inventoryTransactionService;
+
     @Override
     public Page<ShipmentDTO> getShipmentsByStatus(String status, Pageable pageable) {
         return shipmentRepository.findByShipmentStatus(status, pageable).map(this::convertToDTO);
@@ -54,6 +59,7 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
 
         shipmentRepository.saveAll(shipmentEntities);
     }
+
     // 발주서와 연동하여 Shipment 자동 생성
     @Override
     public void createAndSaveShipmentsFromProcurementPlan(ProcumentPlanDTO procurementPlanDTO) {
@@ -97,6 +103,7 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
         return shipmentRepository.findAll(pageable)
                 .map(this::convertToDTO);
     }
+
     //현재 재고 업데이트
     @Override
     public void updateCurrentQuantity(){
@@ -136,6 +143,23 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
                     inventory.setCurrentQuantity((int) (currentQuantity - requestedQuantity));
                     shipment.setCurrentQuantity(currentQuantity - requestedQuantity); // 출고 후 현재 수량
                     shipment.setShipmentStatus("진행중"); // 상태 업데이트
+                    //수정해야함
+
+                    
+                    // 인벤토리 트랜잭션 기록 생성 (출고)
+                    InventoryTransactionDTO transactionDTO = InventoryTransactionDTO.builder()
+                            .transactionCode(null) // 거래 코드는 생성 시 자동 처리
+                            .inventoryCode(inventory.getInventoryCode()) // 재고 ID
+                            .procurementCode(shipment.getProcurementPlanCode())
+                            .productCode(productCode) // 제품 코드
+                            .businessId(null) // 사업자 ID
+                            .transactionType("출고") // 거래 유형
+                            .quantity(requestedQuantity) // 요청된 출고 수량
+                            .transactionDate(LocalDate.now()) // 거래 일시
+                            .transactionValue(null) // 거래 금액(필요하면 계산 추가)
+                            .relatedOrderCode(shipment.getShipmentId()) // 관련 발주서 또는 출고 ID
+                            .build();
+                    inventoryTransactionService.createTransaction(transactionDTO);
                 } else {
                     // 재고 부족 처리
                     shipment.setShipmentStatus("재고부족");// 상태를 "재고 부족"으로 설정

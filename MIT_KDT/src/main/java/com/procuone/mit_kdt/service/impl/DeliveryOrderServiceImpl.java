@@ -13,6 +13,8 @@ import com.procuone.mit_kdt.repository.PurchaseOrderRepository;
 import com.procuone.mit_kdt.service.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -93,10 +95,25 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
         return convertEntityToDTO(savedOrder);
     }
 
+    @Override
+    public DeliveryOrderDTO getDeliveryOrder(DeliveryOrderDTO deliveryOrderDTO) {
+        // 전달받은 DeliveryOrderDTO의 deliveryCode를 사용하여 엔티티 조회
+        DeliveryOrder deliveryOrder = deliveryOrderRepository.findById(deliveryOrderDTO.getDeliveryCode())
+                .orElseThrow(() -> new IllegalArgumentException("해당 납품 지시 정보를 찾을 수 없습니다: " + deliveryOrderDTO.getDeliveryCode()));
+
+        // 조회된 엔티티를 DTO로 변환하여 반환
+        return convertEntityToDTO(deliveryOrder);
+    }
+
 
     @Override
     public List<DeliveryOrder> findCompletedOrders() {
         return deliveryOrderRepository.findByStatus("완료");
+    }
+
+    @Override
+    public Page<DeliveryOrderDTO> findbystatus(String status, Pageable pageable) {
+        return null;
     }
 
     /**

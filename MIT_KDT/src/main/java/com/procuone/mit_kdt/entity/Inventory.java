@@ -3,6 +3,7 @@ package com.procuone.mit_kdt.entity;
 import com.procuone.mit_kdt.entity.BOM.Item;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 
@@ -15,9 +16,17 @@ import java.time.LocalDateTime;
 public class Inventory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "inventory_id")
-    private Long id; // 재고 고유 ID
+    @GeneratedValue(generator = "custom-id")
+    @GenericGenerator(
+            name = "custom-id",
+            strategy = "com.procuone.mit_kdt.customidGenerator.CustomIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "prefix", value = "inventory_"),
+                    @org.hibernate.annotations.Parameter(name = "tableName", value = "Inventory"),
+                    @org.hibernate.annotations.Parameter(name = "columnName", value = "inventory_code")
+            }
+    )
+    private String InventoryCode; // 재고 고유 ID
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)

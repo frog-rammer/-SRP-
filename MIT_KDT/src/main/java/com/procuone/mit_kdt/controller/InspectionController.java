@@ -1,14 +1,18 @@
 package com.procuone.mit_kdt.controller;
 
-import com.procuone.mit_kdt.dto.ContractDTO;
-import com.procuone.mit_kdt.dto.InspectionDTO;
-import com.procuone.mit_kdt.service.InspectionService;
+import com.procuone.mit_kdt.dto.*;
+import com.procuone.mit_kdt.entity.DeliveryOrder;
+import com.procuone.mit_kdt.entity.PurchaseOrder;
+import com.procuone.mit_kdt.service.*;
+import com.procuone.mit_kdt.service.impl.PurchaseOrderServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -18,6 +22,18 @@ public class InspectionController {
 
     @Autowired
     private final InspectionService inspectionService;
+    @Autowired
+    InventoryService inventoryService;
+    @Autowired
+    private final InventoryTransactionService inventoryTransactionService;
+    @Autowired
+    private DeliveryOrderService deliveryOrderService;
+    @Autowired
+    private PurchaseOrderService purchaseOrderService;
+    @Autowired
+    private  ItemService itemService;
+
+
 
     @GetMapping("/status")
     public String getInspectionStatus(Model model) {
@@ -28,15 +44,12 @@ public class InspectionController {
                 .filter(inspection -> "검수중".equals(inspection.getInspectionStatus())
                         || "검수완료(불량)".equals(inspection.getInspectionStatus()))
                 .toList();
-
         // 검수 완료 상태 데이터
         List<InspectionDTO> completedInspections = inspections.stream()
                 .filter(inspection -> "검수완료".equals(inspection.getInspectionStatus()))
                 .toList();
-
         model.addAttribute("inspections", ongoingInspections);
         model.addAttribute("completedInspections", completedInspections);
-
         return "materialReceipt/inspectionStatus";
     }
 
@@ -52,6 +65,29 @@ public class InspectionController {
         System.out.println("Received DTO: " + inspectionDTO);
         inspectionService.saveInspection(inspectionDTO);
         inspectionService.processInspection(inspectionDTO);
+
+
+        DeliveryOrderDTO deliveryOrderDTO = new DeliveryOrderDTO();
+        deliveryOrderDTO.setDeliveryCode(inspectionDTO.getDeliveryCode());
+        deliveryOrderDTO=deliveryOrderService.getDeliveryOrder(deliveryOrderDTO);
+
+        PurchaseOrderDTO purchaseOrderDTO = purchaseOrderService.getpurchaseOrderById(deliveryOrderDTO.getPurchaseOrderCode());
+
+        Long itemId = itemService.getItemIdByProductCode(inspectionDTO.getProductCode());
+
+        InventoryDTO inventoryDTO = inventoryService.getInventoryByItemId(itemId);
+
+        InventoryTransactionDTO transactionDTO = new InventoryTransactionDTO();
+        transactionDTO.setProcurementCode(purchaseOrderDTO.getProcurementPlanCode());
+        transactionDTO.setInventoryCode(inventoryDTO.getInventoryCode());
+        transactionDTO.setProductCode(inspectionDTO.getProductCode());
+        transactionDTO.setBusinessId(inspectionDTO.getBusniessId());
+        transactionDTO.setTransactionType("입고");
+        transactionDTO.setQuantity(inspectionDTO.getQuantity() - defectiveQuantity);
+        transactionDTO.setTransactionDate(LocalDate.now());
+        transactionDTO.setTransactionValue((double)(purchaseOrderDTO.getPrice()/purchaseOrderDTO.getQuantity())*(inspectionDTO.getQuantity() - defectiveQuantity));
+        transactionDTO.setRelatedOrderCode(purchaseOrderDTO.getPurchaseOrderCode());
+        inventoryTransactionService.createTransaction(transactionDTO);
         return "redirect:/inspection/status";
     }
 
