@@ -1,6 +1,7 @@
 package com.procuone.mit_kdt.repository;
 
 import com.procuone.mit_kdt.entity.BOM.Item;
+import com.procuone.mit_kdt.entity.CompanyItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,4 +33,13 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("SELECT i.id FROM Item i WHERE i.productCode = :productCode")
     Long findIdByProductCode(@Param("productCode") String productCode);// 제품코드로 아이템아이디 가져오기
+
+    // 카테고리 이름으로 아이템 조회
+    List<Item> findByCategory_Name(String categoryName);
+
+    // 카테고리 ID로 아이템 조회
+    List<Item> findByCategory_Id(Long categoryId);
+
+    @Query("SELECT ci FROM CompanyItem ci WHERE ci.item.id = :itemId AND ci.contractStatus = false")
+    List<CompanyItem> findByItemIdAndContractStatusFalse(@Param("itemId") Long itemId);
 }

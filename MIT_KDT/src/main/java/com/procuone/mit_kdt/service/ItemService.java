@@ -13,6 +13,8 @@ public interface ItemService {
     // Item 엔티티를 ProductCode로 조회
     Item getItemEntityByProductCode(String productCode);
 
+    List<String> getChildProductCodesByParentCode(String parentCode);
+
     // 품목 저장 (DTO를 통해 저장 처리)
     boolean saveItem(ItemDTO itemDTO);
 
@@ -39,4 +41,7 @@ public interface ItemService {
 
     //프로덕트 코드로 아이템 아이디가져오기
     Long getItemIdByProductCode(String productCode);
+
+    List<ItemDTO> getItemsByCategoryName(String categoryName);
+
 }

@@ -1,8 +1,12 @@
 package com.procuone.mit_kdt.controller;
 
+import com.procuone.mit_kdt.dto.CompanyItemDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.entity.BOM.Item;
+import com.procuone.mit_kdt.entity.CompanyItem;
+import com.procuone.mit_kdt.repository.CompanyItemRepository;
+import com.procuone.mit_kdt.service.CompanyItemService;
 import com.procuone.mit_kdt.service.ContractService;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.CategoryService;
@@ -17,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/items")
@@ -30,6 +35,14 @@ public class ItemController {
 
     @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private CompanyItemRepository companyItemRepository;
+
+    @GetMapping("/byCategoryName")
+    public List<ItemDTO> getItemsByCategoryName(@RequestParam String categoryName) {
+        return itemService.getItemsByCategoryName(categoryName);
+    }
 
     // 품목 목록을 반환하는 API
     @GetMapping("/api/items")
@@ -131,4 +144,33 @@ public class ItemController {
             return null;
         }
     }
+
+    @GetMapping("/getSuppliersByParent")
+    @ResponseBody
+    public List<CompanyItemDTO> getSuppliersByParentCode(@RequestParam String parentCode) {
+        // parentCode를 기반으로 하위 productCodes 추출
+        List<String> childProductCodes = itemService.getChildProductCodesByParentCode(parentCode);
+
+        // 해당 코드들로 업체 데이터 조회
+        List<CompanyItem> companyItems = companyItemRepository.findByParentProductCodeAndContractStatusFalse(childProductCodes);
+
+        // DTO 변환
+        return companyItems.stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private CompanyItemDTO convertEntityToDTO(CompanyItem companyItem) {
+        return CompanyItemDTO.builder()
+                .id(companyItem.getId())
+                .businessId(companyItem.getCompany().getBusinessId()) // 업체 ID
+                .itemId(companyItem.getItem().getId())                // 아이템 ID
+                .leadTime(companyItem.getLeadTime())                  // 소요 시간
+                .supplyUnit(companyItem.getSupplyUnit())              // 최소 공급 단위
+                .productionQty(companyItem.getProductionQty())        // 최소 생산 수량
+                .unitCost(companyItem.getUnitCost())                  // 단가
+                .contractStatus(companyItem.getContractStatus())      // 계약 상태
+                .build();
+    }
+
 }

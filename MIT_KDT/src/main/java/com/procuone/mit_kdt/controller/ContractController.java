@@ -11,6 +11,7 @@ import com.procuone.mit_kdt.entity.CompanyItem;
 import com.procuone.mit_kdt.entity.Contract;
 import com.procuone.mit_kdt.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -130,10 +131,17 @@ public class ContractController {
         CompanyDTO companyDTO = companyService.getCompanyDetails(businessId);
         CompanyItemDTO companyItemDTO = companyItemService.getCompanyItemByBussinessIdAnditemId(businessId,itemId);
         Optional<ItemDTO> itemDTO = itemService.getItemById(companyItemDTO.getItemId());
+
+        // 2년 뒤 날짜 계산
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 2);
+        java.sql.Date contractEndDate = new java.sql.Date(calendar.getTimeInMillis());
+
         // 모델에 데이터를 추가하여 뷰로 전달
         model.addAttribute("companyDTO", companyDTO);
         model.addAttribute("companyItemDTO", companyItemDTO);
         model.addAttribute("itemDTO", itemDTO.get());
+        model.addAttribute("contractEndDate", contractEndDate);
         return "procurementPlan/registerContract"; // 계약 등록 페이지로 이동
     }
 
@@ -152,5 +160,41 @@ public class ContractController {
         return contractService.getContractsByProductCode(productCode);
     }
 
+    @GetMapping("/getAvailableSuppliers")
+    @ResponseBody
+    public List<Map<String, Object>> getAvailableSuppliers(@RequestParam String parentProductCode) {
+        System.out.println("Received parentProductCode: " + parentProductCode);
 
+        List<CompanyItemDTO> companyItems = companyItemService.getAvailableCompanyItems(parentProductCode);
+
+        // 아이템 이름과 업체명을 조회하여 결과에 추가
+        List<Map<String, Object>> result = companyItems.stream().map(item -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("businessId", item.getBusinessId());
+            map.put("unitCost", item.getUnitCost());
+            map.put("leadTime", item.getLeadTime());
+            map.put("itemId", item.getItemId());
+
+            // Item 이름 가져오기
+            Optional<ItemDTO> itemDTO = itemService.getItemById(item.getItemId());
+            itemDTO.ifPresent(dto -> map.put("itemName", dto.getItemName()));
+
+            // 업체명 가져오기
+            CompanyDTO companyDTO = companyService.getCompanyDetails(item.getBusinessId());
+            if (companyDTO != null) {
+                map.put("comName", companyDTO.getComName());
+            }
+
+            return map;
+        }).collect(Collectors.toList());
+
+        System.out.println("Result size: " + result.size());
+        return result;
+    }
+
+    @GetMapping("/company-items/{itemId}")
+    public ResponseEntity<?> getCompanyItems(@PathVariable Long itemId) {
+        List<CompanyItem> items = companyItemService.findItemsByItemId(itemId);
+        return ResponseEntity.ok(items);
+    }
 }
