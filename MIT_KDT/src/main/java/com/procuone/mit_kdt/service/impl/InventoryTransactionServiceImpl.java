@@ -7,9 +7,16 @@ import com.procuone.mit_kdt.repository.InventoryRepository;
 import com.procuone.mit_kdt.repository.InventoryTransactionRepository;
 import com.procuone.mit_kdt.service.InventoryTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.IsoFields;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,43 +64,6 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
                 .collect(Collectors.toList());
     }
     /**
-     * 제품 코드(productCode)로 해당 거래를 조회하고 DTO 정보로 갱신하는 메서드.
-     * productCode가 unique하므로 productCode로 거래를 식별할 수 있다.
-     */
-    @Override
-    public InventoryTransactionDTO updateTransactionByProductCode(String productCode, InventoryTransactionDTO dto) {
-        // productCode로 거래 조회
-        InventoryTransaction entity = inventoryTransactionRepository.findByProductCode(productCode)
-                .orElseThrow(() -> new IllegalArgumentException("Transaction not found for product code: " + productCode));
-
-        // inventory 갱신 로직 (DTO에 inventoryId가 있을 경우)
-        Inventory inventory = null;
-        if (dto.getInventoryCode() != null) {
-            inventory = inventoryRepository.findById(dto.getInventoryCode())
-                    .orElseThrow(() -> new IllegalArgumentException("Inventory not found"));
-        }
-
-        // productCode는 여기서 productCode로 조회했으므로, DTO의 productCode로 갱신할지, 유지할지 결정
-        // 상황에 따라 다르지만, 여기서는 DTO에 productCode가 있으면 업데이트, 없으면 기존값 유지
-        String updatedProductCode = (dto.getProductCode() != null) ? dto.getProductCode() : entity.getProductCode();
-
-        InventoryTransaction updatedEntity = InventoryTransaction.builder()
-                .transactionCode(entity.getTransactionCode()) // PK는 변경 불가
-                .inventory(inventory == null ? entity.getInventory() : inventory)
-                .productCode(updatedProductCode)
-                .transactionType(dto.getTransactionType() != null ? dto.getTransactionType() : entity.getTransactionType())
-                .quantity(dto.getQuantity() != null ? dto.getQuantity() : entity.getQuantity())
-                .transactionDate(dto.getTransactionDate() != null ? dto.getTransactionDate() : entity.getTransactionDate())
-                .transactionValue(dto.getTransactionValue() != null ? dto.getTransactionValue() : entity.getTransactionValue())
-                .relatedOrderCode(dto.getRelatedOrderCode() != null ? dto.getRelatedOrderCode() : entity.getRelatedOrderCode())
-                .build();
-
-        InventoryTransaction saved = inventoryTransactionRepository.save(updatedEntity);
-        return toDTO(saved);
-    }
-
-
-    /**
      * 특정 거래 코드(transactionCode)에 해당하는 재고 거래 정보를 업데이트하는 메서드.
      * DTO를 받아 해당 거래 엔티티의 내용을 업데이트 후, DB에 저장하고 갱신된 데이터를 DTO로 반환한다.
      */
@@ -132,6 +102,153 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
             throw new IllegalArgumentException("Transaction not found");
         }
         inventoryTransactionRepository.deleteById(transactionCode);
+    }
+
+    /**
+     * 특정 거래 유형(입고/출고)별 페이징된 거래 반환
+     */
+    @Override
+    public Page<InventoryTransactionDTO> getPagedTransactionsByStatus(String transactionType, Pageable pageable) {
+        return inventoryTransactionRepository.findByTransactionType(transactionType, pageable)
+                .map(this::toDTO);
+    }
+
+    /**
+     * 특정 제품 코드로 거래 내역 조회
+     */
+    @Override
+    public List<InventoryTransactionDTO> getTransactionsByProductCode(String productCode) {
+        return inventoryTransactionRepository.findAllByProductCode(productCode).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 특정 기간 동안의 거래 내역 조회
+     */
+    @Override
+    public List<InventoryTransactionDTO> getTransactionsByDateRange(LocalDate startDate, LocalDate endDate) {
+        return inventoryTransactionRepository.findByTransactionDateBetween(startDate, endDate).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public Map<String, Long> getMonthlyInboundStatsByProductCode(String productCode) {
+        List<InventoryTransaction> transactions = inventoryTransactionRepository
+                .findByTransactionTypeAndProductCode("입고", productCode);
+        return aggregateByMonth(transactions);
+    }
+
+    @Override
+    public Map<String, Long> getMonthlyOutboundStatsByProductCode(String productCode) {
+        List<InventoryTransaction> transactions = inventoryTransactionRepository
+                .findByTransactionTypeAndProductCode("출고", productCode);
+        return aggregateByMonth(transactions);
+    }
+
+    @Override
+    public Map<String, Long> getWeeklyInboundStatsByProductCode(String productCode) {
+        List<InventoryTransaction> transactions = inventoryTransactionRepository
+                .findByTransactionTypeAndProductCode("입고", productCode);
+        return aggregateByWeek(transactions);
+    }
+
+    @Override
+    public Map<String, Long> getWeeklyOutboundStatsByProductCode(String productCode) {
+        List<InventoryTransaction> transactions = inventoryTransactionRepository
+                .findByTransactionTypeAndProductCode("출고", productCode);
+        return aggregateByWeek(transactions);
+    }
+
+    private Map<String, Long> aggregateByMonth(List<InventoryTransaction> transactions) {
+        Map<String, Long> monthlyStats = new HashMap<>();
+        for (InventoryTransaction transaction : transactions) {
+            String month = transaction.getTransactionDate().getMonth().toString(); // 월 이름 예: JANUARY
+            monthlyStats.put(month, monthlyStats.getOrDefault(month, 0L) + transaction.getQuantity());
+        }
+        return monthlyStats;
+    }
+    private Map<String, Long> aggregateByWeek(List<InventoryTransaction> transactions) {
+        Map<String, Long> weeklyStats = new HashMap<>();
+        for (InventoryTransaction transaction : transactions) {
+            String week = "Week " + transaction.getTransactionDate().get(IsoFields.WEEK_OF_WEEK_BASED_YEAR); // ISO 주차
+            weeklyStats.put(week, weeklyStats.getOrDefault(week, 0L) + transaction.getQuantity());
+        }
+        return weeklyStats;
+    }
+
+
+    /**
+     * 특정 거래 유형과 제품 코드로 거래 내역 조회
+     */
+    public List<InventoryTransactionDTO> getTransactionsByTypeAndProductCode(String transactionType, String productCode) {
+        return inventoryTransactionRepository.findByTransactionTypeAndProductCode(transactionType, productCode).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 제품 코드별 월별 거래 통계 계산
+     */
+    @Override
+    public Map<String, Long> getMonthlyTransactionStatsByProductCode(String productCode) {
+        List<InventoryTransaction> transactions = inventoryTransactionRepository.findAllByProductCode(productCode);
+        return transactions.stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.getTransactionDate().getMonth().toString(),
+                        Collectors.summingLong(InventoryTransaction::getQuantity)
+                ));
+    }
+
+    /**
+     * 제품 코드별 주별 거래 통계 계산
+     */
+    @Override
+    public Map<String, Long> getWeeklyTransactionStatsByProductCode(String productCode) {
+        List<InventoryTransaction> transactions = inventoryTransactionRepository.findAllByProductCode(productCode);
+        return transactions.stream()
+                .collect(Collectors.groupingBy(
+                        t -> "Week " + t.getTransactionDate().get(IsoFields.WEEK_OF_WEEK_BASED_YEAR),
+                        Collectors.summingLong(InventoryTransaction::getQuantity)
+                ));
+    }
+
+    /**
+     * 거래 금액 통계 (특정 제품 코드별)
+     */
+    @Override
+    public Double getCostStatsByProductCode(String productCode) {
+        return inventoryTransactionRepository.findAllByProductCode(productCode).stream()
+                .mapToDouble(t -> Optional.ofNullable(t.getTransactionValue()).orElse(0.0))
+                .sum();
+    }
+
+    // 거래 유형별 총 금액
+    @Override
+    public Map<String, Double> calculateTotalTransactionValueByType() {
+        List<InventoryTransaction> transactions = inventoryTransactionRepository.findAll();
+        Map<String, Double> totalValues = new HashMap<>();
+
+        for (InventoryTransaction transaction : transactions) {
+            String type = transaction.getTransactionType();
+            totalValues.put(type, totalValues.getOrDefault(type, 0.0) +
+                    (transaction.getTransactionValue() != null ? transaction.getTransactionValue() : 0.0));
+        }
+
+        return totalValues;
+    }
+     // 거래 수량 통계
+    @Override
+    public Map<String, Long> calculateTransactionQuantities() {
+        List<InventoryTransaction> transactions = inventoryTransactionRepository.findAll();
+        Map<String, Long> quantities = new HashMap<>();
+
+        for (InventoryTransaction transaction : transactions) {
+            String type = transaction.getTransactionType();
+            quantities.put(type, quantities.getOrDefault(type, 0L) + transaction.getQuantity());
+        }
+
+        return quantities;
     }
 
     /**

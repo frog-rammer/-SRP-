@@ -143,16 +143,13 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
                     inventory.setCurrentQuantity((int) (currentQuantity - requestedQuantity));
                     shipment.setCurrentQuantity(currentQuantity - requestedQuantity); // 출고 후 현재 수량
                     shipment.setShipmentStatus("진행중"); // 상태 업데이트
-                    //수정해야함
 
-                    
                     // 인벤토리 트랜잭션 기록 생성 (출고)
                     InventoryTransactionDTO transactionDTO = InventoryTransactionDTO.builder()
-                            .transactionCode(null) // 거래 코드는 생성 시 자동 처리
                             .inventoryCode(inventory.getInventoryCode()) // 재고 ID
                             .procurementCode(shipment.getProcurementPlanCode())
                             .productCode(productCode) // 제품 코드
-                            .businessId(null) // 사업자 ID
+                            .businessId("null") // 사업자 ID
                             .transactionType("출고") // 거래 유형
                             .quantity(requestedQuantity) // 요청된 출고 수량
                             .transactionDate(LocalDate.now()) // 거래 일시
