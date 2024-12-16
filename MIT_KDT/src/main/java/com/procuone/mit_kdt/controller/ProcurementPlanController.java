@@ -135,24 +135,58 @@ public class ProcurementPlanController {
     public String procurementPlanView(
             Model model,
             @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "startDate", required = false) String startDateString,
+            @RequestParam(value = "endDate", required = false) String endDateString,
             @RequestParam(value = "page", defaultValue = "0") int page) {
+
         int pageSize = 10;
         Pageable pageable = PageRequest.of(page, pageSize);
 
+        // startDate, endDate를 LocalDate로 변환
+        LocalDate startDate = (startDateString != null && !startDateString.isEmpty()) ? LocalDate.parse(startDateString) : null;
+        LocalDate endDate = (endDateString != null && !endDateString.isEmpty()) ? LocalDate.parse(endDateString) : null;
+
         Page<ProcurementPlan> procurementPlans;
+
+        // 검색 조건에 따라 쿼리 수행
         if (search != null && !search.isEmpty()) {
-            procurementPlans = ProcurementPlanRepository.findByProductNameContainingOrProductCodeContaining(search, search, pageable);
+            if (startDate != null && endDate != null) {
+                // 검색어, 시작일, 종료일 모두 있을 때
+                procurementPlans = ProcurementPlanRepository.findByProductNameContainingAndPlanStartDateGreaterThanEqualAndPlanEndDateLessThanEqual(
+                        search, startDate, endDate, pageable);
+            } else if (startDate != null) {
+                // 검색어와 시작일만 있을 때
+                procurementPlans = ProcurementPlanRepository.findByProductNameContainingAndPlanStartDateGreaterThanEqual(
+                        search, startDate, pageable);
+            } else if (endDate != null) {
+                // 검색어와 종료일만 있을 때
+                procurementPlans = ProcurementPlanRepository.findByProductNameContainingAndPlanEndDateLessThanEqual(
+                        search, endDate, pageable);
+            } else {
+                // 검색어만 있을 때
+                procurementPlans = ProcurementPlanRepository.findByProductNameContainingOrProductCodeContaining(search, search, pageable);
+            }
         } else {
-            procurementPlans = ProcurementPlanRepository.findAll(pageable);
+            // 검색어가 없을 때
+            if (startDate != null && endDate != null) {
+                procurementPlans = ProcurementPlanRepository.findByPlanStartDateGreaterThanEqualAndPlanEndDateLessThanEqual(startDate, endDate, pageable);
+            } else {
+                procurementPlans = ProcurementPlanRepository.findAll(pageable);
+            }
         }
+
+        // 뷰에 데이터 추가
         model.addAttribute("procurementPlanList", procurementPlans.getContent());
         model.addAttribute("search", search);
+        model.addAttribute("startDate", startDateString); // String 그대로 전달
+        model.addAttribute("endDate", endDateString); // String 그대로 전달
         model.addAttribute("currentPage", procurementPlans.getNumber());
         model.addAttribute("totalPages", procurementPlans.getTotalPages());
         model.addAttribute("totalItems", procurementPlans.getTotalElements());
 
         return "purchaseOrder/procurementPlanView";
     }
+
 
     @GetMapping("/comProcurementPlanView")
     public String comProcurementPlanView(

@@ -24,14 +24,19 @@ public interface ProcurementPlanRepository extends JpaRepository<ProcurementPlan
     // 다중 ProcurementPlanCode를 사용한 데이터 조회 (페이징 지원)
     Page<ProcurementPlan> findByProcurementPlanCodeIn(List<String> procurementPlanCodes, Pageable pageable);
 
+    // 제품명과 시작일, 종료일을 포함한 데이터 조회
+    Page<ProcurementPlan> findByProductNameContainingAndPlanStartDateGreaterThanEqualAndPlanEndDateLessThanEqual(
+            String productName, LocalDate startDate, LocalDate endDate, Pageable pageable);
 
-//    // 품목명으로 검색 (대소문자 구분 없이 포함된 내용 검색)
-//    List<ProcurementPlan> findByproductNameContaining(String productName);
-//
-//    // 시작일과 종료일 사이의 날짜로 검색
-//    List<ProcurementPlan> findByStartDateBetween(LocalDate startDate, LocalDate endDate);
-//
-//    // 수량으로 검색
-//    List<ProcurementPlan> findByQuantity(Long quantity);
-//}
+    // 제품명과 시작일만 포함한 데이터 조회
+    Page<ProcurementPlan> findByProductNameContainingAndPlanStartDateGreaterThanEqual(
+            String productName, LocalDate startDate, Pageable pageable);
+
+    // 제품명과 종료일만 포함한 데이터 조회
+    Page<ProcurementPlan> findByProductNameContainingAndPlanEndDateLessThanEqual(
+            String productName, LocalDate endDate, Pageable pageable);
+
+    // 시작일과 종료일로 검색 (검색어 없이)
+    Page<ProcurementPlan> findByPlanStartDateGreaterThanEqualAndPlanEndDateLessThanEqual(
+            LocalDate startDate, LocalDate endDate, Pageable pageable);
 }

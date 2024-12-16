@@ -269,8 +269,9 @@
                     <td th:text="${procurementPlan.planEndDate}"></td>      <!--계획 종료일-->
                     <td th:text="${procurementPlan.procurementEndDate}"></td>       <!--조달납기일 코드-->
                     <td>
-                        <a th:href="@{/procurementPlan/edit/{procurementPlanCode}(procurementPlanCode=${procurementPlan.procurementPlanCode})}"
-                           class="btn">수정</a>
+<!--                        <a th:href="@{/procurementPlan/edit/{procurementPlanCode}(procurementPlanCode=${procurementPlan.procurementPlanCode})}"-->
+<!--                           class="btn">수정</a>-->
+                        <input type="button" class="btn"value="수정">
                         <input type="button" class="btn"value="삭제">
                     </td>
                 </tr>
@@ -283,15 +284,15 @@
             <div class="pagination">
 
                 <a th:if="${currentPage > 0}"
-                   th:href="@{/procumentPlan/procurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
+                   th:href="@{/procurementPlan/procurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
 
                 <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                    th:classappend="${i == currentPage} ? 'active' : ''"
-                   th:href="@{/procumentPlan/procurementPlanView(page=${i}, search=${search})}"
+                   th:href="@{/procurementPlan/procurementPlanView(page=${i}, search=${search != null ? search : ''})}"
                    th:text="${i + 1}">1</a>
 
                 <a th:if="${currentPage < totalPages - 1}"
-                   th:href="@{/procumentPlan/procurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
+                   th:href="@{/procurementPlan/procurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
 
             </div>
         </section>

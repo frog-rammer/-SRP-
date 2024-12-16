@@ -211,14 +211,16 @@
     <main class="layout-main">
         <h1>조달계획 조회</h1>
         <section class="search-section">
-            <form action="/procurementPlan/viewSearch" method="get">
-                <label for="productName">품목명</label>
-                <input type="text" id="productName" name="productName" th:value="${productName}"
-                       placeholder="품목명을 입력하세요">
+            <form action="/procurementPlanView" method="get">
+                <label for="search">품목명</label>
+                <input type="text" id="search" name="search" th:value="${search}" placeholder="품목명을 입력하세요">
+
                 <label for="startDate">시작일</label>
-                <input type="date" id="startDate" name="startDate" th:value="${planStartDate}">
+                <input type="date" id="startDate" name="startDate" th:value="${startDate}">
+
                 <label for="endDate">종료일</label>
-                <input type="date" id="endDate" name="endDate" th:value="${planEndDate}">
+                <input type="date" id="endDate" name="endDate" th:value="${endDate}">
+
                 <button type="submit" class="btn">검색</button>
             </form>
         </section>
@@ -237,7 +239,7 @@
                     <th>계획 시작일</th>
                     <th>계획 종료일</th>
                     <th>조달 납기일</th>
-                    <th></th>
+                    <th>작업</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -253,6 +255,7 @@
                     <td th:text="${procurementPlan.planEndDate}"></td>      <!--계획 종료일-->
                     <td th:text="${procurementPlan.procurementEndDate}"></td>       <!--조달납기일 코드-->
                     <td>
+                        <input type="button" class="btn" value="수정">
                         <input type="button" class="btn" value="삭제">
                     </td>
                 </tr>
@@ -263,18 +266,19 @@
             </table>
             <!-- 페이지네이션 버튼 -->
             <div class="pagination">
-
+                <!-- 이전 페이지 버튼 -->
                 <a th:if="${currentPage > 0}"
-                   th:href="@{/procumentPlan/procurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
+                   th:href="@{/procurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
 
+                <!-- 페이지 번호 버튼 -->
                 <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                    th:classappend="${i == currentPage} ? 'active' : ''"
-                   th:href="@{/procumentPlan/procurementPlanView(page=${i}, search=${search})}"
-                   th:text="${i + 1}">1</a>
+                   th:href="@{/procurementPlanView(page=${i}, search=${search})}"
+                   th:text="${i + 1}"></a>
 
+                <!-- 다음 페이지 버튼 -->
                 <a th:if="${currentPage < totalPages - 1}"
-                   th:href="@{/procumentPlan/procurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
-
+                   th:href="@{/procurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
             </div>
         </section>
     </main>
