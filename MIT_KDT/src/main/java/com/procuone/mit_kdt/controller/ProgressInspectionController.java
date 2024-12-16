@@ -84,10 +84,12 @@ public class ProgressInspectionController {
     }
 
     @GetMapping("/progressInspectionProcessingBoard")
-    public String ProcessingBoardView(Model model, HttpSession session) {
+    public String ProcessingBoardView(Model model, HttpSession session, @RequestParam(defaultValue = "1") int page, // 사용자 요청 페이지 (1부터 시작)
+                                      @RequestParam(defaultValue = "8") int size,
+                                      Pageable pageable) {
 
         String businessId = (String) session.getAttribute("businessId");
-        Pageable pageable = PageRequest.of(0, 8);
+        pageable = PageRequest.of(page - 1, size);
         Page<ProgressInspectionDTO> productionPlanPage = progressInspectionService.getInspectionsByBusinessId(businessId, pageable);
 
 
@@ -107,6 +109,7 @@ public class ProgressInspectionController {
 
         return "purchaseOrder/progressInspectionProcessing";
     }
+
 
     @PostMapping("/updateInspectedQuantity")
     public String updateInspectedQuantity(@RequestParam String progressInspectionCode,
