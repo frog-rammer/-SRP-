@@ -95,6 +95,16 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
         return convertEntityToDTO(savedOrder);
     }
 
+    @Override
+    public DeliveryOrderDTO getDeliveryOrder(DeliveryOrderDTO deliveryOrderDTO) {
+        // 전달받은 DeliveryOrderDTO의 deliveryCode를 사용하여 엔티티 조회
+        DeliveryOrder deliveryOrder = deliveryOrderRepository.findById(deliveryOrderDTO.getDeliveryCode())
+                .orElseThrow(() -> new IllegalArgumentException("해당 납품 지시 정보를 찾을 수 없습니다: " + deliveryOrderDTO.getDeliveryCode()));
+
+        // 조회된 엔티티를 DTO로 변환하여 반환
+        return convertEntityToDTO(deliveryOrder);
+    }
+
 
     @Override
     public List<DeliveryOrder> findCompletedOrders() {
