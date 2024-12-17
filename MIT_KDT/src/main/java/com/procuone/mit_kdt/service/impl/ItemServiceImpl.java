@@ -3,6 +3,7 @@ package com.procuone.mit_kdt.service.impl;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.entity.BOM.Category;
 import com.procuone.mit_kdt.entity.BOM.Item;
+import com.procuone.mit_kdt.repository.BOMRelationshipRepository;
 import com.procuone.mit_kdt.repository.CategoryRepository;
 import com.procuone.mit_kdt.repository.ItemRepository;
 import com.procuone.mit_kdt.service.ItemService;
@@ -21,6 +22,15 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private BOMRelationshipRepository relationshipRepository;
+
+    @Override
+    public List<String> getChildProductCodesByParentCode(String parentCode) {
+        // 예시: 데이터베이스에서 child_product_code 조회
+        return relationshipRepository.findChildProductCodesByParentCode(parentCode);
+    }
 
     // 품목 저장 (DTO를 받아 처리)
     @Override
@@ -122,6 +132,15 @@ public class ItemServiceImpl implements ItemService {
     public Item getItemEntityByProductCode(String productCode) {
         return itemRepository.findByProductCode(productCode)
                 .orElseThrow(() -> new RuntimeException("Item not found with productCode: " + productCode));
+    }
+
+    @Override
+    public List<ItemDTO> getItemsByCategoryName(String categoryName) {
+        // 카테고리 이름으로 아이템 조회
+        List<Item> items = itemRepository.findByCategory_Name(categoryName);
+        return items.stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
     }
 
     // DTO -> Entity 변환 메서드
