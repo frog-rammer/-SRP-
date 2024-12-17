@@ -193,15 +193,17 @@
         </table>
 
         <div class="pagination">
-            <a th:if="${currentPage > 1}"
-               th:href="@{'/progressInspection/progressInspectionProcessingBoard'(page=${currentPage - 1})}">이전</a>
-            <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
-                <a th:href="@{'/progressInspection/progressInspectionProcessingBoard'(page=${pageNum})}"
-                   th:text="${pageNum}"
-                   th:classappend="${pageNum == currentPage} ? 'active' : ''"></a>
-            </span>
-            <a th:if="${currentPage < totalPages}"
-               th:href="@{'/progressInspection/progressInspectionProcessingBoard'(page=${currentPage + 1})}">다음</a>
+            <a th:if="${ongoingCurrentPage > 1}"
+               th:href="@{'/progressInspectionProcessingBoard/ongoing'(ongoingPage=${ongoingCurrentPage - 1})}">이전</a>
+
+            <span th:each="pageNum : ${#numbers.sequence(1, ongoingTotalPages)}">
+        <a th:href="@{'/progressInspectionProcessingBoard/ongoing'(ongoingPage=${pageNum})}"
+           th:text="${pageNum}"
+           th:classappend="${pageNum == ongoingCurrentPage} ? 'active' : ''"></a>
+    </span>
+
+            <a th:if="${ongoingCurrentPage < ongoingTotalPages}"
+               th:href="@{'/progressInspectionProcessingBoard/ongoing'(ongoingPage=${ongoingCurrentPage + 1})}">다음</a>
         </div>
 
         <div id="updateFormContainer">
@@ -228,6 +230,59 @@
                 <button type="submit">등록</button>
             </form>
         </div>
+        <!-- 검수 완료된 데이터 테이블 -->
+        <h2>검수 완료된 데이터</h2>
+        <table id="completedInspectionTable">
+            <thead>
+            <tr>
+                <th>검수 코드</th>
+                <th>발주 코드</th>
+                <th>품목 코드</th>
+                <th>품목명</th>
+                <th>사업자 ID</th>
+                <th>회사명</th>
+                <th>발주 수량</th>
+                <th>검수된 수량</th>
+                <th>검수 상태</th>
+                <th>검수 일자</th>
+                <th>발주 일자</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="inspection : ${completedInspectionList}">
+                <td th:text="${inspection.progressInspectionCode}"></td>
+                <td th:text="${inspection.purchaseOrderCode}"></td>
+                <td th:text="${inspection.productCode}"></td>
+                <td th:text="${inspection.productName}"></td>
+                <td th:text="${inspection.businessId}"></td>
+                <td th:text="${inspection.comName}"></td>
+                <td th:text="${inspection.totalQuantity}"></td>
+                <td th:text="${inspection.inspectedQuantity}"></td>
+                <td th:text="${inspection.inspectionStatus}"></td>
+                <td th:text="${inspection.inspectionDate}"></td>
+                <td th:text="${inspection.orderDate}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(completedInspectionList)}">
+                <td colspan="12">검수 완료된 데이터가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- 하단 테이블 페이징 -->
+        <div class="pagination">
+            <a th:if="${completedCurrentPage > 1}"
+               th:href="@{'/progressInspection/progressInspectionProcessingBoard'(ongoingPage=${ongoingCurrentPage}, completedPage=${completedCurrentPage - 1})}">이전</a>
+
+            <span th:each="pageNum : ${#numbers.sequence(1, completedTotalPages)}">
+        <a th:href="@{'/progressInspection/progressInspectionProcessingBoard'(ongoingPage=${ongoingCurrentPage}, completedPage=${pageNum})}"
+           th:text="${pageNum}"
+           th:classappend="${pageNum == completedCurrentPage} ? 'active' : ''"></a>
+    </span>
+
+            <a th:if="${completedCurrentPage < completedTotalPages}"
+               th:href="@{'/progressInspection/progressInspectionProcessingBoard'(ongoingPage=${ongoingCurrentPage}, completedPage=${completedCurrentPage + 1})}">다음</a>
+        </div>
+
     </main>
 </div>
 <script>

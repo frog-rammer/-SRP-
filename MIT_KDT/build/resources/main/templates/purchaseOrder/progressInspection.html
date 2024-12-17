@@ -10,12 +10,6 @@
             list-style: none;
             display: inline;
         }
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -72,6 +66,39 @@
             background-color: #ccc;
             pointer-events: none;
         }
+        /* Search Bar */
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input, select, button {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .search-bar button {
+            background-color: #32928E;
+            color: white;
+            cursor: pointer;
+        }
+
+        .search-bar button:hover {
+            background-color: #278F75;
+        }
+
+        .button {
+            padding: 6px 12px;
+            background-color: #32928E;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .button:hover {
+            background-color: #278F75;
+        }
     </style>
 </head>
 <body>
@@ -86,23 +113,19 @@
         <h2>진척 검수 처리 - 발주 리스트</h2>
         <div class="search-container">
             <form method="get" th:action="@{/progressInspection/progressInspectionBoard}">
-                <div class="date-search">
+                <div class="search-bar">
                     <label>
-                        <input type="date" name="dateStart" id="date-start" th:value="${dateStart}">
+                        <input type="date" name="dateStart" class="date-start" th:value="${dateStart}">
                         <span>-</span>
-                        <input type="date" name="dateEnd" id="date-end" th:value="${dateEnd}">
+                        <input type="date" name="dateEnd" class="date-end" th:value="${dateEnd}">
                     </label>
-                </div>
-                <div class="keyword-search">
                     <label>
-                        <select name="keywordType" id="keyword-select">
+                        <select name="keywordType" class="keyword-select">
                             <option value="productCode" th:selected="${productCodeQuery != null}">품목코드</option>
                             <option value="productName" th:selected="${productNameQuery != null}">품목명</option>
                         </select>
                         <input type="text" name="productCodeQuery" th:value="${productCodeQuery}" placeholder="키워드 검색">
                     </label>
-                </div>
-                <div class="status-search">
                     <label>
                         <select name="inspectionStatus" id="inspectionStatus">
                             <option value="">전체</option>
@@ -111,8 +134,8 @@
                             <option value="검수예정" th:selected="${inspectionStatus == '검수예정'}">검수예정</option>
                         </select>
                     </label>
-                </div>
                 <button type="submit">검색</button>
+                </div>
             </form>
             <table>
                 <thead>

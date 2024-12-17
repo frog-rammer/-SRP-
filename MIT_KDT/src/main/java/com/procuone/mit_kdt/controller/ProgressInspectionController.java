@@ -71,32 +71,35 @@ public class ProgressInspectionController {
     }
 
     @GetMapping("/progressInspectionProcessingBoard")
-    public String ProcessingBoardView(Model model, HttpSession session, @RequestParam(defaultValue = "1") int page, // 사용자 요청 페이지 (1부터 시작)
-                                      @RequestParam(defaultValue = "8") int size,
-                                      Pageable pageable) {
+    public String ProcessingBoardView(Model model, HttpSession session,
+                                      @RequestParam(defaultValue = "1") int ongoingPage, // 상단 테이블 페이지
+                                      @RequestParam(defaultValue = "1") int completedPage, // 하단 테이블 페이지
+                                      @RequestParam(defaultValue = "8") int size) {
 
         String businessId = (String) session.getAttribute("businessId");
-        pageable = PageRequest.of(page - 1, size);
-        Page<ProgressInspectionDTO> productionPlanPage = progressInspectionService.getInspectionsByBusinessId(businessId, pageable);
 
+        // 상단 테이블: 검수예정과 검수진행중 상태
+        Pageable ongoingPageable = PageRequest.of(ongoingPage - 1, size);
+        Page<ProgressInspectionDTO> ongoingInspections = progressInspectionService
+                .getInspectionsByStatus(businessId, "검수예정", "검수진행중", ongoingPageable);
 
-        // 페이지네이션 관련 정보
-        int currentPage = productionPlanPage.getNumber() + 1; // 현재 페이지 (0-based를 1-based로 변환)
-        int totalPages = productionPlanPage.getTotalPages();  // 총 페이지 수
-        int startPage = Math.max(1, currentPage - 2); // 시작 페이지
-        int endPage = Math.min(totalPages, startPage + 4); // 끝 페이지
-        startPage = Math.max(1, endPage - 4); // 보정
+        // 하단 테이블: 검수완료 상태
+        Pageable completedPageable = PageRequest.of(completedPage - 1, size);
+        Page<ProgressInspectionDTO> completedInspections = progressInspectionService
+                .getInspectionsByStatus(businessId, "검수완료", null, completedPageable);
 
-        // 모델에 데이터 추가
-        model.addAttribute("progressInspectionList", productionPlanPage.getContent()); // 데이터 리스트
-        model.addAttribute("currentPage", currentPage); // 현재 페이지
-        model.addAttribute("totalPages", totalPages); // 총 페이지
-        model.addAttribute("startPage", startPage); // 시작 페이지
-        model.addAttribute("endPage", endPage); // 끝 페이지
+        // 상단 테이블 페이지네이션
+        model.addAttribute("progressInspectionList", ongoingInspections.getContent());
+        model.addAttribute("ongoingCurrentPage", ongoingPage);
+        model.addAttribute("ongoingTotalPages", ongoingInspections.getTotalPages());
+
+        // 하단 테이블 페이지네이션
+        model.addAttribute("completedInspectionList", completedInspections.getContent());
+        model.addAttribute("completedCurrentPage", completedPage);
+        model.addAttribute("completedTotalPages", completedInspections.getTotalPages());
 
         return "purchaseOrder/progressInspectionProcessing";
     }
-
 
     @PostMapping("/updateInspectedQuantity")
     public String updateInspectedQuantity(@RequestParam String progressInspectionCode,
