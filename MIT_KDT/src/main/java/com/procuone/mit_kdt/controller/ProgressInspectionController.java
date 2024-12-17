@@ -34,51 +34,33 @@ public class ProgressInspectionController {
     ItemService itemService;
     @GetMapping("/progressInspectionBoard")
     public String getProgressInspection(Model model,
-                                        @RequestParam(defaultValue = "1") int page, // 사용자 요청 페이지 (1부터 시작)
+                                        @RequestParam(defaultValue = "1") int page,
                                         @RequestParam(defaultValue = "8") int size,
-                                        Pageable pageable,
                                         @RequestParam(required = false) String productCodeQuery,
                                         @RequestParam(required = false) String productNameQuery,
-                                        @RequestParam(required = false) String procurementPlanCodeQuery,
-                                        @RequestParam(required = false) LocalDate dateStart, // 시작날짜
-                                        @RequestParam(required = false) LocalDate dateEnd // 종료 날짜
-    ) {
-        pageable = PageRequest.of(page - 1, size); // 0부터 시작하도록 조정
+                                        @RequestParam(required = false) LocalDate dateStart,
+                                        @RequestParam(required = false) LocalDate dateEnd) {
+        Pageable pageable = PageRequest.of(page - 1, size);
 
-        // 날짜 필터링 및 기타 필터 조건 추가
-        Page<ProgressInspectionDTO> productionPlanPage = progressInspectionService.searchProgressInspections(
-                productCodeQuery, productNameQuery, procurementPlanCodeQuery, dateStart, dateEnd, pageable);
+        // '검수예정' 상태 데이터 필터링 및 조건 검색
+        Page<ProgressInspectionDTO> progressPage = progressInspectionService.searchProgressInspections(
+                productCodeQuery, productNameQuery, null, dateStart, dateEnd, pageable);
 
-        // 로그로 productionPlanPage 출력
-        System.out.println("============ 시작: productionPlanPage 출력 ============");
-        productionPlanPage.getContent().forEach(System.out::println);
-        System.out.println("============ 끝: productionPlanPage 출력 ============");
-
-        int totalPages = productionPlanPage.getTotalPages();
+        int totalPages = progressPage.getTotalPages();
         int currentPage = page;
+        int startPage = Math.max(1, currentPage - 2);
+        int endPage = Math.min(totalPages, startPage + 4);
+        startPage = Math.max(1, endPage - 4);
 
-        // 페이지네이션 범위 계산 (최대 5개 페이지 표시)
-        int startPage = 1;
-        int endPage = 1;
-
-        if (totalPages > 0) {
-            startPage = Math.max(1, currentPage - 2); // 최소 페이지는 1
-            endPage = Math.min(totalPages, startPage + 4); // 최대 페이지는 startPage + 4
-            startPage = Math.max(1, endPage - 4); // 보정
-        }
-
-        // 모델에 데이터 및 페이지네이션 정보 추가
-        model.addAttribute("progressInspectionList", productionPlanPage.getContent());
+        model.addAttribute("progressInspectionList", progressPage.getContent());
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
-        model.addAttribute("size", size);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
-        model.addAttribute("dateStart", dateStart); // 상태 유지
-        model.addAttribute("dateEnd", dateEnd); // 상태 유지
-        model.addAttribute("productCodeQuery", productCodeQuery); // 상태 유지
-        model.addAttribute("productNameQuery", productNameQuery); // 상태 유지
-        model.addAttribute("procurementPlanCodeQuery", procurementPlanCodeQuery); // 상태 유지
+        model.addAttribute("dateStart", dateStart);
+        model.addAttribute("dateEnd", dateEnd);
+        model.addAttribute("productCodeQuery", productCodeQuery);
+        model.addAttribute("productNameQuery", productNameQuery);
 
         return "purchaseOrder/progressInspection";
     }
