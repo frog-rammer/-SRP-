@@ -226,44 +226,6 @@ public class ProcurementPlanController {
 
         return "companyProcumentPlanView";
     }
-
-    // 수정 폼을 띄울 때
-    @GetMapping("/procurementPlan/edit/{procurementPlanCode}")
-    public String showEditForm(@PathVariable String procurementPlanCode, Model model) {
-        // 서비스에서 해당 코드에 대한 조달계획 정보를 가져옵니다.
-        ProcurementPlan procurementPlan = procurementPlanService.getProcurementPlanByCode(procurementPlanCode);
-        model.addAttribute("procurementPlan", procurementPlan);
-        return "editProcurementPlan"; // 'procurementPlanEdit.html' 화면을 렌더링
-    }
-
-    // 수정 완료 후 처리
-    @PostMapping("/procurementPlan/update")
-    public String updateProcurementPlan(@ModelAttribute ProcurementPlan procurementPlan) {
-        // 서비스에서 해당 정보를 업데이트합니다.
-        procurementPlanService.updateProcurementPlan(procurementPlan);
-        return "redirect:/procurementPlan/list"; // 수정 후 목록 페이지로 리디렉션
-    }
-
-
-//    @GetMapping("/viewSearch")
-//    public String searchProcurementPlans(@RequestParam(required = false) String productName,
-//                                         @RequestParam(required = false) String startDate,
-//                                         @RequestParam(required = false) String endDate,
-//                                         @RequestParam(required = false) Long quantity,
-//                                         Model model){
-//
-//        // 문자열로 입력받은 날짜를 LocalDate로 변환
-//        LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : null;
-//        LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate) : null;
-//
-//        // 검색 조건을 Service에 전달하여 결과를 가져옵니다.
-//        List<ProcumentPlanDTO> result = procurementPlanService.searchProcurementPlans(productName, startDate, endDate, quantity);
-//
-//        // 결과를 모델에 추가하여 뷰에서 사용할 수 있도록 합니다.
-//        model.addAttribute("result", result);
-//
-//        return "purchaseOrder/procurementPlanView";  // 검색 결과 페이지로 이동
-//    }
 }
 
 

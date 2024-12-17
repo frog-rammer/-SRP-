@@ -268,17 +268,17 @@
             <div class="pagination">
                 <!-- 이전 페이지 버튼 -->
                 <a th:if="${currentPage > 0}"
-                   th:href="@{/procurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
+                   th:href="@{/procurementPlanView(page=${currentPage - 1}, search=${search}, startDate=${startDate}, endDate=${endDate})}">이전</a>
 
                 <!-- 페이지 번호 버튼 -->
                 <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                    th:classappend="${i == currentPage} ? 'active' : ''"
-                   th:href="@{/procurementPlanView(page=${i}, search=${search})}"
+                   th:href="@{/procurementPlanView(page=${i}, search=${search}, startDate=${startDate}, endDate=${endDate})}"
                    th:text="${i + 1}"></a>
 
                 <!-- 다음 페이지 버튼 -->
                 <a th:if="${currentPage < totalPages - 1}"
-                   th:href="@{/procurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
+                   th:href="@{/procurementPlanView(page=${currentPage + 1}, search=${search}, startDate=${startDate}, endDate=${endDate})}">다음</a>
             </div>
         </section>
     </main>
