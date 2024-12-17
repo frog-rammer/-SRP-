@@ -178,8 +178,8 @@ public class ProcurementPlanController {
         // 뷰에 데이터 추가
         model.addAttribute("procurementPlanList", procurementPlans.getContent());
         model.addAttribute("search", search);
-        model.addAttribute("startDate", startDateString); // String 그대로 전달
-        model.addAttribute("endDate", endDateString); // String 그대로 전달
+        model.addAttribute("startDate", startDateString);
+        model.addAttribute("endDate", endDateString);
         model.addAttribute("currentPage", procurementPlans.getNumber());
         model.addAttribute("totalPages", procurementPlans.getTotalPages());
         model.addAttribute("totalItems", procurementPlans.getTotalElements());
@@ -226,6 +226,50 @@ public class ProcurementPlanController {
 
         return "companyProcumentPlanView";
     }
+
+    @PostMapping("/updateProcurementPlan")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateProcurementPlan(@RequestBody Map<String, String> updatedData) {
+        try {
+            String procurementPlanCode = updatedData.get("procurementPlanCode");
+            int quantity = Integer.parseInt(updatedData.get("quantity"));
+            int procurementQuantity = Integer.parseInt(updatedData.get("procurementQuantity"));
+            String planStartDate = updatedData.get("planStartDate");
+            String planEndDate = updatedData.get("planEndDate");
+            String procurementEndDate = updatedData.get("procurementEndDate");
+
+            // 서버 측에서 조달수량이 계획수량을 초과하지 않는지 확인
+            if (procurementQuantity > quantity) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "조달수량은 계획수량을 초과할 수 없습니다."));
+            }
+
+            // 계획 종료일과 시작일, 조달 납기일 검증
+            if (LocalDate.parse(planEndDate).isBefore(LocalDate.parse(planStartDate))) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "계획 종료일은 계획 시작일보다 빠를 수 없습니다."));
+            }
+
+            if (LocalDate.parse(planEndDate).isAfter(LocalDate.parse(procurementEndDate))) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "계획 종료일은 조달 납기일보다 늦을 수 없습니다."));
+            }
+
+            if (LocalDate.parse(planStartDate).isAfter(LocalDate.parse(procurementEndDate))) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "계획 시작일은 조달 납기일보다 늦을 수 없습니다."));
+            }
+
+            // 데이터 업데이트 로직
+            boolean isUpdated = procurementPlanService.updateProcurementPlan(procurementPlanCode, quantity, procurementQuantity, planStartDate, planEndDate, procurementEndDate);
+
+            if (isUpdated) {
+                return ResponseEntity.ok(Map.of("success", true));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false));
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false));
+        }
+    }
 }
+
 
 

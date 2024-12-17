@@ -22,6 +22,11 @@ public interface ProcurementPlanService {
     // 조달계획 조회
     ProcurementPlan getProcurementPlanByCode(String procurementPlanCode);
 
-    // 조달계획 업데이트
-    void updateProcurementPlan(ProcurementPlan procurementPlan);
+    // 조달계획을 업데이트하는 메소드
+    boolean updateProcurementPlan(String procurementPlanCode,
+                                  int quantity,
+                                  int procurementQuantity,
+                                  String planStartDate,
+                                  String planEndDate,
+                                  String procurementEndDate);
 }

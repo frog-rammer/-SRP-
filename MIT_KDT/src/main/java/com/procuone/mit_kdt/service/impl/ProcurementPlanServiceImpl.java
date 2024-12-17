@@ -22,9 +22,6 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     @Autowired
     private ProductionPlanRepository productionPlanRepository;
 
-    @Autowired
-    private ProcurementPlanRepository procurementPlanRepository;
-
     @Override
     public ProcumentPlanDTO registerProcurementPlan(ProcumentPlanDTO dto) {
         // 1. 생산 계획 조회
@@ -134,13 +131,56 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     // 조달계획 조회
     @Override
     public ProcurementPlan getProcurementPlanByCode(String procurementPlanCode) {
-        return procurementPlanRepository.findByProcurementPlanCode(procurementPlanCode);
+        return repository.findByProcurementPlanCode(procurementPlanCode);
     }
 
-    // 조달계획 업데이트
     @Override
-    public void updateProcurementPlan(ProcurementPlan procurementPlan) {
-        procurementPlanRepository.save(procurementPlan); // JPA를 사용해 데이터 저장
+    public boolean updateProcurementPlan(String procurementPlanCode,
+                                         int quantity,
+                                         int procurementQuantity,
+                                         String planStartDate,
+                                         String planEndDate,
+                                         String procurementEndDate) {
+
+        // 조달계획 조회 (DB에서)
+        ProcurementPlan procurementPlan = repository.findByProcurementPlanCode(procurementPlanCode);
+
+        if (procurementPlan == null) {
+            return false; // 조달계획이 없다면 실패 처리
+        }
+
+        // 비즈니스 로직: 계획수량, 조달수량, 날짜 검증
+        if (procurementQuantity > quantity) {
+            return false; // 조달수량이 계획수량을 초과하면 실패
+        }
+
+        LocalDate planStart = LocalDate.parse(planStartDate);
+        LocalDate planEnd = LocalDate.parse(planEndDate);
+        LocalDate procurementEnd = LocalDate.parse(procurementEndDate);
+
+        if (planEnd.isBefore(planStart)) {
+            return false; // 계획 종료일이 시작일보다 빠르면 실패
+        }
+
+        if (planEnd.isAfter(procurementEnd)) {
+            return false; // 계획 종료일이 조달 납기일보다 늦으면 실패
+        }
+
+        if (planStart.isAfter(procurementEnd)) {
+            return false; // 계획 시작일이 조달 납기일보다 늦으면 실패
+        }
+
+        // DB에 수정된 내용 저장
+        procurementPlan.setProcurementQuantity((long) procurementQuantity);
+        procurementPlan.setPlanStartDate(planStart);
+        procurementPlan.setPlanEndDate(planEnd);
+        procurementPlan.setProcurementEndDate(procurementEnd);
+
+        // 리포지토리를 통해 데이터 업데이트
+        repository.save(procurementPlan);
+
+        return true; // 성공적으로 업데이트된 경우
     }
 }
+
 

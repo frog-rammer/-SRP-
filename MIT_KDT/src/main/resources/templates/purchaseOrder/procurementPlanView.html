@@ -255,8 +255,8 @@
                     <td th:text="${procurementPlan.planEndDate}"></td>      <!--계획 종료일-->
                     <td th:text="${procurementPlan.procurementEndDate}"></td>       <!--조달납기일 코드-->
                     <td>
-                        <input type="button" class="btn" value="수정">
-                        <input type="button" class="btn" value="삭제">
+                        <input type="button" class="btn edit-btn" value="수정" onclick="editProcurementPlan(this)">
+                        <input type="button" class="btn delete-btn" value="삭제" onclick="deleteProcurementPlan(this)">
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(procurementPlanList)}">
@@ -285,6 +285,147 @@
     <footer>
         <p>&copy; 2024 조달관리 시스템</p>
     </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 수정 버튼 클릭 시 입력창으로 변환
+            const editButtons = document.querySelectorAll('.btn-edit');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const cells = row.querySelectorAll('td');
+
+                    // 현재 데이터 추출
+                    const planQuantity = parseInt(cells[4].innerText.trim(), 10); // 계획수량
+                    const procurementQuantity = parseInt(cells[5].innerText.trim(), 10); // 조달수량
+                    const planStartDate = cells[6].innerText.trim();
+                    const planEndDate = cells[7].innerText.trim();
+                    const procurementEndDate = cells[8].innerText.trim();
+
+                    // 인풋으로 변경
+                    cells[4].innerHTML = `<input type="number" value="${procurementQuantity}" class="edit-field" min="1" />`; // 조달수량
+                    cells[5].innerHTML = `<input type="date" value="${planStartDate}" class="edit-field" />`; // 계획 시작일
+                    cells[6].innerHTML = `<input type="date" value="${planEndDate}" class="edit-field" />`; // 계획 종료일
+                    cells[7].innerHTML = `<input type="date" value="${procurementEndDate}" class="edit-field" />`; // 조달 납기일
+
+                    // 기존 '수정' 버튼을 '저장' 버튼으로 변경
+                    this.value = '저장';
+                    this.classList.remove('edit-btn');
+                    this.classList.add('btn-save');
+                });
+            });
+
+            // 저장 버튼 클릭 시 입력값 검증 후 저장
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('btn-save')) {
+                    const button = event.target;
+                    const row = button.closest('tr');
+                    const cells = row.querySelectorAll('td');
+                    const procurementPlanCode = row.getAttribute('data-id');
+
+                    // 수정된 값 추출
+                    const planQuantity = parseInt(cells[4].innerText.trim(), 10); // 계획수량 (고정값)
+                    const procurementQuantity = parseInt(cells[5].querySelector('input').value, 10); // 조달수량
+                    const planStartDate = cells[6].querySelector('input').value;
+                    const planEndDate = cells[7].querySelector('input').value;
+                    const procurementEndDate = cells[8].querySelector('input').value;
+
+                    // 조건 검증
+                    if (procurementQuantity > planQuantity) {
+                        alert('조달수량은 계획수량을 초과할 수 없습니다.');
+                        return; // 조달수량이 계획수량을 초과하면 저장하지 않음
+                    }
+
+                    // 계획 종료일이 계획 시작일보다 빠를 수 없고, 조달납기일보다 늦어야 함
+                    if (new Date(planEndDate) < new Date(planStartDate)) {
+                        alert('계획 종료일은 계획 시작일보다 빠를 수 없습니다.');
+                        return;
+                    }
+
+                    if (new Date(planEndDate) > new Date(procurementEndDate)) {
+                        alert('계획 종료일은 조달 납기일보다 늦을 수 없습니다.');
+                        return;
+                    }
+
+                    if (new Date(planStartDate) > new Date(procurementEndDate)) {
+                        alert('계획 시작일은 조달 납기일보다 늦을 수 없습니다.');
+                        return;
+                    }
+
+                    // 서버로 수정된 데이터 전송 (AJAX)
+                    fetch('/updateProcurementPlan', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            procurementPlanCode: procurementPlanCode,
+                            quantity: planQuantity, // 계획수량은 수정 불가
+                            procurementQuantity: procurementQuantity,
+                            planStartDate: planStartDate,
+                            planEndDate: planEndDate,
+                            procurementEndDate: procurementEndDate
+                        }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // 성공적으로 업데이트 되었으면 테이블 셀을 다시 일반 텍스트로 변경
+                                cells[4].innerHTML = procurementQuantity; // 조달수량
+                                cells[5].innerHTML = planStartDate; // 계획 시작일
+                                cells[6].innerHTML = planEndDate; // 계획 종료일
+                                cells[7].innerHTML = procurementEndDate; // 조달 납기일
+
+                                // 저장 버튼을 수정 버튼으로 변경
+                                button.value = '수정';
+                                button.classList.remove('btn-save');
+                                button.classList.add('btn-edit');
+                            } else {
+                                alert('수정에 실패했습니다.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('서버 오류가 발생했습니다.');
+                        });
+                }
+            });
+
+            // 삭제 버튼 클릭 시 해당 행 삭제
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('btn-delete')) {
+                    const button = event.target;
+                    const row = button.closest('tr');
+                    const procurementPlanCode = row.getAttribute('data-id');
+
+                    // 삭제 확인 후 삭제 요청
+                    if (confirm("정말 삭제하시겠습니까?")) {
+                        fetch('/deleteProcurementPlan', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                procurementPlanCode: procurementPlanCode
+                            }),
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('삭제가 완료되었습니다.');
+                                    row.remove(); // 해당 행 삭제
+                                } else {
+                                    alert('삭제에 실패했습니다.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('서버 오류가 발생했습니다.');
+                            });
+                    }
+                }
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
