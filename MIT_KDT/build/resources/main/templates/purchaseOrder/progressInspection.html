@@ -79,38 +79,32 @@
     <header class="layout-header">
         <div th:replace="~{partials/procuOneHeader :: header}"></div>
     </header>
-
     <aside class="layout-sidebar">
         <div th:replace="~{partials/procuOneSide :: side}"></div>
     </aside>
-
     <main class="layout-main">
         <h2>진척 검수 처리 - 발주 리스트</h2>
-
-        <div class="progress">
-            <button class="plan-btn">검수계획 등록</button>
-            <button class="process-btn">검수처리</button>
-        </div>
-
         <div class="search-container">
-            <div class="date-search">
-                <label>
-                    <input type="date" id="date-start" th:value="${dateStart}">
-                    <span>-</span>
-                    <input type="date" id="date-end" th:value="${dateEnd}">
-                </label>
-                <button id="search-btn">검색</button>
-            </div>
-            <div class="keyword-search">
-                <label>
-                    <select id="keyword-select">
-                        <option th:selected="${productCodeQuery != null}" value="productCode">품목코드</option>
-                        <option th:selected="${productNameQuery != null}" value="productName">품목명</option>
-                    </select>
-                    <input type="text" id="keyword-search" th:value="${productCodeQuery ?: productNameQuery}" placeholder="키워드 검색">
-                    <button id="keyword-search-btn">검색</button>
-                </label>
-            </div>
+            <form method="get" th:action="@{/progressInspection/progressInspectionBoard}">
+                <div class="date-search">
+                    <label>
+                        <input type="date" id="date-start" th:value="${dateStart}">
+                        <span>-</span>
+                        <input type="date" id="date-end" th:value="${dateEnd}">
+                    </label>
+                    <button id="search-btn">검색</button>
+                </div>
+                <div class="keyword-search">
+                    <label>
+                        <select id="keyword-select">
+                            <option th:selected="${productCodeQuery != null}" value="productCode">품목코드</option>
+                            <option th:selected="${productNameQuery != null}" value="productName">품목명</option>
+                        </select>
+                        <input type="text" id="keyword-search" th:value="${productCodeQuery ?: productNameQuery}" placeholder="키워드 검색">
+                        <button id="keyword-search-btn">검색</button>
+                    </label>
+                </div>
+            </form>
             <table>
                 <thead>
                 <tr>
@@ -146,6 +140,9 @@
                 </tr>
                 </tbody>
             </table>
+            <div class="progress">
+                <button class="process-btn">검수처리</button>
+            </div>
         </div>
             <div class="pagination">
                 <ul>
@@ -154,7 +151,6 @@
                         <a th:href="@{'/progressInspection/progressInspectionBoard'(page=${currentPage - 1}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, procurementPlanCodeQuery=${procurementPlanCodeQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
                            class="page-btn">이전</a>
                     </li>
-
                     <!-- 페이지 번호 -->
                     <li th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}">
                         <a th:href="@{'/progressInspection/progressInspectionBoard'(page=${pageNumber}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, procurementPlanCodeQuery=${procurementPlanCodeQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
@@ -163,7 +159,6 @@
                            class="page-btn">
                         </a>
                     </li>
-
                     <!-- 다음 페이지 버튼 -->
                     <li th:if="${currentPage < totalPages}">
                         <a th:href="@{'/progressInspection/progressInspectionBoard'(page=${currentPage + 1}, size=${size}, productCodeQuery=${productCodeQuery}, productNameQuery=${productNameQuery}, procurementPlanCodeQuery=${procurementPlanCodeQuery}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
@@ -171,10 +166,7 @@
                     </li>
                 </ul>
             </div>
-
-
     </main>
-
     <footer class="layout-footer"></footer>
 </div>
 </body>
