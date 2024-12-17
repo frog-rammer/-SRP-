@@ -39,6 +39,18 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
         return inspections.map(this::calculateExpectedArrivalDateAndConvertToDTO);
     }
 
+    @Override
+    public Page<ProgressInspectionDTO> getInspectionsByStatus(String businessId, String status1, String status2, Pageable pageable) {
+        Page<ProgressInspection> inspections;
+
+        if (status2 != null) {
+            inspections = progressInspectionRepository.findByStatusIn(businessId, status1, status2, pageable);
+        } else {
+            inspections = progressInspectionRepository.findByStatus(businessId, status1, pageable);
+        }
+
+        return inspections.map(this::entityToDto);
+    }
 
     // 리드타임 계산 및 DTO 변환
     private ProgressInspectionDTO calculateExpectedArrivalDateAndConvertToDTO(ProgressInspection entity) {

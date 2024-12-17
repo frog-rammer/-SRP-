@@ -21,4 +21,5 @@ public interface ProgressInspectionService {
     // 엔티티 < - > DTO 간 변환 메서드
     public ProgressInspection dtoToEntity(ProgressInspectionDTO dto, PurchaseOrder purchaseOrder);
     public ProgressInspectionDTO entityToDto(ProgressInspection entity);
+    Page<ProgressInspectionDTO> getInspectionsByStatus(String businessId, String status1, String status2, Pageable pageable);
 }

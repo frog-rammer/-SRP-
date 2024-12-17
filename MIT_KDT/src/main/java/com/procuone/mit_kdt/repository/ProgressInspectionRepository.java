@@ -37,4 +37,19 @@ public interface ProgressInspectionRepository extends JpaRepository<ProgressInsp
     @Query("SELECT pi FROM ProgressInspection pi WHERE pi.inspectedQuantity > 0")
     Page<ProgressInspection> findAllWithInspectedQuantityGreaterThanZero(Pageable pageable);
 
+    @Query("SELECT pi FROM ProgressInspection pi " +
+            "WHERE pi.businessId = :businessId " +
+            "AND (pi.inspectionStatus = :status1 OR pi.inspectionStatus = :status2)")
+    Page<ProgressInspection> findByStatusIn(@Param("businessId") String businessId,
+                                            @Param("status1") String status1,
+                                            @Param("status2") String status2,
+                                            Pageable pageable);
+
+    @Query("SELECT pi FROM ProgressInspection pi " +
+            "WHERE pi.businessId = :businessId " +
+            "AND pi.inspectionStatus = :status1")
+    Page<ProgressInspection> findByStatus(@Param("businessId") String businessId,
+                                          @Param("status1") String status1,
+                                          Pageable pageable);
+
 }
