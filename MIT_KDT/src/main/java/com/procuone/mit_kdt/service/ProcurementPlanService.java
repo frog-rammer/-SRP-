@@ -10,9 +10,12 @@ import java.util.List;
 
 public interface ProcurementPlanService {
     ProcumentPlanDTO registerProcurementPlan(ProcumentPlanDTO dto);
+
     long getRequiredProcurementQuantity(String productionPlanId);
+
     // DTO ↔ Entity 변환 메서드
     ProcurementPlan dtoToEntity(ProcumentPlanDTO dto);
+
     ProcumentPlanDTO entityToDto(ProcurementPlan entity);
 
     String search(ProcumentPlanDTO procumentPlanDTO);
@@ -22,11 +25,14 @@ public interface ProcurementPlanService {
     // 조달계획 조회
     ProcurementPlan getProcurementPlanByCode(String procurementPlanCode);
 
-    // 조달계획을 업데이트하는 메소드
+    // 조달 계획을 수정하는 메소드
     boolean updateProcurementPlan(String procurementPlanCode,
                                   int quantity,
                                   int procurementQuantity,
                                   String planStartDate,
                                   String planEndDate,
                                   String procurementEndDate);
+
+    // 조달 계획을 삭제하는 메소드
+    boolean deleteProcurementPlan(String procurementPlanCode);
 }

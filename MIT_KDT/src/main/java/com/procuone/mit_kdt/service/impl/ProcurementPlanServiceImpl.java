@@ -181,6 +181,18 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
 
         return true; // 성공적으로 업데이트된 경우
     }
+    @Override
+    public boolean deleteProcurementPlan(String procurementPlanCode) {
+        ProcurementPlan procurementPlan = repository.findByProcurementPlanCode(procurementPlanCode);
+
+        if (procurementPlan == null) {
+            return false; // 조달계획이 없다면 실패 처리
+        }
+
+        // 삭제
+        repository.delete(procurementPlan);
+        return true;
+    }
 }
 
 

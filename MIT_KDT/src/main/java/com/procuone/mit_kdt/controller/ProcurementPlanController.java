@@ -238,12 +238,11 @@ public class ProcurementPlanController {
             String planEndDate = updatedData.get("planEndDate");
             String procurementEndDate = updatedData.get("procurementEndDate");
 
-            // 서버 측에서 조달수량이 계획수량을 초과하지 않는지 확인
+            // 유효성 검사
             if (procurementQuantity > quantity) {
                 return ResponseEntity.badRequest().body(Map.of("success", false, "message", "조달수량은 계획수량을 초과할 수 없습니다."));
             }
 
-            // 계획 종료일과 시작일, 조달 납기일 검증
             if (LocalDate.parse(planEndDate).isBefore(LocalDate.parse(planStartDate))) {
                 return ResponseEntity.badRequest().body(Map.of("success", false, "message", "계획 종료일은 계획 시작일보다 빠를 수 없습니다."));
             }
@@ -256,7 +255,7 @@ public class ProcurementPlanController {
                 return ResponseEntity.badRequest().body(Map.of("success", false, "message", "계획 시작일은 조달 납기일보다 늦을 수 없습니다."));
             }
 
-            // 데이터 업데이트 로직
+            // DB 업데이트
             boolean isUpdated = procurementPlanService.updateProcurementPlan(procurementPlanCode, quantity, procurementQuantity, planStartDate, planEndDate, procurementEndDate);
 
             if (isUpdated) {
@@ -269,6 +268,26 @@ public class ProcurementPlanController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false));
         }
     }
+
+    // 삭제 기능
+    @DeleteMapping("/deleteProcurementPlan")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> deleteProcurementPlan(@RequestParam String procurementPlanCode) {
+        try {
+            // 해당 코드로 조달 계획을 찾고 삭제
+            boolean isDeleted = procurementPlanService.deleteProcurementPlan(procurementPlanCode);
+
+            if (isDeleted) {
+                return ResponseEntity.ok(Map.of("success", true));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false));
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false));
+        }
+    }
+
 }
 
 
