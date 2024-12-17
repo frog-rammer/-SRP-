@@ -201,7 +201,7 @@
     <main class="layout-main">
         <h1>조달계획 조회</h1>
         <section class="search-section">
-            <form action="/procurementPlanView" method="get">
+            <form action="/procurementPlan/procurementPlanView" method="get">
                 <label for="search">품목명</label>
                 <input type="text" id="search" name="search" th:value="${search}" placeholder="품목명을 입력하세요">
 
@@ -258,17 +258,17 @@
             <div class="pagination">
                 <!-- 이전 페이지 버튼 -->
                 <a th:if="${currentPage > 0}"
-                   th:href="@{/procurementPlanView(page=${currentPage - 1}, search=${search}, startDate=${startDate}, endDate=${endDate})}">이전</a>
+                   th:href="@{/procurementPlan/procurementPlanView(page=${currentPage - 1}, search=${search}, startDate=${startDate}, endDate=${endDate})}">이전</a>
 
                 <!-- 페이지 번호 버튼 -->
                 <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                    th:classappend="${i == currentPage} ? 'active' : ''"
-                   th:href="@{/procurementPlanView(page=${i}, search=${search}, startDate=${startDate}, endDate=${endDate})}"
+                   th:href="@{/procurementPlan/procurementPlanView(page=${i}, search=${search}, startDate=${startDate}, endDate=${endDate})}"
                    th:text="${i + 1}"></a>
 
                 <!-- 다음 페이지 버튼 -->
                 <a th:if="${currentPage < totalPages - 1}"
-                   th:href="@{/procurementPlanView(page=${currentPage + 1}, search=${search}, startDate=${startDate}, endDate=${endDate})}">다음</a>
+                   th:href="@{/procurementPlan/procurementPlanView(page=${currentPage + 1}, search=${search}, startDate=${startDate}, endDate=${endDate})}">다음</a>
             </div>
         </section>
     </main>
@@ -342,7 +342,7 @@
                     }
 
                     // 서버로 수정된 데이터 전송 (AJAX)
-                    fetch('/updateProcurementPlan', {
+                    fetch('/procurementPlan/updateProcurementPlan', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -389,7 +389,7 @@
 
                     // 삭제 확인 후 삭제 요청
                     if (confirm("정말 삭제하시겠습니까?")) {
-                        fetch('/deleteProcurementPlan', {
+                        fetch('/procurementPlan/deleteProcurementPlan', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
