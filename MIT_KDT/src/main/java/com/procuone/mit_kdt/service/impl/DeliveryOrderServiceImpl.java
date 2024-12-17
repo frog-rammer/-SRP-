@@ -116,6 +116,7 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
         return null;
     }
 
+
     /**
      * 매일 자정에 실행 (cron 표현식: "0 0 0 * * *")
      */
@@ -125,15 +126,14 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
         LocalDate today = LocalDate.now();
         // 운송중 상태이고 배송 날짜가 오늘인 모든 DeliveryOrder를 조회
         // 테스트를 위해 주석처리함
-//        List<DeliveryOrder> ordersToComplete = deliveryOrderRepository.findByStatusAndDeliveryDate("운송중", today);
+        List<DeliveryOrder> ordersToComplete = deliveryOrderRepository.findByStatusAndDeliveryDate("운송중", today);
         //
-        List<DeliveryOrder> ordersToComplete = deliveryOrderRepository.findAll();
+        //List<DeliveryOrder> ordersToComplete = deliveryOrderRepository.findAll();
         // 상태를 "완료"로 변경
         InspectionDTO inspectionDTO = new InspectionDTO();
 
         for (DeliveryOrder order : ordersToComplete) {
             order.setStatus("완료");
-
             //입고 검수 테이블에 검수중으로 추가
             inspectionDTO.setDeliveryCode(order.getDeliveryCode());
             inspectionDTO.setInspectionDate(LocalDate.of(1000,1,1));

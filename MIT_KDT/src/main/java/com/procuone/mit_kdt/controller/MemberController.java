@@ -1,6 +1,7 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.MemberDTO;
+import com.procuone.mit_kdt.entity.Member;
 import com.procuone.mit_kdt.service.CompanyService;
 import com.procuone.mit_kdt.service.MemberService;
 import jakarta.servlet.http.HttpServlet;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class MemberController {
@@ -61,7 +63,9 @@ public class MemberController {
                     System.out.println("Business ID not found!");
                 }
             }
-            session.setAttribute("username", memberDTO.getMemberId()); // 사용자 ID 세션에 저장
+            Optional<Member> sessionMember = memberService.getMember(memberDTO.getMemberId());
+            session.setAttribute("userId", sessionMember.get().getMemberId());
+            session.setAttribute("username", sessionMember.get().getMemberName()); // 사용자 ID 세션에 저장
             session.setAttribute("userType", userType); // 사용자 타입 세션에 저장
 
             // 세션 값 확인을 위한 출력

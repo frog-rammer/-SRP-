@@ -10,6 +10,8 @@ import com.procuone.mit_kdt.service.InventoryService;
 import com.procuone.mit_kdt.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,6 +78,15 @@ public class InspectionServiceImpl implements InspectionService {
                 .productionQty(contract.getProductionQty())
                 .contractStatus(contract.getContractStatus())
                 .build();
+    }
+
+    //상태별로 페이징된 입고검수목록
+    @Override
+    public Page<InspectionDTO> getInspectionsByStatus(String status, Pageable pageable) {
+        // Repository를 통해 상태별로 페이지네이션된 데이터 조회
+        Page<Inspection> inspectionPage = inspectionRepository.findByInspectionStatus(status, pageable);
+        // Page<Inspection> -> Page<InspectionDTO> 변환
+        return inspectionPage.map(this::convertToDTO);
     }
 
     @Override

@@ -20,6 +20,7 @@ public interface BOMRelationshipRepository extends JpaRepository<BOMRelationship
     // 특정 하위 제품 코드를 부모로 가지는 모든 관계 조회
     List<BOMRelationship> findByChildItemProductCode(String childProductCode);
 
+
     // 특정 상위 제품 코드에 대한 하위 제품 코드만 조회
     @Query("SELECT r.childItem.productCode FROM BOMRelationship r WHERE r.parentItem.productCode = :parentProductCode")
     List<String> findChildProductCodesByParentCode(@Param("parentProductCode") String parentProductCode);

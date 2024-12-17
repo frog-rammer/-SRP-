@@ -6,6 +6,7 @@ import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
 import com.procuone.mit_kdt.entity.BOM.PurchaseBOM;
+import com.procuone.mit_kdt.entity.Member;
 import com.procuone.mit_kdt.entity.ProcurementPlan;
 import com.procuone.mit_kdt.repository.ProcurementPlanRepository;
 import com.procuone.mit_kdt.service.*;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -114,19 +116,21 @@ public class ProcurementPlanController {
     }
 
     @PostMapping("/register")
-    public String procurementInput(@ModelAttribute ProcumentPlanDTO procumentPlanDTO) {
+    public String procurementInput(@ModelAttribute ProcumentPlanDTO procumentPlanDTO,HttpSession session) {
 
         System.out.println("===================== DTO 출력 =================" + procumentPlanDTO.toString());
+        // 세션에서 사용자 이름 가져오기
+        String username = (String) session.getAttribute("username");
+
+        System.out.println("===================== memberName 출력 =================" + username );
+
 
         //1. 조달계획 테이블에 넣기
         procumentPlanDTO = procurementPlanService.registerProcurementPlan(procumentPlanDTO);
         //2. 발주서 자동생성
-        purchaseOrderService.registerPurchaseOrder(procumentPlanDTO);
-
+        purchaseOrderService.registerPurchaseOrder(procumentPlanDTO,username);
         //3.상태를 "대기" 상태로 출고요청에 자동생성하기
         materialIssueService.createAndSaveShipmentsFromProcurementPlan(procumentPlanDTO); // Shipment 생성
-
-
         // 4. 저장된 조달 계획 리스트를 다시 로드하여 View에 전달
         return "redirect:/procurementPlan/register"; // GET 메서드 호출로 리다이렉트
     }
