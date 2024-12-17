@@ -128,7 +128,7 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
         // 테스트를 위해 주석처리함
         List<DeliveryOrder> ordersToComplete = deliveryOrderRepository.findByStatusAndDeliveryDate("운송중", today);
         //
-        //List<DeliveryOrder> ordersToComplete = deliveryOrderRepository.findAll();
+//        List<DeliveryOrder> ordersToComplete = deliveryOrderRepository.findAll();
         // 상태를 "완료"로 변경
         InspectionDTO inspectionDTO = new InspectionDTO();
 
@@ -149,8 +149,6 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
         }
         // 변경된 상태를 저장
         deliveryOrderRepository.saveAll(ordersToComplete);
-
-
         System.out.println(ordersToComplete.size() + "개의 배송 상태가 '완료'로 변경되었습니다.");
     }
 

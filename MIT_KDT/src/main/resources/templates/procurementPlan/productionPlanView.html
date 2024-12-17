@@ -7,24 +7,9 @@
     <link rel="stylesheet" th:href="@{/css/productionPlanView.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
-        /* layout-main 스타일 */
-        .layout-main {
-            background-color: #f9f9f9; /* 연한 회색 배경 */
-            width: 100%;
-            padding: 30px; /* 내부 여백 */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh; /* 화면 크기에 맞게 최소 높이 설정 */
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
-            border-radius: 8px; /* 모서리 둥글게 */
-        }
-
         /* 컨테이너 내부의 각 섹션을 구분짓기 */
         .container {
             width: 100%;
-            max-width: 1200px; /* 최대 너비 설정 */
             margin: 0 auto; /* 가운데 정렬 */
             display: flex;
             flex-direction: column;
@@ -70,7 +55,7 @@
         .searchBtn, .detailsBtn, .updateBtn {
             padding: 10px 15px;
             font-size: 14px;
-            background-color: #267f6d;
+            background-color: #32928E;
             color: white;
             border: none;
             border-radius: 4px;
@@ -97,7 +82,7 @@
         }
 
         .productionPlanList table th {
-            background-color: #267f6d;
+            background-color: #32928E;
             color: white;
         }
 
@@ -120,7 +105,7 @@
 
         .pagination a {
             padding: 8px 15px;
-            background-color: #267f6d;
+            background-color: #32928E;
             color: white;
             text-decoration: none;
             border-radius: 4px;
@@ -132,7 +117,7 @@
 
 
         .pagination a.current {
-            background-color: #267f6d;
+            background-color: #32928E;
             color: white;
             font-weight: bold;
         }
@@ -140,9 +125,6 @@
             width: 100px;
             height: 25px;
         }
-
-
-
         /* 수정, 삭제 버튼 스타일 */
         button.editBtn, button.deleteBtn {
             padding: 8px 12px;
@@ -171,7 +153,74 @@
             background-color: #d3d3d3;
             cursor: not-allowed;
         }
+        .selectContainer {
+            display: flex;
+            gap: 200px;
+            align-items: center;
 
+        }
+
+        .selectContainer div {
+            display: flex;
+            gap: 30px;
+            font-family: Arial, sans-serif;
+        }
+
+        .selectContainer label {
+            margin-bottom: 5px;
+            font-weight: bolder;
+            color: #333;
+        }
+
+        .yearSelect, .monthSelect {
+            padding: 0 0 0 10px;
+            border: 2px solid #ddd; /* 테두리 */
+            border-radius: 8px; /* 모서리 둥글게 */
+            background-color: #fff; /* 배경색 */
+            color: #333; /* 글자색 */
+            appearance: none; /* 기본 브라우저 스타일 제거 */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23333' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px; /* 화살표 아이콘 크기 */
+            cursor: pointer;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+            /* 셀렉트 박스 크기 고정 및 박스 사이즈 설정 */
+            width: 150px; /* 고정 너비 */
+            min-width: 150px; /* 최소 너비 */
+            height: 100px;
+            box-sizing: border-box; /* 패딩과 테두리를 포함한 너비 설정 */
+        }
+
+        /* 셀렉트 박스 호버 및 포커스 효과 */
+        .yearSelect:hover, .monthSelect:hover {
+            border-color: #aaa;
+        }
+        .yearSelect:focus, .monthSelect:focus {
+            outline: none;
+            border-color: #4CAF50; /* 초록색 강조 */
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* 포커스 시 그림자 효과 */
+        }
+
+        /* 셀렉트 박스 옵션 스타일 (크롬 기반) */
+        .yearSelect option, .monthSelect option {
+            background-color: #fff;
+            color: #333;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        /* 반응형 스타일 */
+        @media (max-width: 600px) {
+            .selectContainer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .yearSelect, .monthSelect {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -189,23 +238,29 @@
                 <!-- 달력 부분 -->
                 <section class="calendarWrap">
                     <h3>생산 달력</h3>
-                    <label for="yearSelect">연도:</label>
-                    <select id="yearSelect"></select>
-                    <label for="monthSelect">월:</label>
-                    <select id="monthSelect">
-                        <option value="0">1</option>
-                        <option value="1">2</option>
-                        <option value="2">3</option>
-                        <option value="3">4</option>
-                        <option value="4">5</option>
-                        <option value="5">6</option>
-                        <option value="6">7</option>
-                        <option value="7">8</option>
-                        <option value="8">9</option>
-                        <option value="9">10</option>
-                        <option value="10">11</option>
-                        <option value="11">12</option>
-                    </select>
+                    <div class="selectContainer">
+                        <div>
+                            <label for="yearSelect">연도:</label>
+                            <select id="yearSelect" class="yearSelect"></select>
+                        </div>
+                        <div>
+                            <label for="monthSelect">월:</label>
+                            <select id="monthSelect" class="monthSelect">
+                                <option value="0">1</option>
+                                <option value="1">2</option>
+                                <option value="2">3</option>
+                                <option value="3">4</option>
+                                <option value="4">5</option>
+                                <option value="5">6</option>
+                                <option value="6">7</option>
+                                <option value="7">8</option>
+                                <option value="8">9</option>
+                                <option value="9">10</option>
+                                <option value="10">11</option>
+                                <option value="11">12</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="calendar" id="calendar">
                         <div>Sun</div>
                         <div>Mon</div>
@@ -219,6 +274,7 @@
 
                 <!-- 생산 계획 목록 부분 -->
                 <section class="productionPlanListWrap">
+                    <h3>생산 계획 목록</h3>
                     <div class="productionPlanListSearchBar">
                         <select name="searchType">
                             <option value="productPlanCode">생산계획번호</option>
@@ -235,7 +291,7 @@
 
                         <button type="submit" class="searchBtn">검색</button>
                     </div>
-                    <h3>생산 계획 목록</h3>
+
                     <section class="productionPlanList">
                         <table>
                             <thead>
@@ -340,7 +396,7 @@
             let dateDiv = document.querySelector(`.calendar div[data-day="${calendarDateText}"]`);
 
             if (dateDiv) {
-                dateDiv.style.backgroundColor = '#99cc99'; // 날짜 색칠
+                dateDiv.style.backgroundColor = '#e30018'; // 날짜 색칠
                 // 색칠된 날짜를 연도, 월, 일 기준으로 저장
                 highlightedDates.push({
                     day: calendarDateText,
@@ -396,7 +452,7 @@
             let calendarDateText = dateDiv.innerText;
             // 해당 날짜가 저장된 날짜 배열에 있고, 월과 연도가 일치하면 색칠
             if (calendarDateText && highlightedDates.some(date => date.day == calendarDateText && date.month == month && date.year == year)) {
-                dateDiv.style.backgroundColor = '#99cc99';  // 색칠된 날짜 배경색
+                dateDiv.style.backgroundColor = '#32928E';  // 색칠된 날짜 배경색
             }
         });
     }

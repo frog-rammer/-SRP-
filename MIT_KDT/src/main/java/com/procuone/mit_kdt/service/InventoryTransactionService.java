@@ -50,6 +50,12 @@ public interface InventoryTransactionService{
     // 제품 코드로 특정 거래 금액 통계 가져오기
     Double getCostStatsByProductCode(String productCode);
 
+    // 월별 금액 통계
+    Map<String, Double> getMonthlyCostStatsByProductCode(String productCode);
+
+    //  주별 금액 통계
+    Map<String, Double> getWeeklyCostStatsByProductCode(String productCode);
+
     // 거래 유형별 총 금액 계산 (예: 총 입고 금액, 총 출고 금액)
     Map<String, Double> calculateTotalTransactionValueByType();
 

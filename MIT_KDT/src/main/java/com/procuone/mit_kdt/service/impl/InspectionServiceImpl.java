@@ -103,6 +103,7 @@ public class InspectionServiceImpl implements InspectionService {
 
         // 재고 처리
         Long Itemid = itemService.getItemIdByProductCode(inspectionDTO.getProductCode());
+
         InventoryDTO inventoryDTO = InventoryDTO.builder()
                 .itemId(Itemid) // 제품 코드 (Item ID)
                 .itemName(inspection.getProductName()) // 제품 이름

@@ -194,8 +194,6 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
         }
         return weeklyStats;
     }
-
-
     /**
      * 특정 거래 유형과 제품 코드로 거래 내역 조회
      */
@@ -241,6 +239,29 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
                 .sum();
     }
 
+    @Override
+    public Map<String, Double> getMonthlyCostStatsByProductCode(String productCode) {
+        List<InventoryTransaction> transactions = inventoryTransactionRepository
+                .findByTransactionTypeAndProductCode("입고", productCode);
+
+        return transactions.stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.getTransactionDate().getMonth().toString(), // 월 이름 예: "DECEMBER"
+                        Collectors.summingDouble(t -> Optional.ofNullable(t.getTransactionValue()).orElse(0.0))
+                ));
+    }
+    @Override
+    public Map<String, Double> getWeeklyCostStatsByProductCode(String productCode) {
+        List<InventoryTransaction> transactions = inventoryTransactionRepository
+                .findByTransactionTypeAndProductCode("입고", productCode);
+
+        return transactions.stream()
+                .collect(Collectors.groupingBy(
+                        t -> "Week " + t.getTransactionDate().get(IsoFields.WEEK_OF_WEEK_BASED_YEAR), // ISO 주차
+                        Collectors.summingDouble(t -> Optional.ofNullable(t.getTransactionValue()).orElse(0.0))
+                ));
+    }
+
     // 거래 유형별 총 금액
     @Override
     public Map<String, Double> calculateTotalTransactionValueByType() {
@@ -282,7 +303,6 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
         if (dto == null) {
             return null;
         }
-
         return InventoryTransaction.builder()
                 .transactionCode(dto.getTransactionCode())
                 .procurementCode(dto.getProcurementCode())

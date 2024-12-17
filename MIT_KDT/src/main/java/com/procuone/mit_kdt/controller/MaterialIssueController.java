@@ -105,19 +105,35 @@ public class MaterialIssueController {
         model.addAttribute("weeklyStats", weeklyStats);
 
         // 5. 주별/월별 금액 계산
-        Map<String, Map<String, Double>> costStats = new HashMap<>();
+        Map<String, Map<String, Map<String, Double>>> costStats = new HashMap<>();
         for (ItemDTO product : finishedProducts) {
             List<ItemDTO> childItems = finishedProductChildItems.get(product.getProductCode());
-            Map<String, Double> productCostStats = new HashMap<>();
+            Map<String, Map<String, Double>> productCostStats = new HashMap<>();
+
             for (ItemDTO childItem : childItems) {
-                Double childCostStats = inventoryTransactionService
-                        .getCostStatsByProductCode(childItem.getProductCode());
+                // 월별 금액 통계
+                Map<String, Double> monthlyCostStats = inventoryTransactionService
+                        .getMonthlyCostStatsByProductCode(childItem.getProductCode());
+
+                // 주별 금액 통계
+                Map<String, Double> weeklyCostStats = inventoryTransactionService
+                        .getWeeklyCostStatsByProductCode(childItem.getProductCode());
+
+                // 각 데이터 저장
+                Map<String, Double> childCostStats = new HashMap<>();
+                childCostStats.putAll(monthlyCostStats);
+                childCostStats.putAll(weeklyCostStats);
+
                 productCostStats.put(childItem.getProductCode(), childCostStats);
-                System.out.println("Step 5 - Cost Stats for " + childItem.getProductCode() + ": " + childCostStats);
+
+                System.out.println("Step 5 - Cost Stats for " + childItem.getProductCode() + " - Monthly: "
+                        + monthlyCostStats + ", Weekly: " + weeklyCostStats);
             }
             costStats.put(product.getProductCode(), productCostStats);
         }
+
         model.addAttribute("costStats", costStats);
+
 
         // 6. 월별 목표 금액 설정
         Map<Integer, Long> monthlyInboundValues = new HashMap<>();

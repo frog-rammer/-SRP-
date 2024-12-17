@@ -63,7 +63,6 @@ public class InspectionController {
 
         return "materialReceipt/inspectionStatus";
     }
-
     private void setPaginationAttributes(Model model, String prefix, Page<?> pageData, int currentPage, int size, int blockSize) {
         int currentBlock = currentPage / blockSize; // 현재 페이지 블록
         int startPage = currentBlock * blockSize; // 시작 페이지 번호
@@ -78,10 +77,6 @@ public class InspectionController {
         model.addAttribute(prefix + "HasPreviousBlock", currentBlock > 0);
         model.addAttribute(prefix + "HasNextBlock", endPage < pageData.getTotalPages());
     }
-
-
-
-
     @PostMapping("/save")
     public String saveInspection(@RequestParam String inspectionCode , @RequestParam(required = false) Long defectiveQuantity) {
         InspectionDTO inspectionDTO = inspectionService.getInspectionById(inspectionCode);
@@ -91,10 +86,9 @@ public class InspectionController {
         }
         inspectionDTO.setDefectiveQuantity(defectiveQuantity);
         System.out.println("Received DTO: " + inspectionDTO);
+
         inspectionService.saveInspection(inspectionDTO);
         inspectionService.processInspection(inspectionDTO);
-
-
         DeliveryOrderDTO deliveryOrderDTO = new DeliveryOrderDTO();
         deliveryOrderDTO.setDeliveryCode(inspectionDTO.getDeliveryCode());
         deliveryOrderDTO=deliveryOrderService.getDeliveryOrder(deliveryOrderDTO);
@@ -104,7 +98,6 @@ public class InspectionController {
         Long itemId = itemService.getItemIdByProductCode(inspectionDTO.getProductCode());
 
         InventoryDTO inventoryDTO = inventoryService.getInventoryByItemId(itemId);
-
         InventoryTransactionDTO transactionDTO = new InventoryTransactionDTO();
         transactionDTO.setProcurementCode(purchaseOrderDTO.getProcurementPlanCode());
         transactionDTO.setInventoryCode(inventoryDTO.getInventoryCode());

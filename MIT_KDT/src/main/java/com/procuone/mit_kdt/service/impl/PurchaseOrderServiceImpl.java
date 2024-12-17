@@ -71,21 +71,20 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
             // DTO -> Entity 변환
             Item item = dtoToEntity(itemDTOOptional.get());
-            // Inventory 업데이트 또는 삽입
-            Inventory inventory = inventoryRepository.findByItemId(item.getId())
-                    .orElseGet(() -> {
-                        Inventory newInventory = new Inventory();
-                        newInventory.setItem(item); // 연관된 Item 설정
-                        newInventory.setItemName(item.getItemName()); // 보조 필드
-                        newInventory.setCurrentQuantity(0);
-                        newInventory.setReservedQuantity(0);
-                        newInventory.setMinimumRequired(0);
-                        return newInventory;
-                    });
-            // 재고 업데이트
-            inventory.setCurrentQuantity(inventory.getCurrentQuantity() + Math.toIntExact(order.getQuantity()));
-            inventory.setReservedQuantity(inventory.getReservedQuantity() + Math.toIntExact(order.getQuantity()));
-            inventoryRepository.save(inventory);
+//            // Inventory 업데이트 또는 삽입
+//            Inventory inventory = inventoryRepository.findByItemId(item.getId())
+//                    .orElseGet(() -> {
+//                        Inventory newInventory = new Inventory();
+//                        newInventory.setItem(item); // 연관된 Item 설정
+//                        newInventory.setItemName(item.getItemName()); // 보조 필드
+//                        newInventory.setCurrentQuantity(0);
+//                        newInventory.setReservedQuantity(0);
+//                        newInventory.setMinimumRequired(0);
+//                        return newInventory;
+//                    });
+//            // 재고 업데이트
+//            inventory.setReservedQuantity(inventory.getReservedQuantity() + Math.toIntExact(order.getQuantity()));
+//            inventoryRepository.save(inventory);
             Optional<Company> companyDTO = companyRepository.findByBusinessId(order.getBusinessId());
             //진척 검수 테이블에 추가
             ProgressInspection progressInspection = new ProgressInspection();
@@ -119,6 +118,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<BOMRelationship> childItems = BOMRelationshipRepository.findChildItemsByParentProductCode(procurementPlanDTO.getProductCode());
         // 2. 하위 품목들의 수량 계산 및 조달 계획에 따른 발주서 생성
         List<PurchaseOrderDTO> purchaseOrderList = new ArrayList<>();
+
         for (BOMRelationship relationship : childItems) {
             String childProductCode = relationship.getChildItem().getProductCode();
             long requiredQuantity = relationship.getQuantity() * procurementPlanDTO.getProcurementQuantity();
@@ -129,6 +129,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             if (itemDTO.isPresent()) {
                 Long itemId = itemDTO.get().getId();
                 Inventory inventory = inventoryRepository.findByItemId(itemId).orElse(null);
+
                 if (inventory != null) {
                     availableInventory = inventory.getCurrentQuantity() != null ? inventory.getCurrentQuantity() : 0;
                     // 가용 재고 차감
@@ -183,6 +184,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         purchaseOrderRepository.saveAll(purchaseOrders);
     }
+
     @Override
     public List<PurchaseOrderDTO> getCompletedOrdersBybusinessId(String businessId) {
         return purchaseOrderRepository.findByBusinessId(businessId).stream()

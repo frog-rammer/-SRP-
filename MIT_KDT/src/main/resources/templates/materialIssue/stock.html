@@ -449,11 +449,17 @@
                 const stats = weekKey
                     ? (weeklyStats?.[productCode]?.[childCode]?.inbound?.[weekKey] || 0)
                     : (monthlyStats?.[productCode]?.[childCode]?.inbound?.[monthName] || 0);
-                const costs = costStats?.[productCode]?.[childCode] || 0;
+                const outboundstats = weekKey
+                    ? (weeklyStats?.[productCode]?.[childCode]?.outbound?.[weekKey] || 0)
+                    : (monthlyStats?.[productCode]?.[childCode]?.outbound?.[monthName] || 0);
+
+                const costs = weekKey
+                    ? (costStats?.[productCode]?.[childCode]?.[weekKey] || 0)
+                    : (costStats?.[productCode]?.[childCode]?.[monthName] || 0);
 
                 labels.push(childItem.itemName);
                 inboundQuantities.push(stats);
-                outboundQuantities.push(0);
+                outboundQuantities.push(outboundstats);
                 totalCosts.push(costs);
             });
 

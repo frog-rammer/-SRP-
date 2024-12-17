@@ -20,10 +20,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/purchaseOrder")
 public class PurchaseOrderController {
-
     @Autowired
     private PurchaseOrderService purchaseOrderService;
-
     @Autowired
     private ProgressInspectionService progressInspectionService;
     @GetMapping("/purchaseOrders")
@@ -56,6 +54,7 @@ public class PurchaseOrderController {
     public String completeOrders(@RequestParam List<String> orderIds) {
         // 발주 처리
         purchaseOrderService.completeOrders(orderIds);
+
         return "redirect:/purchaseOrder/purchaseOrders";
     }
 
@@ -68,6 +67,7 @@ public class PurchaseOrderController {
     public String procurementPlanView() {
         return "purchaseOrder/procurementPlanView";
     }
+
 
     @GetMapping("/purchaseOrders/ajax")
     @ResponseBody
