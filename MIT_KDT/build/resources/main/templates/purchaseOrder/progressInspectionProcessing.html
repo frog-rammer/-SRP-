@@ -194,14 +194,14 @@
 
         <div class="pagination">
             <a th:if="${currentPage > 1}"
-               th:href="@{'/progressInspectionProcessingBoard'(page=${currentPage - 1})}">이전</a>
+               th:href="@{'/progressInspection/progressInspectionProcessingBoard'(page=${currentPage - 1})}">이전</a>
             <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
-                <a th:href="@{'/progressInspectionProcessingBoard'(page=${pageNum})}"
+                <a th:href="@{'/progressInspection/progressInspectionProcessingBoard'(page=${pageNum})}"
                    th:text="${pageNum}"
                    th:classappend="${pageNum == currentPage} ? 'active' : ''"></a>
             </span>
             <a th:if="${currentPage < totalPages}"
-               th:href="@{'/progressInspectionProcessingBoard'(page=${currentPage + 1})}">다음</a>
+               th:href="@{'/progressInspection/progressInspectionProcessingBoard'(page=${currentPage + 1})}">다음</a>
         </div>
 
         <div id="updateFormContainer">

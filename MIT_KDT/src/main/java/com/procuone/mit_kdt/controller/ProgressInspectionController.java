@@ -34,60 +34,49 @@ public class ProgressInspectionController {
     ItemService itemService;
     @GetMapping("/progressInspectionBoard")
     public String getProgressInspection(Model model,
-                                        @RequestParam(defaultValue = "1") int page, // 사용자 요청 페이지 (1부터 시작)
+                                        @RequestParam(defaultValue = "1") int page,
                                         @RequestParam(defaultValue = "8") int size,
-                                        Pageable pageable,
                                         @RequestParam(required = false) String productCodeQuery,
                                         @RequestParam(required = false) String productNameQuery,
-                                        @RequestParam(required = false) String procurementPlanCodeQuery,
-                                        @RequestParam(required = false) LocalDate dateStart, // 시작날짜
-                                        @RequestParam(required = false) LocalDate dateEnd // 종료 날짜
-    ) {
-        pageable = PageRequest.of(page - 1, size); // 0부터 시작하도록 조정
+                                        @RequestParam(required = false) LocalDate dateStart,
+                                        @RequestParam(required = false) LocalDate dateEnd,
+                                        @RequestParam(required = false) String inspectionStatus) {
+        Pageable pageable = PageRequest.of(page - 1, size);
 
-        // 날짜 필터링 및 기타 필터 조건 추가
-        Page<ProgressInspectionDTO> productionPlanPage = progressInspectionService.searchProgressInspections(
-                productCodeQuery, productNameQuery, procurementPlanCodeQuery, dateStart, dateEnd, pageable);
+        // NULL 또는 공백 값 처리
+        productCodeQuery = (productCodeQuery != null && !productCodeQuery.isEmpty()) ? productCodeQuery : null;
+        productNameQuery = (productNameQuery != null && !productNameQuery.isEmpty()) ? productNameQuery : null;
+        inspectionStatus = (inspectionStatus != null && !inspectionStatus.isEmpty()) ? inspectionStatus : null;
 
-        // 로그로 productionPlanPage 출력
-        System.out.println("============ 시작: productionPlanPage 출력 ============");
-        productionPlanPage.getContent().forEach(System.out::println);
-        System.out.println("============ 끝: productionPlanPage 출력 ============");
+        // 필터링 검색 호출
+        Page<ProgressInspectionDTO> progressPage = progressInspectionService.searchProgressInspections(
+                productCodeQuery, productNameQuery, null, dateStart, dateEnd, inspectionStatus, pageable);
 
-        int totalPages = productionPlanPage.getTotalPages();
-        int currentPage = page;
-
-        // 페이지네이션 범위 계산 (최대 5개 페이지 표시)
-        int startPage = 1;
-        int endPage = 1;
-
-        if (totalPages > 0) {
-            startPage = Math.max(1, currentPage - 2); // 최소 페이지는 1
-            endPage = Math.min(totalPages, startPage + 4); // 최대 페이지는 startPage + 4
-            startPage = Math.max(1, endPage - 4); // 보정
-        }
-
-        // 모델에 데이터 및 페이지네이션 정보 추가
-        model.addAttribute("progressInspectionList", productionPlanPage.getContent());
-        model.addAttribute("currentPage", currentPage);
+        // 페이지네이션 설정
+        int totalPages = progressPage.getTotalPages();
+        model.addAttribute("progressInspectionList", progressPage.getContent());
+        model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
-        model.addAttribute("size", size);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-        model.addAttribute("dateStart", dateStart); // 상태 유지
-        model.addAttribute("dateEnd", dateEnd); // 상태 유지
-        model.addAttribute("productCodeQuery", productCodeQuery); // 상태 유지
-        model.addAttribute("productNameQuery", productNameQuery); // 상태 유지
-        model.addAttribute("procurementPlanCodeQuery", procurementPlanCodeQuery); // 상태 유지
+        model.addAttribute("startPage", Math.max(1, page - 2));
+        model.addAttribute("endPage", Math.min(totalPages, page + 2));
+
+        // 기존 필터링 조건을 화면에 유지
+        model.addAttribute("dateStart", dateStart);
+        model.addAttribute("dateEnd", dateEnd);
+        model.addAttribute("productCodeQuery", productCodeQuery);
+        model.addAttribute("productNameQuery", productNameQuery);
+        model.addAttribute("inspectionStatus", inspectionStatus);
 
         return "purchaseOrder/progressInspection";
     }
 
     @GetMapping("/progressInspectionProcessingBoard")
-    public String ProcessingBoardView(Model model, HttpSession session) {
+    public String ProcessingBoardView(Model model, HttpSession session, @RequestParam(defaultValue = "1") int page, // 사용자 요청 페이지 (1부터 시작)
+                                      @RequestParam(defaultValue = "8") int size,
+                                      Pageable pageable) {
 
         String businessId = (String) session.getAttribute("businessId");
-        Pageable pageable = PageRequest.of(0, 8);
+        pageable = PageRequest.of(page - 1, size);
         Page<ProgressInspectionDTO> productionPlanPage = progressInspectionService.getInspectionsByBusinessId(businessId, pageable);
 
 
@@ -107,6 +96,7 @@ public class ProgressInspectionController {
 
         return "purchaseOrder/progressInspectionProcessing";
     }
+
 
     @PostMapping("/updateInspectedQuantity")
     public String updateInspectedQuantity(@RequestParam String progressInspectionCode,
