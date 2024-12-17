@@ -88,22 +88,31 @@
             <form method="get" th:action="@{/progressInspection/progressInspectionBoard}">
                 <div class="date-search">
                     <label>
-                        <input type="date" id="date-start" th:value="${dateStart}">
+                        <input type="date" name="dateStart" id="date-start" th:value="${dateStart}">
                         <span>-</span>
-                        <input type="date" id="date-end" th:value="${dateEnd}">
+                        <input type="date" name="dateEnd" id="date-end" th:value="${dateEnd}">
                     </label>
-                    <button id="search-btn">검색</button>
                 </div>
                 <div class="keyword-search">
                     <label>
-                        <select id="keyword-select">
-                            <option th:selected="${productCodeQuery != null}" value="productCode">품목코드</option>
-                            <option th:selected="${productNameQuery != null}" value="productName">품목명</option>
+                        <select name="keywordType" id="keyword-select">
+                            <option value="productCode" th:selected="${productCodeQuery != null}">품목코드</option>
+                            <option value="productName" th:selected="${productNameQuery != null}">품목명</option>
                         </select>
-                        <input type="text" id="keyword-search" th:value="${productCodeQuery ?: productNameQuery}" placeholder="키워드 검색">
-                        <button id="keyword-search-btn">검색</button>
+                        <input type="text" name="productCodeQuery" th:value="${productCodeQuery}" placeholder="키워드 검색">
                     </label>
                 </div>
+                <div class="status-search">
+                    <label>
+                        <select name="inspectionStatus" id="inspectionStatus">
+                            <option value="">전체</option>
+                            <option value="검수완료" th:selected="${inspectionStatus == '검수완료'}">검수완료</option>
+                            <option value="검수진행중" th:selected="${inspectionStatus == '검수진행중'}">검수진행중</option>
+                            <option value="검수예정" th:selected="${inspectionStatus == '검수예정'}">검수예정</option>
+                        </select>
+                    </label>
+                </div>
+                <button type="submit">검색</button>
             </form>
             <table>
                 <thead>

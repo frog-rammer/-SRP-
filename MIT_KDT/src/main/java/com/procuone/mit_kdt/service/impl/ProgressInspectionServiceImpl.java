@@ -31,13 +31,14 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
                                                                  String procurementPlanCodeQuery,
                                                                  LocalDate dateStart,
                                                                  LocalDate dateEnd,
+                                                                 String inspectionStatus,
                                                                  Pageable pageable) {
         Page<ProgressInspection> inspections = progressInspectionRepository.searchByFilters(
-                productCodeQuery, productNameQuery, procurementPlanCodeQuery, dateStart, dateEnd, pageable);
+                productCodeQuery, productNameQuery, procurementPlanCodeQuery, dateStart, dateEnd, inspectionStatus, pageable);
 
-        // 리드타임 계산과 DTO 변환
         return inspections.map(this::calculateExpectedArrivalDateAndConvertToDTO);
     }
+
 
     // 리드타임 계산 및 DTO 변환
     private ProgressInspectionDTO calculateExpectedArrivalDateAndConvertToDTO(ProgressInspection entity) {
