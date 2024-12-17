@@ -14,16 +14,18 @@ import java.time.LocalDate;
 public interface ProgressInspectionRepository extends JpaRepository<ProgressInspection, String> {
 
     @Query("SELECT p FROM ProgressInspection p " +
-            "WHERE (:productCodeQuery IS NULL OR p.productCode LIKE %:productCodeQuery%) " +
-            "AND (:productNameQuery IS NULL OR p.productName LIKE %:productNameQuery%) " +
-            "AND (:procurementPlanCodeQuery IS NULL OR p.purchaseOrder.procurementPlanCode LIKE %:procurementPlanCodeQuery%) " +
+            "WHERE (:productCodeQuery IS NULL OR :productCodeQuery = '' OR p.productCode LIKE %:productCodeQuery%) " +
+            "AND (:productNameQuery IS NULL OR :productNameQuery = '' OR p.productName LIKE %:productNameQuery%) " +
+            "AND (:procurementPlanCodeQuery IS NULL OR :procurementPlanCodeQuery = '' OR p.purchaseOrder.procurementPlanCode LIKE %:procurementPlanCodeQuery%) " +
             "AND (:dateStart IS NULL OR p.inspectionDate >= :dateStart) " +
-            "AND (:dateEnd IS NULL OR p.inspectionDate <= :dateEnd)")
-    Page<ProgressInspection> searchByFilters(String productCodeQuery,
-                                             String productNameQuery,
-                                             String procurementPlanCodeQuery,
-                                             LocalDate dateStart,
-                                             LocalDate dateEnd,
+            "AND (:dateEnd IS NULL OR p.inspectionDate <= :dateEnd) " +
+            "AND (:inspectionStatus IS NULL OR :inspectionStatus = '' OR p.inspectionStatus = :inspectionStatus)")
+    Page<ProgressInspection> searchByFilters(@Param("productCodeQuery") String productCodeQuery,
+                                             @Param("productNameQuery") String productNameQuery,
+                                             @Param("procurementPlanCodeQuery") String procurementPlanCodeQuery,
+                                             @Param("dateStart") LocalDate dateStart,
+                                             @Param("dateEnd") LocalDate dateEnd,
+                                             @Param("inspectionStatus") String inspectionStatus,
                                              Pageable pageable);
 
     // 비즈니스 아이디로 진척검수 처리 과정 불러오기
