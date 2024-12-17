@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public interface ProgressInspectionService {
     //진척검수 현황 페이지
     Page<ProgressInspectionDTO> searchProgressInspections(
-            String productCodeQuery, String productNameQuery, String procurementPlanCodeQuery, LocalDate dateStart,LocalDate dateEnd, Pageable pageable);
+            String productCodeQuery, String productNameQuery, String procurementPlanCodeQuery, LocalDate dateStart, LocalDate dateEnd, String inspectionStatus, Pageable pageable);
     // 사업자번호로 가져오기
     public Page<ProgressInspectionDTO> getInspectionsByBusinessId(String businessId,Pageable pageable);
     // 검수현황 업데이트 

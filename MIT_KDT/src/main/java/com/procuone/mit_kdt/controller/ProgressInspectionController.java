@@ -39,28 +39,33 @@ public class ProgressInspectionController {
                                         @RequestParam(required = false) String productCodeQuery,
                                         @RequestParam(required = false) String productNameQuery,
                                         @RequestParam(required = false) LocalDate dateStart,
-                                        @RequestParam(required = false) LocalDate dateEnd) {
+                                        @RequestParam(required = false) LocalDate dateEnd,
+                                        @RequestParam(required = false) String inspectionStatus) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        // '검수예정' 상태 데이터 필터링 및 조건 검색
+        // NULL 또는 공백 값 처리
+        productCodeQuery = (productCodeQuery != null && !productCodeQuery.isEmpty()) ? productCodeQuery : null;
+        productNameQuery = (productNameQuery != null && !productNameQuery.isEmpty()) ? productNameQuery : null;
+        inspectionStatus = (inspectionStatus != null && !inspectionStatus.isEmpty()) ? inspectionStatus : null;
+
+        // 필터링 검색 호출
         Page<ProgressInspectionDTO> progressPage = progressInspectionService.searchProgressInspections(
-                productCodeQuery, productNameQuery, null, dateStart, dateEnd, pageable);
+                productCodeQuery, productNameQuery, null, dateStart, dateEnd, inspectionStatus, pageable);
 
+        // 페이지네이션 설정
         int totalPages = progressPage.getTotalPages();
-        int currentPage = page;
-        int startPage = Math.max(1, currentPage - 2);
-        int endPage = Math.min(totalPages, startPage + 4);
-        startPage = Math.max(1, endPage - 4);
-
         model.addAttribute("progressInspectionList", progressPage.getContent());
-        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
+        model.addAttribute("startPage", Math.max(1, page - 2));
+        model.addAttribute("endPage", Math.min(totalPages, page + 2));
+
+        // 기존 필터링 조건을 화면에 유지
         model.addAttribute("dateStart", dateStart);
         model.addAttribute("dateEnd", dateEnd);
         model.addAttribute("productCodeQuery", productCodeQuery);
         model.addAttribute("productNameQuery", productNameQuery);
+        model.addAttribute("inspectionStatus", inspectionStatus);
 
         return "purchaseOrder/progressInspection";
     }
