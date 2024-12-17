@@ -7,6 +7,9 @@ import com.procuone.mit_kdt.service.*;
 import com.procuone.mit_kdt.service.impl.PurchaseOrderServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,25 +36,50 @@ public class InspectionController {
     @Autowired
     private  ItemService itemService;
 
-
-
     @GetMapping("/status")
-    public String getInspectionStatus(Model model) {
-        List<InspectionDTO> inspections = inspectionService.getAllInspections();
+    public String getInspectionStatus(Model model,
+                                      @RequestParam(defaultValue = "0") int ongoingPage,
+                                      @RequestParam(defaultValue = "0") int errorPage,
+                                      @RequestParam(defaultValue = "0") int completedPage,
+                                      @RequestParam(defaultValue = "8") int size) {
 
-        // 검수 중 또는 불량 상태 데이터
-        List<InspectionDTO> ongoingInspections = inspections.stream()
-                .filter(inspection -> "검수중".equals(inspection.getInspectionStatus())
-                        || "검수완료(불량)".equals(inspection.getInspectionStatus()))
-                .toList();
-        // 검수 완료 상태 데이터
-        List<InspectionDTO> completedInspections = inspections.stream()
-                .filter(inspection -> "검수완료".equals(inspection.getInspectionStatus()))
-                .toList();
-        model.addAttribute("inspections", ongoingInspections);
-        model.addAttribute("completedInspections", completedInspections);
+        // 검수 중 상태 페이지네이션
+        Pageable ongoingPageable = PageRequest.of(ongoingPage, size);
+        Page<InspectionDTO> ongoingInspections = inspectionService.getInspectionsByStatus("검수중", ongoingPageable);
+
+        // 불량 상태 페이지네이션
+        Pageable errorPageable = PageRequest.of(errorPage, size);
+        Page<InspectionDTO> errorInspections = inspectionService.getInspectionsByStatus("검수완료(불량)", errorPageable);
+
+        // 검수 완료 상태 페이지네이션
+        Pageable completedPageable = PageRequest.of(completedPage, size);
+        Page<InspectionDTO> completedInspections = inspectionService.getInspectionsByStatus("검수완료", completedPageable);
+
+        // 블록 처리 변수 설정
+        int blockSize = 5; // 페이지 블록 크기 (1~5, 6~10 등)
+        setPaginationAttributes(model, "ongoing", ongoingInspections, ongoingPage, size, blockSize);
+        setPaginationAttributes(model, "error", errorInspections, errorPage, size, blockSize);
+        setPaginationAttributes(model, "completed", completedInspections, completedPage, size, blockSize);
+
         return "materialReceipt/inspectionStatus";
     }
+
+    private void setPaginationAttributes(Model model, String prefix, Page<?> pageData, int currentPage, int size, int blockSize) {
+        int currentBlock = currentPage / blockSize; // 현재 페이지 블록
+        int startPage = currentBlock * blockSize; // 시작 페이지 번호
+        int endPage = Math.min(startPage + blockSize, pageData.getTotalPages()); // 끝 페이지 번호
+
+        model.addAttribute(prefix + "Inspections", pageData.getContent());
+        model.addAttribute(prefix + "CurrentPage", currentPage);
+        model.addAttribute(prefix + "TotalPages", pageData.getTotalPages());
+        model.addAttribute(prefix + "PageSize", size);
+        model.addAttribute(prefix + "StartPage", startPage);
+        model.addAttribute(prefix + "EndPage", endPage);
+        model.addAttribute(prefix + "HasPreviousBlock", currentBlock > 0);
+        model.addAttribute(prefix + "HasNextBlock", endPage < pageData.getTotalPages());
+    }
+
+
 
 
     @PostMapping("/save")

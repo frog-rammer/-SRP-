@@ -97,6 +97,11 @@ public class MemberServiceImpl implements MemberService {
         return userType;
     }
 
+    @Override
+    public Optional<Member> getMember(String memberId) {
+        return memberRepository.findByMemberId(memberId);
+    }
+
 
     // 부서번호에 따른 타입 설정
     public MemberDTO setUserType(MemberDTO dto) {

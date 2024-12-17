@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>입고검수 현황</title>
+    <title>입고검수</title>
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
@@ -23,47 +23,46 @@
         h1 {
             text-align: center;
         }
-        .filter {
-            margin-bottom: 20px;
+        .pagination {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination a {
+            padding: 8px 15px;
+            background-color: #267f6d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .pagination a:hover {
+            background-color: #1f6658;
+        }
+        .pagination a.current {
+            background-color: #1f6658;
+            font-weight: bold;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
         th, td {
             padding: 10px;
             text-align: center;
+            border: 1px solid #ddd;
         }
         th {
             background-color: #32928E;
-            color: #fff;
-        }
-        .status {
-            font-weight: bold;
-        }
-        .status.complete {
-            color: green;
-        }
-        .status.pending {
-            color: orange;
-        }
-        .status.failed {
-            color: red;
+            color: white;
         }
         .button {
             padding: 10px 15px;
             background-color: #32928E;
             color: white;
-            border: none;
-            cursor: pointer;
             border-radius: 5px;
+            cursor: pointer;
         }
         .button:hover {
             background-color: #267e73;
@@ -72,72 +71,95 @@
 </head>
 <body>
 <div class="grid-container">
-    <!-- 헤더-->
     <div class="layout-header">
-        <header  th:replace="partials/procuOneHeader :: header"></header>
+        <header th:replace="partials/procuOneHeader :: header"></header>
     </div>
-    <!-- 사이드바 -->
     <div class="layout-sidebar">
-        <aside  th:replace="partials/procuOneSide :: side"></aside>
+        <aside th:replace="partials/procuOneSide :: side"></aside>
     </div>
-
-
-    <!-- 본문 -->
     <main class="layout-main">
         <div class="container">
-            <h1>입고검수 현황</h1>
-            <!-- 필터 -->
-            <div class="filter">
-                <div>
-                    <label for="dateFilter">날짜: </label>
-                    <input type="date" id="dateFilter">
-                </div>
-                <div>
-                    <label for="statusFilter">상태: </label>
-                    <select id="statusFilter">
-                        <option value="all">전체</option>
-                        <option value="complete">검수 완료</option>
-                        <option value="pending">검수 중</option>
-                        <option value="failed">검수 완료(불량)</option>
-                    </select>
-                </div>
-                <button class="button" onclick="filterResults()">필터링</button>
-            </div>
-            <!-- 입고검수 테이블 -->
-            <table id="inspectionTable">
+            <h1>입고검수현황</h1>
+            <!-- 검수중 테이블 -->
+            <h3>검수중 리스트</h3>
+            <table>
                 <thead>
                 <tr>
                     <th>입고 일자</th>
                     <th>상품명</th>
                     <th>수량</th>
                     <th>검수 결과</th>
-                    <th>불량 수량</th>
-                    <th>검수 현황</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="inspection : ${inspections}">
-                    <td th:text="${inspection.inspectionDate}">날짜</td>
-                    <td th:text="${inspection.productName}">상품명</td>
-                    <td th:text="${inspection.quantity}">수량</td>
+                <tr th:each="inspection : ${ongoingInspections}">
+                    <td th:text="${inspection.inspectionDate}"></td>
+                    <td th:text="${inspection.productName}"></td>
+                    <td th:text="${inspection.quantity}"></td>
                     <td>
-                        <form  th:action="@{/inspection/save}" method="post">
-                            <input type="number" name ="defectiveQuantity" min="0" placeholder="불량수량을 입력해주세요">
+                        <form th:action="@{/inspection/save}" method="post" onsubmit="return validateForm(this);">
+                            <input type="number" name="defectiveQuantity" min="0" placeholder="불량수량을 입력해주세요">
                             <input type="hidden" name="inspectionCode" th:value="${inspection.inspectionCode}">
-                            <button class="button" type="submit">검수</button>
+                            <button type="submit" class="button">검수</button>
                         </form>
                     </td>
-                    <td th:text="${inspection.defectiveQuantity}"></td>
-
-                    <td th:text="${inspection.inspectionStatus}"
-                        th:classappend="'status ' + ${inspection.inspectionStatus}"></td>
-
                 </tr>
                 </tbody>
             </table>
+            <!-- 검수중 페이지네이션 -->
+            <div class="pagination">
+                <span th:if="${ongoingHasPreviousBlock}">
+                    <a th:href="@{/inspection/status(ongoingPage=${ongoingStartPage - 1}, size=${ongoingPageSize})}">&lt;</a>
+                </span>
+                <span th:each="pageNum : ${#numbers.sequence(ongoingStartPage, ongoingEndPage - 1)}">
+                    <a th:href="@{/inspection/status(ongoingPage=${pageNum}, size=${ongoingPageSize})}"
+                       th:text="${pageNum + 1}"
+                       th:classappend="${pageNum == ongoingCurrentPage ? 'current' : ''}"></a>
+                </span>
+                <span th:if="${ongoingHasNextBlock}">
+                    <a th:href="@{/inspection/status(ongoingPage=${ongoingEndPage}, size=${ongoingPageSize})}">&gt;</a>
+                </span>
+            </div>
+            <!-- 불량 상태 테이블 -->
+            <h3>불량 상태 리스트</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>입고 일자</th>
+                    <th>납품지시코드</th>
+                    <th>사업자번호(협력업체)</th>
+                    <th>상품명</th>
+                    <th>불량 수량</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="inspection : ${errorInspections}">
+                    <td th:text="${inspection.inspectionDate}"></td>
+                    <td th:text="${inspection.deliveryCode}"></td>
+                    <td th:text="${inspection.busniessId}"></td>
+                    <td th:text="${inspection.productName}"></td>
+                    <td th:text="${inspection.defectiveQuantity}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <!-- 불량 페이지네이션 -->
+            <div class="pagination">
+                <span th:if="${errorHasPreviousBlock}">
+                    <a th:href="@{/inspection/status(errorPage=${errorStartPage - 1}, size=${errorPageSize})}">&lt;</a>
+                </span>
+                <span th:each="pageNum : ${#numbers.sequence(errorStartPage, errorEndPage - 1)}">
+                    <a th:href="@{/inspection/status(errorPage=${pageNum}, size=${errorPageSize})}"
+                       th:text="${pageNum + 1}"
+                       th:classappend="${pageNum == errorCurrentPage ? 'current' : ''}"></a>
+                </span>
+                <span th:if="${errorHasNextBlock}">
+                    <a th:href="@{/inspection/status(errorPage=${errorEndPage}, size=${errorPageSize})}">&gt;</a>
+                </span>
+            </div>
 
-            <h1>입고마감 현황</h1>
-            <table id="completedInspectionTable">
+            <!-- 검수 완료 테이블 -->
+            <h3>검수 완료 리스트</h3>
+            <table>
                 <thead>
                 <tr>
                     <th>입고 일자</th>
@@ -149,18 +171,55 @@
                 </thead>
                 <tbody>
                 <tr th:each="completedInspection : ${completedInspections}">
-                    <td th:text="${completedInspection.inspectionDate}">날짜</td>
-                    <td th:text="${completedInspection.productName}">상품명</td>
-                    <td th:text="${completedInspection.quantity}">수량</td>
-                    <td th:text="${completedInspection.inspectionStatus}">검수 상태</td>
+                    <td th:text="${completedInspection.inspectionDate}"></td>
+                    <td th:text="${completedInspection.productName}"></td>
+                    <td th:text="${completedInspection.quantity}"></td>
+                    <td th:text="${completedInspection.inspectionStatus}"></td>
                     <td>
                         <a th:href="@{'/inspection/invoice/' + ${completedInspection.inspectionCode}}" class="button">보기</a>
                     </td>
                 </tr>
                 </tbody>
             </table>
+
+            <!-- 검수 완료 페이지네이션 -->
+            <div class="pagination">
+                <span th:if="${completedHasPreviousBlock}">
+                    <a th:href="@{/inspection/status(completedPage=${completedStartPage - 1}, size=${completedPageSize})}">&lt;</a>
+                </span>
+                <span th:each="pageNum : ${#numbers.sequence(completedStartPage, completedEndPage - 1)}">
+                    <a th:href="@{/inspection/status(completedPage=${pageNum}, size=${completedPageSize})}"
+                       th:text="${pageNum + 1}"
+                       th:classappend="${pageNum == completedCurrentPage ? 'current' : ''}"></a>
+                </span>
+                <span th:if="${completedHasNextBlock}">
+                    <a th:href="@{/inspection/status(completedPage=${completedEndPage}, size=${completedPageSize})}">&gt;</a>
+                </span>
+            </div>
         </div>
     </main>
 </div>
+<script>
+    function validateForm(form) {
+        // 불량수량 입력 필드 값 가져오기
+        var defectiveQuantity = form["defectiveQuantity"].value;
+        if(defectiveQuantity ==""){
+            defectiveQuantity = 0;
+        }
+        // 유효성 검사: 비어있거나 음수인 경우
+        if (defectiveQuantity < 0) {
+            alert("불량수량을 입력해주세요. 음수는 허용되지 않습니다.");
+            return false; // 폼 제출 막기
+        }
+        // 예/아니오 확인창
+        var confirmation = confirm("불량 수량이 " + defectiveQuantity + "개가 맞습니까?");
+        if (confirmation) {
+            return true; // 확인(OK) 시 제출 진행
+        } else {
+            alert("제출이 취소되었습니다.");
+            return false; // 취소(Cancel) 시 제출 중단
+        }
+    }
+</script>
 </body>
 </html>

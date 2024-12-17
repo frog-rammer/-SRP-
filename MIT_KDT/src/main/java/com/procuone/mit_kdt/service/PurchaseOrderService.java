@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface PurchaseOrderService {
-    void registerPurchaseOrder(ProcumentPlanDTO procurementPlanDTO);
+    void registerPurchaseOrder(ProcumentPlanDTO procurementPlanDTO,String userName);
 
     Page<PurchaseOrderDTO> getOrdersByStatus(String status, int page, int size);
     List<PurchaseOrderDTO> getCompletedOrders(String status); // 스태이터스 리스트형태로 뽑기
