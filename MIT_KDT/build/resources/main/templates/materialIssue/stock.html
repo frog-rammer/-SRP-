@@ -1,91 +1,162 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>재고 산출</title>
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
-    <title>자재 재고 산출</title>
-    <style>
-        /* 메인 영역 스타일 */
-        .layout-main {
-            padding: 20px;
-            background-color: #f4f4f4;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .layout-main h1 {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .layout-main h2 {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        /* 테이블 스타일 */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        table th,
-        table td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #32928E;  /* 테이블 헤더 배경색 */
-            color: white;
-        }
-
-        table tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        table tbody tr:hover {
-            background-color: #e1e1e1;
-        }
-
-        /* 버튼 스타일 */
-        #btn {
-            background-color: #32928E;  /* 버튼 배경색 */
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s ease;
-        }
-
-        #btn:hover {
-            background-color: #267c6f;  /* 버튼 hover 상태 */
-        }
-
-        /* 링크 스타일 */
-        a {
-            text-decoration: none;
-            color: #32928E;
-            font-weight: bold;
-        }
-
-        a:hover {
-            color: #267c6f;
-        }
-
-    </style>
 </head>
+<style>
+    /* 설명 부분 회색 글씨 처리 */
+    section p {
+        color: #7f8c8d;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    /* 제목 스타일 */
+    h1, h2 {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    h1 {
+        font-size: 2rem;
+        border-bottom: 3px solid #32928E;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+
+    /* 검색 및 필터 스타일 */
+    form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+        align-items: center;
+    }
+
+    form label {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    select, button {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+
+    button {
+        background-color: #32928E;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #267c6f;
+    }
+
+    /* 테이블 스타일 */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+
+    table th, table td {
+        padding: 12px 15px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    table th {
+        background-color: #32928E;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    table tbody tr:nth-child(odd) {
+        background-color: #fff;
+    }
+
+    table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* 달성 여부 스타일 */
+    .achieved {
+        color: #27ae60;
+        font-weight: bold;
+    }
+
+    .not-achieved {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+
+    /* 페이지네이션 스타일 */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        font-size: 1rem;
+        gap: 5px;
+    }
+
+    .pagination a {
+        padding: 8px 12px;
+        background-color: #f4f4f4;
+        color: #2c3e50;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .pagination a:hover {
+        background-color: #32928E;
+        color: white;
+    }
+
+    .pagination a.current {
+        background-color: #32928E;
+        color: white;
+        font-weight: bold;
+    }
+
+    .pagination span {
+        padding: 8px 12px;
+        color: #7f8c8d;
+    }
+
+    /* 차트 영역 스타일 */
+    #chartContainer {
+        margin: 20px 0;
+    }
+
+    /* 체크박스 및 버튼 스타일 */
+    input[type="checkbox"] {
+        transform: scale(1.2);
+        margin-right: 5px;
+    }
+</style>
+
 <body>
 <div class="grid-container">
-    <!-- 헤더 -->
     <header class="layout-header">
         <div th:replace="partials/procuOneHeader :: header"></div>
     </header>
@@ -95,114 +166,339 @@
     </aside>
 
     <main class="layout-main">
-        <h1>자재 재고 산출</h1>
+        <header>
+            <h1>재고 산출</h1>
+        </header>
+        <!-- 안내 메시지 -->
+        <section>
+            <p>
+                1. <strong>완제품</strong>을 선택합니다.<br>
+                2. <strong>월</strong>을 선택한 후, 필요하면 해당 <strong>주차</strong>를 선택합니다.<br>
+                3. 마지막으로 <strong>적용</strong> 버튼을 눌러 차트를 확인합니다.<br>
+                <em>※ 월만 선택해도 조회가 가능하며, 주차까지 선택하면 더 상세한 데이터가 표시됩니다.</em>
+            </p>
+        </section>
 
-        <!-- 재고 현황 테이블 -->
-        <h2>현재 재고 현황</h2>
-        <table border="1">
-            <thead>
-            <tr>
-                <th>자재 코드</th>
-                <th>자재명</th>
-                <th>입고 수량</th>
-                <th>출고 수량</th>
-                <th>현재 재고 수량</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- 재고 산출을 위한 예시 데이터 -->
-            <tr>
-                <td>M54321</td>
-                <td>철판</td>
-                <td>150</td>
-                <td>50</td>
-                <td>100</td> <!-- 입고 - 출고 = 재고 -->
-            </tr>
-            <tr>
-                <td>M12345</td>
-                <td>알루미늄</td>
-                <td>300</td>
-                <td>100</td>
-                <td>200</td>
-            </tr>
-            <tr>
-                <td>M67890</td>
-                <td>강철</td>
-                <td>600</td>
-                <td>300</td>
-                <td>300</td>
-            </tr>
-            <tr>
-                <td>M23456</td>
-                <td>알루미늄</td>
-                <td>200</td>
-                <td>150</td>
-                <td>50</td>
-            </tr>
-            </tbody>
-        </table>
+        <!-- 검색 및 필터 -->
+        <section>
+            <form id="filterForm">
+                <label for="productSelect">완제품 선택:</label>
+                <select id="productSelect" name="productSelect">
+                    <option value="">전체</option>
+                    <option th:each="product : ${finishedProducts}"
+                            th:value="${product.productCode}"
+                            th:text="${product.itemName}"></option>
+                </select>
 
-        <!-- 재고 상태 계산 버튼 -->
-        <button type="button" onclick="calculateStock()" id="btn">재고 계산</button>
+                <label for="monthSelect">월 선택:</label>
+                <select id="monthSelect" name="monthSelect">
+                    <option value="">전체</option>
+                    <option th:each="month : ${#numbers.sequence(1, 12)}"
+                            th:value="${month}" th:text="${month} + '월'"></option>
+                </select>
 
-        <h2>재고 계산 결과</h2>
-        <table border="1">
-            <thead>
-            <tr>
-                <th>자재 코드</th>
-                <th>자재명</th>
-                <th>총 입고 수량</th>
-                <th>총 출고 수량</th>
-                <th>현재 재고 수량</th>
-            </tr>
-            </thead>
-            <tbody id="stockCalculationResult">
-            <!-- 계산된 재고 결과가 여기에 출력됩니다. -->
-            </tbody>
-        </table>
+                <label for="weekSelect">주 선택:</label>
+                <select id="weekSelect" name="weekSelect" disabled>
+                    <option value="">전체</option>
+                </select>
+                <button type="button" id="applyFilter">적용</button>
+            </form>
+        </section>
 
-        <!-- 입고 및 출고 내역 버튼 -->
-        <div>
-            <a href="/materialReceipt/stockIn">입고 관리로 이동</a> |
-            <a href="stockOut">출고 관리로 이동</a>
-        </div>
+        <!-- 동적 차트 -->
+        <section>
+            <h2>재고 추이</h2>
+            <div>
+                <label>
+                    <input type="checkbox" id="toggleCost"> 금액 보기
+                </label>
+            </div>
+            <div id="chartContainer">
+                <canvas id="inventoryChart"></canvas>
+            </div>
+        </section>
+
+        <section>
+            <!-- 토글 버튼 -->
+            <button type="button" class="btn" style="width: 80%; margin-left: 10%;" id="toggleMonthlySection">
+                월별 입고 금액 보기
+            </button>
+
+            <!-- 월별 입고 금액 섹션 -->
+            <div id="monthlySection" style="display: none;">
+                <h2>월별 입고 금액 및 목표 달성 여부</h2>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>월</th>
+                        <th>입고 금액 (원)</th>
+                        <th>목표 금액 (원)</th>
+                        <th>달성 여부</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="month : ${#numbers.sequence(1, 12)}">
+                        <!-- 월 표시 -->
+                        <td th:text="${month} + '월'"></td>
+                        <!-- 입고 금액 (Key를 문자열로 변환해서 가져오기) -->
+                        <td th:text="${monthlyInboundValues[__${month}__] != null ? #numbers.formatInteger(monthlyInboundValues[__${month}__], 1, 'COMMA') : 0} + ' 원'"></td>
+                        <!-- 목표 금액 -->
+                        <td th:text="${monthlyTarget != null ? #numbers.formatInteger(monthlyTarget, 1, 'COMMA') : 0} + ' 원'"></td>
+                        <!-- 달성 여부 -->
+                        <td th:text="${monthlyInboundValues[__${month}__] != null && monthlyInboundValues[__${month}__] >= monthlyTarget ? '달성' : '미달'}"
+                            th:classappend="${monthlyInboundValues[__${month}__] != null && monthlyInboundValues[__${month}__] >= monthlyTarget} ? 'achieved' : 'not-achieved'">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section>
+            <h2>입고 히스토리</h2>
+            <table border="1" style="width: 100%; text-align: center; border-collapse: collapse;">
+                <thead>
+                <tr>
+                    <th>거래 코드</th>
+                    <th>제품 코드</th>
+                    <th>수량</th>
+                    <th>거래 일시</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="transaction : ${inboundTransactions}">
+                    <td th:text="${transaction.transactionCode}"></td>
+                    <td th:text="${transaction.productCode}"></td>
+                    <td th:text="${transaction.quantity}"></td>
+                    <td th:text="${transaction.transactionDate}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <!-- 페이지네이션 -->
+            <div class="pagination">
+        <span th:if="${currentInboundPage > 0}">
+            <a th:href="@{/materialIssue/stock(page=${currentInboundPage - 1})}">Previous</a>
+        </span>
+                <span th:each="pageNum : ${#numbers.sequence(0, totalInboundPages - 1)}">
+            <a th:href="@{/materialIssue/stock(page=${pageNum})}" th:text="${pageNum + 1}"
+               th:classappend="${pageNum == currentInboundPage ? 'current' : ''}"></a>
+        </span>
+                <span th:if="${currentInboundPage < totalInboundPages - 1}">
+            <a th:href="@{/materialIssue/stock(page=${currentInboundPage + 1})}">Next</a>
+        </span>
+            </div>
+        </section>
+
+        <section>
+            <h2>출고 히스토리</h2>
+            <table border="1" style="width: 100%; text-align: center; border-collapse: collapse;">
+                <thead>
+                <tr>
+                    <th>거래 코드</th>
+                    <th>제품 코드</th>
+                    <th>수량</th>
+                    <th>거래 일시</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="transaction : ${outboundTransactions}">
+                    <td th:text="${transaction.transactionCode}"></td>
+                    <td th:text="${transaction.productCode}"></td>
+                    <td th:text="${transaction.quantity}"></td>
+                    <td th:text="${transaction.transactionDate}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <!-- 페이지네이션 -->
+            <div class="pagination">
+        <span th:if="${currentOutboundPage > 0}">
+            <a th:href="@{/materialIssue/stock(page=${currentOutboundPage - 1})}">Previous</a>
+        </span>
+                <span th:each="pageNum : ${#numbers.sequence(0, totalOutboundPages - 1)}">
+            <a th:href="@{/materialIssue/stock(page=${pageNum})}" th:text="${pageNum + 1}"
+               th:classappend="${pageNum == currentOutboundPage ? 'current' : ''}"></a>
+        </span>
+                <span th:if="${currentOutboundPage < totalOutboundPages - 1}">
+            <a th:href="@{/materialIssue/stock(page=${currentOutboundPage + 1})}">Next</a>
+        </span>
+            </div>
+        </section>
+
     </main>
-
-    <footer class="layout-footer">
-        <!-- Footer 내용 -->
-    </footer>
 </div>
+<!-- Chart.js 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Thymeleaf 데이터 전달 -->
+<script th:inline="javascript">
+    // Thymeleaf로 전달된 데이터 (서버 측에서 넘어오는 데이터)
+    const finishedProductChildItems = /*[[${finishedProductChildItems}]]*/ {};
+    const monthlyStats = /*[[${monthlyStats}]]*/ {};
+    const weeklyStats = /*[[${weeklyStats}]]*/ {};
+    const costStats = /*[[${costStats}]]*/ {};
 
-<script>
-    // 재고 계산 함수
-    function calculateStock() {
-        // 입고, 출고 수량을 기반으로 재고 계산
-        const stockData = [
-            { code: 'M54321', name: '철판', incoming: 150, outgoing: 50 },
-            { code: 'M12345', name: '알루미늄', incoming: 300, outgoing: 100 },
-            { code: 'M67890', name: '강철', incoming: 600, outgoing: 300 },
-            { code: 'M23456', name: '알루미늄', incoming: 200, outgoing: 150 }
-        ];
+    console.log("finishedProductChildItems:", finishedProductChildItems);
+    console.log("monthlyStats:", monthlyStats);
+    console.log("weeklyStats:", weeklyStats);
+    console.log("costStats:", costStats);
 
-        const resultTableBody = document.getElementById('stockCalculationResult');
-        resultTableBody.innerHTML = ''; // 이전 결과 삭제
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleButton = document.getElementById('toggleMonthlySection');
+        const monthlySection = document.getElementById('monthlySection');
 
-        stockData.forEach(item => {
-            const currentStock = item.incoming - item.outgoing; // 재고 수량 계산
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-        <td>${item.code}</td>
-        <td>${item.name}</td>
-        <td>${item.incoming}</td>
-        <td>${item.outgoing}</td>
-        <td>${currentStock}</td>
-      `;
-
-            resultTableBody.appendChild(row);
+        // 월별 섹션 토글
+        toggleButton.addEventListener("click", function () {
+            monthlySection.style.display = (monthlySection.style.display === "none" || monthlySection.style.display === "") ? "block" : "none";
+            toggleButton.textContent = monthlySection.style.display === "block" ? "월별 입고 금액 숨기기" : "월별 입고 금액 보기";
         });
-    }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const ctx = document.getElementById('inventoryChart').getContext('2d');
+        let inventoryChart;
+
+        const initializeChart = (labels, datasets) => {
+            if (inventoryChart) inventoryChart.destroy();
+            inventoryChart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            title: { display: true, text: '수량' },
+                            ticks: { callback: value => value.toLocaleString() }
+                        },
+                        y1: {
+                            position: 'right',
+                            title: { display: true, text: '금액 (단위: 천 원)' },
+                            grid: { drawOnChartArea: false },
+                            ticks: { callback: value => (value / 1000).toLocaleString() + 'K' }
+                        }
+                    }
+                }
+            });
+        };
+
+        const getMonthName = (month) => [
+            "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+            "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+        ][month - 1];
+        // ISO 주차 번호 반환 함수
+        const updateWeeks = (selectedMonth) => {
+            const weekSelect = document.getElementById('weekSelect');
+            const currentYear = new Date().getFullYear();
+            weekSelect.innerHTML = '<option value="">전체</option>';
+
+            // 누적 주차 계산에 서버 주차 오프셋 추가
+            const weeks = [];
+            let serverOffset = 1; // 서버 기준과 클라이언트 기준의 오프셋 조정값
+            const firstDay = new Date(currentYear, selectedMonth - 1, 1);
+            const lastDay = new Date(currentYear, selectedMonth, 0);
+
+            let currentDate = firstDay;
+            while (currentDate <= lastDay) {
+                const weekNumber = getISOWeekNumber(currentDate, serverOffset);
+                const startOfWeek = new Date(currentDate);
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+                if (endOfWeek > lastDay) endOfWeek.setTime(lastDay.getTime());
+
+                weeks.push({
+                    label: `Week ${weekNumber}`,
+                    range: `${startOfWeek.toISOString().split('T')[0]} ~ ${endOfWeek.toISOString().split('T')[0]}`
+                });
+                currentDate.setDate(currentDate.getDate() + 7);
+            }
+
+            // 주차 데이터 셀렉트 박스 채우기
+            weeks.forEach(week => {
+                const option = document.createElement('option');
+                option.value = week.label;
+                option.textContent = `${week.label} (${week.range})`;
+                weekSelect.appendChild(option);
+            });
+
+            weekSelect.disabled = weeks.length === 0; // 데이터가 없으면 비활성화
+        };
+
+        const getISOWeekNumber = (date, offset = 0) => {
+            const target = new Date(date);
+            const dayNumber = (target.getDay() + 6) % 7;
+            target.setDate(target.getDate() - dayNumber + 3);
+            const firstThursday = new Date(target.getFullYear(), 0, 4);
+            firstThursday.setDate(firstThursday.getDate() - (firstThursday.getDay() + 6) % 7);
+            const weekNumber = Math.ceil(((target - firstThursday) / 86400000 + 1) / 7);
+            return weekNumber + offset; // 서버 기준과 맞추기 위해 오프셋 적용
+        };
+
+
+        const filterData = (productCode, month, week, showCost) => {
+            if (!productCode) return alert("완제품을 선택해주세요.");
+
+            const labels = [];
+            const inboundQuantities = [];
+            const outboundQuantities = [];
+            const totalCosts = [];
+
+            const monthName = getMonthName(month);
+            const weekKey = week || null;
+
+            const childItems = finishedProductChildItems?.[productCode] || [];
+            childItems.forEach(childItem => {
+                const childCode = childItem.productCode;
+                const stats = weekKey
+                    ? (weeklyStats?.[productCode]?.[childCode]?.inbound?.[weekKey] || 0)
+                    : (monthlyStats?.[productCode]?.[childCode]?.inbound?.[monthName] || 0);
+                const costs = costStats?.[productCode]?.[childCode] || 0;
+
+                labels.push(childItem.itemName);
+                inboundQuantities.push(stats);
+                outboundQuantities.push(0);
+                totalCosts.push(costs);
+            });
+
+            const datasets = [
+                { label: '입고량', data: inboundQuantities, backgroundColor: 'rgba(75, 192, 192, 0.7)' },
+                { label: '출고량', data: outboundQuantities, backgroundColor: 'rgba(192, 75, 75, 0.7)' }
+            ];
+
+            if (showCost) {
+                datasets.push({
+                    label: '총 금액',
+                    data: totalCosts,
+                    type: 'line',
+                    yAxisID: 'y1',
+                    borderColor: 'rgba(255, 165, 0, 1)',
+                    borderWidth: 2
+                });
+            }
+            initializeChart(labels, datasets);
+        };
+
+        const today = new Date();
+        const currentMonth = today.getMonth() + 1;
+        document.getElementById('monthSelect').value = currentMonth;
+        updateWeeks(currentMonth);
+
+        const productSelect = document.getElementById('productSelect');
+        const defaultProductCode = "EBA-MDL-0001";
+        productSelect.value = defaultProductCode;
+        filterData(defaultProductCode, currentMonth, "", false);
+
+        document.getElementById('applyFilter').addEventListener('click', () => {
+            const productCode = productSelect.value;
+            const month = document.getElementById('monthSelect').value;
+            const week = document.getElementById('weekSelect').value;
+            const showCost = document.getElementById('toggleCost').checked;
+            filterData(productCode, month, week, showCost);
+        });
+
+        document.getElementById('monthSelect').addEventListener('change', (e) => updateWeeks(e.target.value));
+    });
 </script>
+
+
+
 
 </body>
 </html>

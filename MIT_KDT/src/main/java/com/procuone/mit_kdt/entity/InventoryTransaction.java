@@ -34,7 +34,7 @@ public class InventoryTransaction {
     @JoinColumn(name = "inventory_code", nullable = false)
     private Inventory inventory;
 
-    @Column(unique = true,nullable = false)
+    @Column(nullable = false)
     private String productCode;
 
     @Column(nullable = false)
