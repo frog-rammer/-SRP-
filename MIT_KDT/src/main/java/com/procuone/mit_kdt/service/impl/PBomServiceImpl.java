@@ -115,6 +115,7 @@ public class PBomServiceImpl implements PBomService {
         return PurchaseBOMDTO.builder()
                 .id(purchaseBOM.getId())
                 .productCode(purchaseBOM.getProductCode())
+                .supplyUnit(purchaseBOM.getSupplyUnit())
                 .itemId(purchaseBOM.getItem().getId())
                 .businessId(purchaseBOM.getCompany().getBusinessId())
                 .quantity(purchaseBOM.getQuantity())

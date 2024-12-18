@@ -30,6 +30,7 @@ public class PBomController {
             System.out.println("Received PurchaseBOMDTO: " + purchaseBOMDTO.toString());
             purchaseBOMDTO.setItemId(itemService.findByProductCode(purchaseBOMDTO.getProductCode()).get().getId());
             pBomService.registerPurchaseBOM(purchaseBOMDTO);
+
             return ResponseEntity.ok(Collections.singletonMap("message", "P-BOM 구성 등록 완료"));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Collections.singletonMap("error", "P-BOM 등록 중 문제가 발생했습니다."));

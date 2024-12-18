@@ -138,11 +138,11 @@
                             <th>조달계획번호</th>
                             <th>관련생산계획</th>
                             <th>사업자번호</th>
+                            <th>회사명</th>
                             <th>품목명</th>
+                            <th>품목 코드</th>
                             <th>구매주문수량</th>
                             <th>조달납기일</th>
-                            <th>사업자 번호</th>
-                            <th>품목 코드</th>
                         </tr>
                         </thead>
                         <tbody class="auto-orders">
@@ -153,11 +153,11 @@
                             <td th:text="${order.procurementPlanCode}"></td>
                             <td th:text="${order.productPlanCode}"></td>
                             <td th:text="${order.businessId}"></td>
+                            <td th:text="${order.comName}"></td>
+                            <td th:text="${order.itemName}"></td>
                             <td th:text="${order.productCode}"></td>
                             <td th:text="${order.quantity}"></td>
                             <td th:text="${order.procurementEndDate}"></td>
-                            <td th:text="${order.businessId}"></td>
-                            <td th:text="${order.productCode}"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -193,9 +193,11 @@
                         <th>선택</th>
                         <th>발주코드</th>
                         <th>사업자번호</th>
+                        <th>회사명</th>
                         <th>품목명</th>
+                        <th>품목코드</th>
                         <th>발주수량</th>
-                        <th>입고예정일</th>
+                        <th>조달납기일</th>
                         <th>발주일</th>
                         <th>발주서</th>
                     </tr>
@@ -207,6 +209,8 @@
                         </td>
                         <td th:text="${order.purchaseOrderCode}"></td>
                         <td th:text="${order.businessId}"></td>
+                        <td th:text="${order.comName}"></td>
+                        <td th:text="${order.itemName}"></td>
                         <td th:text="${order.productCode}"></td>
                         <td th:text="${order.quantity}"></td>
                         <td th:text="${order.procurementEndDate}"></td>
@@ -275,6 +279,8 @@
                     <td>${order.procurementPlanCode || ''}</td>
                     <td>${order.productPlanCode || ''}</td>
                     <td>${order.businessId || ''}</td>
+                    <td>${order.comName || ''}</td>
+                    <td>${order.itemName || ''}</td>
                     <td>${order.productCode || ''}</td>
                     <td>${order.quantity || ''}</td>
                     <td>${tableType === 'auto' ? order.procurementEndDate : order.createdDate || ''}</td>

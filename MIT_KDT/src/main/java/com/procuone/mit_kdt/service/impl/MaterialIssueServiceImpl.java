@@ -62,7 +62,7 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
 
     // 발주서와 연동하여 Shipment 자동 생성
     @Override
-    public void createAndSaveShipmentsFromProcurementPlan(ProcumentPlanDTO procurementPlanDTO) {
+    public void createAndSaveShipmentsFromProcurementPlan(ProcumentPlanDTO procurementPlanDTO,String username) {
         // 1. 조달 계획 기반 하위 품목 가져오기
         List<BOMRelationship> childItems = bomRelationshipRepository.findChildItemsByParentProductCode(procurementPlanDTO.getProductCode());
 
@@ -78,7 +78,7 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
             // 3. ShipmentDTO 생성
             ShipmentDTO shipmentDTO = ShipmentDTO.builder()
                     .requestDate(LocalDate.now())
-                    .manager("SYSTEM") // 자동 생성 시 시스템 기본값
+                    .manager(username) // 자동 생성 시 시스템 기본값
                     .procurementPlanCode(procurementPlanDTO.getProcurementPlanCode())
                     .productPlanCode(procurementPlanDTO.getProductPlanCode())
                     .productCode(childProductCode)

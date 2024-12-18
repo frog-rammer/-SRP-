@@ -8,10 +8,8 @@
   <link rel="stylesheet" th:href="@{/css/layout.css}">
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 20px;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -33,6 +31,11 @@
       text-align: center;
     }
 
+    #itemCount{
+      width: 280px;
+      margin-right: 10px;
+    }
+
     .btn {
       padding: 10px 15px;
       background-color: #32928E;
@@ -44,15 +47,45 @@
     .btn:hover {
       background-color: #278F75;
     }
+    input {
+      height: 30px;
+      border: 1px solid rgba(230, 230, 230, 0.91);
+      background: rgba(246, 246, 246, 0.91);
+    }
+    select {
+      background-color:rgba(246, 246, 246, 0.91); /* 셀렉트 박스의 배경색 */
+      color: #333; /* 글자색 */
+      border: 1px solid #ddd; /* 테두리 색 */
+      padding: 5px;
+      border-radius: 5px; /* 모서리 둥글기 */
+      font-size: 14px;
+    }
+
+    select:focus {
+      outline: none; /* 포커스 시 외곽선 제거 */
+      border-color: #dfdddd; /* 포커스 시 테두리 색상 */
+      background-color: rgba(246, 246, 246, 0.91); /* 포커스 시 배경색 */
+    }
     .input-section {
       margin-bottom: 20px;
+      display: flex;
     }
     h1{
       text-align: center;
     }
+    .button{
+      padding: 5px 10px;
+      background-color: #32928E;
+      border-radius: 3px;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-right: 15px;
+    }
     #btn{
       padding: 10px 15px;
       background-color: #32928E;
+      border-radius: 3px;
       color: white;
       border: none;
       cursor: pointer;
@@ -75,12 +108,14 @@
     <h1>공급 물품 등록</h1>
     <!-- 공급 물품 등록 시작 -->
     <section class="input-section">
-      <label for="itemCount">등록할 물품 개수: </label>
-      <input type="number" id="itemCount" min="1" placeholder="예: 3">
-      <button class="btn" onclick="generateRows()">생성</button>
+      <div>
+        <label for="itemCount">등록할 물품 개수: </label>
+        <input type="number" id="itemCount" min="1" placeholder="등록할 공급 물품의 수를 입력하세요 (ex : 3)  ">
+        <button class="button" onclick="generateRows()">생성</button>
+      </div>
       <!-- 엑셀 업로드 -->
       <div>
-        <button type="button" class="btn" onclick="document.getElementById('excelFile').click()">엑셀로 등록하기</button>
+        <button type="button" class="button" onclick="document.getElementById('excelFile').click()">엑셀로 등록하기</button>
         <input type="file" id="excelFile" style="display: none;" onchange="uploadExcel()" accept=".xlsx,.xls">
       </div>
     </section>
@@ -94,9 +129,9 @@
         <tr>
           <th>품목 선택</th>
           <th>품목 코드</th>
-          <th>생산 L/T</th>
-          <th>최소 공급 단위</th>
-          <th>최소 생산 수량</th>
+          <th>L/T</th>
+          <th>최대 공급 단위(일)</th>
+          <th>생산수량(L/T 당)</th>
           <th>단가</th>
         </tr>
         </thead>
@@ -189,7 +224,7 @@
       const ltInput = document.createElement('input');
       ltInput.type = "number";
       ltInput.name = `leadTime_${i}`;
-      ltInput.placeholder = "예: 5";
+      ltInput.placeholder = "ex: 5 ( 5일)";
       ltInput.required = true;
       ltCell.appendChild(ltInput);
       row.appendChild(ltCell);
@@ -199,7 +234,7 @@
       const supplyUnitInput = document.createElement('input');
       supplyUnitInput.type = "number";
       supplyUnitInput.name = `supplyUnit_${i}`;
-      supplyUnitInput.placeholder = "예: 10";
+      supplyUnitInput.placeholder = "ex: 10 (일당 10개)";
       supplyUnitInput.required = true;
       supplyUnitCell.appendChild(supplyUnitInput);
       row.appendChild(supplyUnitCell);
@@ -209,7 +244,7 @@
       const productionQtyInput = document.createElement('input');
       productionQtyInput.type = "number";
       productionQtyInput.name = `productionQty_${i}`;
-      productionQtyInput.placeholder = "예: 100";
+      productionQtyInput.placeholder = "ex: 100 (L/T당 100개)";
       productionQtyInput.required = true;
       productionQtyCell.appendChild(productionQtyInput);
       row.appendChild(productionQtyCell);
@@ -219,7 +254,7 @@
       const costInput = document.createElement('input');
       costInput.type = "number";
       costInput.name = `unitCost_${i}`;
-      costInput.placeholder = "예: 5000";
+      costInput.placeholder = "ex: 10000 (개당 10000원)";
       costInput.required = true;
       costCell.appendChild(costInput);
       row.appendChild(costCell);

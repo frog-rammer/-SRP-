@@ -130,7 +130,7 @@ public class ProcurementPlanController {
         //2. 발주서 자동생성
         purchaseOrderService.registerPurchaseOrder(procumentPlanDTO,username);
         //3.상태를 "대기" 상태로 출고요청에 자동생성하기
-        materialIssueService.createAndSaveShipmentsFromProcurementPlan(procumentPlanDTO); // Shipment 생성
+        materialIssueService.createAndSaveShipmentsFromProcurementPlan(procumentPlanDTO,username); // Shipment 생성
         // 4. 저장된 조달 계획 리스트를 다시 로드하여 View에 전달
         return "redirect:/procurementPlan/register"; // GET 메서드 호출로 리다이렉트
     }
