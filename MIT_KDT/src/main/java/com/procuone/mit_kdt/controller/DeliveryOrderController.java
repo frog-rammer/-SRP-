@@ -56,14 +56,12 @@ public class DeliveryOrderController {
             order.setComName(companyService.getCompanyDetails(order.getBusinessId()).getComName());
             order.setAvailableQuantity(availableQuantity); // 납품 가능 수량 설정
         });
-
         // 3. 모델에 발주서 리스트 및 페이징 정보 추가
         model.addAttribute("purchaseOrders", purchaseOrderDTOS.getContent()); // 현재 페이지 데이터
         model.addAttribute("currentPage", purchaseOrderDTOS.getNumber()); // 현재 페이지 번호
         model.addAttribute("totalPages", purchaseOrderDTOS.getTotalPages()); // 전체 페이지 수
         model.addAttribute("pageSize", size); // 페이지 크기
         model.addAttribute("deliveryOrderDTO",new DeliveryOrderDTO());
-
         return "materialReceipt/deliveryOrder";
     }
 

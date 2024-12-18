@@ -224,15 +224,16 @@
 
         <!-- 계약된 회사 리스트 영역 -->
         <aside class="layout-right">
-            <h2>계약된 회사 정보</h2>
+            <h2>계약된 회사 리스트</h2>
             <table class="company-list">
                 <thead>
                 <tr>
                     <th>회사명</th>
-                    <th>사업자번호</th>
+                    <th>사업자 번호</th>
                     <th>L/T</th>
                     <th>단가</th>
-                    <th>최소 생산 수량</th>
+                    <th>L/T당 생산 수량</th>
+                    <th>일일 공급 최대 수량</th>
                     <th>선택</th>
                 </tr>
                 </thead>
@@ -384,7 +385,8 @@
                     <td>${company.leadTime}</td>
                     <td>${company.unitCost}</td>
                     <td>${company.productionQty}</td>
-                    <td><input type="radio" name="selectedCompany" data-company-name="${company.comName}" data-product-code="${company.productCode}"  data-business-Id="${company.businessId}" data-lead-time="${company.leadTime}" data-unit-cost="${company.unitCost}" data-production-qty="${company.productionQty}"></td>
+                    <td>${company.supplyUnit}</td>
+                    <td><input type="radio" name="selectedCompany" data-company-name="${company.comName}" data-product-code="${company.productCode}"  data-business-Id="${company.businessId}" data-lead-time="${company.leadTime}" data-unit-cost="${company.unitCost}" data-production-qty="${company.productionQty}" data-supply-unit="${company.supplyUnit}"></td>
                 `;
                     companyTableBody.appendChild(row);
                 });
@@ -394,6 +396,7 @@
                 alert("계약된 회사 정보를 불러오는 중 문제가 발생했습니다.");
             });
     }
+
     function addToPurchaseBOM() {
         const selectedCompanyRows = document.querySelectorAll('#companyTableBody input[type="radio"]:checked');
         if (selectedCompanyRows.length === 0) {
@@ -409,7 +412,7 @@
             const productionQty = row.dataset.productionQty;
             const businessId = row.dataset.businessId;
             const itemId = row.dataset.itemId;
-
+            const supplyUnit = row.dataset.supplyUnit;
 
             // P-BOM 등록을 위한 서버로의 요청
             const purchaseBOMData = {
@@ -418,7 +421,8 @@
                 itemId: itemId,
                 leadTime: leadTime,
                 unitCost: unitCost,
-                productionQty: productionQty
+                productionQty: productionQty,
+                supplyUnit :supplyUnit
             };
 
             fetch('/purchase/register', {

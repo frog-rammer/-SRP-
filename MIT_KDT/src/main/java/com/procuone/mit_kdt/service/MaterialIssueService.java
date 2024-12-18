@@ -15,7 +15,7 @@ public interface MaterialIssueService {
     void saveShipment(List<ShipmentDTO> shipments);
     Page<ShipmentDTO> getAllShipments(Pageable pageable);
     void updateCurrentQuantity(); // 현재 재고 반영
-    void createAndSaveShipmentsFromProcurementPlan(ProcumentPlanDTO procurementPlanDTO); //shipment 자동 생성
+    void createAndSaveShipmentsFromProcurementPlan(ProcumentPlanDTO procurementPlanDTO,String username); //shipment 자동 생성
     void updateToOngoing(List<String> shipmentIds); // 출고 진행
     void confirmReceipt(List<String> shipmentIds);  // 수령확인 처리 메서드
     //DTO<->엔티티 변환

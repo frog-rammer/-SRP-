@@ -221,7 +221,7 @@
         <section>
             <!-- 토글 버튼 -->
             <button type="button" class="btn" style="width: 80%; margin-left: 10%;" id="toggleMonthlySection">
-                월별 입고 금액 보기
+                월별 목표 달성 여부 보기
             </button>
 
             <!-- 월별 입고 금액 섹션 -->
@@ -347,7 +347,7 @@
         // 월별 섹션 토글
         toggleButton.addEventListener("click", function () {
             monthlySection.style.display = (monthlySection.style.display === "none" || monthlySection.style.display === "") ? "block" : "none";
-            toggleButton.textContent = monthlySection.style.display === "block" ? "월별 입고 금액 숨기기" : "월별 입고 금액 보기";
+            toggleButton.textContent = monthlySection.style.display === "block" ? "월별 목표달성 여부 숨기기" : "월별 목표 달성 여부 확인";
         });
     });
 

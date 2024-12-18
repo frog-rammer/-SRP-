@@ -1,5 +1,6 @@
 package com.procuone.mit_kdt.service.impl;
 
+import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
@@ -8,6 +9,7 @@ import com.procuone.mit_kdt.entity.BOM.BOMRelationship;
 import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.entity.BOM.PurchaseBOM;
 import com.procuone.mit_kdt.repository.*;
+import com.procuone.mit_kdt.service.CompanyService;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,13 +42,21 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private ProgressInspectionRepository progressInspectionRepository;
     @Autowired
     private CompanyRepository companyRepository;
-
+    @Autowired
+    private CompanyService  companyService;
     @Override
     public Page<PurchaseOrderDTO> getOrdersByStatus(String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         // 엔티티를 DTO로 변환하는 로직 포함
-        return purchaseOrderRepository.findByStatus(status, pageable)
+        Page<PurchaseOrderDTO> purchaseOrderDTOS = purchaseOrderRepository.findByStatus(status, pageable)
                 .map(this::convertEntityToDTO);
+        for(PurchaseOrderDTO purchaseOrderDTO : purchaseOrderDTOS.getContent()) {
+            Optional<ItemDTO> itemDTO = itemService.findByProductCode(purchaseOrderDTO.getProductCode());
+            itemDTO.ifPresent(dto -> purchaseOrderDTO.setItemName(dto.getItemName()));
+            CompanyDTO companyDTO = companyService.getCompanyDetails(purchaseOrderDTO.getBusinessId());
+            purchaseOrderDTO.setComName(companyDTO.getComName());
+        }
+        return purchaseOrderDTOS;
     }
 
     @Override

@@ -1,8 +1,12 @@
 package com.procuone.mit_kdt.controller;
 
+import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.dto.ContractDTO;
 import com.procuone.mit_kdt.dto.InspectionDTO;
+import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
+import com.procuone.mit_kdt.service.CompanyService;
+import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.ProgressInspectionService;
 import com.procuone.mit_kdt.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +16,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/purchaseOrder")
@@ -24,6 +30,11 @@ public class PurchaseOrderController {
     private PurchaseOrderService purchaseOrderService;
     @Autowired
     private ProgressInspectionService progressInspectionService;
+    @Autowired
+    private ItemService itemService;
+    @Autowired
+    private CompanyService companyService;
+
     @GetMapping("/purchaseOrders")
     public String purchaseOrders(
             @RequestParam(defaultValue = "0") int page1,
@@ -83,9 +94,21 @@ public class PurchaseOrderController {
 
         if ("auto".equals(tableType)) {
             orders = purchaseOrderService.searchOrders("자동생성", keyword, type, startDate, endDate);
+            for(PurchaseOrderDTO purchaseOrderDTO : orders){
+                Optional<ItemDTO> itemDTO = itemService.findByProductCode(purchaseOrderDTO.getProductCode());
+                CompanyDTO companyDTO = companyService.getCompanyDetails(purchaseOrderDTO.getBusinessId());
+                purchaseOrderDTO.setComName(companyDTO.getComName());
+                purchaseOrderDTO.setItemName(itemDTO.get().getItemName());
+            }
             response.put("auto", orders);
         } else if ("completed".equals(tableType)) {
             orders = purchaseOrderService.searchOrders("발주완료", keyword, type, startDate, endDate);
+            for(PurchaseOrderDTO purchaseOrderDTO : orders){
+                Optional<ItemDTO> itemDTO = itemService.findByProductCode(purchaseOrderDTO.getProductCode());
+                CompanyDTO companyDTO = companyService.getCompanyDetails(purchaseOrderDTO.getBusinessId());
+                purchaseOrderDTO.setComName(companyDTO.getComName());
+                purchaseOrderDTO.setItemName(itemDTO.get().getItemName());
+            }
             response.put("completed", orders);
         } else {
             response.put("error", "Invalid table type");
@@ -117,7 +140,10 @@ public class PurchaseOrderController {
     @GetMapping("/purchaseOrder/{purchaseOrderCode}")
     public String viewPurchaseOrder(@PathVariable String purchaseOrderCode, Model model) {
         PurchaseOrderDTO purchaseOrderDTO = purchaseOrderService.getpurchaseOrderById(purchaseOrderCode);
-
+        Optional<ItemDTO> itemDTO = itemService.findByProductCode(purchaseOrderDTO.getProductCode());
+        CompanyDTO companyDTO = companyService.getCompanyDetails(purchaseOrderDTO.getBusinessId());
+        purchaseOrderDTO.setComName(companyDTO.getComName());
+        purchaseOrderDTO.setItemName(itemDTO.get().getItemName());
         model.addAttribute("purchaseOrder", purchaseOrderDTO);
 
         return "purchaseOrder"; // HTML 템플릿 파일 이름

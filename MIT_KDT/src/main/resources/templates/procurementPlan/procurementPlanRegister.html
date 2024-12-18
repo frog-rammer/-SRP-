@@ -547,8 +547,10 @@
     const productPlanCodeInput = document.getElementById('productPlanCode');
     const requiredProcurementQuantityInput = document.getElementById('requiredProcurementQuantity');
     let productionStartDate, productionEndDate;
-
-    for (let i = 2020; i <= 2030; i++) {
+    const today = new Date();       // 오늘 날짜를 생성
+    const year = today.getFullYear(); // 연도 가져오기
+    const yearEnd = year +10;
+    for (let i = year; i <= yearEnd; i++) {
         const option = document.createElement('option');
         option.value = i;
         option.textContent = i;
