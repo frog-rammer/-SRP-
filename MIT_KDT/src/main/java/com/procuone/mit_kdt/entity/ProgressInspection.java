@@ -51,6 +51,9 @@ public class ProgressInspection {
     private Long inspectedQuantity; // 검수된 수량
 
     @Column(nullable = false)
+    private LocalDate expectedArrivalDate;  // 입고예정일
+
+    @Column(nullable = false)
     private String inspectionStatus; // 검수 상태 ("검수 중", "검수 완료" 등)
 
     @Column(nullable = false)

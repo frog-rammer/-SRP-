@@ -26,6 +26,7 @@ public class PurchaseOrderDTO {
     private Long availableQuantity; // 추가된 필드: 납품 가능 수량
     private String comName; // 추가된 필드: 회사명
     private String ItemName; // 추가된 필드: 아이템이름
+    private LocalDate ExpectedArrivalDate; //입고예정일
 
     // JPQL 쿼리에 사용되는 생성자
     public PurchaseOrderDTO(String purchaseOrderCode, String procurementPlanCode, String productPlanCode,

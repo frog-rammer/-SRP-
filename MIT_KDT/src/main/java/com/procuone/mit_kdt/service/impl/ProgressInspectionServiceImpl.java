@@ -36,7 +36,7 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
         Page<ProgressInspection> inspections = progressInspectionRepository.searchByFilters(
                 productCodeQuery, productNameQuery, procurementPlanCodeQuery, dateStart, dateEnd, inspectionStatus, pageable);
 
-        return inspections.map(this::calculateExpectedArrivalDateAndConvertToDTO);
+        return inspections.map(this::entityToDto);
     }
 
     @Override
@@ -52,49 +52,10 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
         return inspections.map(this::entityToDto);
     }
 
-    // 리드타임 계산 및 DTO 변환
-    private ProgressInspectionDTO calculateExpectedArrivalDateAndConvertToDTO(ProgressInspection entity) {
-        ProgressInspectionDTO dto = entityToDto(entity);
-
-        PurchaseOrder purchaseOrder = entity.getPurchaseOrder();
-        if (purchaseOrder != null) {
-            String businessId = purchaseOrder.getBusinessId();
-            String productCode = purchaseOrder.getProductCode();
-
-            // Contract 레포지토리 사용
-            Contract contract = contractRepository.findContractByBusinessIdAndProductCode(businessId, productCode);
-
-            if (contract != null) {
-                int leadTime = contract.getLeadTime(); // 리드타임 (일 단위)
-                int productionQty = contract.getProductionQty(); // 리드타임당 생산량
-
-                Long totalQuantity = entity.getTotalQuantity(); // 발주된 총 수량
-                LocalDate orderDate = entity.getOrderDate(); // 발주일
-
-                if (totalQuantity != null && productionQty > 0 && leadTime > 0) {
-                    // 필요한 리드타임 계산
-                    int requiredLeadTimes = (int) Math.ceil((double) totalQuantity / productionQty);
-
-                    // 입고 예정일 계산
-                    LocalDate expectedArrivalDate = orderDate.plusDays((long) (requiredLeadTimes - 1) * leadTime);
-                    dto.setExpectedArrivalDate(expectedArrivalDate); // LocalDate로 설정
-                } else {
-                    dto.setExpectedArrivalDate(null); // 계산 불가 시 null 처리
-                }
-            } else {
-                dto.setExpectedArrivalDate(null); // 계약 정보가 없으면 null
-            }
-        } else {
-            dto.setExpectedArrivalDate(null); // 발주서 정보가 없으면 null
-        }
-
-        return dto;
-    }
 
     @Override
     public Page<ProgressInspectionDTO> getInspectionsByBusinessId(String businessId, Pageable pageable) {
         Page<ProgressInspection> inspections = progressInspectionRepository.findByBusinessId(businessId, pageable);
-
         // DTO 변환 및 반환
         return inspections.map(this::entityToDto);
     }
@@ -145,6 +106,7 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
                 .productCode(dto.getProductCode())
                 .productName(dto.getProductName())
                 .totalQuantity(dto.getTotalQuantity())
+                .expectedArrivalDate(dto.getExpectedArrivalDate())
                 .inspectedQuantity(dto.getInspectedQuantity())
                 .inspectionStatus(dto.getInspectionStatus())
                 .inspectionDate(dto.getInspectionDate())
@@ -166,8 +128,8 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
                 .inspectedQuantity(entity.getInspectedQuantity())
                 .inspectionStatus(entity.getInspectionStatus())
                 .inspectionDate(entity.getInspectionDate())
+                .expectedArrivalDate(entity.getExpectedArrivalDate())
                 .orderDate(entity.getOrderDate())
-                .expectedArrivalDate(null) // expectedArrivalDate는 calculateExpectedArrivalDateAndConvertToDTO에서 계산
                 .build();
     }
 

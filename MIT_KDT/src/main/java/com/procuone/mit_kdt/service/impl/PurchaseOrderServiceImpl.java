@@ -3,6 +3,7 @@ package com.procuone.mit_kdt.service.impl;
 import com.procuone.mit_kdt.dto.CompanyDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
+import com.procuone.mit_kdt.dto.ProgressInspectionDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
 import com.procuone.mit_kdt.entity.*;
 import com.procuone.mit_kdt.entity.BOM.BOMRelationship;
@@ -44,6 +45,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private CompanyRepository companyRepository;
     @Autowired
     private CompanyService  companyService;
+    @Autowired
+    ContractRepository contractRepository;
     @Override
     public Page<PurchaseOrderDTO> getOrdersByStatus(String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -104,6 +107,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             progressInspection.setTotalQuantity(order.getQuantity());
             progressInspection.setInspectedQuantity(0L);
             progressInspection.setInspectionStatus("검수예정");
+            progressInspection.setExpectedArrivalDate(order.getExpectedArrivalDate());
             progressInspection.setBusinessId(order.getBusinessId());
             progressInspection.setComName(companyDTO.get().getComName());
             progressInspection.setInspectionDate(LocalDate.of(1000,1,1));
@@ -111,7 +115,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             progressInspectionRepository.save(progressInspection);
         }
     }
-
     private Item dtoToEntity(ItemDTO dto) {
         return Item.builder()
                 .id(dto.getId())
@@ -182,11 +185,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseOrderDTO.setPrice(totalPrice);
             purchaseOrderDTO.setCreatedBy(userName);
             purchaseOrderDTO.setCreatedDate(LocalDate.now());
-
+            purchaseOrderDTO.setExpectedArrivalDate(calculateExpectedArrivalDateAndConvertToDTO(purchaseOrderDTO));
             // DTO 리스트에 추가
             purchaseOrderList.add(purchaseOrderDTO);
         }
-
         // 5. 발주서 테이블에 저장
         List<PurchaseOrder> purchaseOrders = purchaseOrderList.stream()
                 .map(this::dtoToEntity)
@@ -194,6 +196,54 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         purchaseOrderRepository.saveAll(purchaseOrders);
     }
+
+    // 리드타임 계산 및 DTO 변환
+    private LocalDate calculateExpectedArrivalDateAndConvertToDTO(PurchaseOrderDTO purchaseOrder) {
+
+        if (purchaseOrder != null) {
+            String businessId = purchaseOrder.getBusinessId();
+            String productCode = purchaseOrder.getProductCode();
+
+            // Contract 레포지토리 사용
+            Contract contract = contractRepository.findContractByBusinessIdAndProductCode(businessId, productCode);
+
+            if (contract != null) {
+                int leadTime = contract.getLeadTime(); // 리드타임 (일 단위)
+                int productionQty = contract.getProductionQty(); // 리드타임당 생산량
+                int supplyUnitLeadTime = contract.getSupplyUnit();
+
+                Long totalQuantity = purchaseOrder.getQuantity(); // 발주된 총 수량
+                LocalDate orderDate = purchaseOrder.getCreatedDate(); // 발주일
+
+                if (totalQuantity != null && productionQty > 0 && leadTime > 0) {
+                    // 필요한 리드타임 계산
+
+                    // 협력회사 생산 리드타임
+                    int requiredLeadTimes = (int) Math.ceil((double) totalQuantity / ((double)productionQty/leadTime));
+                    //2명이서 2분동안 각각 1개씩 제품 진척검수를 한다 가정 함.
+                    /*  하루 근무 시간: 오전 9시 ~ 오후 6시 → 9시간
+                        실질적인 작업시간 8시간 = 480분
+                        사람당 하루 검수량 240개  *2 = 480개
+                     */
+                    // 진척 검수 일정 추가
+                    requiredLeadTimes+= (int)Math.ceil((double)totalQuantity/480);
+                    //공급 운반 일정 추가
+                    requiredLeadTimes += (int)Math.ceil((double)totalQuantity/supplyUnitLeadTime);
+                    // 입고 예정일 계산
+                    LocalDate expectedArrivalDate = orderDate.plusDays((long)(requiredLeadTimes));
+                    purchaseOrder.setExpectedArrivalDate(expectedArrivalDate); // LocalDate로 설정
+                } else {
+                    purchaseOrder.setExpectedArrivalDate(null); // 계산 불가 시 null 처리
+                }
+            } else {
+                purchaseOrder.setExpectedArrivalDate(null); // 계약 정보가 없으면 null
+            }
+        }
+
+        assert purchaseOrder != null;
+        return purchaseOrder.getExpectedArrivalDate();
+    }
+
 
     @Override
     public List<PurchaseOrderDTO> getCompletedOrdersBybusinessId(String businessId) {
@@ -217,6 +267,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 .createdDate(dto.getCreatedDate())
                 .updatedBy(dto.getUpdatedBy())
                 .updatedDate(dto.getUpdatedDate())
+                .ExpectedArrivalDate(dto.getExpectedArrivalDate())
                 .build();
     }
 
@@ -236,6 +287,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 .createdDate(entity.getCreatedDate())
                 .updatedBy(entity.getUpdatedBy())
                 .updatedDate(entity.getUpdatedDate())
+                .ExpectedArrivalDate(entity.getExpectedArrivalDate())
                 .build();
     }
     @Override

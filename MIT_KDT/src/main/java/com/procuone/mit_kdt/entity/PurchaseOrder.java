@@ -38,6 +38,7 @@ public class PurchaseOrder {
     private String status;
     private String createdBy;
     private LocalDate createdDate;
+    private LocalDate ExpectedArrivalDate;
     private String updatedBy;
     private LocalDate updatedDate;
 }
