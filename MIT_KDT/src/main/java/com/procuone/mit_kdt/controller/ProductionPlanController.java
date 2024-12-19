@@ -34,7 +34,7 @@ public class ProductionPlanController {
         List<ItemDTO> topItems = itemService.getTopItems();
         model.addAttribute("topItems", topItems);
 
-        return "procurementPlan/productionPlanInput";  // 템플릿 이름
+        return "production/productionPlanInput";  // 템플릿 이름
     }
 
     @GetMapping("/view")
@@ -47,7 +47,7 @@ public class ProductionPlanController {
         model.addAttribute("totalPages", productionPlanPage.getTotalPages());  // 총 페이지 수
         model.addAttribute("totalItems", productionPlanPage.getTotalElements()); // 전체 아이템 수
 
-        return "procurementPlan/productionPlanView";
+        return "production/productionPlanView";
     }
 
 
@@ -56,7 +56,7 @@ public class ProductionPlanController {
                            BindingResult result, Model model,
                            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         if (result.hasErrors()) {
-            return "procurementPlan/productionPlanInput";  // 유효성 검사 실패 시 입력 폼으로 돌아가기
+            return "production/productionPlanInput";  // 유효성 검사 실패 시 입력 폼으로 돌아가기
         }
 
         // 엔티티 저장
@@ -102,7 +102,7 @@ public class ProductionPlanController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
 
-        return "procurementPlan/productionPlanView"; // 결과를 보여줄 뷰
+        return "production/productionPlanView"; // 결과를 보여줄 뷰
     }
 
     @PostMapping("/uploadExcel")

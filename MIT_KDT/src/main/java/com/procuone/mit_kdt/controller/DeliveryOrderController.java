@@ -4,19 +4,14 @@ package com.procuone.mit_kdt.controller;
 import com.procuone.mit_kdt.dto.CompanyInventoryDTO;
 import com.procuone.mit_kdt.dto.DeliveryOrderDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
-import com.procuone.mit_kdt.dto.ProgressInspectionDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
-import com.procuone.mit_kdt.entity.ProgressInspection;
 import com.procuone.mit_kdt.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -62,7 +57,7 @@ public class DeliveryOrderController {
         model.addAttribute("totalPages", purchaseOrderDTOS.getTotalPages()); // 전체 페이지 수
         model.addAttribute("pageSize", size); // 페이지 크기
         model.addAttribute("deliveryOrderDTO",new DeliveryOrderDTO());
-        return "materialReceipt/deliveryOrder";
+        return "procurement/deliveryOrder";
     }
 
     @PostMapping("/register")

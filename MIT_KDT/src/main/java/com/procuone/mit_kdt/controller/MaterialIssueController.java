@@ -1,7 +1,6 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.InventoryTransactionDTO;
-import com.procuone.mit_kdt.dto.ItemDTOs.BOMRelationshipDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
 import com.procuone.mit_kdt.dto.ShipmentDTO;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/materialIssue")
@@ -187,7 +185,7 @@ public class MaterialIssueController {
         model.addAttribute("totalOutboundPages", outboundTransactions.getTotalPages());
         model.addAttribute("totalOutboundItems", outboundTransactions.getTotalElements());
 
-        return "materialIssue/stock";
+        return "material/stock";
     }
 
 
@@ -244,7 +242,7 @@ public class MaterialIssueController {
         model.addAttribute("totalCompletedItems", completedShipments.getTotalElements());
 
         // 반환할 뷰 이름
-        return "materialIssue/stockOut";
+        return "material/stockOut";
     }
 
     @GetMapping("/stockOutOnProductionPart")
@@ -271,7 +269,7 @@ public class MaterialIssueController {
         model.addAttribute("currentCompletedPage", completedShipments.getNumber());
         model.addAttribute("totalCompletedPages", completedShipments.getTotalPages());
         model.addAttribute("totalCompletedItems", completedShipments.getTotalElements());
-        return "materialIssue/shipmentConfirmation";
+        return "production/shipmentConfirmation";
     }
 
     @PostMapping("/confirmReceipt")

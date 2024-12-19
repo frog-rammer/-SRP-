@@ -1,12 +1,9 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.CompanyDTO;
-import com.procuone.mit_kdt.dto.ItemDTOs.PurchaseBOMDTO;
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
-import com.procuone.mit_kdt.entity.BOM.PurchaseBOM;
-import com.procuone.mit_kdt.entity.Member;
 import com.procuone.mit_kdt.entity.ProcurementPlan;
 import com.procuone.mit_kdt.repository.ProcurementPlanRepository;
 import com.procuone.mit_kdt.service.*;
@@ -15,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -72,7 +66,7 @@ public class ProcurementPlanController {
 
         List<ProcurementPlan> procurementPlanList = procurementPlanService.getAllProcurementPlans();//추가
 
-        return "procurementPlan/procurementPlanRegister";
+        return "procurement/procurementPlanRegister";
     }
     @GetMapping("/search")
     public String searchProductionPlans(
@@ -155,7 +149,7 @@ public class ProcurementPlanController {
         model.addAttribute("totalPages", procurementPlans.getTotalPages());
         model.addAttribute("totalItems", procurementPlans.getTotalElements());
 
-        return "purchaseOrder/procurementPlanView";
+        return "procurement/procurementPlanView";
     }
 
     @GetMapping("/comProcurementPlanView")
@@ -194,7 +188,7 @@ public class ProcurementPlanController {
         model.addAttribute("totalPages", comProcurementPlans.getTotalPages());
         model.addAttribute("totalItems", comProcurementPlans.getTotalElements());
 
-        return "companyProcumentPlanView";
+        return "supplier/companyProcumentPlanView";
     }
 
     // 수정 폼을 띄울 때

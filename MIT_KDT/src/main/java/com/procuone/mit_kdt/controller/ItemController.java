@@ -6,7 +6,6 @@ import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.entity.BOM.Item;
 import com.procuone.mit_kdt.entity.CompanyItem;
 import com.procuone.mit_kdt.repository.CompanyItemRepository;
-import com.procuone.mit_kdt.service.CompanyItemService;
 import com.procuone.mit_kdt.service.ContractService;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.CategoryService;
@@ -56,7 +55,7 @@ public class ItemController {
         model.addAttribute("item", new ItemDTO());
         List<CategoryDTO> rootCategories = categoryService.getRootCategories();
         model.addAttribute("categories", rootCategories);
-        return "procurementPlan/registerProductForm";
+        return "procurement/registerProductForm";
     }
 
     @GetMapping("/{categoryId}")
