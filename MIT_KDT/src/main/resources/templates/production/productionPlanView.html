@@ -38,10 +38,45 @@
             order: 1; /* 생산 계획 목록을 위로 배치 */
         }
 
-        .productionPlanListSearchBar {
+        /* 검색 섹션 스타일 */
+        .search-container {
+            background-color: #ffffff;
+            border-radius: 8px;
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-container input[type="text"],
+        .search-container input[type="date"] {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 200px;
+            box-sizing: border-box;
+        }
+
+        .search-container input:focus {
+            border-color: #32928E;
+            outline: none;
+        }
+
+        .search-container button {
+            padding: 10px 15px;
+            font-size: 14px;
+            background-color: #32928E;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-container button:hover {
+            background-color: #267570;
         }
 
         input[type="text"] {
@@ -221,6 +256,24 @@
                 width: 100%;
             }
         }
+        /* 제목과 소개글 스타일 */
+        .header-container {
+            margin: 20px 0;
+        }
+
+        .header-container h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #32928E;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+
+        .header-container p {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 <body>
@@ -233,6 +286,14 @@
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
     <main class="layout-main">
+        <!-- 제목과 소개글 -->
+        <div class="header-container">
+            <h1>생산계획 조회</h1>
+            <p>
+                아래에서 생산 계획을 조회하거나 수정, 삭제 할 수 있습니다.<br>
+                <em>※ 생산계획 목록에서 생산 계획을 클릭하면, 해당 생산 계획의 생산 시작일과 종료일이 생산 달력에 표시 됩니다.</em>
+            </p>
+        </div>
         <form action="/productionPlan/search" method="post" th:object="${productionPlanDTO}">
             <div class="container">
                 <!-- 달력 부분 -->
@@ -274,21 +335,17 @@
 
                 <!-- 생산 계획 목록 부분 -->
                 <section class="productionPlanListWrap">
-                    <h3>생산 계획 목록</h3>
-                    <div class="productionPlanListSearchBar">
+
+                    <div class="search-container">
+                        <h3>생산 계획 목록</h3>
                         <select name="searchType">
                             <option value="productPlanCode">생산계획번호</option>
                             <option value="productName">생산제품명</option>
                             <option value="productCode">생산제품코드</option>
                         </select>
                         <input type="text" name="searchKeyword" placeholder="검색어를 입력하세요">
-
-                        <label for="startDate">시작일:</label>
                         <input type="date" name="startDate" id="startDate">
-
-                        <label for="endDate">종료일:</label>
                         <input type="date" name="endDate" id="endDate">
-
                         <button type="submit" class="searchBtn">검색</button>
                     </div>
 

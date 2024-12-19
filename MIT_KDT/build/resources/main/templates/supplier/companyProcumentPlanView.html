@@ -25,26 +25,47 @@
         }
 
         /* 검색 섹션 스타일 */
-        .search-section {
-            margin-bottom: 40px;
-            background-color: #f8f9fa;
+        .search-container {
+            background-color: #ffffff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            max-width: 700px;
-            margin: 0 auto;
-        }
 
-        .search-section h3 {
-            font-size: 1.4rem;
             margin-bottom: 20px;
-            color: #32928E;
-            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .search-section form {
-            display: flex;
-            flex-direction: column;
+        .search-container input[type="text"],
+        .search-container input[type="date"] {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 200px;
+            box-sizing: border-box;
+        }
+
+        .search-container input:focus {
+            border-color: #32928E;
+            outline: none;
+        }
+
+        .search-container button {
+            padding: 10px 15px;
+            font-size: 14px;
+            background-color: #32928E;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-container button:hover {
+            background-color: #267570;
         }
 
         /* 각 입력 항목을 가로로 배치 */
@@ -96,6 +117,13 @@
 
         .search-section .btn:hover {
             background-color: #286f6b;
+        }
+
+        h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
         }
 
         /* 결과 섹션 스타일 */
@@ -197,7 +225,25 @@
             padding: 8px 20px; /* 버튼 크기 조정 */
             font-size: 0.95rem; /* 글자 크기 조금 더 작게 */
         }
+        /* 제목과 소개글 스타일 */
+        .header-container {
+            margin: 20px 0;
+        }
 
+        .header-container h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #32928E;
+            font-weight: bold;
+            padding-bottom: 10px;
+            text-align: left;
+        }
+
+        .header-container p {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 <body>
@@ -210,9 +256,13 @@
         <div th:replace="~{partials/procuOneSide :: side}"></div>
     </aside>
     <main class="layout-main">
-        <h1><span th:text="${companyDTO.comName}"></span> 업체 조달계획 조회</h1>
-        <section class="search-section">
-            <h3>검색</h3>
+        <!-- 제목과 소개글 -->
+        <div class="header-container">
+            <h1>조달계획</h1>
+            <p>아래에서 조달계획을 확인하거나, 수정 또는 삭제 할 수 있습니다.</p>
+        </div>
+        <section class="search-container">
+            <h3><span th:text="${companyDTO.comName}"></span> 업체 조달계획 조회</h3>
             <form action="/procurementPlan/comsearch" method="get">
                 <!--                <label for="procurementPlanCode">조달계획 코드</label>-->
                 <!--                <input type="text" id="procurementPlanCode" name="procurementPlanCode" th:value="${procurementPlanCode}" placeholder="조달계획 코드를 입력하세요">-->
@@ -238,7 +288,6 @@
         </section>
 
         <section class="results-section">
-            <h3>조회 결과</h3>
             <table>
                 <thead>
                 <tr>

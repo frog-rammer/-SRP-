@@ -101,6 +101,24 @@
         .button:hover {
             background-color: #278F75;
         }
+        /* 제목과 소개글 스타일 */
+        .header-container {
+            margin: 20px 0;
+        }
+
+        .header-container h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #32928E;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+
+        .header-container p {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 <body>
@@ -112,13 +130,21 @@
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
     <main class="layout-main">
+        <!-- 제목과 소개글 -->
+        <div class="header-container">
+            <h1>구매발주</h1>
+            <p>
+                1. 구매 발주 목록에서 <strong>품목</strong>을 선택합니다.<br>
+                2. <strong>발주</strong>버튼을 누른 뒤, 아래 <strong>구매 발주서 관리</strong>를 확인합니다.<br>
+                3. 마지막으로 구매 발주서 관리에서 <strong>보기</strong> 버튼을 눌러 발주서를 확인합니다.<br>
+                <em>※ 조달납기일 기준으로 날짜 검색이 가능하며, 사업자번호 또는 품목명으로 검색이 가능합니다.</em>
+            </p>
+        </div>
         <div id="content">
             <!-- Auto-generated table -->
             <section class="procurement-plan">
-                <div class="top">
-                    <h2>구매 발주 목록</h2>
-                </div>
                 <div class="search-bar">
+                    <h2>구매 발주 목록</h2>
                     <input type="date" class="date-start" placeholder="시작 날짜">
                     <input type="date" class="date-end" placeholder="종료 날짜">
                     <select class="keyword-type">
