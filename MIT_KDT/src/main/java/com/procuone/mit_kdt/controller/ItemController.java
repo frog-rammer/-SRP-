@@ -54,7 +54,10 @@ public class ItemController {
     public String showRegisterForm(Model model) {
         model.addAttribute("item", new ItemDTO());
         List<CategoryDTO> rootCategories = categoryService.getRootCategories();
+        List<ItemDTO> rootItems = itemService.getItemsByCategoryId(1L);
+
         model.addAttribute("categories", rootCategories);
+        model.addAttribute("rootItems", rootItems);
         return "procurement/registerProductForm";
     }
 

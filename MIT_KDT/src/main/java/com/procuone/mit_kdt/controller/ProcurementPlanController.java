@@ -106,7 +106,7 @@ public class ProcurementPlanController {
         model.addAttribute("endPage", endPage);
         model.addAttribute("procurementPlanDTO", new ProcumentPlanDTO());
 
-        return "procurementPlan/procurementPlanRegister"; // 검색 결과 페이지
+        return "procurement/procurementPlanRegister"; // 검색 결과 페이지
     }
 
     @PostMapping("/register")

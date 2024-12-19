@@ -6,54 +6,42 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <style>
-        /* 공통 스타일 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            height: 100%;
-            overflow: auto;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-
         /* 메인 컨테이너 */
         .main-container {
-            display: flex;
-            padding: 20px;
+            width: 100%;
             gap: 20px;
         }
-
         /* 메인 콘텐츠 (품목등록 영역) */
         .layout-main {
-            flex: 1;
+            display: flex;
+            width: 100%;
+            gap: 30px;
             padding: 20px;
             background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            border: 1px solid #c2c2c2;
         }
-
         /* 계약된 회사 리스트 표시 영역 */
         .layout-right {
-            flex: 1;
             padding: 20px;
+            width: 45%;
             background-color: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             border: 1px solid #c2c2c2;
-            height: auto;
-            max-height: 800px;
             overflow-y: auto;
         }
+        .layout-right .top-section{
+            min-height: 50%;
 
+        }
         /* 폼 스타일 */
         .layout-main form {
             display: flex;
+            width: 45%;
+            padding: 20px 20px;
+            border-radius: 8px;
+            border: 1px solid #c2c2c2;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             flex-direction: column;
         }
 
@@ -69,7 +57,7 @@
         input[type="number"],
         input[type="file"],
         select {
-            width: 100%;
+            width: 95%;
             padding: 12px;
             margin-top: 5px;
             border: 1px solid #ccc;
@@ -86,8 +74,12 @@
         }
 
         /* 버튼 스타일 */
+        .btn-wrap{
+            display: flex; /* 플렉스박스 활성화 */
+            justify-content: flex-end; /* 오른쪽 정렬 */
+        }
         .btn {
-            padding: 12px 20px;
+            padding: 10px 15px;
             background-color: #32928E;
             color: white;
             border: none;
@@ -107,52 +99,29 @@
         .company-list {
             width: 100%;
             border-collapse: collapse;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             margin-top: 10px;
         }
 
         .company-list th, .company-list td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.1rem;
         }
 
         .company-list th {
-            background-color: #f2f2f2;
+            background-color: #32928E;
+            color: white;
         }
 
         .company-list tbody tr:hover {
             background-color: #e9e9e9;
         }
-
-        /* 트리 형태 P-BOM 리스트 */
-        .pbom-container {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-        }
-
-        .pbom-tree ul {
-            list-style-type: none;
-        }
-
-        .pbom-tree ul li {
-            margin-left: 20px;
-        }
-        #drawingWrap{
-            width: 60%;
-            height: 100%;
-            margin: 0 auto;
-        }
-        #drawingWrap > img{
-            max-width: 100%;
-            margin-top: 10px;
-        }
         /* 제목과 소개글 스타일 */
         .header-container {
-            margin: 20px 0;
+            margin: 20px 20px;
         }
-
         .header-container h1 {
             color: #2c3e50;
             font-size: 2rem;
@@ -161,10 +130,24 @@
             font-weight: bold;
             padding-bottom: 10px;
         }
-
         .header-container p {
             font-size: 16px;
             color: #7f8c8d;
+        }
+        .image-wrap{
+            width: 100%;
+        }
+        .drawingWrap-Wrap{
+            text-align: center;
+            align-items: center;
+        }
+        #drawingWrap{
+            width: 100%;
+        }
+        /* 셀렉트 박스 스타일 */
+        #productGroup {
+            width: 30%; /* 셀렉트 박스 너비 설정 */
+            padding: 5px; /* 내부 여백 */
         }
     </style>
 </head>
@@ -188,18 +171,8 @@
         </div>
         <!-- 품목등록 영역 -->
         <main class="layout-main">
-            <h1>품목등록</h1>
             <form th:action="@{/items/InputProduct}" method="post" enctype="multipart/form-data" onsubmit="combineDimensions()">
-                <!-- 상위 제품군 선택 -->
-                <div id="productGroupDiv">
-                    <label for="productGroup">제품군 선택</label>
-                    <select id="productGroup" name="productGroup" onchange="handleProductGroupSelection()">
-                        <option value="">== 제품군 선택 ==</option>
-                        <option value="electricBikeA">전기자전거 A</option>
-                        <option value="electricBikeB">전기자전거 B</option>
-                        <option value="electricScooter">전동킥보드</option>
-                    </select>
-                </div>
+                <h2>품목등록</h2>
                 <!-- 분류 선택 -->
                 <div id="categoryDiv">
                     <label>분류</label>
@@ -238,38 +211,54 @@
                     <input type="hidden" name="dimensions" id="dimensions" />
                 </div>
                 <!-- 도면파일 -->
-                <div>
+                <div class="image-wrap">
                     <label for="drawingWrap">도면파일</label>
-                    <div id="drawingWrap">
-                        <img id="drawingPreview" alt="도면 파일 미리보기" >
+                    <div class="drawingWrap-Wrap">
+                        <div id="drawingWrap">
+                            <img id="drawingPreview" alt="도면 파일 미리보기" >
+                        </div>
                     </div>
                 </div>
-
-
             </form>
-        </main>
 
-        <!-- 계약된 회사 리스트 영역 -->
-        <aside class="layout-right">
-            <h2>계약된 회사 리스트</h2>
-            <table class="company-list">
-                <thead>
-                <tr>
-                    <th>회사명</th>
-                    <th>사업자 번호</th>
-                    <th>L/T</th>
-                    <th>단가</th>
-                    <th>L/T당 생산 수량</th>
-                    <th>일일 공급 최대 수량</th>
-                    <th>선택</th>
-                </tr>
-                </thead>
-                <tbody id="companyTableBody">
-                <!-- 동적으로 채워질 계약 정보들 -->
-                </tbody>
-            </table>
-            <button class="btn" onclick="addToPurchaseBOM()">P-Bom 구성</button>
-        </aside>
+            <!-- 계약된 회사 리스트 영역 -->
+            <aside class="layout-right">
+                <section class="top-section">
+                    <h2>계약된 회사 리스트</h2>
+                    <table class="company-list">
+                        <thead>
+                        <tr>
+                            <th>회사명</th>
+                            <th>사업자 번호</th>
+                            <th>L/T</th>
+                            <th>단가</th>
+                            <th>L/T당 생산 수량</th>
+                            <th>일일 공급 최대 수량</th>
+                            <th>선택</th>
+                        </tr>
+                        </thead>
+                        <tbody id="companyTableBody">
+                        <!-- 동적으로 채워질 계약 정보들 -->
+                        </tbody>
+                    </table>
+                    <div class="btn-wrap">
+                        <button class="btn" onclick="addToPurchaseBOM()">P-BOM 구성</button>
+                    </div>
+                </section>
+                <section class="bottom-section">
+                        <h2>구성된 구매 BOM 트리</h2>
+                        <!-- 상위 제품군 선택 -->
+                        <div id="productGroupDiv">
+                            <select id="productGroup" name="productGroup">
+                                <option value="">== 제품군 선택 ==</option>
+                            </select>
+                        </div>
+                </section>
+
+            </aside>
+        </main>
+    </div>
+
 </div>
 <script>
     function updateNextCategory(level) {
@@ -281,7 +270,6 @@
         if (nextSelect) {
             nextSelect.remove();
         }
-
         // 선택된 카테고리가 없는 경우 종료
         if (!selectedCategoryId) {
             return;
@@ -376,6 +364,8 @@
                             if (selectedItem.drawingFile) {
                                 drawingPreview.src = selectedItem.drawingFile; // 파일 경로 설정
                                 drawingPreview.style.display = "block"; // 이미지 표시
+                                drawingPreview.style.width="50%";
+                                drawingPreview.style.margin="0 25%";
                             } else {
                                 drawingPreview.style.display = "none"; // 이미지 없을 경우 숨기기
                             }
@@ -476,52 +466,6 @@
                 });
         });
     }
-    //
-    // // P-BOM 트리 데이터를 서버에서 가져와서 트리 형태로 표시하는 함수
-    // function loadPurchaseBOMTree() {
-    //     fetch('/purchase/tree')
-    //         .then(response => {
-    //             if (!response.ok) throw new Error("Failed to fetch P-BOM tree");
-    //             return response.json();
-    //         })
-    //         .then(treeData => {
-    //             console.log('P-BOM 트리 데이터:', treeData);
-    //             // 트리 형태의 P-BOM 리스트 초기화
-    //             const pbomList = document.getElementById("pbomTree");
-    //             pbomList.innerHTML = '';
-    //
-    //             // 트리 데이터를 기반으로 리스트 요소를 생성하여 화면에 추가
-    //             createTreeElement(treeData, pbomList);
-    //         })
-    //         .catch(error => {
-    //             console.error('Error fetching P-BOM tree:', error);
-    //             alert("P-BOM 트리 데이터를 불러오는 중 문제가 발생했습니다.");
-    //         });
-    // }
-    //
-    // function createTreeElement(node, parentElement) {
-    //     if (!node) return;
-    //
-    //     const newItem = document.createElement("li");
-    //     newItem.textContent = `${node.productCode} - ${node.companyName ? node.companyName : ''}, L/T: ${node.leadTime ? node.leadTime : ''}, 단가: ${node.unitCost ? node.unitCost : ''}, 최소 생산 수량: ${node.productionQty ? node.productionQty : ''}`;
-    //     parentElement.appendChild(newItem);
-    //
-    //     if (node.children && node.children.length > 0) {
-    //         const childList = document.createElement("ul");
-    //         newItem.appendChild(childList);
-    //
-    //         node.children.forEach(childNode => {
-    //             createTreeElement(childNode, childList);
-    //         });
-    //     }
-    // }
-    //
-    // // 페이지 로딩 시 P-BOM 트리 데이터 로드
-    // document.addEventListener("DOMContentLoaded", () => {
-    //     loadPurchaseBOMTree();
-    // });
-
 </script>
-
 </body>
 </html>

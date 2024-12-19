@@ -311,15 +311,15 @@
             <div class="pagination">
 
                 <a th:if="${currentPage > 0}"
-                   th:href="@{/procumentPlan/procurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
+                   th:href="@{/procurementPlan/procurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
 
                 <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                    th:classappend="${i == currentPage} ? 'active' : ''"
-                   th:href="@{/procumentPlan/procurementPlanView(page=${i}, search=${search})}"
+                   th:href="@{/procurementPlan/procurementPlanView(page=${i}, search=${search})}"
                    th:text="${i + 1}">1</a>
 
                 <a th:if="${currentPage < totalPages - 1}"
-                   th:href="@{/procumentPlan/procurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
+                   th:href="@{/procurementPlan/procurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
 
             </div>
         </section>
