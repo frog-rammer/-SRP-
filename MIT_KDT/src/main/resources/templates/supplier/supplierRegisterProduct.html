@@ -70,9 +70,6 @@
       margin-bottom: 20px;
       display: flex;
     }
-    h1{
-      text-align: center;
-    }
     .button{
       padding: 5px 10px;
       background-color: #32928E;
@@ -92,6 +89,24 @@
       margin-left: 50%;
       margin-top: 10px ;
     }
+    /* 제목과 소개글 스타일 */
+    .header-container {
+      margin: 20px 0;
+    }
+
+    .header-container h1 {
+      color: #2c3e50;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #32928E;
+      font-weight: bold;
+      padding-bottom: 10px;
+    }
+
+    .header-container p {
+      font-size: 16px;
+      color: #7f8c8d;
+    }
   </style>
 </head>
 <body>
@@ -104,17 +119,22 @@
     <div th:replace="partials/procuOneSide :: side"></div>
   </aside>
   <main class="layout-main">
+    <!-- 제목과 소개글 -->
+    <div class="header-container">
+      <h1>공급물품등록</h1>
+      <p>
+        1. <strong>등록할 물품 개수</strong>를 입력합니다.<br>
+        2. <strong>생성버튼</strong>을 클릭한 후, 생성된 필드에 값을 입력하고 <strong>등록버튼</strong>을 클릭합니다.<br>
+        <em>※ 엑셀로 등록하기 버튼을 사용하여, 한번에 공급물품을 등록 할 수 있습니다.</em>
+      </p>
+    </div>
 
-    <h1>공급 물품 등록</h1>
     <!-- 공급 물품 등록 시작 -->
     <section class="input-section">
       <div>
         <label for="itemCount">등록할 물품 개수: </label>
         <input type="number" id="itemCount" min="1" placeholder="등록할 공급 물품의 수를 입력하세요 (ex : 3)  ">
         <button class="button" onclick="generateRows()">생성</button>
-      </div>
-      <!-- 엑셀 업로드 -->
-      <div>
         <button type="button" class="button" onclick="document.getElementById('excelFile').click()">엑셀로 등록하기</button>
         <input type="file" id="excelFile" style="display: none;" onchange="uploadExcel()" accept=".xlsx,.xls">
       </div>

@@ -6,6 +6,26 @@
     <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/productPlanInput.css}">
+    <style>
+        /* 제목과 소개글 스타일 */
+        .header-container {
+            margin: 20px 0;
+        }
+
+        .header-container h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #32928E;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+
+        .header-container p {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+    </style>
 </head>
 <body>
 <div class="grid-container">
@@ -17,6 +37,16 @@
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
     <main class="layout-main">
+        <!-- 제목과 소개글 -->
+        <div class="header-container">
+            <h1>생산계획 등록</h1>
+            <p>
+                1. 생산 달력에서 <strong>생산 시작일</strong>을 선택합니다.<br>
+                2. <strong>생산 종료일</strong>을 선택한 후, 계획 입력에서 <strong>생산제품</strong>을 선택합니다.<br>
+                3. 마지막으로 <strong>저장</strong> 버튼을 눌러 생산계획을 등록합니다.<br>
+                <em>※ 엑셀로 등록하기 버튼을 사용하여, 생산계획을 한번에 등록 할 수 있습니다.</em>
+            </p>
+        </div>
         <div class="container">
             <!-- 달력 부분 -->
             <section class="calendarWrap">

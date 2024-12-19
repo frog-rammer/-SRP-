@@ -148,6 +148,24 @@
             max-width: 100%;
             margin-top: 10px;
         }
+        /* 제목과 소개글 스타일 */
+        .header-container {
+            margin: 20px 0;
+        }
+
+        .header-container h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #32928E;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+
+        .header-container p {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 <body>
@@ -159,6 +177,15 @@
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
     <div class="main-container">
+        <!-- 제목과 소개글 -->
+        <div class="header-container">
+            <h1>품목정보등록</h1>
+            <p>
+                1. 품목등록에서 <strong>제품군 선택</strong>에서 원하는 제품군을 선택합니다.<br>
+                2. <strong>제품 코드</strong>까지 선택한 후, 계약된 회사 리스트에서 <strong>원하는 회사</strong>를 선택합니다.<br>
+                <em>※ 제품 코드 까지 선택하면, 그 품목에 대한 데이터가 표시됩니다.</em>
+            </p>
+        </div>
         <!-- 품목등록 영역 -->
         <main class="layout-main">
             <h1>품목등록</h1>

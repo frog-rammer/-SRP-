@@ -16,7 +16,6 @@
         /* 생산 계획 목록 */
         .productionPlanListWrap {
             background-color: #fff;
-            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
@@ -279,8 +278,6 @@
             background-color: #ffffff;
             padding: 20px;
             border-radius: 8px;
-
-            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -317,7 +314,27 @@
         .search-container button:hover {
             background-color: #267570;
         }
+        /* 제목과 소개글 스타일 */
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            margin: 20px 0;
+        }
 
+        .header-container h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin: 0;
+            border-bottom: 2px solid #32928E;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+
+        .header-container p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -329,6 +346,15 @@
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
     <div class="layout-main">
+        <div class="header-container">
+            <h1>조달계획등록</h1>
+            <p>
+                1. 생산 계획 목록에서 <strong>생산계획</strong>을 선택합니다.<br>
+                2. <strong>생산계획</strong>을 선택한 후, <strong>조달 납기일</strong>을 선정합니다.<br>
+                3. 마지막으로 조달 수량을 입력 한 뒤 <strong>조달계획 등록</strong> 버튼을 눌러 조달계획을 등록합니다.<br>
+                <em>※ 조달 필요수량을 확인후, 조달 수량을 입력해 주세요.</em>
+            </p>
+        </div>
         <!-- 생산 계획 목록 -->
         <section class="productionPlanListWrap">
 

@@ -68,9 +68,9 @@
     font-size: 1.4rem;
     color: #32928E;
     font-weight: bold;
+    width: 100px;
 }
 .excelUploadBtn {
-    margin-top: 20px;
     background-color: #32928E;
     color: white;
     border: none;

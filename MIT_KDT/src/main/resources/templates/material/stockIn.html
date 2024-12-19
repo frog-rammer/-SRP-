@@ -83,7 +83,24 @@
     #link:hover {
       background-color:#278F75;
     }
+    /* 제목과 소개글 스타일 */
+    .header-container {
+      margin: 20px 0;
+    }
 
+    .header-container h1 {
+      color: #2c3e50;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #32928E;
+      font-weight: bold;
+      padding-bottom: 10px;
+    }
+
+    .header-container p {
+      font-size: 16px;
+      color: #7f8c8d;
+    }
   </style>
 </head>
 <body>
@@ -98,7 +115,11 @@
   </aside>
 
   <main class="layout-main">
-  <h1>자재 입고 관리</h1>
+    <!-- 제목과 소개글 -->
+    <div class="header-container">
+      <h1>자재입고관리</h1>
+      <p>입고 대기 현황과 입고 진행 현황을 확인 할 수 있습니다.</p>
+    </div>
 
   <!-- 입고 대기 현황 테이블 -->
   <h2>입고 대기 현황</h2>

@@ -9,7 +9,6 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
         }
@@ -143,6 +142,24 @@
         #updateFormContainer button:hover {
             background-color: #267570; /* 호버 시 버튼 색상 */
         }
+        /* 제목과 소개글 스타일 */
+        .header-container {
+            margin: 20px 0;
+        }
+
+        .header-container h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #32928E;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+
+        .header-container p {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 <body>
@@ -155,6 +172,16 @@
         <div th:replace="partials/procuOneSide :: side"></div>
     </aside>
     <main class="layout-main">
+        <!-- 제목과 소개글 -->
+        <div class="header-container">
+            <h1>진척검수 처리</h1>
+            <p>
+                1. 진척 검수 처리에서 <strong>품목</strong>을 선택합니다.<br>
+                2. <strong>품목</strong>을 선택한 후, <strong>검수 수량</strong>을 입력합니다.<br>
+                3. 마지막으로 <strong>등록</strong> 버튼을 눌러 검수 상태를 확인합니다.<br>
+                <em>※ 현재까지 검수된 수량을 확인 할 수 있습니다.</em>
+            </p>
+        </div>
         <h1>진척 검수 처리</h1>
         <table id="inspectionTable">
             <thead>

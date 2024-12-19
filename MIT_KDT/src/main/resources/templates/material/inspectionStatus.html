@@ -51,9 +51,29 @@
             border-radius: 5px;
             cursor: pointer;
             border: none;
+            text-decoration: none;
         }
         .button:hover {
             background-color: #267e73;
+        }
+        /* 제목과 소개글 스타일 */
+        .header-container {
+            margin: 20px 0;
+        }
+
+        .header-container h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #32928E;
+            font-weight: bold;
+            padding-bottom: 10px;
+            text-align: left;
+        }
+
+        .header-container p {
+            font-size: 16px;
+            color: #7f8c8d;
         }
     </style>
 </head>
@@ -66,8 +86,16 @@
         <aside th:replace="partials/procuOneSide :: side"></aside>
     </div>
     <main class="layout-main">
-        <div class="container">
+        <!-- 제목과 소개글 -->
+        <div class="header-container">
             <h1>입고검수현황</h1>
+            <p>
+                1. 검수중 리스트에서 <strong>불량수량</strong>을 입력합니다.<br>
+                2. <strong>검수버튼</strong>을 클릭한 후, 수량 확인 후 <strong>불량 상태 리스트</strong>와 <strong>검수 완료 리스트</strong>를 확인합니다.<br>
+                <em>※ 검수 완료 리스트에서 해당 품목에 대한 거래명세서를 확인 할 수 있습니다.</em>
+            </p>
+        </div>
+        <div class="container">
             <!-- 검수중 테이블 -->
             <h3>검수중 리스트</h3>
             <table>
