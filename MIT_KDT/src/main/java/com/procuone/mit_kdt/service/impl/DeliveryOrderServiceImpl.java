@@ -19,7 +19,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DeliveryOrderServiceImpl implements DeliveryOrderService {
@@ -116,6 +118,46 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
         return null;
     }
 
+    @Override
+    public Page<DeliveryOrderDTO> searchDeliveryOrders(String purchaseOrderCode, String productCode, Pageable pageable) {
+        Page<DeliveryOrder> deliveryOrders = deliveryOrderRepository.searchByPurchaseOrderCodeAndProductCode(purchaseOrderCode, productCode, pageable);
+        return deliveryOrders.map(this::convertEntityToDTO);
+    }
+
+    @Override
+    public Map<String, Long> calculateTotalQuantities(Map<String, List<DeliveryOrderDTO>> groupedOrders) {
+        // 발주 코드별 합계 계산
+        Map<String, Long> totalQuantities = new HashMap<>();
+        for (Map.Entry<String, List<DeliveryOrderDTO>> entry : groupedOrders.entrySet()) {
+            String purchaseOrderCode = entry.getKey();
+            List<DeliveryOrderDTO> deliveryOrders = entry.getValue();
+
+            // 합계 계산 (운송 중 상태 제외)
+            long totalDelivered = deliveryOrders.stream()
+                    .filter(order -> !"운송 중".equals(order.getStatus())) // 운송 중 제외
+                    .mapToLong(DeliveryOrderDTO::getDeliveryQuantity)
+                    .sum();
+
+            totalQuantities.put(purchaseOrderCode, totalDelivered);
+        }
+        return totalQuantities;
+    }
+
+    @Override
+    public Map<String, String> calculateAchievementStatus(Map<String, Long> purchaseOrderQuantities) {
+        // 발주 코드별 달성 여부 계산
+        Map<String, String> achievementStatus = new HashMap<>();
+        for (Map.Entry<String, Long> entry : purchaseOrderQuantities.entrySet()) {
+            String purchaseOrderCode = entry.getKey();
+            Long deliveredQuantity = entry.getValue();
+            Long totalRequiredQuantity = entry.getValue(); // 발주 수량 (여기선 같은 값 사용)
+
+            // 달성 여부 계산
+            String status = (deliveredQuantity >= totalRequiredQuantity) ? "달성" : "미달성";
+            achievementStatus.put(purchaseOrderCode, status);
+        }
+        return achievementStatus;
+    }
 
     /**
      * 매일 자정에 실행 (cron 표현식: "0 0 0 * * *")
@@ -158,15 +200,17 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
         return DeliveryOrderDTO.builder()
                 .deliveryCode(deliveryOrder.getDeliveryCode()) // 납품 지시 코드
                 .purchaseOrderCode(deliveryOrder.getPurchaseOrder().getPurchaseOrderCode()) // 발주서 코드
-                .businessId(deliveryOrder.getBusinessId()) // 사업자 ID
                 .productCode(deliveryOrder.getProductCode()) // 품목 코드
                 .deliveryQuantity(deliveryOrder.getDeliveryQuantity()) // 납품 수량
                 .deliveryDate(deliveryOrder.getDeliveryDate()) // 납품일
+                .expectedArrivalDate(deliveryOrder.getPurchaseOrder().getExpectedArrivalDate()) // 발주서의 입고 예정일
+                .totalQuantity(deliveryOrder.getPurchaseOrder().getQuantity())
                 .status(deliveryOrder.getStatus()) // 납품 상태
-                .price(deliveryOrder.getPrice())
+                .price(deliveryOrder.getPrice()) // 가격
                 .createdDate(deliveryOrder.getCreatedDate()) // 생성일
                 .build();
     }
+
 
     @Override
     public DeliveryOrder convertDTOToEntity(DeliveryOrderDTO dto, PurchaseOrder purchaseOrder) {
