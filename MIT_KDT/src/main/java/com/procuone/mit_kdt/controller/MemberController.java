@@ -4,7 +4,6 @@ import com.procuone.mit_kdt.dto.MemberDTO;
 import com.procuone.mit_kdt.entity.Member;
 import com.procuone.mit_kdt.service.CompanyService;
 import com.procuone.mit_kdt.service.MemberService;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +32,12 @@ public class MemberController {
     @GetMapping({"/", "/login"})
     public String login(Model model) {
         model.addAttribute("memberDTO", new MemberDTO());
-        return "login";
+        return "support/login";
     }
 
     @GetMapping("signup")
     public String signup(Model model) {
-        return "signup";
+        return "support/signup";
     }
 
     @GetMapping("/logout")
@@ -79,7 +78,7 @@ public class MemberController {
     }
     @GetMapping("/compSignup")
     public String compSignupPage() {
-        return "compSignup";  // 'compSignup.html'을 반환
+        return "support/compSignup";  // 'compSignup.html'을 반환
     }
 
     @PostMapping("/signup")
@@ -112,7 +111,7 @@ public class MemberController {
         model.addAttribute("user", user);
 
         // myPage.html 뷰를 반환
-        return "myPage";
+        return "support/myPage";
     }
 
 

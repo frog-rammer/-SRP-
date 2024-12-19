@@ -2,8 +2,6 @@ package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.CompanyInventoryDTO;
 import com.procuone.mit_kdt.dto.ProgressInspectionDTO;
-import com.procuone.mit_kdt.entity.CompanyInventory;
-import com.procuone.mit_kdt.entity.ProgressInspection;
 import com.procuone.mit_kdt.service.CompanyInventoryService;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.ProgressInspectionService;
@@ -67,7 +65,7 @@ public class ProgressInspectionController {
         model.addAttribute("productNameQuery", productNameQuery);
         model.addAttribute("inspectionStatus", inspectionStatus);
 
-        return "purchaseOrder/progressInspection";
+        return "procurement/progressInspection";
     }
 
     @GetMapping("/progressInspectionProcessingBoard")
@@ -98,7 +96,7 @@ public class ProgressInspectionController {
         model.addAttribute("completedCurrentPage", completedPage);
         model.addAttribute("completedTotalPages", completedInspections.getTotalPages());
 
-        return "purchaseOrder/progressInspectionProcessing";
+        return "supplier/progressInspectionProcessing";
     }
 
     @PostMapping("/updateInspectedQuantity")

@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,7 +50,7 @@ public class ContractController {
         // 4. 모델에 데이터 추가
         model.addAttribute("items", items);
         // 5. 뷰 렌더링
-        return "procurementPlan/compareContracts"; // 뷰 이름을 수정하지 않음 // 품목 목록을 뷰에 전달
+        return "procurement/compareContracts"; // 뷰 이름을 수정하지 않음 // 품목 목록을 뷰에 전달
     }
 
     //
@@ -142,7 +141,7 @@ public class ContractController {
         model.addAttribute("companyItemDTO", companyItemDTO);
         model.addAttribute("itemDTO", itemDTO.get());
         model.addAttribute("contractEndDate", contractEndDate);
-        return "procurementPlan/registerContract"; // 계약 등록 페이지로 이동
+        return "procurement/registerContract"; // 계약 등록 페이지로 이동
     }
 
 
@@ -151,7 +150,7 @@ public class ContractController {
     public String compareContracts(@RequestParam("productCode") String productCode, Model model) {
         List<CompanyItem> companyItems = contractService.getCompanyItemsByProductCode(productCode);
         model.addAttribute("companyItems", companyItems);
-        return "procurementPlan/compareContracts :: contractTable"; // 테이블 부분만 업데이트
+        return "procurement/compareContracts :: contractTable"; // 테이블 부분만 업데이트
     }
     // 계약된 회사 리스트 불러오기 (비동기 호출)
     @GetMapping("/{productCode}")

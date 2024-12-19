@@ -3,19 +3,15 @@ package com.procuone.mit_kdt.controller;
 import com.procuone.mit_kdt.dto.*;
 import com.procuone.mit_kdt.dto.ItemDTOs.CategoryDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
-import com.procuone.mit_kdt.entity.Company;
 import com.procuone.mit_kdt.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +45,7 @@ public class CompanyController {
 
         List<ContractDTO> contracts = companyService.getContractsByBusinessId(businessId);
         model.addAttribute("contracts", contracts);
-        return "contractListForm"; // 계약 목록 페이지
+        return "supplier/contractListForm"; // 계약 목록 페이지
     }
 
     @GetMapping("/contract/contractForm/{id}")
@@ -61,7 +57,7 @@ public class CompanyController {
 
         model.addAttribute("contract", contract);
         model.addAttribute("company", companyDTO);
-        return "contractForm";
+        return "supplier/contractForm";
     }
 
     // 업체 재고 관리 페이지
@@ -76,14 +72,14 @@ public class CompanyController {
         List<ItemDTO> items = companyItemService.getItemsByBusinessId(businessId);
         model.addAttribute("items", items);
         model.addAttribute("inventory", new CompanyInventoryDTO());
-        return "companyInventory"; // 템플릿 이름
+        return "supplier/companyInventory"; // 템플릿 이름
     }
     // 업체 상세 정보 보기
     @GetMapping("/companyDetail/{businessId}")
     public String getCompanyDetails(@PathVariable String businessId, Model model) {
         CompanyDTO companyDTO = companyService.getCompanyDetails(businessId);
         model.addAttribute("companyDTO", companyDTO);
-        return "procurementPlan/viewDetailCompany";
+        return "procurement/viewDetailCompany";
     }
     // 업체 등록 폼
     @GetMapping("/register")
@@ -110,7 +106,7 @@ public class CompanyController {
         model.addAttribute("currentPage", companyPage.getNumber());
         model.addAttribute("totalPages", companyPage.getTotalPages());
         model.addAttribute("totalItems", companyPage.getTotalElements());
-        return "procurementPlan/viewCompanylistForm";
+        return "procurement/viewCompanylistForm";
     }
     // 업체 검색
     @GetMapping("/search")
@@ -126,7 +122,7 @@ public class CompanyController {
         model.addAttribute("currentPage", companyPage.getNumber());
         model.addAttribute("totalPages", companyPage.getTotalPages());
         model.addAttribute("totalItems", companyPage.getTotalElements());
-        return "procurementPlan/viewCompanylistForm";
+        return "procurement/viewCompanylistForm";
     }
     // 업체가 제품 등록하는 페이지
     @GetMapping("/supplierRegisterProduct")

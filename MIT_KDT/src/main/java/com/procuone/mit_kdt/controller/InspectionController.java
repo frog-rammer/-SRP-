@@ -1,10 +1,7 @@
 package com.procuone.mit_kdt.controller;
 
 import com.procuone.mit_kdt.dto.*;
-import com.procuone.mit_kdt.entity.DeliveryOrder;
-import com.procuone.mit_kdt.entity.PurchaseOrder;
 import com.procuone.mit_kdt.service.*;
-import com.procuone.mit_kdt.service.impl.PurchaseOrderServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,8 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Controller
 @RequestMapping("/inspection")
@@ -61,7 +56,7 @@ public class InspectionController {
         setPaginationAttributes(model, "error", errorInspections, errorPage, size, blockSize);
         setPaginationAttributes(model, "completed", completedInspections, completedPage, size, blockSize);
 
-        return "materialReceipt/inspectionStatus";
+        return "material/inspectionStatus";
     }
     private void setPaginationAttributes(Model model, String prefix, Page<?> pageData, int currentPage, int size, int blockSize) {
         int currentBlock = currentPage / blockSize; // 현재 페이지 블록
@@ -121,6 +116,6 @@ public class InspectionController {
         model.addAttribute("inspection", inspectionDTO);
         model.addAttribute("contract", contractDTO);
 
-        return "materialReceipt/invoice"; // HTML 템플릿 파일 이름
+        return "material/invoice"; // HTML 템플릿 파일 이름
     }
 }
