@@ -214,10 +214,11 @@
     <button type="button" class="btn" id="toggleButton">생산계획별 확인</button>
     <section class="productionPlanListWrap"  id="planSection">
       <div class="productionPlanListSearchBar">
-        <input type="text" placeholder="검색어를 입력하세요">
-        <button class="searchBtn">검색</button>
+        <h3>생산 계획 목록</h3>
+        <input type="text" id="searchInput" placeholder="검색어를 입력하세요">
+        <button class="searchBtn" onclick="handleSearch()">검색</button>
       </div>
-      <h3>생산 계획 목록</h3>
+
       <section class="productionPlanList">
         <table id="productionPlansTable">
           <thead>
@@ -526,6 +527,52 @@
     fetchProductionPlans();
     fetchShipments();
   });
+  function handleSearch() {
+    const searchKeyword = document.getElementById("searchInput").value.trim();
+    console.log("검색어:", searchKeyword); // 콘솔에 검색어 출력
+    fetchProductionPlans(0, 10, searchKeyword); // 검색어 전달
+  }
+
+  function fetchProductionPlans(page = 0, size = 10, keyword = "") {
+    const query = keyword ? `&keyword=${encodeURIComponent(keyword)}` : "";
+    fetch(`/materialIssue/getProductionPlans?page=${page}&size=${size}${query}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error("API 요청 실패");
+              }
+              return response.json();
+            })
+            .then(data => {
+              console.log("응답 데이터:", data); // 응답 데이터 확인
+              const tbody = document.getElementById("planTableBody");
+              tbody.innerHTML = "";
+
+              // 데이터가 비어있을 경우 처리
+              if (!data.content || data.content.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='6'>검색 결과가 없습니다.</td></tr>";
+                return;
+              }
+
+              // 데이터가 있을 경우 테이블 업데이트
+              data.content.forEach(plan => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+          <td>${plan.planStartDate}</td>
+          <td>${plan.planEndDate}</td>
+          <td>${plan.productPlanCode}</td>
+          <td>${plan.productName}</td>
+          <td>${plan.productCode}</td>
+          <td>${plan.quantity}</td>
+        `;
+                row.addEventListener("click", () => highlightProductionPlan(plan.productPlanCode));
+                tbody.appendChild(row);
+              });
+
+              updatePagination("productionPlansPagination", data.pageable.pageNumber, data.totalPages, (newPage) => fetchProductionPlans(newPage, size, keyword));
+            })
+            .catch(error => console.error("오류 발생:", error));
+  }
+
 </script>
 
 </body>
