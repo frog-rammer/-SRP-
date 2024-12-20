@@ -23,7 +23,7 @@
         /* 계약된 회사 리스트 표시 영역 */
         .layout-right {
             padding: 20px;
-            width: 45%;
+            width: 60%;
             background-color: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
@@ -31,8 +31,14 @@
             overflow-y: auto;
         }
         .layout-right .top-section{
-            min-height: 50%;
-
+            height: fit-content;
+        }
+        .bottom-section{
+            border: 1px solid #bbb;
+            margin: 10px 10px 0 0;
+            border-radius: 15px;
+            padding: 20px;
+            height: fit-content;
         }
         /* 폼 스타일 */
         .layout-main form {
@@ -149,6 +155,46 @@
             width: 30%; /* 셀렉트 박스 너비 설정 */
             padding: 5px; /* 내부 여백 */
         }
+
+
+        /* 트리 구조 기본 스타일 */
+        #treeContainer ul {
+            list-style-type: none; /* 기본 불릿 제거 */
+            margin: 20px;
+            padding-left: 20px; /* 하위 항목 들여쓰기 */
+            position: relative; /* 트리 스타일을 위한 기준 */
+        }
+
+        #treeContainer ul::before {
+            content: ""; /* 수직 라인 */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 100%;
+            background-color: #ccc;
+        }
+
+        #treeContainer li {
+            position: relative;
+            padding-left: 10px; /* 텍스트와 선 간격 */
+            margin-bottom: 5px;
+        }
+
+        #treeContainer li::before {
+            content: "-"; /* 수평 연결선 */
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ccc; /* 선 색상 */
+            font-weight: bold;
+        }
+
+        #treeContainer li:last-child::before {
+            content: "ㄴ"; /* 마지막 항목은 'ㄴ'으로 표시 */
+            color: #999; /* 색상 조정 가능 */
+        }
     </style>
 </head>
 <body>
@@ -251,7 +297,16 @@
                         <div id="productGroupDiv">
                             <select id="productGroup" name="productGroup">
                                 <option value="">== 제품군 선택 ==</option>
+                                <option th:each="rootItem : ${rootItems}"
+                                        th:value="${rootItem.productCode}"
+                                        th:text="${rootItem.itemName}"
+                                        th:attr="data-product-code=${rootItem.productCode}">
+                                </option>
                             </select>
+                        </div>
+                        <!-- 트리 렌더링 영역 -->
+                        <div id="treeContainer">
+                            <!-- JSON 데이터로 트리가 그려질 곳 -->
                         </div>
                 </section>
 
@@ -260,6 +315,98 @@
     </div>
 
 </div>
+<script>
+    // 완성품 기반 P-BOM 트리 구성
+    document.getElementById('productGroup').addEventListener('change', function () {
+        const selectedValue = this.value; // 선택된 option의 value 값
+        console.log('선택된 완성품:', selectedValue);
+        fetchTreeInfo((selectedValue));
+    });
+    function fetchTreeInfo(productCode) {
+        fetch('/purchase/treeInfoGet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `productCode=${encodeURIComponent(productCode)}`
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`서버 응답 오류: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('받은 데이터:', data); // JSON 데이터 콘솔에 출력
+
+                // 트리 구조 렌더링
+                const treeContainer = document.getElementById('treeContainer');
+                treeContainer.innerHTML = ''; // 기존 내용 초기화
+                const treeHTML = renderTree(data); // 트리 HTML 생성
+                treeContainer.appendChild(treeHTML); // 트리 HTML 삽입
+            })
+            .catch(error => {
+                console.error('Fetch 요청 중 오류 발생:', error);
+                alert("트리를 불러오는 중 문제가 발생했습니다.");
+            });
+    }
+    function renderTree(data) {
+        const ul = document.createElement('ul'); // 트리의 루트 요소
+
+        for (const categoryName in data) {
+            const li = document.createElement('li');
+            const categoryData = data[categoryName];
+
+            // 중첩된 데이터(하위 카테고리)인지 확인
+            if (typeof categoryData === 'object' && !("사업자번호" in categoryData)) {
+                // 중첩된 카테고리인 경우
+                li.textContent = categoryName;
+
+                // 하위 카테고리 처리
+                const childTree = renderTree(categoryData);
+                li.appendChild(childTree);
+            } else {
+                // 최종 데이터(부품)인 경우: 한 줄로 표시
+                const pbomStatus = categoryData?.["회사명"] === "아직 구성되지 않았습니다."
+                    ? `<span style='color: red; cursor: pointer;' onclick="handleMisconfigured('${categoryData?.["아이템 코드"]}')">미구성</span>`
+                    : `<span style='color: green;'>구성됨</span> (${categoryData?.["회사명"] || "정보 없음"}, ${categoryData?.["사업자번호"] || "정보 없음"})`;
+
+                li.innerHTML = `
+                ${categoryName}:
+                 ${categoryData?.["아이템 코드"] || "정보 없음"}
+                (${categoryData?.["아이템 이름"] || "정보 없음"})
+                P-BOM 상태: ${pbomStatus}
+            `;
+            }
+
+            ul.appendChild(li);
+        }
+
+        return ul;
+    }
+    function handleMisconfigured(productCode) {
+        console.log(`미구성 선택됨: Product Code = ${productCode}`);
+
+        // 1. 제품 코드 필드 채우기
+        const productCodeSelect = document.getElementById("productCode");
+        if (productCodeSelect) {
+            // 기존 옵션 초기화
+            productCodeSelect.innerHTML = '<option value="">== 제품 코드 선택 ==</option>';
+            const newOption = document.createElement("option");
+            newOption.value = productCode;
+            newOption.textContent = productCode;
+            productCodeSelect.appendChild(newOption);
+
+            // 제품 코드 선택
+            productCodeSelect.value = productCode;
+            console.log(`제품 코드 자동 선택: ${productCode}`);
+
+            // 2. 강제로 "change" 이벤트 트리거
+            const event = new Event("change");
+            productCodeSelect.dispatchEvent(event);
+        }
+    }
+</script>
 <script>
     function updateNextCategory(level) {
         const currentSelect = document.getElementById(`categorySelect_${level}`);
@@ -345,12 +492,7 @@
                     if (selectedCode) {
                         const selectedItem = items.find(item => item.productCode === selectedCode);
                         if (selectedItem) {
-                            // 부품이 선택되었을 때 나머지 필드를 자동으로 채우기 위한 로직
-
-                            // 품목명 자동 채우기
                             document.getElementById("itemName").value = selectedItem.itemName;
-
-                            // 규격 자동 채우기
                             const dimensions = selectedItem.dimensions.split('x');
                             if (dimensions.length === 3) {
                                 document.getElementById("width").value = dimensions[0].trim();
@@ -358,22 +500,18 @@
                                 document.getElementById("depth").value = dimensions[2].trim();
                             }
                             document.getElementById("dimensions").value = selectedItem.dimensions;
-
-                            // 도면 파일 이미지 미리보기 설정
                             const drawingPreview = document.getElementById("drawingPreview");
                             if (selectedItem.drawingFile) {
-                                drawingPreview.src = selectedItem.drawingFile; // 파일 경로 설정
-                                drawingPreview.style.display = "block"; // 이미지 표시
-                                drawingPreview.style.width="50%";
-                                drawingPreview.style.margin="0 25%";
+                                drawingPreview.src = selectedItem.drawingFile;
+                                drawingPreview.style.display = "block";
                             } else {
-                                drawingPreview.style.display = "none"; // 이미지 없을 경우 숨기기
+                                drawingPreview.style.display = "none";
                             }
                             fetchContractedCompanies(selectedItem.productCode);
-
                         }
                     }
                 });
+
             })
             .catch(error => {
                 console.error('Error fetching items:', error);

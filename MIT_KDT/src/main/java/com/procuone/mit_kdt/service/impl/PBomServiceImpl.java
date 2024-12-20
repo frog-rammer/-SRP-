@@ -47,41 +47,12 @@ public class PBomServiceImpl implements PBomService {
         purchaseBOMRepository.save(purchaseBOM);
     }
 
-//    @Override
-//    public List<PurchaseBOMDTO> getPurchaseBOMTree() throws Exception {
-//        List<BOMRelationship> relationships = bomRelationshipRepository.findAll();
-//        Map<String, List<PurchaseBOMDTO>> parentChildMap = new HashMap<>();
-//
-//        // 부모-자식 관계 매핑
-//        for (BOMRelationship relationship : relationships) {
-//            PurchaseBOMDTO childDTO = convertRelationshipToDTO(relationship);
-//            parentChildMap.computeIfAbsent(relationship.getParentItem().getProductCode(), k -> new ArrayList<>()).add(childDTO);
-//        }
-//
-//        // 트리 형태로 구성 (루트 노드를 찾고, 재귀적으로 구성)
-//        List<PurchaseBOMDTO> tree = new ArrayList<>();
-//        for (String parentProductCode : parentChildMap.keySet()) {
-//            if (!isChild(parentProductCode, relationships)) {
-//                tree.add(buildTree(parentProductCode, parentChildMap));
-//            }
-//        }
-//        return tree;
-//    }
-//
-//    private boolean isChild(String productCode, List<BOMRelationship> relationships) {
-//        return relationships.stream().anyMatch(rel -> rel.getChildItem().getProductCode().equals(productCode));
-//    }
-//
-//    private PurchaseBOMDTO buildTree(String productCode, Map<String, List<PurchaseBOMDTO>> parentChildMap) {
-//        PurchaseBOMDTO node = new PurchaseBOMDTO();
-//        node.setProductCode(productCode);
-//        node.setChildren(parentChildMap.getOrDefault(productCode, new ArrayList<>()));
-//
-//        for (PurchaseBOMDTO child : node.getChildren()) {
-//            child.setChildren(parentChildMap.getOrDefault(child.getProductCode(), new ArrayList<>()));
-//        }
-//        return node;
-//    }
+    @Override
+    public Optional<PurchaseBOM> getPBomByProductCode(String productCode) {
+        // PurchaseBOM 엔티티를 직접 반환
+        return purchaseBOMRepository.findByProductCode(productCode);
+    }
+
 
     private PurchaseBOMDTO convertRelationshipToDTO(BOMRelationship relationship) {
         // BOMRelationship을 바탕으로 DTO 생성

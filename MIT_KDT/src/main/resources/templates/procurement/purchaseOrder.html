@@ -148,14 +148,16 @@
       </tr>
       <tr>
         <td><strong>발주일:</strong> <span th:text="${purchaseOrder.createdDate}">발주일</span></td>
-        <td><strong>입고일:</strong> <span th:text="${purchaseOrder.procurementEndDate}">입고일</span></td>
+        <td><strong>입고 예정일:</strong> <span th:text="${purchaseOrder.expectedArrivalDate}">입고 예정</span></td>
       </tr>
       <tr>
-        <td><strong>업체명:</strong> <span th:text="${purchaseOrder.comName}">업체명</span></td>
-        <td><strong>사업자번호:</strong> <span th:text="${purchaseOrder.businessId}">사업자번호</span></td>
+        <td><strong>업체 명:</strong> <span th:text="${purchaseOrder.comName}">업체명</span></td>
+
+        <td><strong>사업자 번호:</strong> <span th:text="${purchaseOrder.businessId}">사업자번호</span></td>
       </tr>
       <tr>
         <td><strong>담당자:</strong> <span th:text="${purchaseOrder.createdBy}">담당자</span></td>
+        <td><strong>조달 납기일:</strong> <span th:text="${purchaseOrder.procurementEndDate}">조달납기일</span></td>
       </tr>
     </table>
   </div>
