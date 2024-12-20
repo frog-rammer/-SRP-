@@ -60,7 +60,7 @@ public class AddressController {
         }
 
         model.addAttribute("addressList", results); // 결과를 모델에 추가
-        return "address"; // 템플릿 이름
+        return "support/address"; // 템플릿 이름
     }
 
 }

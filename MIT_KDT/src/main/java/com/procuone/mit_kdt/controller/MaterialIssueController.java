@@ -5,7 +5,9 @@ import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
 import com.procuone.mit_kdt.dto.ShipmentDTO;
 import com.procuone.mit_kdt.entity.BOM.BOMRelationship;
+import com.procuone.mit_kdt.entity.ProductionPlan;
 import com.procuone.mit_kdt.repository.BOMRelationshipRepository;
+import com.procuone.mit_kdt.repository.ProductionPlanRepository;
 import com.procuone.mit_kdt.service.InventoryTransactionService;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.MaterialIssueService;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +42,34 @@ public class MaterialIssueController {
 
     @Autowired
     private InventoryTransactionService inventoryTransactionService;
+
+    @Autowired
+    private ProductionPlanRepository productionPlanRepository;
+
+    @GetMapping("/getProductionPlans")
+    public ResponseEntity<?> getProductionPlans(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false, defaultValue = "") String keyword
+    ) {
+        Page<ProductionPlan> plans = productionPlanRepository.findProductionPlans(keyword, PageRequest.of(page, size));
+        return ResponseEntity.ok(plans);
+    }
+    @GetMapping("/getShipments")
+    @ResponseBody
+    public Map<String, Object> getShipments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "대기") String status
+    ) {
+        Page<ShipmentDTO> shipments = materialIssueService.getShipmentsByStatus(status, PageRequest.of(page, size));
+        Map<String, Object> response = new HashMap<>();
+        response.put("shipments", shipments.getContent());
+        response.put("currentPage", shipments.getNumber());
+        response.put("totalPages", shipments.getTotalPages());
+        return response;
+    }
+
 
     @GetMapping("/stock")
     public String stock(Model model, Pageable pageable,
