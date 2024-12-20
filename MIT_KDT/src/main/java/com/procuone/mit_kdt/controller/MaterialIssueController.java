@@ -40,6 +40,35 @@ public class MaterialIssueController {
     @Autowired
     private InventoryTransactionService inventoryTransactionService;
 
+    @GetMapping("/getProductionPlans")
+    @ResponseBody
+    public Map<String, Object> getProductionPlans(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(PageRequest.of(page, size));
+        Map<String, Object> response = new HashMap<>();
+        response.put("productionPlans", productionPlanPage.getContent());
+        response.put("currentPage", productionPlanPage.getNumber());
+        response.put("totalPages", productionPlanPage.getTotalPages());
+        return response;
+    }
+    @GetMapping("/getShipments")
+    @ResponseBody
+    public Map<String, Object> getShipments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "대기") String status
+    ) {
+        Page<ShipmentDTO> shipments = materialIssueService.getShipmentsByStatus(status, PageRequest.of(page, size));
+        Map<String, Object> response = new HashMap<>();
+        response.put("shipments", shipments.getContent());
+        response.put("currentPage", shipments.getNumber());
+        response.put("totalPages", shipments.getTotalPages());
+        return response;
+    }
+
+
     @GetMapping("/stock")
     public String stock(Model model, Pageable pageable,
                         @RequestParam(defaultValue = "0") int page,

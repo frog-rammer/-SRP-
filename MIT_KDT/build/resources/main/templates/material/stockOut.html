@@ -178,6 +178,12 @@
       font-size: 16px;
       color: #7f8c8d;
     }
+
+    /* 하이라이트 스타일 */
+    .highlight {
+      background-color: #f1c40f; /* 강조 색상 */
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -210,12 +216,10 @@
       <div class="productionPlanListSearchBar">
         <input type="text" placeholder="검색어를 입력하세요">
         <button class="searchBtn">검색</button>
-        <button class="detailsBtn">등록된 계획 자세히 보기</button>
-        <button onclick="updateProgress()" class="updateBtn">진행 상황 업데이트</button>
       </div>
       <h3>생산 계획 목록</h3>
       <section class="productionPlanList">
-        <table>
+        <table id="productionPlansTable">
           <thead>
           <tr>
             <th>생산 시작일</th>
@@ -227,8 +231,8 @@
           </tr>
           </thead>
           <tbody id="planTableBody">
-          <tr th:each="productionplan : ${productionPlanList}" onclick="highlightDates(event)">
-            <td th:text="${productionplan.planStartDate}"></td>
+          <tr th:each="productionplan : ${productionPlanList}" onclick="highlightProductionPlan(this)">
+          <td th:text="${productionplan.planStartDate}"></td>
             <td th:text="${productionplan.planEndDate}"></td>
             <td th:text="${productionplan.productPlanCode}"></td>
             <td th:text="${productionplan.productName}"></td>
@@ -239,7 +243,7 @@
         </table>
       </section>
       <!-- 페이지네이션 -->
-      <div class="pagination">
+      <div class="pagination" id="productionPlansPagination">
                         <span th:if="${currentProductionPlanPage > 0}">
                             <a th:href="@{/materialIssue/stockOut(page=${currentProductionPlanPage - 1})}">Previous</a>
                         </span>
@@ -258,7 +262,7 @@
     <section>
       <h2>출고 목록</h2>
       <table>
-        <thead>
+        <thead id="shipmentsTable">
         <tr>
           <th><input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes(this)"> 전체 선택</th>
           <th>출고번호</th>
@@ -272,7 +276,7 @@
           <th>출고 상태</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="shipmentsTableBody">
         <tr th:each="shipment : ${waitingShipmentList}">
           <td><input type="checkbox" name="selectItem" th:value="${shipment.shipmentId}"></td>
           <td th:text="${shipment.shipmentId}"></td>
@@ -289,7 +293,7 @@
       </table>
 
       <!-- 페이지네이션 -->
-      <div class="pagination">
+      <div class="pagination" id="shipmentsPagination">
     <span th:if="${currentWaitingPage > 0}">
       <a th:href="@{/materialIssue/stockOut(page=${currentWaitingPage - 1})}">이전</a>
     </span>
@@ -397,7 +401,6 @@
 </div>
 
 <script>
-  // 전체 선택/해제 기능
   function toggleAllCheckboxes(selectAllCheckbox) {
     const checkboxes = document.querySelectorAll('input[name="selectItem"]');
     checkboxes.forEach(checkbox => {
@@ -405,7 +408,6 @@
     });
   }
 
-  // 출고 요청 처리
   function handleOutboundRequest() {
     const selectedCheckboxes = document.querySelectorAll('input[name="selectItem"]:checked');
     if (selectedCheckboxes.length === 0) {
@@ -413,23 +415,7 @@
       return;
     }
 
-    const selectedShipments = [];
-    selectedCheckboxes.forEach(checkbox => {
-      const row = checkbox.closest('tr'); // 현재 행
-      const shipmentId = row.cells[1].textContent; // 출고번호
-      const productName = row.cells[6].textContent; // 자재명
-      const requestedQuantity = row.cells[8].textContent; // 요청 수량
-      const shipmentStatus = row.cells[9].textContent; // 출고 상태
-
-      // 선택된 출고 항목 데이터 수집
-      selectedShipments.push({
-        shipmentId,
-        productName,
-        requestedQuantity,
-        shipmentStatus,
-      });
-    });
-    const selectedShipmentIds = selectedShipments.map(shipment => shipment.shipmentId);
+    const selectedShipmentIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
 
     fetch('/materialIssue/stockOut', {
       method: 'POST',
@@ -445,26 +431,100 @@
               return response.text();
             })
             .then(message => {
-              alert(message); // 성공 메시지 출력
-              alert(`${selectedShipments.length}개의 출고 요청이 완료되었습니다.`);
-              location.reload(); // 페이지 새로고침
+              alert(message);
+              location.reload();
             })
             .catch(error => {
               console.error('출고 요청 처리 중 오류:', error);
               alert('출고 요청 처리 중 오류가 발생했습니다.');
             });
-
-    // 선택된 항목 출력 (백엔드 연동 시 이 부분을 서버 전송 로직으로 변경)
-    console.log("출고 요청 항목:", selectedShipments);
-
-
-    // 여기에 서버로 데이터를 전송하는 AJAX 또는 폼 제출 로직을 추가 가능
   }
 
-  // 버튼 클릭 시 섹션 애니메이션 효과로 숨기기/보이기
   document.getElementById("toggleButton").addEventListener("click", function() {
     const planSection = document.getElementById("planSection");
     planSection.classList.toggle("active");
+  });
+
+  function highlightProductionPlan(planCode) {
+    const rows = document.querySelectorAll("#shipmentsTableBody tr");
+    rows.forEach(row => {
+      const productionPlanCode = row.cells[3]?.textContent?.trim();
+      if (productionPlanCode === planCode) {
+        row.classList.add("highlight");
+      } else {
+        row.classList.remove("highlight");
+      }
+    });
+  }
+
+  function fetchProductionPlans(page = 0, size = 10) {
+    fetch(`/materialIssue/getProductionPlans?page=${page}&size=${size}`)
+            .then(response => response.json())
+            .then(data => {
+              const tbody = document.getElementById("planTableBody");
+              tbody.innerHTML = "";
+              data.productionPlans.forEach(plan => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+          <td>${plan.planStartDate}</td>
+          <td>${plan.planEndDate}</td>
+          <td>${plan.productPlanCode}</td>
+          <td>${plan.productName}</td>
+          <td>${plan.productCode}</td>
+          <td>${plan.quantity}</td>
+        `;
+                row.addEventListener("click", () => highlightProductionPlan(plan.productPlanCode));
+                tbody.appendChild(row);
+              });
+              updatePagination("productionPlansPagination", data.currentPage, data.totalPages, fetchProductionPlans);
+            });
+  }
+
+  function fetchShipments(page = 0, size = 10) {
+    fetch(`/materialIssue/getShipments?page=${page}&size=${size}&status=대기`)
+            .then(response => response.json())
+            .then(data => {
+              const tbody = document.getElementById("shipmentsTableBody");
+              tbody.innerHTML = "";
+              data.shipments.forEach(shipment => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+          <td><input type="checkbox" name="selectItem" value="${shipment.shipmentId}"></td>
+          <td>${shipment.shipmentId}</td>
+          <td>${shipment.manager}</td>
+          <td>${shipment.productPlanCode}</td>
+          <td>${shipment.procurementPlanCode}</td>
+          <td>${shipment.productCode}</td>
+          <td>${shipment.itemName}</td>
+          <td>${shipment.currentQuantity}</td>
+          <td>${shipment.requestedQuantity}</td>
+          <td>${shipment.shipmentStatus}</td>
+        `;
+                tbody.appendChild(row);
+              });
+              updatePagination("shipmentsPagination", data.currentPage, data.totalPages, fetchShipments);
+            });
+  }
+
+  function updatePagination(containerId, currentPage, totalPages, fetchFunction) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    for (let i = 0; i < totalPages; i++) {
+      const pageLink = document.createElement("a");
+      pageLink.textContent = i + 1;
+      pageLink.href = "#";
+      pageLink.className = i === currentPage ? "current" : "";
+      pageLink.addEventListener("click", e => {
+        e.preventDefault();
+        fetchFunction(i);
+      });
+      container.appendChild(pageLink);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    fetchProductionPlans();
+    fetchShipments();
   });
 </script>
 
