@@ -10,6 +10,7 @@ import com.procuone.mit_kdt.service.ContractService;
 import com.procuone.mit_kdt.service.ItemService;
 import com.procuone.mit_kdt.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -67,6 +69,20 @@ public class ItemController {
         List<ItemDTO> itemDTOS = itemService.getItemsByCategoryId(categoryId);
         return ResponseEntity.ok(itemDTOS);
     }
+
+    @GetMapping("/btnClick/{productCode}")
+    @ResponseBody
+    public ResponseEntity<?> getItemByProductCode(@PathVariable String productCode) {
+        Optional<ItemDTO> itemDTO = itemService.findByProductCode(productCode);
+
+        if (itemDTO.isPresent()) {
+            return ResponseEntity.ok(itemDTO.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Item not found for productCode: " + productCode);
+        }
+    }
+
 
     @GetMapping("/view")
     public String showView(Model model) {

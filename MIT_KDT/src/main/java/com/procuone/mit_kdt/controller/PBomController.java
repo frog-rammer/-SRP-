@@ -4,6 +4,7 @@ package com.procuone.mit_kdt.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.PurchaseBOMDTO;
+import com.procuone.mit_kdt.dto.ProductDTO;
 import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
 import com.procuone.mit_kdt.entity.BOM.BOMRelationship;
 import com.procuone.mit_kdt.entity.BOM.Category;
@@ -118,8 +119,7 @@ public class PBomController {
             return ResponseEntity.status(500).body(Collections.singletonMap("error", "데이터 조회 중 문제가 발생했습니다."));
         }
     }
-
-    // 부모 추적
+    // 부모 추적 (헬퍼 메서드)
     public List<String> getCategoryHierarchy(Long categoryId) {
         // 최종 결과를 저장할 리스트
         List<String> hierarchy = new ArrayList<>();
@@ -141,6 +141,5 @@ public class PBomController {
 
         return hierarchy;
     }
-
 
 }
