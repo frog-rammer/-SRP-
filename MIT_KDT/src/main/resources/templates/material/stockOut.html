@@ -296,14 +296,14 @@
       <!-- 페이지네이션 -->
       <div class="pagination" id="shipmentsPagination">
     <span th:if="${currentWaitingPage > 0}">
-      <a th:href="@{/materialIssue/stockOut(page=${currentWaitingPage - 1})}">이전</a>
+      <a th:href="@{/materialIssue/stockOut(spage=${currentWaitingPage - 1})}">이전</a>
     </span>
         <span th:each="pageNum : ${#numbers.sequence(0, totalWaitingPages - 1)}">
-      <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+      <a th:href="@{/materialIssue/stockOut(spage=${pageNum})}" th:text="${pageNum + 1}"
          th:classappend="${pageNum == currentWaitingPage ? 'current' : ''}"></a>
     </span>
         <span th:if="${currentWaitingPage < totalWaitingPages - 1}">
-      <a th:href="@{/materialIssue/stockOut(page=${currentWaitingPage + 1})}">다음</a>
+      <a th:href="@{/materialIssue/stockOut(spage=${currentWaitingPage + 1})}">다음</a>
     </span>
       </div>
     </section>
@@ -322,7 +322,6 @@
           <th>조달계획코드</th>
           <th>자재코드</th>
           <th>자재명</th>
-
           <th>요청 수량</th>
           <th>출고 상태</th>
         </tr>
@@ -344,14 +343,14 @@
       <!-- 페이지네이션 -->
       <div class="pagination">
     <span th:if="${currentOngoingPage > 0}">
-      <a th:href="@{/materialIssue/stockOut(page=${currentOngoingPage - 1})}">이전</a>
+      <a th:href="@{/materialIssue/stockOut(dpage=${currentOngoingPage - 1})}">이전</a>
     </span>
         <span th:each="pageNum : ${#numbers.sequence(0, totalOngoingPages - 1)}">
-      <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+      <a th:href="@{/materialIssue/stockOut(dpage=${pageNum})}" th:text="${pageNum + 1}"
          th:classappend="${pageNum == currentOngoingPage ? 'current' : ''}"></a>
     </span>
         <span th:if="${currentOngoingPage < totalOngoingPages - 1}">
-      <a th:href="@{/materialIssue/stockOut(page=${currentOngoingPage + 1})}">다음</a>
+      <a th:href="@{/materialIssue/stockOut(dpage=${currentOngoingPage + 1})}">다음</a>
     </span>
       </div>
     </section>
@@ -383,14 +382,14 @@
       <!-- 페이지네이션 -->
       <div class="pagination">
     <span th:if="${currentCompletedPage > 0}">
-      <a th:href="@{/materialIssue/stockOut(page=${currentCompletedPage - 1})}">이전</a>
+      <a th:href="@{/materialIssue/stockOut(fpage=${currentCompletedPage - 1})}">이전</a>
     </span>
         <span th:each="pageNum : ${#numbers.sequence(0, totalCompletedPages - 1)}">
-      <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+      <a th:href="@{/materialIssue/stockOut(fage=${pageNum})}" th:text="${pageNum + 1}"
          th:classappend="${pageNum == currentCompletedPage ? 'current' : ''}"></a>
     </span>
         <span th:if="${currentCompletedPage < totalCompletedPages - 1}">
-      <a th:href="@{/materialIssue/stockOut(page=${currentCompletedPage + 1})}">다음</a>
+      <a th:href="@{/materialIssue/stockOut(fpage=${currentCompletedPage + 1})}">다음</a>
     </span>
       </div>
     </section>

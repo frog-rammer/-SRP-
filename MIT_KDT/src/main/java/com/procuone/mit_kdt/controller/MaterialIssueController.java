@@ -73,9 +73,11 @@ public class MaterialIssueController {
 
     @GetMapping("/stock")
     public String stock(Model model, Pageable pageable,
-                        @RequestParam(defaultValue = "0") int page,
-                        @RequestParam(defaultValue = "8") int size) {
-        pageable = PageRequest.of(page, size);
+                        @RequestParam(defaultValue = "0") int ipage,
+                        @RequestParam(defaultValue = "8") int isize,
+                        @RequestParam(defaultValue = "0") int opage,
+                        @RequestParam(defaultValue = "8") int osize) {
+
 
         // 1. 완제품 리스트 가져오기
         List<ItemDTO> finishedProducts = itemService.getItemsByCategoryId(1L);
@@ -196,11 +198,12 @@ public class MaterialIssueController {
         model.addAttribute("monthlyStatus", monthlyStatus);
 
         // 7. 입고 상태 트랜잭션 가져오기
+        pageable = PageRequest.of(ipage, isize);
         Page<InventoryTransactionDTO> inboundTransactions = inventoryTransactionService
                 .getPagedTransactionsByStatus("입고", pageable);
         System.out.println("Step 7 - Inbound Transactions: " + inboundTransactions.getContent());
         model.addAttribute("inboundTransactions", inboundTransactions.getContent());
-
+        pageable = PageRequest.of(opage, osize);
         // 8. 출고 상태 트랜잭션 가져오기
         Page<InventoryTransactionDTO> outboundTransactions = inventoryTransactionService
                 .getPagedTransactionsByStatus("출고", pageable);
@@ -235,6 +238,12 @@ public class MaterialIssueController {
             Model model,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int spage,
+            @RequestParam(defaultValue = "10") int ssize,
+            @RequestParam(defaultValue = "0") int dpage,
+            @RequestParam(defaultValue = "10") int dsize,
+            @RequestParam(defaultValue = "0") int fpage,
+            @RequestParam(defaultValue = "10") int fsize,
             Pageable pageable
     ) {
         // 페이지 정보 생성
@@ -250,9 +259,12 @@ public class MaterialIssueController {
         // 인벤토리에서 현재 수량 업데이트  (시간 많이 잡아먹을 수 있으니 업데이트 최적화 필요)
         materialIssueService.updateCurrentQuantity();
         // 상태별 데이터 필터링 및 페이지네이션
+        pageable = PageRequest.of(spage, ssize);
         Page<ShipmentDTO> waitingShipments = materialIssueService.getShipmentsByStatus("대기", pageable);
+        pageable = PageRequest.of(dpage, dsize);
         Page<ShipmentDTO> ongoingOrShortageShipments = materialIssueService.getShipmentsByStatuses(
                 List.of("진행중", "재고부족"), pageable);
+        pageable = PageRequest.of(fpage, fsize);
         Page<ShipmentDTO> completedShipments = materialIssueService.getShipmentsByStatus("출고완료", pageable);
         // 출고 목록 (대기 상태)
         model.addAttribute("waitingShipmentList", waitingShipments.getContent());
@@ -280,7 +292,9 @@ public class MaterialIssueController {
     public String stockOutOnProductionPart(
             Model model,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+             @RequestParam(defaultValue = "0") int spage,
+            @RequestParam(defaultValue = "10") int ssize
             ,Pageable pageable
     ) {
         // 페이지 정보 생성
@@ -289,6 +303,7 @@ public class MaterialIssueController {
         materialIssueService.updateCurrentQuantity();
         // 상태별 데이터 필터링 및 페이지네이션
         Page<ShipmentDTO> ongoingOrShortageShipments = materialIssueService.getShipmentsByStatus("진행중", pageable);
+        pageable = PageRequest.of(spage, ssize);
         Page<ShipmentDTO> completedShipments = materialIssueService.getShipmentsByStatus("출고완료", pageable);
         // 출고 학인 (진행중 상태)
         model.addAttribute("ongoingOrShortageShipmentList", ongoingOrShortageShipments.getContent());

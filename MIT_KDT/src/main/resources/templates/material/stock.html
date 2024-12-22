@@ -272,14 +272,14 @@
             <!-- 페이지네이션 -->
             <div class="pagination">
         <span th:if="${currentInboundPage > 0}">
-            <a th:href="@{/materialIssue/stock(page=${currentInboundPage - 1})}">Previous</a>
+            <a th:href="@{/materialIssue/stock(ipage=${currentInboundPage - 1})}">Previous</a>
         </span>
                 <span th:each="pageNum : ${#numbers.sequence(0, totalInboundPages - 1)}">
-            <a th:href="@{/materialIssue/stock(page=${pageNum})}" th:text="${pageNum + 1}"
+            <a th:href="@{/materialIssue/stock(ipage=${pageNum})}" th:text="${pageNum + 1}"
                th:classappend="${pageNum == currentInboundPage ? 'current' : ''}"></a>
         </span>
                 <span th:if="${currentInboundPage < totalInboundPages - 1}">
-            <a th:href="@{/materialIssue/stock(page=${currentInboundPage + 1})}">Next</a>
+            <a th:href="@{/materialIssue/stock(ipage=${currentInboundPage + 1})}">Next</a>
         </span>
             </div>
         </section>
@@ -307,14 +307,14 @@
             <!-- 페이지네이션 -->
             <div class="pagination">
         <span th:if="${currentOutboundPage > 0}">
-            <a th:href="@{/materialIssue/stock(page=${currentOutboundPage - 1})}">Previous</a>
+            <a th:href="@{/materialIssue/stock(opage=${currentOutboundPage - 1})}">Previous</a>
         </span>
                 <span th:each="pageNum : ${#numbers.sequence(0, totalOutboundPages - 1)}">
-            <a th:href="@{/materialIssue/stock(page=${pageNum})}" th:text="${pageNum + 1}"
+            <a th:href="@{/materialIssue/stock(opage=${pageNum})}" th:text="${pageNum + 1}"
                th:classappend="${pageNum == currentOutboundPage ? 'current' : ''}"></a>
         </span>
                 <span th:if="${currentOutboundPage < totalOutboundPages - 1}">
-            <a th:href="@{/materialIssue/stock(page=${currentOutboundPage + 1})}">Next</a>
+            <a th:href="@{/materialIssue/stock(opage=${currentOutboundPage + 1})}">Next</a>
         </span>
             </div>
         </section>

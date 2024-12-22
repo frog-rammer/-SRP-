@@ -246,14 +246,14 @@
             <!-- 페이지네이션 -->
             <div class="pagination">
                 <span th:if="${currentOngoingPage > 0}">
-                  <a th:href="@{/materialIssue/stockOut(page=${currentOngoingPage - 1})}">이전</a>
+                  <a th:href="@{/materialIssue/stockOutOnProductionPart(page=${currentOngoingPage - 1})}">이전</a>
                 </span>
                             <span th:each="pageNum : ${#numbers.sequence(0, totalOngoingPages - 1)}">
-                  <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+                  <a th:href="@{/materialIssue/stockOutOnProductionPart(page=${pageNum})}" th:text="${pageNum + 1}"
                      th:classappend="${pageNum == currentOngoingPage ? 'current' : ''}"></a>
                 </span>
                             <span th:if="${currentOngoingPage < totalOngoingPages - 1}">
-                  <a th:href="@{/materialIssue/stockOut(page=${currentOngoingPage + 1})}">다음</a>
+                  <a th:href="@{/materialIssue/stockOutOnProductionPart(page=${currentOngoingPage + 1})}">다음</a>
                 </span>
             </div>
         </section>
@@ -284,14 +284,14 @@
             <!-- 페이지네이션 -->
             <div class="pagination">
     <span th:if="${currentCompletedPage > 0}">
-      <a th:href="@{/materialIssue/stockOut(page=${currentCompletedPage - 1})}">이전</a>
+      <a th:href="@{/materialIssue/stockOutOnProductionPart(spage=${currentCompletedPage - 1})}">이전</a>
     </span>
                 <span th:each="pageNum : ${#numbers.sequence(0, totalCompletedPages - 1)}">
-      <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
+      <a th:href="@{/materialIssue/stockOutOnProductionPart(spage=${pageNum})}" th:text="${pageNum + 1}"
          th:classappend="${pageNum == currentCompletedPage ? 'current' : ''}"></a>
     </span>
                 <span th:if="${currentCompletedPage < totalCompletedPages - 1}">
-      <a th:href="@{/materialIssue/stockOut(page=${currentCompletedPage + 1})}">다음</a>
+      <a th:href="@{/materialIssue/stockOutOnProductionPart(spage=${currentCompletedPage + 1})}">다음</a>
     </span>
             </div>
         </section>

@@ -32,11 +32,14 @@ public class MaterialReceiptController {
     public String stockIn(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size,
+            @RequestParam(defaultValue = "0") int Hpage,
+            @RequestParam(defaultValue = "6") int Hsize,
             @RequestParam(required = false) String purchaseOrderCode,
             @RequestParam(required = false) String productCode,
-            Model model
+            Model model,
+            Pageable pageable
     ) {
-        Pageable pageable = PageRequest.of(page, size);
+        pageable = PageRequest.of(page, size);
         Page<DeliveryOrderDTO> deliveryOrdersPage = deliveryOrderService.searchDeliveryOrders(purchaseOrderCode, productCode, pageable);
 
         model.addAttribute("deliveryOrdersPage", deliveryOrdersPage);
@@ -45,7 +48,7 @@ public class MaterialReceiptController {
         model.addAttribute("totalItems", deliveryOrdersPage.getTotalElements());
         model.addAttribute("pageSize", deliveryOrdersPage.getSize());
 
-
+        pageable = PageRequest.of(Hpage, Hsize);
         // 7. 입고 상태 트랜잭션 가져오기
         Page<InventoryTransactionDTO> inboundTransactions = inventoryTransactionService
                 .getPagedTransactionsByStatus("입고", pageable);

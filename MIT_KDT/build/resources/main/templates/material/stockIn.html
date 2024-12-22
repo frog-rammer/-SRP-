@@ -249,14 +249,14 @@
         <!-- 페이지네이션 -->
         <div class="pagination">
         <span th:if="${currentInboundPage > 0}">
-            <a th:href="@{/materialIssue/stock(page=${currentInboundPage - 1})}">Previous</a>
+            <a th:href="@{/materialIssue/stock(Hpage=${currentInboundPage - 1})}">이전</a>
         </span>
           <span th:each="pageNum : ${#numbers.sequence(0, totalInboundPages - 1)}">
-            <a th:href="@{/materialIssue/stock(page=${pageNum})}" th:text="${pageNum + 1}"
+            <a th:href="@{/materialReceipt/stockIn(Hpage=${pageNum})}" th:text="${pageNum + 1}"
                th:classappend="${pageNum == currentInboundPage ? 'current' : ''}"></a>
         </span>
           <span th:if="${currentInboundPage < totalInboundPages - 1}">
-            <a th:href="@{/materialIssue/stock(page=${currentInboundPage + 1})}">Next</a>
+            <a th:href="@{/materialReceipt/stockIn(Hpage=${currentInboundPage + 1})}">다음</a>
         </span>
         </div>
       </section>
