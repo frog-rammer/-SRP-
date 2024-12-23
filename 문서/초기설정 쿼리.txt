@@ -1,0 +1,294 @@
+DROP DATABASE procuone;
+
+CREATE DATABASE procuone;
+-- 카테고리 데이터
+-- 카테고리 데이터
+USE procuone;
+
+LOAD DATA INFILE 'C:/address/경기도.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+LOAD DATA INFILE 'C:/address/서울특별시.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+
+LOAD DATA INFILE 'C:/address/강원특별자치도.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+
+LOAD DATA INFILE 'C:/address/경상남도.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+
+LOAD DATA INFILE 'C:/address/경상북도.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+LOAD DATA INFILE 'C:/address/광주광역시.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+LOAD DATA INFILE 'C:/address/대구광역시.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+LOAD DATA INFILE 'C:/address/대전광역시.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+LOAD DATA INFILE 'C:/address/부산광역시.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+LOAD DATA INFILE 'C:/address/세종특별자치시.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+
+LOAD DATA INFILE 'C:/address/울산광역시.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+
+LOAD DATA INFILE 'C:/address/인천광역시.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+
+LOAD DATA INFILE 'C:/address/전라남도.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+LOAD DATA INFILE 'C:/address/전북특별자치도.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+LOAD DATA INFILE 'C:/address/제주특별자치도.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+LOAD DATA INFILE 'C:/address/충청남도.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+LOAD DATA INFILE 'C:/address/충청북도.txt' 
+INTO TABLE address 
+FIELDS TERMINATED BY '|' 
+LINES TERMINATED BY '\n' 
+IGNORE 1 LINES 
+(postal_code, province, province_english, city_district, city_district_english, town, town_english, road_code, road_name, road_name_english, below_ground, main_building_number, sub_building_number, building_management_number, bulk_delivery_name, city_district_building_name, legal_dong_code, legal_dong_name, ri_name, administrative_dong_name, mountain_status, land_number_main, town_sequence_number, land_number_sub, old_postal_code, postal_code_sequence_number);
+
+
+-- 대분류
+INSERT INTO Category (id, name, type) VALUES (1, '완성품', '대분류');
+INSERT INTO Category (id, name, type) VALUES (2, '부품', '대분류');
+
+-- 중분류
+INSERT INTO Category (id, name, type, parent_id) VALUES (3, '프레임 및 바디', '중분류', 2);
+INSERT INTO Category (id, name, type, parent_id) VALUES (4, '전기부품', '중분류', 2);
+INSERT INTO Category (id, name, type, parent_id) VALUES (5, '기계부품', '중분류', 2);
+INSERT INTO Category (id, name, type, parent_id) VALUES (6, '바퀴 및 이동 부품', '중분류', 2);
+INSERT INTO Category (id, name, type, parent_id) VALUES (19, '구동 시스템 부품', '중분류', 2);
+INSERT INTO Category (id, name, type, parent_id) VALUES (20, '안전 장치', '중분류', 2);
+INSERT INTO Category (id, name, type, parent_id) VALUES (33, '킥보드 부품', '중분류', 2);
+
+-- 소분류
+-- 프레임 및 바디
+INSERT INTO Category (id, name, type, parent_id) VALUES (7, '알루미늄 프레임', '소분류', 3);
+INSERT INTO Category (id, name, type, parent_id) VALUES (8, '스틸 바디 커버', '소분류', 3);
+INSERT INTO Category (id, name, type, parent_id) VALUES (25, '알루미늄 핸들바', '소분류', 3);
+INSERT INTO Category (id, name, type, parent_id) VALUES (26, '안장', '소분류', 3);
+
+-- 전기부품
+INSERT INTO Category (id, name, type, parent_id) VALUES (9, '전원 시스템', '소분류', 4);
+INSERT INTO Category (id, name, type, parent_id) VALUES (10, '구동 모터', '소분류', 4);
+INSERT INTO Category (id, name, type, parent_id) VALUES (11, '전자 인터페이스', '소분류', 4);
+INSERT INTO Category (id, name, type, parent_id) VALUES (12, '조명 시스템', '소분류', 4);
+INSERT INTO Category (id, name, type, parent_id) VALUES (32, '배터리', '소분류', 4);
+
+-- 기계부품
+INSERT INTO Category (id, name, type, parent_id) VALUES (13, '구동계 부품', '소분류', 5);
+INSERT INTO Category (id, name, type, parent_id) VALUES (14, '제동 시스템', '소분류', 5);
+INSERT INTO Category (id, name, type, parent_id) VALUES (15, '핸들 및 조향 시스템', '소분류', 5);
+INSERT INTO Category (id, name, type, parent_id) VALUES (16, '좌석 및 탑승자 지원', '소분류', 5);
+INSERT INTO Category (id, name, type, parent_id) VALUES (27, '페달', '소분류', 5);
+INSERT INTO Category (id, name, type, parent_id) VALUES (28, '체인', '소분류', 5);
+
+-- 바퀴 및 이동 부품
+INSERT INTO Category (id, name, type, parent_id) VALUES (17, '바퀴', '소분류', 6);
+INSERT INTO Category (id, name, type, parent_id) VALUES (18, '서스펜션', '소분류', 6);
+INSERT INTO Category (id, name, type, parent_id) VALUES (29, '타이어', '소분류', 6);
+INSERT INTO Category (id, name, type, parent_id) VALUES (30, '휠셋', '소분류', 6);
+
+-- 구동 시스템 부품
+INSERT INTO Category (id, name, type, parent_id) VALUES (21, '페달 시스템', '소분류', 19);
+INSERT INTO Category (id, name, type, parent_id) VALUES (22, '체인 시스템', '소분류', 19);
+
+-- 안전 장치
+INSERT INTO Category (id, name, type, parent_id) VALUES (23, '헬멧', '소분류', 20);
+INSERT INTO Category (id, name, type, parent_id) VALUES (24, '안전벨트', '소분류', 20);
+INSERT INTO Category (id, name, type, parent_id) VALUES (31, '반사경', '소분류', 20);
+
+-- 킥보드 부품
+INSERT INTO Category (id, name, type, parent_id) VALUES (34, '킥보드 프레임', '소분류', 33);
+INSERT INTO Category (id, name, type, parent_id) VALUES (35, '킥보드 핸들바', '소분류', 33);
+INSERT INTO Category (id, name, type, parent_id) VALUES (36, '킥보드 바퀴', '소분류', 33);
+INSERT INTO Category (id, name, type, parent_id) VALUES (37, '킥보드 전원 시스템', '소분류', 33);
+INSERT INTO Category (id, name, type, parent_id) VALUES (38, '킥보드 배터리', '소분류', 33);
+INSERT INTO Category (id, name, type, parent_id) VALUES (39, '킥보드 모터', '소분류', 33);
+INSERT INTO Category (id, name, type, parent_id) VALUES (40, '킥보드 제동 시스템', '소분류', 33);
+INSERT INTO Category (id, name, type, parent_id) VALUES (41, '킥보드 조명 시스템', '소분류', 33);
+
+-- 아이템 데이터
+-- 전기자전거 A 부품 삽입
+-- 전기자전거 A를 아이템으로 추가
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-MDL-0001', '전기자전거 A', 1, '1500x600x1000', '/drawings/electric_bike_a.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-FRM-0001', '알루미늄 프레임', 7, '1200x600x300', '/drawings/aluminum_frame.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-BDY-0001', '알루미늄 바디 커버', 8, '800x500x200', '/drawings/aluminum_body_cover.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-HBR-0001', '알루미늄 핸들바 및 조향 시스템', 25, '600x100x50', '/drawings/handlebar.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-SDL-0001', '안장', 26, '300x150x100', '/drawings/seat.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-PWR-0001', '전원 시스템', 9, '400x300x200', '/drawings/power_system.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-BAT-0001', '배터리', 32, '350x250x150', '/drawings/battery.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-MOT-0001', '고출력 모터', 10, '350x350x200', '/drawings/high_power_motor.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-INT-0001', '전자 인터페이스', 11, '200x100x50', '/drawings/interface.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-LGT-0001', '조명 시스템', 12, '150x80x80', '/drawings/lighting.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-DRV-0001', '구동계 부품', 13, '500x300x150', '/drawings/drive_component.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-BRK-0001', '제동 시스템', 14, '300x200x100', '/drawings/brake_system.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-STG-0001', '정밀 핸들 및 조향 시스템', 15, '600x200x150', '/drawings/precision_steering.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-STS-0001', '좌석 및 탑승자 지원', 16, '400x200x150', '/drawings/seat_support.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-PDL-0001', '알루미늄 페달', 27, '100x50x20', '/drawings/aluminum_pedal.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-CHN-0001', '체인', 28, '1500x20x10', '/drawings/chain.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-WHL-0001', '바퀴', 17, '700x700x100', '/drawings/wheel.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-SUS-0001', '서스펜션', 18, '300x100x80', '/drawings/suspension.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-TYR-0001', '고급 타이어', 29, '700x700x80', '/drawings/high_end_tire.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-WST-0001', '휠셋', 30, '700x700x150', '/drawings/wheelset.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-PSY-0001', '페달 시스템', 21, '200x100x50', '/drawings/pedal_system.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBA-RFL-0001', '반사경', 31, '100x100x20', '/drawings/reflector.png', true);
+
+-- 전기자전거 B 부품 삽입
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-MDL-0001', '전기자전거 B', 1, '1500x600x1000', '/drawings/electric_bike_b.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-FRM-0001', '스틸 프레임', 7, '1200x600x300', '/drawings/steel_frame.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-BDY-0001', '스틸 바디 커버', 8, '800x500x200', '/drawings/steel_body_cover.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-HBR-0001', '핸들바', 25, '600x100x50', '/drawings/handlebar.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-SDL-0001', '안장', 26, '300x150x100', '/drawings/seat.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-PWR-0001', '전원 시스템', 9, '400x300x200', '/drawings/power_system.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-MOT-0001', '저출력 모터', 10, '350x350x200', '/drawings/low_power_motor.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-INT-0001', '전자 인터페이스', 11, '200x100x50', '/drawings/interface.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-LGT-0001', '조명 시스템', 12, '150x80x80', '/drawings/lighting.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-DRV-0001', '구동계 부품', 13, '500x300x150', '/drawings/drive_component.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-BRK-0001', '제동 시스템', 14, '300x200x100', '/drawings/brake_system.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-STG-0001', '핸들 및 조향 시스템', 15, '600x200x150', '/drawings/steering.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-STS-0001', '좌석 및 탑승자 지원', 16, '400x200x150', '/drawings/seat_support.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-PDL-0001', '스틸 페달', 27, '100x50x20', '/drawings/steel_pedal.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-CHN-0001', '체인', 28, '1500x20x10', '/drawings/chain.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-WHL-0001', '바퀴', 17, '700x700x100', '/drawings/wheel.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-SUS-0001', '서스펜션', 18, '300x100x80', '/drawings/suspension.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-TYR-0001', '저가형 타이어', 29, '700x700x80', '/drawings/low_end_tire.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-WST-0001', '휠셋', 30, '700x700x150', '/drawings/wheelset.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-PSY-0001', '페달 시스템', 21, '200x100x50', '/drawings/pedal_system.png', true);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('EBB-RFL-0001', '반사경', 31, '100x100x20', '/drawings/reflector.png', true);
+-- 전동 킥보드 부품 삽입
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('ESC-MDL-0001', '전동 킥보드', 1, '1200x400x1000', '/drawings/electric_scooter.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('ESC-FRM-0001', '킥보드 프레임', 34, '1000x400x150', '/drawings/scooter_frame.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('ESC-HBR-0001', '킥보드 핸들바', 35, '600x100x50', '/drawings/scooter_handlebar.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('ESC-WHL-0001', '킥보드 바퀴', 36, '300x300x100', '/drawings/scooter_wheel.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('ESC-PWR-0001', '킥보드 전원 시스템', 37, '400x300x200', '/drawings/scooter_power_system.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('ESC-BAT-0001', '킥보드 배터리', 38, '350x200x150', '/drawings/scooter_battery.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('ESC-MOT-0001', '킥보드 모터', 39, '300x300x200', '/drawings/scooter_motor.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('ESC-BRK-0001', '킥보드 제동 시스템', 40, '200x150x100', '/drawings/scooter_brake_system.png', false);
+INSERT INTO Item (product_code, item_name, category_id, dimensions, drawing_file, is_shared) VALUES ('ESC-LGT-0001', '킥보드 조명 시스템', 41, '150x80x80', '/drawings/scooter_lighting.png', false);
+
+UPDATE Item 
+SET drawing_file = REPLACE(drawing_file, '/drawings/', '/images/BluePrints/')
+WHERE drawing_file LIKE '/drawings/%';
+-- 전기자전거 A와 B, 전동 킥보드 BOM 관계 설정
+-- 전기자전거 A 관계 설정
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-FRM-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-BDY-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-HBR-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-SDL-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-PWR-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-BAT-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-MOT-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-INT-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-LGT-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-DRV-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-BRK-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-STG-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-STS-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-PDL-0001', 2);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-CHN-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-WHL-0001', 2);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-SUS-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-TYR-0001', 2);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-WST-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-PSY-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBA-MDL-0001', 'EBA-RFL-0001', 1);
+
+-- 전기자전거 B 관계 설정
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-FRM-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-BDY-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-HBR-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-SDL-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-PWR-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-MOT-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-INT-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-LGT-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-DRV-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-BRK-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-STG-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-STS-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-PDL-0001', 2);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-CHN-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-WHL-0001', 2);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-SUS-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-TYR-0001', 2);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-WST-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-PSY-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('EBB-MDL-0001', 'EBB-RFL-0001', 1);
+
+-- 전동 킥보드 관계 설정
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('ESC-MDL-0001', 'ESC-FRM-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('ESC-MDL-0001', 'ESC-HBR-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('ESC-MDL-0001', 'ESC-WHL-0001', 2);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('ESC-MDL-0001', 'ESC-PWR-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('ESC-MDL-0001', 'ESC-BAT-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('ESC-MDL-0001', 'ESC-MOT-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('ESC-MDL-0001', 'ESC-BRK-0001', 1);
+INSERT INTO BOMRelationship (parent_product_code, child_product_code, quantity) VALUES ('ESC-MDL-0001', 'ESC-LGT-0001', 1);
