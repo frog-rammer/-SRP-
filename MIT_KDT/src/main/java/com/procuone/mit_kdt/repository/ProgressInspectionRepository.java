@@ -4,6 +4,7 @@ import com.procuone.mit_kdt.entity.ProgressInspection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -58,4 +59,9 @@ public interface ProgressInspectionRepository extends JpaRepository<ProgressInsp
                                           @Param("status") String status,
                                           Pageable pageable);
 
+    @Modifying
+    @Query("DELETE FROM ProgressInspection pi WHERE pi.productCode = :productCode " +
+            "AND pi.purchaseOrder.purchaseOrderCode = :purchaseOrderCode " +
+            "AND pi.businessId = :businessId")
+    void deleteByProductCodeAndPurchaseOrderCodeAndBusinessId(String productCode, String purchaseOrderCode, String businessId);
 }

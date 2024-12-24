@@ -191,9 +191,15 @@
                 </form>
                 <div class="pagination">
                     <ul>
-                        <li th:each="pageNum : ${#numbers.sequence(1, autoTotalPages)}">
-                            <a th:href="@{/purchaseOrder/purchaseOrders(page1=${pageNum - 1}, size1=${7})}"
-                               class="page-btn" th:text="${pageNum}"></a>
+                        <li th:if="${autoCurrentPage > 0}">
+                            <a th:href="@{/purchaseOrder/purchaseOrders(page1=${autoCurrentPage - 1}, size1=${7}, page2=${completedCurrentPage}, size2=${7})}" class="page-btn">이전</a>
+                        </li>
+                        <li th:each="pageNum : ${#numbers.sequence(autoStartPage, autoEndPage)}">
+                            <a th:href="@{/purchaseOrder/purchaseOrders(page1=${pageNum}, size1=${7}, page2=${completedCurrentPage}, size2=${7})}"
+                               class="page-btn" th:text="${pageNum + 1}" th:classappend="${pageNum == autoCurrentPage} ? 'active' : ''"></a>
+                        </li>
+                        <li th:if="${autoCurrentPage < autoTotalPages - 1}">
+                            <a th:href="@{/purchaseOrder/purchaseOrders(page1=${autoCurrentPage + 1}, size1=${7}, page2=${completedCurrentPage}, size2=${7})}" class="page-btn">다음</a>
                         </li>
                     </ul>
                 </div>
@@ -249,11 +255,18 @@
                 </table>
 <!--                <button class="button">삭제</button>-->
 <!--                <button class="button">수정</button>-->
+
                 <div class="pagination">
                     <ul>
-                        <li th:each="pageNum : ${#numbers.sequence(1, completedTotalPages)}">
-                            <a th:href="@{/purchaseOrder/purchaseOrders(page2=${pageNum - 1}, size2=${7})}"
-                               class="page-btn" th:text="${pageNum}"></a>
+                        <li th:if="${completedCurrentPage > 0}">
+                            <a th:href="@{/purchaseOrder/purchaseOrders(page1=${autoCurrentPage}, size1=${7}, page2=${completedCurrentPage - 1}, size2=${7})}" class="page-btn">이전</a>
+                        </li>
+                        <li th:each="pageNum : ${#numbers.sequence(completedStartPage, completedEndPage)}">
+                            <a th:href="@{/purchaseOrder/purchaseOrders(page1=${autoCurrentPage}, size1=${7}, page2=${pageNum}, size2=${7})}"
+                               class="page-btn" th:text="${pageNum + 1}" th:classappend="${pageNum == completedCurrentPage} ? 'active' : ''"></a>
+                        </li>
+                        <li th:if="${completedCurrentPage < completedTotalPages - 1}">
+                            <a th:href="@{/purchaseOrder/purchaseOrders(page1=${autoCurrentPage}, size1=${7}, page2=${completedCurrentPage + 1}, size2=${7})}" class="page-btn">다음</a>
                         </li>
                     </ul>
                 </div>

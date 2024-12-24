@@ -20,6 +20,8 @@ public interface ProgressInspectionService {
     Page<ProgressInspectionDTO> getAllInspectionsInspectedQuantityOverZero(Pageable pageable);
     Page<ProgressInspectionDTO> getInspectionsByStatus(String businessId, String status1, String status2, Pageable pageable);
     Page<ProgressInspectionDTO> getInspectionsByCompleteStatus(String status, Pageable pageable);
+    // 조건으로 진척 검수 삭제
+    void deleteProgressByProductCodeAndPurchaseOrderCodeAndBusinessId(String productCode, String purchaseOrderCode, String businessId);
     // 엔티티 < - > DTO 간 변환 메서드
     public ProgressInspection dtoToEntity(ProgressInspectionDTO dto, PurchaseOrder purchaseOrder);
     public ProgressInspectionDTO entityToDto(ProgressInspection entity);

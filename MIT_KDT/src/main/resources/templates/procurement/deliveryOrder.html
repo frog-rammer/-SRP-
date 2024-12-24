@@ -203,11 +203,11 @@
                 <div class="pagination">
                     <a th:if="${currentPage > 0}"
                        th:href="@{'/deliveryOrder/view'(page=${currentPage - 1}, size=${pageSize})}">이전</a>
-                    <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
-                        <a th:href="@{'/deliveryOrder/view'(page=${pageNum}, size=${pageSize})}"
-                           th:text="${pageNum + 1}"
-                           th:classappend="${pageNum == currentPage} ? 'active' : ''"></a>
-                    </span>
+                    <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+        <a th:href="@{'/deliveryOrder/view'(page=${pageNum}, size=${pageSize})}"
+           th:text="${pageNum + 1}"
+           th:classappend="${pageNum == currentPage} ? 'active' : ''"></a>
+    </span>
                     <a th:if="${currentPage < totalPages - 1}"
                        th:href="@{'/deliveryOrder/view'(page=${currentPage + 1}, size=${pageSize})}">다음</a>
                 </div>
