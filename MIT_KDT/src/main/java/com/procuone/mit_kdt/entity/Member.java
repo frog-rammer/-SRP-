@@ -1,12 +1,11 @@
 package com.procuone.mit_kdt.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,4 +35,6 @@ public class Member{
             this.creationDate = LocalDate.now();  // 현재 날짜를 자동으로 할당
         }
     }
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Notification> notifications = new ArrayList<>(); // 알림 리스트
 }

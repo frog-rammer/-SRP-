@@ -23,4 +23,5 @@ public class ProgressInspectionDTO {
     private String inspectionStatus;       // 검수 상태
     private LocalDate inspectionDate;      // 검수 일자
     private LocalDate orderDate;           // 발주 일자
+    private Long availableQuantity;
 }

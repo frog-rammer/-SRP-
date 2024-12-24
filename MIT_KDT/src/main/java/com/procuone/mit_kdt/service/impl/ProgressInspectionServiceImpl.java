@@ -52,6 +52,13 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
         return inspections.map(this::entityToDto);
     }
 
+    @Override
+    public Page<ProgressInspectionDTO> getInspectionsByCompleteStatus(String status, Pageable pageable) {
+        Page<ProgressInspection> inspections;
+        inspections = progressInspectionRepository.findByCompleteStatus(status, pageable);
+        return inspections.map(this::entityToDto);
+    }
+
 
     @Override
     public Page<ProgressInspectionDTO> getInspectionsByBusinessId(String businessId, Pageable pageable) {

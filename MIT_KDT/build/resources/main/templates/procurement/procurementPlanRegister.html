@@ -362,10 +362,10 @@
             <!-- 검색 및 버튼들 -->
             <section class="search-container">
                 <h3>생산 계획 목록</h3>
-                <form action="/procurementPlan/search" method="get" >
-                    <input type="text" name="productName" placeholder="생산제품명 입력">
-                    <input type="date" name="startDate" placeholder="시작일">
-                    <input type="date" name="endDate" placeholder="종료일">
+                <form action="/procurementPlan/register" method="get">
+                    <input type="text" name="PName" placeholder="생산제품명 입력" th:value="${PName}">
+                    <input type="date" name="startDate" placeholder="시작일" th:value="${startDate}">
+                    <input type="date" name="endDate" placeholder="종료일" th:value="${endDate}">
                     <button type="submit">검색</button>
                 </form>
             </section>
@@ -405,15 +405,15 @@
                 <div class="pagination">
                     <ul>
                         <li th:if="${currentPage > 0}">
-                            <a th:href="@{'/procurementPlan/register'(page=${currentPage - 1}, size=10)}">&laquo; 이전</a>
+                            <a th:href="@{'/procurementPlan/register'(page=${currentPage - 1}, size=4, PName=${PName}, startDate=${startDate}, endDate=${endDate})}">&laquo; 이전</a>
                         </li>
                         <li th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}"
                             th:classappend="${pageNumber - 1 == currentPage} ? 'active'">
-                            <a th:href="@{'/procurementPlan/register'(page=${pageNumber - 1}, size=10)}"
+                            <a th:href="@{'/procurementPlan/register'(page=${pageNumber - 1}, size=4, PName=${PName}, startDate=${startDate}, endDate=${endDate})}"
                                th:text="${pageNumber}">1</a>
                         </li>
                         <li th:if="${currentPage + 1 < totalPages}">
-                            <a th:href="@{'/procurementPlan/register'(page=${currentPage + 1}, size=10)}">다음 &raquo;</a>
+                            <a th:href="@{'/procurementPlan/register'(page=${currentPage + 1}, size=4, PName=${PName}, startDate=${startDate}, endDate=${endDate})}">다음 &raquo;</a>
                         </li>
                     </ul>
                 </div>
@@ -451,6 +451,11 @@
                 <h4>조달계획등록</h4>
                 <div class="form-container">
                     <form action="/procurementPlan/register" method="POST" th:object="${procurementPlanDTO}" onsubmit="return validateForm()">
+                        <input type="hidden" name="PName" th:value="${PName}">
+                        <input type="hidden" name="startDate" th:value="${startDate}">
+                        <input type="hidden" name="endDate" th:value="${endDate}">
+                        <input type="hidden" name="page" th:value="${currentPage}">
+                        <input type="hidden" name="size" th:value="4">
                         <table>
                             <tr>
                                 <th>생산 계획 번호</th>

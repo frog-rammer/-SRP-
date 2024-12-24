@@ -176,7 +176,6 @@
                 <table id="deliveryOrderTable">
                     <thead>
                     <tr>
-                        <th>관련 생산계획</th>
                         <th>발주 코드</th>
                         <th>품목 코드</th>
                         <th>품목명</th>
@@ -187,10 +186,9 @@
                     </thead>
                     <tbody>
                     <tr th:each="order : ${purchaseOrders}" th:if="${order.availableQuantity > 0}" onclick="selectDeliveryOrder(this)">
-                        <td th:text="${order.productPlanCode}"></td>
                         <td th:text="${order.purchaseOrderCode}"></td>
                         <td th:text="${order.productCode}"></td>
-                        <td th:text="${order.itemName}"></td>
+                        <td th:text="${order.productName}"></td>
                         <td th:text="${order.businessId}"></td>
                         <td th:text="${order.comName}"></td>
                         <td th:text="${order.availableQuantity}"></td>
@@ -245,7 +243,6 @@
     function validateDeliveryForm(event) {
         const deliveryQuantity = document.getElementById("deliveryQuantity").value;
         const availableQuantity = document.getElementById("availableQuantity").value;
-
         if (parseInt(deliveryQuantity) > parseInt(availableQuantity)) {
             alert("납품 가능한 수량을 초과할 수 없습니다.");
             event.preventDefault();
@@ -255,11 +252,11 @@
     }
 
     function selectDeliveryOrder(row) {
-        const purchaseOrderCode = row.querySelector("td:nth-child(2)").textContent;
-        const productCode = row.querySelector("td:nth-child(3)").textContent;
-        const businessId = row.querySelector("td:nth-child(5)").textContent;
-        const comName = row.querySelector("td:nth-child(6)").textContent;
-        const availableQuantity = row.querySelector("td:nth-child(7)").textContent;
+        const purchaseOrderCode = row.querySelector("td:nth-child(1)").textContent;
+        const productCode = row.querySelector("td:nth-child(2)").textContent;
+        const businessId = row.querySelector("td:nth-child(4)").textContent;
+        const comName = row.querySelector("td:nth-child(5)").textContent;
+        const availableQuantity = row.querySelector("td:nth-child(6)").textContent;
 
         document.getElementById("purchaseOrderCode").value = purchaseOrderCode.trim();
         document.getElementById("productCode").value = productCode.trim();

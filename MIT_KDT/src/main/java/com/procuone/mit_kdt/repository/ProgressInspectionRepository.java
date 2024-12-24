@@ -52,4 +52,10 @@ public interface ProgressInspectionRepository extends JpaRepository<ProgressInsp
                                           @Param("status1") String status1,
                                           Pageable pageable);
 
+    @Query("SELECT pi FROM ProgressInspection pi " +
+            "WHERE pi.inspectionStatus = :status")
+    Page<ProgressInspection> findByCompleteStatus(
+                                          @Param("status") String status,
+                                          Pageable pageable);
+
 }
