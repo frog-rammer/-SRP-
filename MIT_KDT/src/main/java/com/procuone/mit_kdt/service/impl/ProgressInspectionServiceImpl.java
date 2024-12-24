@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -57,6 +58,12 @@ public class ProgressInspectionServiceImpl implements ProgressInspectionService 
         Page<ProgressInspection> inspections;
         inspections = progressInspectionRepository.findByCompleteStatus(status, pageable);
         return inspections.map(this::entityToDto);
+    }
+
+    @Transactional
+    @Override
+    public void deleteProgressByProductCodeAndPurchaseOrderCodeAndBusinessId(String productCode, String purchaseOrderCode, String businessId) {
+        progressInspectionRepository.deleteByProductCodeAndPurchaseOrderCodeAndBusinessId(productCode, purchaseOrderCode, businessId);
     }
 
 

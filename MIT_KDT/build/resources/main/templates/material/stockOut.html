@@ -244,17 +244,24 @@
         </table>
       </section>
       <!-- 페이지네이션 -->
-      <div class="pagination" id="productionPlansPagination">
-                        <span th:if="${currentProductionPlanPage > 0}">
-                            <a th:href="@{/materialIssue/stockOut(page=${currentProductionPlanPage - 1})}">Previous</a>
-                        </span>
-        <span th:each="pageNum : ${#numbers.sequence(0, totalProductionPlanPages - 1)}">
-                            <a th:href="@{/materialIssue/stockOut(page=${pageNum})}" th:text="${pageNum + 1}"
-                               th:classappend="${pageNum == currentProductionPlanPage ? 'current' : ''}"></a>
-                        </span>
+      <div class="pagination">
+  <span th:if="${currentProductionPlanPage > 0}">
+    <a th:href="@{/materialIssue/stockOut(page=${currentProductionPlanPage - 1})}">이전</a>
+  </span>
+        <span th:if="${productionPlanStartPage > 0}">
+
+  </span>
+        <span th:each="pageNum : ${#numbers.sequence(productionPlanStartPage, productionPlanEndPage - 1)}">
+    <a th:href="@{/materialIssue/stockOut(page=${pageNum})}"
+       th:classappend="${pageNum == currentProductionPlanPage ? 'current' : ''}"
+       th:text="${pageNum + 1}"></a>
+  </span>
+        <span th:if="${productionPlanEndPage < totalProductionPlanPages}">
+
+  </span>
         <span th:if="${currentProductionPlanPage < totalProductionPlanPages - 1}">
-                            <a th:href="@{/materialIssue/stockOut(page=${currentProductionPlanPage + 1})}">Next</a>
-                        </span>
+    <a th:href="@{/materialIssue/stockOut(page=${currentProductionPlanPage + 1})}">다음</a>
+  </span>
       </div>
 
     </section>
@@ -294,18 +301,26 @@
       </table>
 
       <!-- 페이지네이션 -->
-      <div class="pagination" id="shipmentsPagination">
-    <span th:if="${currentWaitingPage > 0}">
-      <a th:href="@{/materialIssue/stockOut(spage=${currentWaitingPage - 1})}">이전</a>
-    </span>
-        <span th:each="pageNum : ${#numbers.sequence(0, totalWaitingPages - 1)}">
-      <a th:href="@{/materialIssue/stockOut(spage=${pageNum})}" th:text="${pageNum + 1}"
-         th:classappend="${pageNum == currentWaitingPage ? 'current' : ''}"></a>
-    </span>
+      <div class="pagination">
+  <span th:if="${currentWaitingPage > 0}">
+    <a th:href="@{/materialIssue/stockOut(spage=${currentWaitingPage - 1})}">이전</a>
+  </span>
+        <span th:if="${waitingStartPage > 0}">
+
+  </span>
+        <span th:each="pageNum : ${#numbers.sequence(waitingStartPage, waitingEndPage - 1)}">
+    <a th:href="@{/materialIssue/stockOut(spage=${pageNum})}"
+       th:classappend="${pageNum == currentWaitingPage ? 'current' : ''}"
+       th:text="${pageNum + 1}"></a>
+  </span>
+        <span th:if="${waitingEndPage < totalWaitingPages}">
+
+  </span>
         <span th:if="${currentWaitingPage < totalWaitingPages - 1}">
-      <a th:href="@{/materialIssue/stockOut(spage=${currentWaitingPage + 1})}">다음</a>
-    </span>
+    <a th:href="@{/materialIssue/stockOut(spage=${currentWaitingPage + 1})}">다음</a>
+  </span>
       </div>
+
     </section>
 
     <!-- 출고 요청 버튼 -->
@@ -342,17 +357,30 @@
 
       <!-- 페이지네이션 -->
       <div class="pagination">
-    <span th:if="${currentOngoingPage > 0}">
-      <a th:href="@{/materialIssue/stockOut(dpage=${currentOngoingPage - 1})}">이전</a>
-    </span>
-        <span th:each="pageNum : ${#numbers.sequence(0, totalOngoingPages - 1)}">
-      <a th:href="@{/materialIssue/stockOut(dpage=${pageNum})}" th:text="${pageNum + 1}"
-         th:classappend="${pageNum == currentOngoingPage ? 'current' : ''}"></a>
-    </span>
+        <!-- 이전 버튼 -->
+        <span th:if="${currentOngoingPage > 0}">
+    <a th:href="@{/materialIssue/stockOut(dpage=${currentOngoingPage - 1})}">이전</a>
+  </span>
+
+        <!-- 페이지 버튼 (중간) -->
+        <span th:if="${ongoingStartPage > 0}">
+
+  </span>
+        <span th:each="pageNum : ${#numbers.sequence(ongoingStartPage, ongoingEndPage - 1)}">
+    <a th:href="@{/materialIssue/stockOut(dpage=${pageNum})}"
+       th:classappend="${pageNum == currentOngoingPage ? 'current' : ''}"
+       th:text="${pageNum + 1}"></a>
+  </span>
+        <span th:if="${ongoingEndPage < totalOngoingPages}">
+
+  </span>
+
+        <!-- 다음 버튼 -->
         <span th:if="${currentOngoingPage < totalOngoingPages - 1}">
-      <a th:href="@{/materialIssue/stockOut(dpage=${currentOngoingPage + 1})}">다음</a>
-    </span>
+    <a th:href="@{/materialIssue/stockOut(dpage=${currentOngoingPage + 1})}">다음</a>
+  </span>
       </div>
+
     </section>
 
   <!-- 출고 내역 테이블 -->
@@ -381,17 +409,25 @@
 
       <!-- 페이지네이션 -->
       <div class="pagination">
-    <span th:if="${currentCompletedPage > 0}">
-      <a th:href="@{/materialIssue/stockOut(fpage=${currentCompletedPage - 1})}">이전</a>
-    </span>
-        <span th:each="pageNum : ${#numbers.sequence(0, totalCompletedPages - 1)}">
-      <a th:href="@{/materialIssue/stockOut(fage=${pageNum})}" th:text="${pageNum + 1}"
-         th:classappend="${pageNum == currentCompletedPage ? 'current' : ''}"></a>
-    </span>
+  <span th:if="${currentCompletedPage > 0}">
+    <a th:href="@{/materialIssue/stockOut(fpage=${currentCompletedPage - 1})}">이전</a>
+  </span>
+        <span th:if="${completedStartPage > 0}">
+
+  </span>
+        <span th:each="pageNum : ${#numbers.sequence(completedStartPage, completedEndPage - 1)}">
+    <a th:href="@{/materialIssue/stockOut(fpage=${pageNum})}"
+       th:classappend="${pageNum == currentCompletedPage ? 'current' : ''}"
+       th:text="${pageNum + 1}"></a>
+  </span>
+        <span th:if="${completedEndPage < totalCompletedPages}">
+
+  </span>
         <span th:if="${currentCompletedPage < totalCompletedPages - 1}">
-      <a th:href="@{/materialIssue/stockOut(fpage=${currentCompletedPage + 1})}">다음</a>
-    </span>
+    <a th:href="@{/materialIssue/stockOut(fpage=${currentCompletedPage + 1})}">다음</a>
+  </span>
       </div>
+
     </section>
 
   <a href="../materialReceipt/stockIn" id="link">입고 관리로 이동</a>
@@ -478,98 +514,104 @@
               updatePagination("productionPlansPagination", data.currentPage, data.totalPages, fetchProductionPlans);
             });
   }
-
-  function fetchShipments(page = 0, size = 10) {
-    fetch(`/materialIssue/getShipments?page=${page}&size=${size}&status=대기`)
-            .then(response => response.json())
-            .then(data => {
-              const tbody = document.getElementById("shipmentsTableBody");
-              tbody.innerHTML = "";
-              data.shipments.forEach(shipment => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-          <td><input type="checkbox" name="selectItem" value="${shipment.shipmentId}"></td>
-          <td>${shipment.shipmentId}</td>
-          <td>${shipment.manager}</td>
-          <td>${shipment.productPlanCode}</td>
-          <td>${shipment.procurementPlanCode}</td>
-          <td>${shipment.productCode}</td>
-          <td>${shipment.itemName}</td>
-          <td>${shipment.currentQuantity}</td>
-          <td>${shipment.requestedQuantity}</td>
-          <td>${shipment.shipmentStatus}</td>
-        `;
-                tbody.appendChild(row);
-              });
-              updatePagination("shipmentsPagination", data.currentPage, data.totalPages, fetchShipments);
-            });
-  }
-
-  function updatePagination(containerId, currentPage, totalPages, fetchFunction) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = "";
-    for (let i = 0; i < totalPages; i++) {
-      const pageLink = document.createElement("a");
-      pageLink.textContent = i + 1;
-      pageLink.href = "#";
-      pageLink.className = i === currentPage ? "current" : "";
-      pageLink.addEventListener("click", e => {
-        e.preventDefault();
-        fetchFunction(i);
-      });
-      container.appendChild(pageLink);
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    fetchProductionPlans();
-    fetchShipments();
-  });
-  function handleSearch() {
-    const searchKeyword = document.getElementById("searchInput").value.trim();
-    console.log("검색어:", searchKeyword); // 콘솔에 검색어 출력
-    fetchProductionPlans(0, 10, searchKeyword); // 검색어 전달
-  }
-
-  function fetchProductionPlans(page = 0, size = 10, keyword = "") {
-    const query = keyword ? `&keyword=${encodeURIComponent(keyword)}` : "";
-    fetch(`/materialIssue/getProductionPlans?page=${page}&size=${size}${query}`)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error("API 요청 실패");
-              }
-              return response.json();
-            })
-            .then(data => {
-              console.log("응답 데이터:", data); // 응답 데이터 확인
-              const tbody = document.getElementById("planTableBody");
-              tbody.innerHTML = "";
-
-              // 데이터가 비어있을 경우 처리
-              if (!data.content || data.content.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='6'>검색 결과가 없습니다.</td></tr>";
-                return;
-              }
-
-              // 데이터가 있을 경우 테이블 업데이트
-              data.content.forEach(plan => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-          <td>${plan.planStartDate}</td>
-          <td>${plan.planEndDate}</td>
-          <td>${plan.productPlanCode}</td>
-          <td>${plan.productName}</td>
-          <td>${plan.productCode}</td>
-          <td>${plan.quantity}</td>
-        `;
-                row.addEventListener("click", () => highlightProductionPlan(plan.productPlanCode));
-                tbody.appendChild(row);
-              });
-
-              updatePagination("productionPlansPagination", data.pageable.pageNumber, data.totalPages, (newPage) => fetchProductionPlans(newPage, size, keyword));
-            })
-            .catch(error => console.error("오류 발생:", error));
-  }
+  //
+  // // function fetchShipments(page = 0, size = 10) {
+  // //   fetch(`/materialIssue/getShipments?page=${page}&size=${size}&status=대기`)
+  // //           .then(response => {
+  // //             if (!response.ok) {
+  // //               throw new Error(`HTTP error! status: ${response.status}`);
+  // //             }
+  // //             return response.json();
+  // //           })
+  // //           .then(data => {
+  // //             console.log("Fetched Data:", data); // 응답 데이터 확인
+  // //             const tbody = document.getElementById("shipmentsTableBody");
+  // //             tbody.innerHTML = "";
+  // //             data.shipments.forEach(shipment => {
+  // //               const row = document.createElement("tr");
+  // //               row.innerHTML = `
+  // //                   <td><input type="checkbox" name="selectItem" value="${shipment.shipmentId}"></td>
+  // //                   <td>${shipment.shipmentId}</td>
+  // //                   <td>${shipment.manager}</td>
+  // //                   <td>${shipment.productPlanCode}</td>
+  // //                   <td>${shipment.procurementPlanCode}</td>
+  // //                   <td>${shipment.productCode}</td>
+  // //                   <td>${shipment.itemName}</td>
+  // //                   <td>${shipment.currentQuantity}</td>
+  // //                   <td>${shipment.requestedQuantity}</td>
+  // //                   <td>${shipment.shipmentStatus}</td>
+  // //               `;
+  // //               tbody.appendChild(row);
+  // //             });
+  // //           })
+  // //           .catch(error => console.error("Fetch error:", error));
+  // // }
+  //
+  // function updatePagination(containerId, currentPage, totalPages, fetchFunction) {
+  //   const container = document.getElementById(containerId);
+  //   container.innerHTML = "";
+  //   for (let i = 0; i < totalPages; i++) {
+  //     const pageLink = document.createElement("a");
+  //     pageLink.textContent = i + 1;
+  //     pageLink.href = "#";
+  //     pageLink.className = i === currentPage ? "current" : "";
+  //     pageLink.addEventListener("click", e => {
+  //       e.preventDefault();
+  //       fetchFunction(i);
+  //     });
+  //     container.appendChild(pageLink);
+  //   }
+  // }
+  //
+  // document.addEventListener("DOMContentLoaded", () => {
+  //   fetchProductionPlans();
+  //   fetchShipments();
+  // });
+  // function handleSearch() {
+  //   const searchKeyword = document.getElementById("searchInput").value.trim();
+  //   console.log("검색어:", searchKeyword); // 콘솔에 검색어 출력
+  //   fetchProductionPlans(0, 10, searchKeyword); // 검색어 전달
+  // }
+  //
+  // function fetchProductionPlans(page = 0, size = 10, keyword = "") {
+  //   const query = keyword ? `&keyword=${encodeURIComponent(keyword)}` : "";
+  //   fetch(`/materialIssue/getProductionPlans?page=${page}&size=${size}${query}`)
+  //           .then(response => {
+  //             if (!response.ok) {
+  //               throw new Error("API 요청 실패");
+  //             }
+  //             return response.json();
+  //           })
+  //           .then(data => {
+  //             console.log("응답 데이터:", data); // 응답 데이터 확인
+  //             const tbody = document.getElementById("planTableBody");
+  //             tbody.innerHTML = "";
+  //
+  //             // 데이터가 비어있을 경우 처리
+  //             if (!data.content || data.content.length === 0) {
+  //               tbody.innerHTML = "<tr><td colspan='6'>검색 결과가 없습니다.</td></tr>";
+  //               return;
+  //             }
+  //
+  //             // 데이터가 있을 경우 테이블 업데이트
+  //             data.content.forEach(plan => {
+  //               const row = document.createElement("tr");
+  //               row.innerHTML = `
+  //         <td>${plan.planStartDate}</td>
+  //         <td>${plan.planEndDate}</td>
+  //         <td>${plan.productPlanCode}</td>
+  //         <td>${plan.productName}</td>
+  //         <td>${plan.productCode}</td>
+  //         <td>${plan.quantity}</td>
+  //       `;
+  //               row.addEventListener("click", () => highlightProductionPlan(plan.productPlanCode));
+  //               tbody.appendChild(row);
+  //             });
+  //
+  //             updatePagination("productionPlansPagination", data.pageable.pageNumber, data.totalPages, (newPage) => fetchProductionPlans(newPage, size, keyword));
+  //           })
+  //           .catch(error => console.error("오류 발생:", error));
+  // }
 
 </script>
 

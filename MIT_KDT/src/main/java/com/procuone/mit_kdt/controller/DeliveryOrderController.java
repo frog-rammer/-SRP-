@@ -43,38 +43,42 @@ public class DeliveryOrderController {
                        Model model, Pageable pageable) {
 
         pageable = PageRequest.of(page, size);
-        //1. 발주서 쭉 불러오기 ->  납품지시 협력회사 가용재고 확인후 출력
-//        Page<PurchaseOrderDTO> purchaseOrderDTOS = purchaseOrderService.getOrdersByStatus("발주완료",page,size);
-        //inspection 불러오기
-        Page<ProgressInspectionDTO> p = progressInspectionService.getInspectionsByCompleteStatus("검수완료",pageable);
 
+        // 1. 검수 완료된 항목 가져오기
+        Page<ProgressInspectionDTO> p = progressInspectionService.getInspectionsByCompleteStatus("검수완료", pageable);
 
-        //2. 납품지시 가능 수량 및 ,
+        // 2. 납품 가능 수량 설정
         p.forEach(order -> {
-//            Long itemId = itemService.getItemIdByProductCode(order.getProductCode());
-            Long availableQuantity = 0L;
-//            Optional<ItemDTO> itemDTO = null;
-//            if (itemId != null) {
-//                itemDTO= itemService.getItemById(itemId);
-//                CompanyInventoryDTO inventoryDTO = companyInventoryService.getInventoryByBusinessIdAndItemId(
-//                        order.getBusinessId(), itemId);
-//                availableQuantity = (inventoryDTO != null) ? inventoryDTO.getCurrentQuantity() : 0L;
-//            }
-            order.setAvailableQuantity(order.getInspectedQuantity()); // 납품 가능 수량 설정
+            Long availableQuantity = order.getInspectedQuantity(); // 납품 가능 수량 설정
+            order.setAvailableQuantity(availableQuantity);
         });
-        // 3. 모델에 발주서 리스트 및 페이징 정보 추가
+
+        // 3. 페이지네이션 정보 계산
+        int maxVisiblePages = 5; // 한 번에 표시할 최대 페이지 수
+        int totalPages = p.getTotalPages(); // 전체 페이지 수
+        int startPage = Math.max(0, page - maxVisiblePages / 2); // 시작 페이지
+        int endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1); // 종료 페이지
+
+        // 4. 모델에 필요한 데이터 추가
         model.addAttribute("purchaseOrders", p.getContent()); // 현재 페이지 데이터
         model.addAttribute("currentPage", p.getNumber()); // 현재 페이지 번호
-        model.addAttribute("totalPages", p.getTotalPages()); // 전체 페이지 수
+        model.addAttribute("totalPages", totalPages); // 전체 페이지 수
         model.addAttribute("pageSize", size); // 페이지 크기
-        model.addAttribute("deliveryOrderDTO",new DeliveryOrderDTO());
+        model.addAttribute("startPage", startPage); // 시작 페이지 번호
+        model.addAttribute("endPage", endPage); // 종료 페이지 번호
+        model.addAttribute("deliveryOrderDTO", new DeliveryOrderDTO()); // 추가 데이터
+
         return "procurement/deliveryOrder";
     }
+
 
     @PostMapping("/register")
     public String register(@ModelAttribute("deliveryOrderDTO") DeliveryOrderDTO deliveryOrderDTO){
 
         DeliveryOrderDTO deliveryOrderErrorCheck = deliveryOrderService.registerDeliveryOrder(deliveryOrderDTO);
+
+        //해당 진척검수 삭제
+        progressInspectionService.deleteProgressByProductCodeAndPurchaseOrderCodeAndBusinessId(deliveryOrderDTO.getProductCode(),deliveryOrderDTO.getPurchaseOrderCode(),deliveryOrderDTO.getBusinessId());
 
 
         return "redirect:/deliveryOrder/view";

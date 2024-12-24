@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -81,7 +82,7 @@ public class MaterialIssueController {
 
         // 1. 완제품 리스트 가져오기
         List<ItemDTO> finishedProducts = itemService.getItemsByCategoryId(1L);
-        System.out.println("Step 1 - Finished Products: " + finishedProducts);
+//        System.out.println("Step 1 - Finished Products: " + finishedProducts);
         model.addAttribute("finishedProducts", finishedProducts);
 
         // 2. 완제품 하위 부품 리스트 가져오기
@@ -95,7 +96,7 @@ public class MaterialIssueController {
                 childItemOpt.ifPresent(childItems::add);
             }
             finishedProductChildItems.put(product.getProductCode(), childItems);
-            System.out.println("Step 2 - Product: " + product.getProductCode() + ", Child Items: " + childItems);
+//            System.out.println("Step 2 - Product: " + product.getProductCode() + ", Child Items: " + childItems);
         }
         model.addAttribute("finishedProductChildItems", finishedProductChildItems);
 
@@ -111,7 +112,7 @@ public class MaterialIssueController {
                 childStats.put("inbound", inboundStats);
                 childStats.put("outbound", outboundStats);
                 productStats.put(childItem.getProductCode(), childStats);
-                System.out.println("Step 3 - Monthly Stats for " + childItem.getProductCode() + " - Inbound: " + inboundStats + ", Outbound: " + outboundStats);
+//                System.out.println("Step 3 - Monthly Stats for " + childItem.getProductCode() + " - Inbound: " + inboundStats + ", Outbound: " + outboundStats);
             }
             monthlyStats.put(product.getProductCode(), productStats);
         }
@@ -129,7 +130,7 @@ public class MaterialIssueController {
                 childStats.put("inbound", inboundStats);
                 childStats.put("outbound", outboundStats);
                 productStats.put(childItem.getProductCode(), childStats);
-                System.out.println("Step 4 - Weekly Stats for " + childItem.getProductCode() + " - Inbound: " + inboundStats + ", Outbound: " + outboundStats);
+//                System.out.println("Step 4 - Weekly Stats for " + childItem.getProductCode() + " - Inbound: " + inboundStats + ", Outbound: " + outboundStats);
             }
             weeklyStats.put(product.getProductCode(), productStats);
         }
@@ -157,8 +158,7 @@ public class MaterialIssueController {
 
                 productCostStats.put(childItem.getProductCode(), childCostStats);
 
-                System.out.println("Step 5 - Cost Stats for " + childItem.getProductCode() + " - Monthly: "
-                        + monthlyCostStats + ", Weekly: " + weeklyCostStats);
+//                System.out.println("Step 5 - Cost Stats for " + childItem.getProductCode() + " - Monthly: " + monthlyCostStats + ", Weekly: " + weeklyCostStats);
             }
             costStats.put(product.getProductCode(), productCostStats);
         }
@@ -181,7 +181,7 @@ public class MaterialIssueController {
                     Map<String, Long> inboundStats = inventoryTransactionService.getMonthlyInboundPriceStatsByProductCode(childItem.getProductCode());
                     // 영문 월 이름 키로 데이터 가져오기
                     long inboundForMonth = inboundStats.getOrDefault(monthKey, 0L);
-                    System.out.println("ChildItem: " + childItem.getProductCode() + ", Month: " + monthKey + ", Inbound: " + inboundForMonth);
+//                    System.out.println("ChildItem: " + childItem.getProductCode() + ", Month: " + monthKey + ", Inbound: " + inboundForMonth);
 
                     totalInbound += inboundForMonth;
                 }
@@ -190,9 +190,9 @@ public class MaterialIssueController {
             monthlyInboundValues.put(month, totalInbound);
             monthlyStatus.put(month, totalInbound >= monthlyTarget ? "달성" : "미달");
 
-            System.out.println("Step 6 - Month: " + monthKey + ", Total Inbound: " + totalInbound + ", Status: " + monthlyStatus.get(month));
+//            System.out.println("Step 6 - Month: " + monthKey + ", Total Inbound: " + totalInbound + ", Status: " + monthlyStatus.get(month));
         }
-        System.out.println("=============ㄴㅁ어ㅏㅁ로ㅑ매노려ㅑㅐㅁ노야ㅐㅁ노야ㅐ=======" + monthlyInboundValues);
+//        System.out.println("=============ㄴㅁ어ㅏㅁ로ㅑ매노려ㅑㅐㅁ노야ㅐㅁ노야ㅐ=======" + monthlyInboundValues);
         model.addAttribute("monthlyTarget", monthlyTarget);
         model.addAttribute("monthlyInboundValues", monthlyInboundValues);
         model.addAttribute("monthlyStatus", monthlyStatus);
@@ -201,13 +201,13 @@ public class MaterialIssueController {
         pageable = PageRequest.of(ipage, isize);
         Page<InventoryTransactionDTO> inboundTransactions = inventoryTransactionService
                 .getPagedTransactionsByStatus("입고", pageable);
-        System.out.println("Step 7 - Inbound Transactions: " + inboundTransactions.getContent());
+//        System.out.println("Step 7 - Inbound Transactions: " + inboundTransactions.getContent());
         model.addAttribute("inboundTransactions", inboundTransactions.getContent());
         pageable = PageRequest.of(opage, osize);
         // 8. 출고 상태 트랜잭션 가져오기
         Page<InventoryTransactionDTO> outboundTransactions = inventoryTransactionService
                 .getPagedTransactionsByStatus("출고", pageable);
-        System.out.println("Step 8 - Outbound Transactions: " + outboundTransactions.getContent());
+//        System.out.println("Step 8 - Outbound Transactions: " + outboundTransactions.getContent());
         model.addAttribute("outboundTransactions", outboundTransactions.getContent());
 
         // 9. 페이징 정보 추가
@@ -232,7 +232,6 @@ public class MaterialIssueController {
         return monthNames[month - 1];
     }
 
-
     @GetMapping("/stockOut")
     public String stockOut(
             Model model,
@@ -243,50 +242,62 @@ public class MaterialIssueController {
             @RequestParam(defaultValue = "0") int dpage,
             @RequestParam(defaultValue = "10") int dsize,
             @RequestParam(defaultValue = "0") int fpage,
-            @RequestParam(defaultValue = "10") int fsize,
-            Pageable pageable
+            @RequestParam(defaultValue = "10") int fsize
     ) {
-        // 페이지 정보 생성
-        pageable = PageRequest.of(page, size);
+        int maxVisiblePages = 5; // 한 번에 보여줄 최대 페이지 버튼 수
 
-        // 생산 계획 페이지 가져오기
-        Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(pageable);
-        model.addAttribute("productionPlanList", productionPlanPage.getContent()); // 생산 계획 목록
-        model.addAttribute("currentProductionPlanPage", productionPlanPage.getNumber());  // 현재 페이지
-        model.addAttribute("totalProductionPlanPages", productionPlanPage.getTotalPages());  // 총 페이지 수
-        model.addAttribute("totalProductionPlanItems", productionPlanPage.getTotalElements()); // 전체 아이템 수
+        // 생산 계획 페이지 (정렬 없음)
+        Pageable productionPageable = PageRequest.of(page, size);
+        Page<ProductionPlanDTO> productionPlanPage = productionPlanService.getAllPlans(productionPageable);
+        int productionPlanStartPage = Math.max(0, page - (maxVisiblePages / 2));
+        int productionPlanEndPage = Math.min(productionPlanPage.getTotalPages(), productionPlanStartPage + maxVisiblePages);
 
-        // 인벤토리에서 현재 수량 업데이트  (시간 많이 잡아먹을 수 있으니 업데이트 최적화 필요)
-        materialIssueService.updateCurrentQuantity();
-        // 상태별 데이터 필터링 및 페이지네이션
-        pageable = PageRequest.of(spage, ssize);
-        Page<ShipmentDTO> waitingShipments = materialIssueService.getShipmentsByStatus("대기", pageable);
-        pageable = PageRequest.of(dpage, dsize);
-        Page<ShipmentDTO> ongoingOrShortageShipments = materialIssueService.getShipmentsByStatuses(
-                List.of("진행중", "재고부족"), pageable);
-        pageable = PageRequest.of(fpage, fsize);
-        Page<ShipmentDTO> completedShipments = materialIssueService.getShipmentsByStatus("출고완료", pageable);
-        // 출고 목록 (대기 상태)
+        model.addAttribute("productionPlanList", productionPlanPage.getContent());
+        model.addAttribute("currentProductionPlanPage", productionPlanPage.getNumber());
+        model.addAttribute("totalProductionPlanPages", productionPlanPage.getTotalPages());
+        model.addAttribute("productionPlanStartPage", productionPlanStartPage);
+        model.addAttribute("productionPlanEndPage", productionPlanEndPage);
+
+        // 출고 목록 (대기 상태) - 출고번호 기준 내림차순
+        Pageable waitingPageable = PageRequest.of(spage, ssize, Sort.by("shipmentId").descending());
+        Page<ShipmentDTO> waitingShipments = materialIssueService.getShipmentsByStatus("대기", waitingPageable);
+        int waitingStartPage = Math.max(0, spage - (maxVisiblePages / 2));
+        int waitingEndPage = Math.min(waitingShipments.getTotalPages(), waitingStartPage + maxVisiblePages);
+
         model.addAttribute("waitingShipmentList", waitingShipments.getContent());
         model.addAttribute("currentWaitingPage", waitingShipments.getNumber());
         model.addAttribute("totalWaitingPages", waitingShipments.getTotalPages());
-        model.addAttribute("totalWaitingItems", waitingShipments.getTotalElements());
+        model.addAttribute("waitingStartPage", waitingStartPage);
+        model.addAttribute("waitingEndPage", waitingEndPage);
 
-        // 출고 현황 (진행중, 재고부족, 출고완료 상태)
+        // 출고 현황 (진행중, 재고부족 상태) - 출고번호 기준 내림차순
+        Pageable ongoingPageable = PageRequest.of(dpage, dsize, Sort.by("shipmentId").descending());
+        Page<ShipmentDTO> ongoingOrShortageShipments = materialIssueService.getShipmentsByStatuses(
+                List.of("진행중", "재고부족"), ongoingPageable);
+        int ongoingStartPage = Math.max(0, dpage - (maxVisiblePages / 2));
+        int ongoingEndPage = Math.min(ongoingOrShortageShipments.getTotalPages(), ongoingStartPage + maxVisiblePages);
+
         model.addAttribute("ongoingOrShortageShipmentList", ongoingOrShortageShipments.getContent());
         model.addAttribute("currentOngoingPage", ongoingOrShortageShipments.getNumber());
         model.addAttribute("totalOngoingPages", ongoingOrShortageShipments.getTotalPages());
-        model.addAttribute("totalOngoingItems", ongoingOrShortageShipments.getTotalElements());
+        model.addAttribute("ongoingStartPage", ongoingStartPage);
+        model.addAttribute("ongoingEndPage", ongoingEndPage);
 
-        // 출고 내역 (출고완료 상태)
+        // 출고 내역 (출고완료 상태) - 출고번호 기준 내림차순
+        Pageable completedPageable = PageRequest.of(fpage, fsize, Sort.by("shipmentId").descending());
+        Page<ShipmentDTO> completedShipments = materialIssueService.getShipmentsByStatus("출고완료", completedPageable);
+        int completedStartPage = Math.max(0, fpage - (maxVisiblePages / 2));
+        int completedEndPage = Math.min(completedShipments.getTotalPages(), completedStartPage + maxVisiblePages);
+
         model.addAttribute("completedShipmentList", completedShipments.getContent());
         model.addAttribute("currentCompletedPage", completedShipments.getNumber());
         model.addAttribute("totalCompletedPages", completedShipments.getTotalPages());
-        model.addAttribute("totalCompletedItems", completedShipments.getTotalElements());
+        model.addAttribute("completedStartPage", completedStartPage);
+        model.addAttribute("completedEndPage", completedEndPage);
 
-        // 반환할 뷰 이름
         return "material/stockOut";
     }
+
 
     @GetMapping("/stockOutOnProductionPart")
     public String stockOutOnProductionPart(

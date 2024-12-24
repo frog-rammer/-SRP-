@@ -11,14 +11,14 @@ import java.util.List;
 @Repository
 public interface BOMRelationshipRepository extends JpaRepository<BOMRelationship, Long> {
     // 상위 아이템에 대한 모든 하위 아이템 관계 조회
-    @Query("SELECT r FROM BOMRelationship r WHERE r.parentItem.productCode = :parentProductCode")
+    @Query("SELECT r FROM BOMRelationship r WHERE r.parentItem.productCode = :parentProductCode ORDER BY r.childItem.productCode DESC")
     List<BOMRelationship> findChildItemsByParentProductCode(@Param("parentProductCode") String parentProductCode);
     // 상위 제품 코드에 대한 모든 하위 아이템 관계 조회
     List<BOMRelationship> findByParentItemProductCode(String parentProductCode);
     // 특정 하위 제품 코드를 부모로 가지는 모든 관계 조회
     List<BOMRelationship> findByChildItemProductCode(String childProductCode);
     // 특정 상위 제품 코드에 대한 하위 제품 코드만 조회
-    @Query("SELECT r.childItem.productCode FROM BOMRelationship r WHERE r.parentItem.productCode = :parentProductCode")
+    @Query("SELECT r.childItem.productCode FROM BOMRelationship r WHERE r.parentItem.productCode = :parentProductCode ORDER BY r.childItem.productCode DESC")
     List<String> findChildProductCodesByParentCode(@Param("parentProductCode") String parentProductCode);
 }
 

@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name="inventory")
 public class Inventory {
-
     @Id
     @GeneratedValue(generator = "custom-id")
     @GenericGenerator(
@@ -22,7 +22,7 @@ public class Inventory {
             strategy = "com.procuone.mit_kdt.customidGenerator.CustomIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "prefix", value = "inventory_"),
-                    @org.hibernate.annotations.Parameter(name = "tableName", value = "Inventory"),
+                    @org.hibernate.annotations.Parameter(name = "tableName", value = "inventory"),
                     @org.hibernate.annotations.Parameter(name = "columnName", value = "inventory_code")
             }
     )
