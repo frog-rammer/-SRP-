@@ -34,4 +34,6 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, St
     
     // 사업자 번호로 검색
     List<PurchaseOrder> findByBusinessId(String businessId);
+
+    List<PurchaseOrder> findByStatusAndProcurementPlanCode(String status, String procurementPlanCode);
 }

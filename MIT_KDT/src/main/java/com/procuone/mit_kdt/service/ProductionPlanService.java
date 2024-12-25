@@ -4,6 +4,7 @@ import com.procuone.mit_kdt.dto.ProductionPlanDTO;
 import com.procuone.mit_kdt.entity.ProductionPlan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -11,9 +12,16 @@ import java.util.List;
 
 public interface ProductionPlanService{
     void savePlan(ProductionPlanDTO productionPlanDTO); // 생산 계획 저장
+
+
+    void updateProductionPlan(ProductionPlanDTO productionPlanDTO);
+
+    @Transactional
+    boolean deleteProductionPlan(String productPlanCode);
+
     ProductionPlanDTO getPlanById(String planNum); // 특정 생산 계획 조회
-    List<ProductionPlanDTO> getAllPlans(); // 모든 생산 계획 조회
-    void deletePlan(String planNum); // 생산 계획 삭제
+    List<ProductionPlanDTO> getAllPlans();// 모든 생산 계획 조회
+
     public abstract Page<ProductionPlanDTO> getAllPlans(Pageable pageable);
     // 검색 메서드
     Page<ProductionPlanDTO> searchPlans(String searchType, String searchKeyword, String startDate, String endDate, Pageable pageable);

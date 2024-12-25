@@ -24,4 +24,7 @@ public interface PurchaseBOMRepository extends JpaRepository<PurchaseBOM, Long> 
      * @return Optional<PurchaseBOM>
      */
     Optional<PurchaseBOM> findByProductCode(String productCode);
+
+
+    Optional<PurchaseBOM> findByItemId(Long itemId);
 }

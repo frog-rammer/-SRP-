@@ -10,4 +10,5 @@ import java.util.List;
 public interface ShipmentRepository extends JpaRepository<Shipment, String> {
     Page<Shipment> findByShipmentStatus(String status, Pageable pageable);
     Page<Shipment> findByShipmentStatusIn(List<String> statuses, Pageable pageable);
+    List<Shipment> findByProcurementPlanCode(String ProcurementPlanCode);
 }

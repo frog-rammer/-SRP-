@@ -49,8 +49,8 @@ public class MaterialIssueController {
 
     @GetMapping("/getProductionPlans")
     public ResponseEntity<?> getProductionPlans(
-            @RequestParam int page,
-            @RequestParam int size,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false, defaultValue = "") String keyword
     ) {
         Page<ProductionPlan> plans = productionPlanRepository.findProductionPlans(keyword, PageRequest.of(page, size));
@@ -304,31 +304,43 @@ public class MaterialIssueController {
             Model model,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-             @RequestParam(defaultValue = "0") int spage,
-            @RequestParam(defaultValue = "10") int ssize
-            ,Pageable pageable
+            @RequestParam(defaultValue = "0") int spage,
+            @RequestParam(defaultValue = "10") int ssize,
+            Pageable pageable
     ) {
         // 페이지 정보 생성
-        pageable = PageRequest.of(page, size);
-        // 인벤토리에서 현재 수량 업데이트  (시간 많이 잡아먹을 수 있으니 업데이트 최적화 필요)
+        pageable = PageRequest.of(page, size,Sort.by("shipmentId").descending());
         materialIssueService.updateCurrentQuantity();
-        // 상태별 데이터 필터링 및 페이지네이션
+
+        // 진행중 상태의 데이터 가져오기
         Page<ShipmentDTO> ongoingOrShortageShipments = materialIssueService.getShipmentsByStatus("진행중", pageable);
-        pageable = PageRequest.of(spage, ssize);
+        int ongoingStartPage = Math.max(0, ongoingOrShortageShipments.getNumber() - 2);
+        int ongoingEndPage = Math.min(ongoingStartPage + 5, ongoingOrShortageShipments.getTotalPages());
+
+        // 출고완료 상태의 데이터 가져오기
+        pageable = PageRequest.of(spage, ssize,Sort.by("shipmentId").descending());
         Page<ShipmentDTO> completedShipments = materialIssueService.getShipmentsByStatus("출고완료", pageable);
-        // 출고 학인 (진행중 상태)
+        int completedStartPage = Math.max(0, completedShipments.getNumber() - 2);
+        int completedEndPage = Math.min(completedStartPage + 5, completedShipments.getTotalPages());
+
+        // 진행중 상태 데이터
         model.addAttribute("ongoingOrShortageShipmentList", ongoingOrShortageShipments.getContent());
         model.addAttribute("currentOngoingPage", ongoingOrShortageShipments.getNumber());
         model.addAttribute("totalOngoingPages", ongoingOrShortageShipments.getTotalPages());
         model.addAttribute("totalOngoingItems", ongoingOrShortageShipments.getTotalElements());
-        // 출고 내역 (출고완료 상태)
+        model.addAttribute("ongoingStartPage", ongoingStartPage);
+        model.addAttribute("ongoingEndPage", ongoingEndPage);
+
+        // 출고완료 상태 데이터
         model.addAttribute("completedShipmentList", completedShipments.getContent());
         model.addAttribute("currentCompletedPage", completedShipments.getNumber());
         model.addAttribute("totalCompletedPages", completedShipments.getTotalPages());
         model.addAttribute("totalCompletedItems", completedShipments.getTotalElements());
+        model.addAttribute("completedStartPage", completedStartPage);
+        model.addAttribute("completedEndPage", completedEndPage);
+
         return "production/shipmentConfirmation";
     }
-
     @PostMapping("/confirmReceipt")
     public String confirmReceipt(
             @RequestParam(value = "selectedShipments", required = false) List<String> shipmentIds,

@@ -157,7 +157,7 @@
             height: 25px;
         }
         /* 수정, 삭제 버튼 스타일 */
-        button.editBtn, button.deleteBtn {
+        button.editBtn, button.deleteBtn ,.saveBtn {
             padding: 8px 12px;
             font-size: 14px;
             background-color: #32928E;
@@ -363,13 +363,13 @@
                                 <!-- 생산 시작일 -->
                                 <td>
                                     <span th:text="${productionplan.planStartDate}" class="planStartDateText"></span>
-                                    <input type="date" name="planStartDate" value="${productionplan.planStartDate}" class="edit-input" style="display:none;">
+                                    <input type="date" name="planStartDate" th:value="${productionplan.planStartDate}" class="edit-input" style="display:none;">
                                 </td>
 
                                 <!-- 생산 종료일 -->
                                 <td>
                                     <span th:text="${productionplan.planEndDate}" class="planEndDateText"></span>
-                                    <input type="date" name="planEndDate" value="${productionplan.planEndDate}" class="edit-input" style="display:none;">
+                                    <input type="date" name="planEndDate" th:value="${productionplan.planEndDate}" class="edit-input" style="display:none;">
                                 </td>
 
                                 <!-- 생산계획번호 -->
@@ -380,13 +380,11 @@
 
                                 <!-- 생산제품코드 -->
                                 <td th:text="${productionplan.productCode}"></td>
-
                                 <!-- 생산수량 -->
                                 <td>
                                     <span th:text="${productionplan.quantity}" class="quantityText"></span>
-                                    <input type="number" name="quantity" value="${productionplan.quantity}" class="edit-input" style="display:none;">
+                                    <input type="number" name="quantity" th:value="${productionplan.quantity}" class="edit-input" style="display:none;">
                                 </td>
-
                                 <!-- 수정, 삭제, 저장 버튼 -->
                                 <td>
                                     <button type="button" class="editBtn">수정</button>
@@ -400,17 +398,23 @@
 
                     <!-- 페이지네이션 -->
                     <div class="pagination">
+                        <!-- 이전 버튼 -->
                         <span th:if="${currentPage > 0}">
-                            <a th:href="@{/productionPlan/view(page=${currentPage - 1})}">Previous</a>
-                        </span>
-                        <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
-                            <a th:href="@{/productionPlan/view(page=${pageNum})}" th:text="${pageNum + 1}"
-                               th:classappend="${pageNum == currentPage ? 'current' : ''}"></a>
-                        </span>
+        <a th:href="@{/productionPlan/view(page=${currentPage - 1})}">이전</a>
+    </span>
+                        <!-- 페이지 번호 반복 -->
+                        <span th:each="pageNum : ${#numbers.sequence(startPage, endPage - 1)}">
+        <a th:href="@{/productionPlan/view(page=${pageNum})}"
+           th:text="${pageNum + 1}"
+           th:classappend="${pageNum == currentPage ? 'current' : ''}"></a>
+    </span>
+
+                        <!-- 다음 버튼 -->
                         <span th:if="${currentPage < totalPages - 1}">
-                            <a th:href="@{/productionPlan/view(page=${currentPage + 1})}">Next</a>
-                        </span>
+        <a th:href="@{/productionPlan/view(page=${currentPage + 1})}">다음</a>
+    </span>
                     </div>
+
 
                 </section>
             </div>
@@ -544,12 +548,20 @@
     document.addEventListener("DOMContentLoaded", function () {
         const planTableBody = document.getElementById("planTableBody");
     });
+
+    ////////--------------------------------------수정 삭제  ----------------------------------------------//////////////
     // 수정 버튼 클릭 시
     const editBtns = document.querySelectorAll('.editBtn');
+    // 삭제 버튼 클릭 시
+    const deleteBtns = document.querySelectorAll('.deleteBtn');
+    // 저장 버튼 클릭 시
+    const saveBtns = document.querySelectorAll('.saveBtn');
+
     editBtns.forEach(editBtn => {
         editBtn.addEventListener('click', function () {
             const row = editBtn.closest('tr');
             const saveBtn = row.querySelector('.saveBtn');
+            const deleteBtn= row.querySelector('.deleteBtn');
             const editInputs = row.querySelectorAll('.edit-input');
 
             // 기존 텍스트 숨기고, 입력 필드 보이기
@@ -561,92 +573,74 @@
 
             // 수정 버튼 숨기고, 저장 버튼 보이기
             editBtn.style.display = 'none';
+            deleteBtn.style.display='none';
             saveBtn.style.display = 'inline-block';
+
+            //수정 하는 로직
+
         });
     });
-
-    // 저장 버튼 클릭 시
-    const saveBtns = document.querySelectorAll('.saveBtn');
-    saveBtns.forEach(saveBtn => {
+    document.querySelectorAll('.saveBtn').forEach(saveBtn => {
         saveBtn.addEventListener('click', function () {
             const row = saveBtn.closest('tr');
-            const productPlanCode = row.querySelector('td:nth-child(3)').innerText;  // 생산계획번호
-            const startDate = row.querySelector('input[name="planStartDate"]').value;
-            const endDate = row.querySelector('input[name="planEndDate"]').value;
-            const quantity = row.querySelector('input[name="quantity"]').value;
+            // 수정된 데이터 가져오기
+            const productPlanCode = row.querySelector('td:nth-child(3)').innerText; // 생산계획번호
+            const planStartDate = row.querySelector('input[name="planStartDate"]').value; // 생산 시작일
+            const planEndDate = row.querySelector('input[name="planEndDate"]').value; // 생산 종료일
+            const quantity = row.querySelector('input[name="quantity"]').value; // 생산수량
 
-            const confirmSave = confirm('수정 내용을 저장하시겠습니까?');
-            if (confirmSave) {
-                // Ajax 요청으로 서버에 수정된 데이터 전송
-                fetch('/productionPlan/update', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        productPlanCode: productPlanCode,
-                        planStartDate: startDate,
-                        planEndDate: endDate,
-                        quantity: quantity
-                    })
+            // 요청 데이터 구성
+            const data = new URLSearchParams({
+                productPlanCode: productPlanCode,
+                planStartDate: planStartDate,
+                planEndDate: planEndDate,
+                quantity: quantity
+            });
+
+            // PATCH 요청 전송
+            fetch('/productionPlan/update', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: data.toString()
+            })
+                .then(response => {
+                    if (response.redirected) {
+                        // 성공하면 리다이렉트 처리
+                        alert(`생산 계획  ${productPlanCode}에 대한 정보가  성공적으로 수정되었습니다.`); // 동적 메시지 생성
+                        window.location.href = response.url;
+                    } else if (!response.ok) {
+                        throw new Error('업데이트 중 오류 발생');
+                    }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // 수정된 값으로 화면 업데이트
-                            row.querySelector('.planStartDateText').innerText = startDate;
-                            row.querySelector('.planEndDateText').innerText = endDate;
-                            row.querySelector('.quantityText').innerText = quantity;
-
-                            // 수정 필드 숨기고, 텍스트 보이기
-                            const editInputs = row.querySelectorAll('.edit-input');
-                            editInputs.forEach(input => {
-                                input.style.display = 'none';
-                                const sibling = input.previousElementSibling;
-                                if (sibling) sibling.style.display = 'inline-block';
-                            });
-
-                            // 수정 버튼 보이기, 저장 버튼 숨기기
-                            saveBtn.style.display = 'none';
-                            row.querySelector('.editBtn').style.display = 'inline-block';
-                            alert('수정되었습니다.');
-                        } else {
-                            alert('수정에 실패했습니다. 다시 시도해 주세요.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('수정 중 오류 발생:', error);
-                        alert('수정에 실패했습니다. 다시 시도해 주세요.');
-                    });
-            }
+                .catch(error => {
+                    console.error('업데이트 오류:', error);
+                    alert('업데이트 중 오류가 발생했습니다.');
+                });
         });
     });
-
-    // 삭제 버튼 클릭 시
-    const deleteBtns = document.querySelectorAll('.deleteBtn');
     deleteBtns.forEach(deleteBtn => {
         deleteBtn.addEventListener('click', function () {
             const row = deleteBtn.closest('tr');
-            const productPlanCode = row.querySelector('td:nth-child(3)').innerText;  // 생산계획번호
+            const productPlanCode = row.querySelector('td:nth-child(3)').innerText; // 생산계획번호
 
             const confirmDelete = confirm('정말로 삭제하시겠습니까?');
             if (confirmDelete) {
                 // Ajax 요청으로 서버에 삭제 요청
+                const data = new URLSearchParams({ productPlanCode: productPlanCode });
+
                 fetch('/productionPlan/delete', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: JSON.stringify({ productPlanCode: productPlanCode })  // 삭제할 생산계획번호 전달
+                    body: data.toString() // 삭제할 생산계획번호 전달
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // 삭제된 항목을 테이블에서 제거
-                            row.remove();
+                    .then(response => {
+                        if (response.redirected) {
                             alert('삭제되었습니다.');
-                            // 페이지를 새로 고침하여 최신 목록을 가져옴
-                            location.reload();
+                            window.location.href = response.url; // 리다이렉트된 페이지로 이동
                         } else {
                             alert('삭제에 실패했습니다. 다시 시도해 주세요.');
                         }

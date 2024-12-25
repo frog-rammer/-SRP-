@@ -60,6 +60,24 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
         shipmentRepository.saveAll(shipmentEntities);
     }
 
+    @Override
+    public List<ShipmentDTO> getShipmentsByProcurementPlanCode(String procurementPlanCode) {
+        // 조달계획 코드에 따라 출고 데이터를 조회
+        List<Shipment> shipments = shipmentRepository.findByProcurementPlanCode(procurementPlanCode);
+
+        // 조회된 엔티티를 DTO로 변환하여 반환
+        return shipments.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public void deleteShipment(ShipmentDTO shipmentDTO) {
+        // ShipmentDTO를 Shipment 엔티티로 변환
+        Shipment shipment = convertToEntity(shipmentDTO);
+        // 출고 데이터 삭제
+        shipmentRepository.delete(shipment);
+    }
+
     // 발주서와 연동하여 Shipment 자동 생성
     @Override
     public void createAndSaveShipmentsFromProcurementPlan(ProcumentPlanDTO procurementPlanDTO,String username) {
@@ -201,6 +219,21 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
         shipmentRepository.saveAll(shipments);
     }
 
+    @Override
+    public void updateShipment(ShipmentDTO shipmentDTO) {
+        // 기존 출고 정보 조회
+        Shipment existingShipment = shipmentRepository.findById(shipmentDTO.getShipmentId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 출고 데이터를 찾을 수 없습니다: " + shipmentDTO.getShipmentId()));
+
+        // 업데이트할 값 적용
+        existingShipment.setRequestedQuantity(shipmentDTO.getRequestedQuantity());
+        existingShipment.setCurrentQuantity(shipmentDTO.getCurrentQuantity());
+        existingShipment.setShipmentStatus(shipmentDTO.getShipmentStatus());
+        existingShipment.setUpdateDate(LocalDate.now());
+
+        // 저장
+        shipmentRepository.save(existingShipment);
+    }
     // 엔티티 -> DTO 변환
     @Override
     public ShipmentDTO convertToDTO(Shipment shipment) {
@@ -248,9 +281,4 @@ public class MaterialIssueServiceImpl implements MaterialIssueService {
                 .shipmentStatus(shipmentDTO.getShipmentStatus())
                 .build();
     }
-
-
-
-
-
 }

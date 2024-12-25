@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 @Controller
@@ -39,6 +41,7 @@ public class MaterialReceiptController {
             Model model,
             Pageable pageable
     ) {
+        // 첫 번째 페이지네이션
         pageable = PageRequest.of(page, size);
         Page<DeliveryOrderDTO> deliveryOrdersPage = deliveryOrderService.searchDeliveryOrders(purchaseOrderCode, productCode, pageable);
 
@@ -48,17 +51,36 @@ public class MaterialReceiptController {
         model.addAttribute("totalItems", deliveryOrdersPage.getTotalElements());
         model.addAttribute("pageSize", deliveryOrdersPage.getSize());
 
+        // 페이지 번호 범위 계산 (최대 5개)
+        int totalPages = deliveryOrdersPage.getTotalPages();
+        model.addAttribute("paginationRange", getPaginationRange(page, totalPages));
+
+        // 두 번째 페이지네이션
         pageable = PageRequest.of(Hpage, Hsize);
-        // 7. 입고 상태 트랜잭션 가져오기
-        Page<InventoryTransactionDTO> inboundTransactions = inventoryTransactionService
-                .getPagedTransactionsByStatus("입고", pageable);
-        System.out.println("Step 7 - Inbound Transactions: " + inboundTransactions.getContent());
+        Page<InventoryTransactionDTO> inboundTransactions = inventoryTransactionService.getPagedTransactionsByStatus("입고", pageable);
+
         model.addAttribute("inboundTransactions", inboundTransactions.getContent());
         model.addAttribute("currentInboundPage", inboundTransactions.getNumber());
         model.addAttribute("totalInboundPages", inboundTransactions.getTotalPages());
         model.addAttribute("totalInboundItems", inboundTransactions.getTotalElements());
 
+        // 페이지 번호 범위 계산 (최대 5개)
+        int totalInboundPages = inboundTransactions.getTotalPages();
+        model.addAttribute("inboundPaginationRange", getPaginationRange(Hpage, totalInboundPages));
+
         return "material/stockIn";
+    }
+
+    // 페이지네이션 범위를 계산하는 메서드
+    private List<Integer> getPaginationRange(int currentPage, int totalPages) {
+        int rangeSize = 5; // 최대 페이지 번호 표시 개수
+        int start = Math.max(0, currentPage - rangeSize / 2);
+        int end = Math.min(totalPages, start + rangeSize);
+
+        if (end - start < rangeSize) {
+            start = Math.max(0, end - rangeSize);
+        }
+        return IntStream.range(start, end).boxed().collect(Collectors.toList());
     }
 
 
