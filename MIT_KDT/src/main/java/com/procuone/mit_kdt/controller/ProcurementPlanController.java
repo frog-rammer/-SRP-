@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +50,7 @@ public class ProcurementPlanController {
                            @RequestParam(required = false) String endDate,
                            Pageable pageable) {
         // 페이지네이션된 생산계획 모델 전달
-        pageable = PageRequest.of(page, size);
+        pageable = PageRequest.of(page, size,Sort.by("productPlanCode").descending());
 
         // 날짜 파싱
         LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : null;
@@ -162,22 +166,40 @@ public class ProcurementPlanController {
     @GetMapping("/procurementPlanView")
     public String procurementPlanView(
             Model model,
-            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "productName", required = false) String productName,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam(value = "page", defaultValue = "0") int page) {
-        int pageSize = 10;
-        Pageable pageable = PageRequest.of(page, pageSize);
+
+        int pageSize = 8; // 한 페이지에 표시할 항목 수
+        int paginationSize = 5; // 한 번에 표시할 페이지네이션 수
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "procurementPlanCode"));
 
         Page<ProcurementPlan> procurementPlans;
-        if (search != null && !search.isEmpty()) {
-            procurementPlans = ProcurementPlanRepository.findByProductNameContainingOrProductCodeContaining(search, search, pageable);
+
+        // 검색 조건 확인
+        if ((productName != null && !productName.isEmpty()) || startDate != null || endDate != null) {
+            procurementPlans = procurementPlanService.searchProcurementPlans(null, productName, startDate, endDate, pageable);
         } else {
-            procurementPlans = ProcurementPlanRepository.findAll(pageable);
+            procurementPlans = procurementPlanService.findAll(pageable);
         }
+
+        // 페이지네이션 범위 계산
+        int currentPage = procurementPlans.getNumber();
+        int totalPages = procurementPlans.getTotalPages();
+
+        int startPage = Math.max(0, currentPage - paginationSize / 2);
+        int endPage = Math.min(totalPages, startPage + paginationSize);
+
+        // 모델 속성 설정
         model.addAttribute("procurementPlanList", procurementPlans.getContent());
-        model.addAttribute("search", search);
-        model.addAttribute("currentPage", procurementPlans.getNumber());
-        model.addAttribute("totalPages", procurementPlans.getTotalPages());
-        model.addAttribute("totalItems", procurementPlans.getTotalElements());
+        model.addAttribute("productName", productName);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
 
         return "procurement/procurementPlanView";
     }
@@ -196,7 +218,7 @@ public class ProcurementPlanController {
             return "redirect:/login";
         }
 
-        pageable = PageRequest.of(page, size);
+        pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "procurementPlanCode"));
 
         Page<ProcurementPlan> comProcurementPlans;
 
@@ -221,6 +243,27 @@ public class ProcurementPlanController {
         return "supplier/companyProcumentPlanView";
     }
 
+    @PostMapping("/procurementDelete")
+    @ResponseBody
+    public ResponseEntity<String> deleteProcurementPlan(@RequestParam("procurementPlanCode") String procurementPlanCode) {
+        try {
+            Long isDeleted = procurementPlanService.deleteProcurementPlanByCode(procurementPlanCode);
+            switch (isDeleted.intValue()) {
+                case 1:
+                    return ResponseEntity.ok("삭제가 완료되었습니다.");
+                case 2:
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 조달계획을 찾을 수 없습니다.");
+                case 3:
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("발주완료 상태의 조달계획은 삭제할 수 없습니다.");
+                default:
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("알 수 없는 오류가 발생했습니다.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+
     // 수정 폼을 띄울 때
     @GetMapping("/procurementPlan/edit/{procurementPlanCode}")
     public String showEditForm(@PathVariable String procurementPlanCode, Model model) {
@@ -239,25 +282,6 @@ public class ProcurementPlanController {
     }
 
 
-//    @GetMapping("/viewSearch")
-//    public String searchProcurementPlans(@RequestParam(required = false) String productName,
-//                                         @RequestParam(required = false) String startDate,
-//                                         @RequestParam(required = false) String endDate,
-//                                         @RequestParam(required = false) Long quantity,
-//                                         Model model){
-//
-//        // 문자열로 입력받은 날짜를 LocalDate로 변환
-//        LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : null;
-//        LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate) : null;
-//
-//        // 검색 조건을 Service에 전달하여 결과를 가져옵니다.
-//        List<ProcumentPlanDTO> result = procurementPlanService.searchProcurementPlans(productName, startDate, endDate, quantity);
-//
-//        // 결과를 모델에 추가하여 뷰에서 사용할 수 있도록 합니다.
-//        model.addAttribute("result", result);
-//
-//        return "purchaseOrder/procurementPlanView";  // 검색 결과 페이지로 이동
-//    }
 }
 
 

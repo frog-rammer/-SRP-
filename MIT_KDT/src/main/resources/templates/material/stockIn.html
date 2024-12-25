@@ -203,27 +203,30 @@
         <!-- 페이지 네이션 -->
         <div class="pagination">
           <!-- Previous 버튼 -->
-                <span th:if="${currentPage > 0}">
-          <a class="btn"
-             th:href="@{/materialReceipt/stockIn(purchaseOrderCode=${purchaseOrderCode}, productCode=${productCode}, page=${currentPage - 1}, size=${pageSize})}">
+          <span th:if="${currentPage > 0}">
+        <a class="btn"
+           th:href="@{/materialReceipt/stockIn(purchaseOrderCode=${purchaseOrderCode}, productCode=${productCode}, page=${currentPage - 1}, size=${pageSize})}">
             이전
-          </a>
-          </span>
-                  <!-- 페이지 번호 반복 -->
-                  <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
-            <a th:href="@{/materialReceipt/stockIn(purchaseOrderCode=${purchaseOrderCode}, productCode=${productCode}, page=${pageNum}, size=${pageSize})}"
-               th:text="${pageNum + 1}"
-               th:classappend="${pageNum == currentPage ? 'current' : ''}">
-            </a>
-          </span>
-                  <!-- Next 버튼 -->
-                  <span th:if="${currentPage < totalPages - 1}">
-            <a class="btn"
-               th:href="@{/materialReceipt/stockIn(purchaseOrderCode=${purchaseOrderCode}, productCode=${productCode}, page=${currentPage + 1}, size=${pageSize})}">
-              다음
-            </a>
-          </span>
+        </a>
+    </span>
+
+          <!-- 페이지 번호 반복 -->
+          <span th:each="pageNum : ${paginationRange}">
+        <a th:href="@{/materialReceipt/stockIn(purchaseOrderCode=${purchaseOrderCode}, productCode=${productCode}, page=${pageNum}, size=${pageSize})}"
+           th:text="${pageNum + 1}"
+           th:classappend="${pageNum == currentPage ? 'current' : ''}">
+        </a>
+    </span>
+
+          <!-- Next 버튼 -->
+          <span th:if="${currentPage < totalPages - 1}">
+        <a class="btn"
+           th:href="@{/materialReceipt/stockIn(purchaseOrderCode=${purchaseOrderCode}, productCode=${productCode}, page=${currentPage + 1}, size=${pageSize})}">
+            다음
+        </a>
+    </span>
         </div>
+
       </section>
 
       <section>
@@ -248,17 +251,20 @@
         </table>
         <!-- 페이지네이션 -->
         <div class="pagination">
-        <span th:if="${currentInboundPage > 0}">
-            <a th:href="@{/materialIssue/stock(Hpage=${currentInboundPage - 1})}">이전</a>
-        </span>
-          <span th:each="pageNum : ${#numbers.sequence(0, totalInboundPages - 1)}">
-            <a th:href="@{/materialReceipt/stockIn(Hpage=${pageNum})}" th:text="${pageNum + 1}"
-               th:classappend="${pageNum == currentInboundPage ? 'current' : ''}"></a>
-        </span>
+    <span th:if="${currentInboundPage > 0}">
+        <a th:href="@{/materialReceipt/stockIn(Hpage=${currentInboundPage - 1})}">이전</a>
+    </span>
+
+          <span th:each="pageNum : ${inboundPaginationRange}">
+        <a th:href="@{/materialReceipt/stockIn(Hpage=${pageNum})}" th:text="${pageNum + 1}"
+           th:classappend="${pageNum == currentInboundPage ? 'current' : ''}"></a>
+    </span>
+
           <span th:if="${currentInboundPage < totalInboundPages - 1}">
-            <a th:href="@{/materialReceipt/stockIn(Hpage=${currentInboundPage + 1})}">다음</a>
-        </span>
+        <a th:href="@{/materialReceipt/stockIn(Hpage=${currentInboundPage + 1})}">다음</a>
+    </span>
         </div>
+
       </section>
   </main>
 </div>

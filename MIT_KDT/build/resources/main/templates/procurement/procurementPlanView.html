@@ -261,7 +261,7 @@
         </div>
         <section class="search-container">
             <h3>조달계획 조회</h3>
-            <form action="/procurementPlan/viewSearch" method="get">
+            <form action="/procurementPlan/procurementPlanView" method="get">
                 <input type="text" id="productName" name="productName" th:value="${productName}"
                        placeholder="품목명을 입력하세요">
                 <input type="date" id="startDate" name="startDate" th:value="${planStartDate}">
@@ -309,21 +309,60 @@
             </table>
             <!-- 페이지네이션 버튼 -->
             <div class="pagination">
-
+                <!-- 이전 버튼 -->
                 <a th:if="${currentPage > 0}"
-                   th:href="@{/procurementPlan/procurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
+                   th:href="@{/procurementPlan/procurementPlanView(page=${currentPage - 1}, productName=${productName}, startDate=${startDate}, endDate=${endDate})}">
+                    이전
+                </a>
 
-                <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                <!-- 페이지 번호 반복 -->
+                <a th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
                    th:classappend="${i == currentPage} ? 'active' : ''"
-                   th:href="@{/procurementPlan/procurementPlanView(page=${i}, search=${search})}"
-                   th:text="${i + 1}">1</a>
+                   th:href="@{/procurementPlan/procurementPlanView(page=${i}, productName=${productName}, startDate=${startDate}, endDate=${endDate})}"
+                   th:text="${i + 1}">
+                </a>
 
+                <!-- 다음 버튼 -->
                 <a th:if="${currentPage < totalPages - 1}"
-                   th:href="@{/procurementPlan/procurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
-
+                   th:href="@{/procurementPlan/procurementPlanView(page=${currentPage + 1}, productName=${productName}, startDate=${startDate}, endDate=${endDate})}">
+                    다음
+                </a>
             </div>
         </section>
     </main>
 </div>
+<script>
+    document.querySelectorAll('.btn[value="삭제"]').forEach(deleteBtn => {
+        deleteBtn.addEventListener('click', function () {
+            const row = deleteBtn.closest('tr'); // 현재 행
+            const procurementPlanCode = row.querySelector('td:nth-child(1)').innerText; // 조달계획 코드
+
+            if (confirm(`조달계획 코드 ${procurementPlanCode}를 삭제하시겠습니까?`)) {
+                fetch('/procurementPlan/procurementDelete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ procurementPlanCode: procurementPlanCode }).toString()
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('삭제가 완료되었습니다.');
+                            row.remove(); // 삭제 후 해당 행 제거
+                        } else {
+                            return response.text().then(text => {
+                                alert(`삭제 실패: ${text}`);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('삭제 중 오류 발생:', error);
+                        alert('삭제에 실패했습니다. 다시 시도해주세요.');
+                    });
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

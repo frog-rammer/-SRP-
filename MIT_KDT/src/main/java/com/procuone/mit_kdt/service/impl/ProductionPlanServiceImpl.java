@@ -1,21 +1,30 @@
 package com.procuone.mit_kdt.service.impl;
 
+import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
+import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
+import com.procuone.mit_kdt.dto.ShipmentDTO;
+import com.procuone.mit_kdt.entity.ProcurementPlan;
 import com.procuone.mit_kdt.entity.ProductionPlan;
 import com.procuone.mit_kdt.repository.ProductionPlanRepository;
+import com.procuone.mit_kdt.service.MaterialIssueService;
+import com.procuone.mit_kdt.service.ProcurementPlanService;
 import com.procuone.mit_kdt.service.ProductionPlanService;
+import com.procuone.mit_kdt.service.PurchaseOrderService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,14 +33,113 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     @Autowired
     private ProductionPlanRepository productionPlanRepository;
 
+    @Autowired
+    private ProcurementPlanService procurementPlanService;
+
+    @Autowired
+    private PurchaseOrderService purchaseOrderService;
+
+    @Autowired
+    private MaterialIssueService materialIssueService;
+
     @Override
     public void savePlan(ProductionPlanDTO productionPlanDTO) {
         // 새로운 ID 생성
         String newId = generateNewId();
         productionPlanDTO.setProductPlanCode(newId);
-
         productionPlanRepository.save(dtoToEntity(productionPlanDTO));
     }
+    @Transactional
+    @Override
+    public void updateProductionPlan(ProductionPlanDTO productionPlanDTO) {
+        // 기존 생산계획 조회
+        ProductionPlan existingPlan = productionPlanRepository.findByProductPlanCode(productionPlanDTO.getProductPlanCode())
+                .orElseThrow(() -> new IllegalArgumentException("해당 생산 계획을 찾을 수 없습니다: " + productionPlanDTO.getProductPlanCode()));
+
+        // 관련 조달계획 조회
+        List<ProcumentPlanDTO> relatedProcurementPlans = procurementPlanService.getProcurementPlanByProductPlanCode(existingPlan.getProductPlanCode());
+
+        // 총 조달 수량 계산
+        long totalProcurementQuantity = relatedProcurementPlans.stream()
+                .mapToLong(ProcumentPlanDTO::getProcurementQuantity)
+                .sum();
+
+        // 생산계획 수량이 줄어드는 경우 기존 조달계획 삭제 및 재생성
+        if (productionPlanDTO.getQuantity() < totalProcurementQuantity) {
+            // 기존 조달계획의 날짜 정보 백업
+            List<ProcumentPlanDTO> backupPlans = new ArrayList<>(relatedProcurementPlans);
+
+            // 기존 조달계획 및 관련 데이터 삭제
+            for (ProcumentPlanDTO procurementPlan : relatedProcurementPlans) {
+                procurementPlanService.deleteProcurementPlanByCode(procurementPlan.getProcurementPlanCode());
+            }
+
+            // 남은 생산계획 수량에 맞춰 새로운 조달계획 생성
+            long remainingQuantity = productionPlanDTO.getQuantity();
+            for (ProcumentPlanDTO backupPlan : backupPlans) {
+                if (remainingQuantity <= 0) break; // 남은 수량이 없으면 종료
+
+                long procurementQuantity = Math.min(remainingQuantity, backupPlan.getProcurementQuantity());
+
+                // 기존 조달 계획 수량보다 줄어든 경우만 새로 생성
+                if (procurementQuantity > 0) {
+                    ProcumentPlanDTO newProcurementPlan = ProcumentPlanDTO.builder()
+                            .productPlanCode(productionPlanDTO.getProductPlanCode())
+                            .productName(productionPlanDTO.getProductName())
+                            .productCode(productionPlanDTO.getProductCode())
+                            .planStartDate(backupPlan.getPlanStartDate()) // 기존 시작 날짜 사용
+                            .planEndDate(backupPlan.getPlanEndDate()) // 기존 종료 날짜 사용
+                            .procurementEndDate(backupPlan.getProcurementEndDate()) // 기존 조달 납기일 사용
+                            .quantity(procurementQuantity)
+                            .procurementQuantity(procurementQuantity)
+                            .build();
+
+                    newProcurementPlan =procurementPlanService.registerProcurementPlan(newProcurementPlan);
+
+                    //2. 발주서 자동생성
+                    purchaseOrderService.registerPurchaseOrder(newProcurementPlan,"System");
+                    //3.상태를 "대기" 상태로 출고요청에 자동생성하기
+                    materialIssueService.createAndSaveShipmentsFromProcurementPlan(newProcurementPlan,"System"); // Shipment 생성
+                }
+
+                remainingQuantity -= procurementQuantity;
+            }
+        }
+
+        // 생산계획 업데이트
+        existingPlan.setProductName(productionPlanDTO.getProductName());
+        existingPlan.setProductCode(productionPlanDTO.getProductCode());
+        existingPlan.setPlanStartDate(productionPlanDTO.getPlanStartDate());
+        existingPlan.setPlanEndDate(productionPlanDTO.getPlanEndDate());
+        existingPlan.setQuantity(productionPlanDTO.getQuantity());
+        productionPlanRepository.save(existingPlan);
+    }
+
+    @Transactional
+    @Override
+    public boolean deleteProductionPlan(String productPlanCode) {
+        // 기존 생산 계획 조회
+        Optional<ProductionPlan> productionPlanOpt = productionPlanRepository.findByProductPlanCode(productPlanCode);
+        if (productionPlanOpt.isPresent()) {
+            // 생산 계획에 연결된 조달 계획 조회
+            List<ProcumentPlanDTO> relatedProcurementPlans = procurementPlanService.getProcurementPlanByProductPlanCode(productPlanCode);
+
+            if (!relatedProcurementPlans.isEmpty()) {
+                // 연결된 조달 계획 삭제
+                for (ProcumentPlanDTO dto : relatedProcurementPlans) {
+                    procurementPlanService.deleteProcurementPlanByCode(dto.getProcurementPlanCode());
+                }
+            }
+
+            // 생산 계획 삭제
+            productionPlanRepository.delete(productionPlanOpt.get());
+            return true;
+        } else {
+            // 생산 계획이 존재하지 않을 경우
+            return false;
+        }
+    }
+
     @Override
     public ProductionPlanDTO getPlanById(String planNum) {
         return productionPlanRepository.findById(planNum)
@@ -46,10 +154,7 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public void deletePlan(String planNum) {
-        productionPlanRepository.deleteById(planNum);
-    }
+
 
     @Override
     public Page<ProductionPlanDTO> getAllPlans(Pageable pageable) {
@@ -213,5 +318,36 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
             }
         }
         return null; // 날짜가 아닌 경우 null 반환
+    }
+
+
+    // DTO -> Entity
+    public static ProductionPlan toEntity(ProductionPlanDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        return ProductionPlan.builder()
+                .productPlanCode(dto.getProductPlanCode())
+                .productName(dto.getProductName())
+                .productCode(dto.getProductCode())
+                .planStartDate(dto.getPlanStartDate())
+                .planEndDate(dto.getPlanEndDate())
+                .quantity(dto.getQuantity())
+                .build();
+    }
+
+    // Entity -> DTO
+    public static ProductionPlanDTO toDTO(ProductionPlan entity) {
+        if (entity == null) {
+            return null;
+        }
+        return ProductionPlanDTO.builder()
+                .productPlanCode(entity.getProductPlanCode())
+                .productName(entity.getProductName())
+                .productCode(entity.getProductCode())
+                .planStartDate(entity.getPlanStartDate())
+                .planEndDate(entity.getPlanEndDate())
+                .quantity(entity.getQuantity())
+                .build();
     }
 }

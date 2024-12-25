@@ -44,7 +44,23 @@ public class PBomServiceImpl implements PBomService {
 
         // DTO를 엔티티로 변환 후 저장
         PurchaseBOM purchaseBOM = convertDTOToEntity(purchaseBOMDTO);
-        purchaseBOMRepository.save(purchaseBOM);
+        Optional<PurchaseBOM> existingPurchaseBOM = purchaseBOMRepository.findByItemId(purchaseBOMDTO.getItemId());
+        if (existingPurchaseBOM.isPresent()) {
+            // 기존 데이터가 있으면 업데이트
+            purchaseBOM = existingPurchaseBOM.get();
+            purchaseBOM.setQuantity(purchaseBOMDTO.getQuantity());
+            purchaseBOM.setUnitCost(purchaseBOMDTO.getUnitCost());
+            purchaseBOM.setProductionQty(purchaseBOMDTO.getProductionQty());
+            Company company = companyRepository.findById(purchaseBOMDTO.getBusinessId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 Company를 찾을 수 없습니다: " + purchaseBOMDTO.getBusinessId()));
+            purchaseBOM.setCompany(company);
+            purchaseBOM.setSupplyUnit(purchaseBOMDTO.getSupplyUnit());
+            purchaseBOMRepository.save(purchaseBOM);
+        } else {
+            // 기존 데이터가 없으면 새로 저장
+            purchaseBOM = convertDTOToEntity(purchaseBOMDTO);
+            purchaseBOMRepository.save(purchaseBOM);
+        }
     }
 
     @Override

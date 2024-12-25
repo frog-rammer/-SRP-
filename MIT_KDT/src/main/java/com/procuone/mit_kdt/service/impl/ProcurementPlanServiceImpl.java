@@ -1,17 +1,25 @@
 package com.procuone.mit_kdt.service.impl;
 
 import com.procuone.mit_kdt.dto.ProcumentPlanDTO;
+import com.procuone.mit_kdt.dto.PurchaseOrderDTO;
+import com.procuone.mit_kdt.dto.ShipmentDTO;
 import com.procuone.mit_kdt.entity.ProcurementPlan;
 import com.procuone.mit_kdt.entity.ProductionPlan;
 import com.procuone.mit_kdt.repository.ProcurementPlanRepository;
 import com.procuone.mit_kdt.repository.ProductionPlanRepository;
+import com.procuone.mit_kdt.service.MaterialIssueService;
 import com.procuone.mit_kdt.service.ProcurementPlanService;
+import com.procuone.mit_kdt.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProcurementPlanServiceImpl implements ProcurementPlanService {
@@ -24,6 +32,12 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
 
     @Autowired
     private ProcurementPlanRepository procurementPlanRepository;
+
+    @Autowired
+    private PurchaseOrderService purchaseOrderService;
+
+    @Autowired
+    private MaterialIssueService materialIssueService;
 
     @Override
     public ProcumentPlanDTO registerProcurementPlan(ProcumentPlanDTO dto) {
@@ -58,6 +72,13 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
         return entityToDto(savedEntity);
     }
 
+    @Override
+    public List<ProcumentPlanDTO> getProcurementPlanByProductPlanCode(String productPlanCode) {
+        List<ProcurementPlan> procurementPlans = procurementPlanRepository.findByProductPlanCode(productPlanCode);
+        return procurementPlans.stream()
+                .map(this::entityToDto) // 엔티티를 DTO로 변환
+                .collect(Collectors.toList());
+    }
     @Override
     public long getRequiredProcurementQuantity(String productionPlanId) {
         // 1. 생산 계획 조회
@@ -109,7 +130,6 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     public String search(ProcumentPlanDTO procurementPlanDTO) {
         // Optional을 사용하여 값을 안전하게 가져오기
         Optional<ProcurementPlan> optional = repository.findById(procurementPlanDTO.getProductPlanCode());
-
         // 값을 찾은 경우
         if (optional.isPresent()) {
             ProcurementPlan procurementPlan = optional.get();
@@ -131,6 +151,16 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
         return repository.findAll();  // 모든 조달 계획을 조회
     }
 
+    @Override
+    public Page<ProcurementPlan> searchProcurementPlans(String search, String productName, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        return procurementPlanRepository.searchProcurementPlans(search, productName, startDate, endDate, pageable);
+    }
+
+    @Override
+    public Page<ProcurementPlan> findAll(Pageable pageable) {
+        return procurementPlanRepository.findAll(pageable);
+    }
+
     // 조달계획 조회
     @Override
     public ProcurementPlan getProcurementPlanByCode(String procurementPlanCode) {
@@ -141,6 +171,39 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     @Override
     public void updateProcurementPlan(ProcurementPlan procurementPlan) {
         procurementPlanRepository.save(procurementPlan); // JPA를 사용해 데이터 저장
+    }
+
+    @Override
+    @Transactional
+    public Long deleteProcurementPlanByCode(String procurementPlanCode) {
+        // 조달계획 조회
+        Optional<ProcurementPlan> procurementPlan = procurementPlanRepository.findById(procurementPlanCode);
+
+        if (procurementPlan.isPresent()) {
+            // 발주서 상태 조회
+            List<PurchaseOrderDTO> orders = purchaseOrderService.getOrdersByStatusAndProcurementPlanCode("자동생성", procurementPlanCode);
+            List<PurchaseOrderDTO> completedOrders = purchaseOrderService.getOrdersByStatusAndProcurementPlanCode("발주완료", procurementPlanCode);
+            List<ShipmentDTO> ships =materialIssueService.getShipmentsByProcurementPlanCode(procurementPlanCode);
+
+            // 이미 발주완료된 조달계획은 삭제 불가능
+            if (!completedOrders.isEmpty()) {
+                return 3L; // 발주완료된 경우
+            }
+            // 발주가 자동생성 상태일 경우 삭제 가능
+            if (!orders.isEmpty()) {
+                for (PurchaseOrderDTO order : orders) {
+                    purchaseOrderService.delete(order);
+                }
+                for(ShipmentDTO ship : ships) {
+                    materialIssueService.deleteShipment(ship);
+                }
+            }
+            // 조달계획 삭제
+            procurementPlanRepository.delete(procurementPlan.get());
+            return 1L; // 성공
+        }
+
+        return 2L; // 조달계획 없음
     }
 }
 

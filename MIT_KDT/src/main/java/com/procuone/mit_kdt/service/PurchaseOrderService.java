@@ -21,4 +21,7 @@ public interface PurchaseOrderService {
     //사업자 번호로 검색
     List<PurchaseOrderDTO> getCompletedOrdersBybusinessId(String businessId);
 
+    public void update(PurchaseOrderDTO purchaseOrderDTO);
+    List<PurchaseOrderDTO> getOrdersByStatusAndProcurementPlanCode(String status, String procurementPlanCode);
+    void delete(PurchaseOrderDTO purchaseOrderDTO);
 }

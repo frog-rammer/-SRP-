@@ -43,12 +43,14 @@ public interface ProductionPlanRepository extends JpaRepository<ProductionPlan, 
             @Param("endDate") LocalDate endDate,
             Pageable pageable);
 
-    // productPlanCode로 생산계획 조회
-    ProductionPlan findByProductPlanCode(String productPlanCode);
+
 
     @Query("SELECT p FROM ProductionPlan p WHERE " +
             "LOWER(p.productPlanCode) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<ProductionPlan> findProductionPlans(@Param("keyword") String keyword, Pageable pageable);
 
+    Optional<ProductionPlan> findByProductPlanCode(String productPlanCode);
+    void deleteByProductPlanCode(String productPlanCode);
+    boolean existsByProductPlanCode(String productPlanCode);
 }

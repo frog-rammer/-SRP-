@@ -19,9 +19,20 @@ public interface ProcurementPlanService {
 
     List<ProcurementPlan> getAllProcurementPlans(); // 모든 조달 계획 조회
 
+    Page<ProcurementPlan> searchProcurementPlans(
+            String search,
+            String productName,
+            LocalDate startDate,
+            LocalDate endDate,
+            Pageable pageable);
+
+    Page<ProcurementPlan> findAll(Pageable pageable);
     // 조달계획 조회
     ProcurementPlan getProcurementPlanByCode(String procurementPlanCode);
 
+    List<ProcumentPlanDTO> getProcurementPlanByProductPlanCode(String productPlanCode);
     // 조달계획 업데이트
     void updateProcurementPlan(ProcurementPlan procurementPlan);
+
+    Long deleteProcurementPlanByCode(String procurementPlanCode);
 }

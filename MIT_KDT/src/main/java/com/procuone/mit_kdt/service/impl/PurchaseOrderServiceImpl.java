@@ -252,6 +252,43 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void update(PurchaseOrderDTO purchaseOrderDTO) {
+        // 기존 발주서 조회
+        PurchaseOrder existingOrder = purchaseOrderRepository.findById(purchaseOrderDTO.getPurchaseOrderCode())
+                .orElseThrow(() -> new IllegalArgumentException("해당 발주서를 찾을 수 없습니다: " + purchaseOrderDTO.getPurchaseOrderCode()));
+
+        // 업데이트할 값 적용
+        existingOrder.setQuantity(purchaseOrderDTO.getQuantity());
+        existingOrder.setPrice(purchaseOrderDTO.getPrice()); // 가격 재계산이 필요한 경우
+        existingOrder.setUpdatedBy("김미영"); // 업데이트 담당자 설정
+        existingOrder.setUpdatedDate(LocalDate.now());
+
+        // 저장
+        purchaseOrderRepository.save(existingOrder);
+    }
+
+    @Override
+    public List<PurchaseOrderDTO> getOrdersByStatusAndProcurementPlanCode(String status, String procurementPlanCode) {
+        List<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findByStatusAndProcurementPlanCode(status, procurementPlanCode);
+
+        return purchaseOrders.stream()
+                .map(this::convertEntityToDTO) // 엔티티를 DTO로 변환
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void delete(PurchaseOrderDTO purchaseOrderDTO) {
+        if (purchaseOrderDTO.getPurchaseOrderCode() == null || purchaseOrderDTO.getPurchaseOrderCode().isEmpty()) {
+            throw new IllegalArgumentException("삭제하려는 발주서 코드가 비어있습니다.");
+        }
+
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderDTO.getPurchaseOrderCode())
+                .orElseThrow(() -> new RuntimeException("해당 발주서를 찾을 수 없습니다: " + purchaseOrderDTO.getPurchaseOrderCode()));
+
+        purchaseOrderRepository.delete(purchaseOrder);
+    }
+
 
 
     private PurchaseOrder dtoToEntity(PurchaseOrderDTO dto) {
