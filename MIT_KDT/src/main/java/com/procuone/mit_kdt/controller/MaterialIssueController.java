@@ -1,5 +1,6 @@
 package com.procuone.mit_kdt.controller;
 
+import com.procuone.mit_kdt.dto.InventoryDTO;
 import com.procuone.mit_kdt.dto.InventoryTransactionDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
@@ -8,10 +9,8 @@ import com.procuone.mit_kdt.entity.BOM.BOMRelationship;
 import com.procuone.mit_kdt.entity.ProductionPlan;
 import com.procuone.mit_kdt.repository.BOMRelationshipRepository;
 import com.procuone.mit_kdt.repository.ProductionPlanRepository;
-import com.procuone.mit_kdt.service.InventoryTransactionService;
-import com.procuone.mit_kdt.service.ItemService;
-import com.procuone.mit_kdt.service.MaterialIssueService;
-import com.procuone.mit_kdt.service.ProductionPlanService;
+import com.procuone.mit_kdt.service.*;
+import com.procuone.mit_kdt.service.impl.InventoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,6 +45,8 @@ public class MaterialIssueController {
 
     @Autowired
     private ProductionPlanRepository productionPlanRepository;
+    @Autowired
+    private InventoryService inventoryService;
 
     @GetMapping("/getProductionPlans")
     public ResponseEntity<?> getProductionPlans(
@@ -261,6 +262,12 @@ public class MaterialIssueController {
         // 출고 목록 (대기 상태) - 출고번호 기준 내림차순
         Pageable waitingPageable = PageRequest.of(spage, ssize, Sort.by("shipmentId").descending());
         Page<ShipmentDTO> waitingShipments = materialIssueService.getShipmentsByStatus("대기", waitingPageable);
+        for(ShipmentDTO shipment : waitingShipments.getContent()) {
+            Long ItemId =itemService.getItemIdByProductCode(shipment.getProductCode());
+            InventoryDTO in = inventoryService.getInventoryByItemId(ItemId);
+            shipment.setCurrentQuantity(in.getCurrentQuantity().longValue());
+        }
+
         int waitingStartPage = Math.max(0, spage - (maxVisiblePages / 2));
         int waitingEndPage = Math.min(waitingShipments.getTotalPages(), waitingStartPage + maxVisiblePages);
 
