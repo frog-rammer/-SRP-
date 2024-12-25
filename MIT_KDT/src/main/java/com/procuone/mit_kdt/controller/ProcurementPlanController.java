@@ -35,7 +35,6 @@ public class ProcurementPlanController {
     private ProcurementPlanRepository ProcurementPlanRepository;
     @Autowired
     MaterialIssueService  materialIssueService;
-
     @Autowired
     CompanyService companyService;
     @Autowired
