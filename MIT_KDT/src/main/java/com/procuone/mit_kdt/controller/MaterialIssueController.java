@@ -1,5 +1,6 @@
 package com.procuone.mit_kdt.controller;
 
+import com.procuone.mit_kdt.dto.InventoryDTO;
 import com.procuone.mit_kdt.dto.InventoryTransactionDTO;
 import com.procuone.mit_kdt.dto.ItemDTOs.ItemDTO;
 import com.procuone.mit_kdt.dto.ProductionPlanDTO;
@@ -8,10 +9,8 @@ import com.procuone.mit_kdt.entity.BOM.BOMRelationship;
 import com.procuone.mit_kdt.entity.ProductionPlan;
 import com.procuone.mit_kdt.repository.BOMRelationshipRepository;
 import com.procuone.mit_kdt.repository.ProductionPlanRepository;
-import com.procuone.mit_kdt.service.InventoryTransactionService;
-import com.procuone.mit_kdt.service.ItemService;
-import com.procuone.mit_kdt.service.MaterialIssueService;
-import com.procuone.mit_kdt.service.ProductionPlanService;
+import com.procuone.mit_kdt.service.*;
+import com.procuone.mit_kdt.service.impl.InventoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/materialIssue")
@@ -46,6 +46,8 @@ public class MaterialIssueController {
 
     @Autowired
     private ProductionPlanRepository productionPlanRepository;
+    @Autowired
+    private InventoryService inventoryService;
 
     @GetMapping("/getProductionPlans")
     public ResponseEntity<?> getProductionPlans(
@@ -202,24 +204,62 @@ public class MaterialIssueController {
         Page<InventoryTransactionDTO> inboundTransactions = inventoryTransactionService
                 .getPagedTransactionsByStatus("입고", pageable);
 //        System.out.println("Step 7 - Inbound Transactions: " + inboundTransactions.getContent());
-        model.addAttribute("inboundTransactions", inboundTransactions.getContent());
+
         pageable = PageRequest.of(opage, osize);
         // 8. 출고 상태 트랜잭션 가져오기
         Page<InventoryTransactionDTO> outboundTransactions = inventoryTransactionService
                 .getPagedTransactionsByStatus("출고", pageable);
 //        System.out.println("Step 8 - Outbound Transactions: " + outboundTransactions.getContent());
+
+        model.addAttribute("inboundTransactions", inboundTransactions.getContent());
         model.addAttribute("outboundTransactions", outboundTransactions.getContent());
 
         // 9. 페이징 정보 추가
-        model.addAttribute("currentInboundPage", inboundTransactions.getNumber());
-        model.addAttribute("totalInboundPages", inboundTransactions.getTotalPages());
-        model.addAttribute("totalInboundItems", inboundTransactions.getTotalElements());
+        // 페이지네이션 범위 계산
+        int paginationSize = 5; // 한 번에 표시할 페이지네이션 수
 
-        model.addAttribute("currentOutboundPage", outboundTransactions.getNumber());
-        model.addAttribute("totalOutboundPages", outboundTransactions.getTotalPages());
-        model.addAttribute("totalOutboundItems", outboundTransactions.getTotalElements());
+        // 출고 페이지네이션 계산
+        int currentOutboundPage = outboundTransactions.getNumber();
+        int totalOutboundPages = outboundTransactions.getTotalPages();
+        int startOutboundPage = Math.max(0, currentOutboundPage - paginationSize / 2);
+        int endOutboundPage = Math.min(totalOutboundPages, startOutboundPage + paginationSize);
+
+        // 입고 페이지네이션 계산
+        int currentInboundPage = inboundTransactions.getNumber();
+        int totalInboundPages = inboundTransactions.getTotalPages();
+        int startInboundPage = Math.max(0, currentInboundPage - paginationSize / 2);
+        int endInboundPage = Math.min(totalInboundPages, startInboundPage + paginationSize);
+
+        // 모델에 페이지네이션 정보 추가
+        model.addAttribute("currentOutboundPage", currentOutboundPage);
+        model.addAttribute("totalOutboundPages", totalOutboundPages);
+        model.addAttribute("startOutboundPage", startOutboundPage);
+        model.addAttribute("endOutboundPage", endOutboundPage);
+
+        model.addAttribute("currentInboundPage", currentInboundPage);
+        model.addAttribute("totalInboundPages", totalInboundPages);
+        model.addAttribute("startInboundPage", startInboundPage);
+        model.addAttribute("endInboundPage", endInboundPage);
+
 
         return "material/stock";
+    }
+
+
+    private void addPaginationAttributes(Model model, Page<?> inboundTransactions, Page<?> outboundTransactions) {
+        int paginationSize = 5;
+
+        // 출고 페이지네이션
+        int currentOutboundPage = outboundTransactions.getNumber();
+        int totalOutboundPages = outboundTransactions.getTotalPages();
+        model.addAttribute("startOutboundPage", Math.max(0, currentOutboundPage - paginationSize / 2));
+        model.addAttribute("endOutboundPage", Math.min(totalOutboundPages, currentOutboundPage + paginationSize));
+
+        // 입고 페이지네이션
+        int currentInboundPage = inboundTransactions.getNumber();
+        int totalInboundPages = inboundTransactions.getTotalPages();
+        model.addAttribute("startInboundPage", Math.max(0, currentInboundPage - paginationSize / 2));
+        model.addAttribute("endInboundPage", Math.min(totalInboundPages, currentInboundPage + paginationSize));
     }
 
 
@@ -261,6 +301,12 @@ public class MaterialIssueController {
         // 출고 목록 (대기 상태) - 출고번호 기준 내림차순
         Pageable waitingPageable = PageRequest.of(spage, ssize, Sort.by("shipmentId").descending());
         Page<ShipmentDTO> waitingShipments = materialIssueService.getShipmentsByStatus("대기", waitingPageable);
+        for(ShipmentDTO shipment : waitingShipments.getContent()) {
+            Long ItemId =itemService.getItemIdByProductCode(shipment.getProductCode());
+            InventoryDTO in = inventoryService.getInventoryByItemId(ItemId);
+            shipment.setCurrentQuantity(in.getCurrentQuantity().longValue());
+        }
+
         int waitingStartPage = Math.max(0, spage - (maxVisiblePages / 2));
         int waitingEndPage = Math.min(waitingShipments.getTotalPages(), waitingStartPage + maxVisiblePages);
 
