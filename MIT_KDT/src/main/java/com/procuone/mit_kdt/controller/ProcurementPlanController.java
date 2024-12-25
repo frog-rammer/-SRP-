@@ -10,10 +10,7 @@ import com.procuone.mit_kdt.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +38,9 @@ public class ProcurementPlanController {
 
     @Autowired
     CompanyService companyService;
+    @Autowired
+    private ProcurementPlanRepository procurementPlanRepository;
+
     @GetMapping("/register")
     public String register(Model model,
                            @RequestParam(value = "page", defaultValue = "0") int page,
@@ -208,40 +208,79 @@ public class ProcurementPlanController {
     public String comProcurementPlanView(
             Model model,
             @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            Pageable pageable,
             HttpSession session) {
-        String businessId = session.getAttribute("businessId").toString();
-        if(businessId == null) {
+
+        int pageSize = 10; // 한 페이지에 표시할 항목 수
+        int paginationSize = 5; // 페이지네이션에서 표시할 최대 페이지 수
+
+        // 세션에서 비즈니스 ID 가져오기
+        String businessId = (String) session.getAttribute("businessId");
+        if (businessId == null) {
             session.invalidate();
             return "redirect:/login";
         }
 
-        pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "procurementPlanCode"));
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "procurementPlanCode"));
+
+        // 발주서를 통해 조달계획 코드를 가져오기
+        List<PurchaseOrderDTO> purchaseOrders = purchaseOrderService.getCompletedOrdersBybusinessId(businessId);
+        List<String> procurementPlanCodes = purchaseOrders.stream()
+                .map(PurchaseOrderDTO::getProcurementPlanCode)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (procurementPlanCodes.isEmpty()) {
+            // 관련 발주서가 없는 경우 빈 페이지 반환
+            model.addAttribute("procurementPlanList", List.of());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", 0);
+            model.addAttribute("startPage", 0);
+            model.addAttribute("endPage", 0);
+            model.addAttribute("search", search);
+            model.addAttribute("startDate", startDate);
+            model.addAttribute("endDate", endDate);
+            return "supplier/companyProcumentPlanView";
+        }
 
         Page<ProcurementPlan> comProcurementPlans;
 
-        if (search != null && !search.isEmpty()) {
-            comProcurementPlans = ProcurementPlanRepository.findByProductNameContainingOrProductCodeContaining(search, search, pageable);
-        } else {
-            List<PurchaseOrderDTO> pDTO  =purchaseOrderService.getCompletedOrdersBybusinessId(businessId);
-            List<String> uniqueProcurementCodes = pDTO.stream()
-                    .map(PurchaseOrderDTO::getProcurementPlanCode) // Extract procurement_plan_code
-                    .distinct() // Remove duplicates
+        // 검색 조건 처리
+        if ((search != null && !search.isEmpty()) || startDate != null || endDate != null) {
+            comProcurementPlans = procurementPlanService.searchProcurementPlans(search, null, startDate, endDate, pageable);
+            // 검색 결과를 발주서에서 가져온 조달계획 코드로 필터링
+            List<ProcurementPlan> filteredPlans = comProcurementPlans.getContent().stream()
+                    .filter(plan -> procurementPlanCodes.contains(plan.getProcurementPlanCode()))
                     .collect(Collectors.toList());
-            comProcurementPlans = ProcurementPlanRepository.findByProcurementPlanCodeIn(uniqueProcurementCodes, pageable);
+            comProcurementPlans = new PageImpl<>(filteredPlans, pageable, filteredPlans.size());
+        } else {
+            // 발주서에서 가져온 조달계획 코드로만 필터링
+            comProcurementPlans = procurementPlanRepository.findByProcurementPlanCodeIn(procurementPlanCodes, pageable);
         }
-        CompanyDTO companyDTO= companyService.getCompanyDetails(businessId);
+
+        // 페이지네이션 범위 계산
+        int currentPage = comProcurementPlans.getNumber();
+        int totalPages = comProcurementPlans.getTotalPages();
+        int startPage = Math.max(0, currentPage - paginationSize / 2);
+        int endPage = Math.min(totalPages, startPage + paginationSize);
+
+        // 모델에 데이터 추가
+        CompanyDTO companyDTO = companyService.getCompanyDetails(businessId);
         model.addAttribute("companyDTO", companyDTO);
         model.addAttribute("procurementPlanList", comProcurementPlans.getContent());
         model.addAttribute("search", search);
-        model.addAttribute("currentPage", comProcurementPlans.getNumber());
-        model.addAttribute("totalPages", comProcurementPlans.getTotalPages());
-        model.addAttribute("totalItems", comProcurementPlans.getTotalElements());
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
 
         return "supplier/companyProcumentPlanView";
     }
+
 
     @PostMapping("/procurementDelete")
     @ResponseBody

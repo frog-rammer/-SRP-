@@ -263,7 +263,7 @@
         </div>
         <section class="search-container">
             <h3><span th:text="${companyDTO.comName}"></span> 업체 조달계획 조회</h3>
-            <form action="/procurementPlan/comsearch" method="get">
+            <form action="/procurementPlan/comProcurementPlanView" method="get">
                 <!--                <label for="procurementPlanCode">조달계획 코드</label>-->
                 <!--                <input type="text" id="procurementPlanCode" name="procurementPlanCode" th:value="${procurementPlanCode}" placeholder="조달계획 코드를 입력하세요">-->
 
@@ -300,9 +300,6 @@
                     <th>계획 시작일</th>
                     <th>계획 종료일</th>
                     <th>조달 납기일</th>
-                    <th colspan="2"></th>
-                    <th></th>
-
                 </tr>
                 </thead>
                 <tbody>
@@ -325,19 +322,27 @@
             </table>
             <!-- 페이지네이션 버튼 -->
             <div class="pagination">
-
+                <!-- 이전 버튼 -->
                 <a th:if="${currentPage > 0}"
-                   th:href="@{/procurementPlan/comProcurementPlanView(page=${currentPage - 1}, search=${search})}">이전</a>
+                   th:href="@{/procurementPlan/comProcurementPlanView(page=${currentPage - 1}, search=${search}, startDate=${startDate}, endDate=${endDate})}">
+                    이전
+                </a>
 
-                <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                   th:classappend="${i == currentPage} ? 'active' : ''"
-                   th:href="@{/procurementPlan/comProcurementPlanView(page=${i}, search=${search})}"
-                   th:text="${i + 1}">1</a>
+                <!-- 페이지 번호 -->
+                <span th:each="i : ${#numbers.sequence(startPage, endPage - 1)}">
+        <a th:href="@{/procurementPlan/comProcurementPlanView(page=${i}, search=${search}, startDate=${startDate}, endDate=${endDate})}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage ? 'active' : ''}">
+        </a>
+    </span>
 
+                <!-- 다음 버튼 -->
                 <a th:if="${currentPage < totalPages - 1}"
-                   th:href="@{/procurementPlan/comProcurementPlanView(page=${currentPage + 1}, search=${search})}">다음</a>
-
+                   th:href="@{/procurementPlan/comProcurementPlanView(page=${currentPage + 1}, search=${search}, startDate=${startDate}, endDate=${endDate})}">
+                    다음
+                </a>
             </div>
+
         </section>
     </main>
     <footer>
