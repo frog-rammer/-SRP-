@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>생산팉 대시보드</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <style>
+        .topContainer{
+            display: flex;
+            gap: 5%;
+            padding: 2%;
+        }
+        .productPlanInfoWrap{
+            border: solid 2px #ccc;
+            border-radius: 10px;
+            padding: 4%;
+            margin: 0 auto;
+        }
+        .productionPlanCount{
+            margin: 0 auto;
+            font-family: 'Godo', sans-serif;
+            font-size: larger;
+        }
+        .planDetail{
+            grid-template-columns: repeat(2,1fr);
+        }
+        /* 달력 섹션 */
+        .calendarWrap {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1); /* 달력 영역 그림자 */
+            display: flex;
+            width: 45%;
+            flex-direction: column;
+            gap: 15px;
+            order: 2; /* 달력을 아래로 배치 (flexbox에서 순서를 바꾸는 방법) */
+        }
+        .calendar{
+            border: 1px solid #eee;
+            border-radius: 3px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(7,1fr);
+            gap:1px;
+        }
+        .calenderDiv {
+            aspect-ratio: 1 / 1; /* 가로와 세로 비율을 1:1로 유지 */
+        }
+        #yearSelect, #monthSelect {
+            width: 100px;
+            height: 25px;
+        }
+        .selectContainer {
+            display: flex;
+            gap: 200px;
+            align-items: center;
+        }
+        .selectContainer div {
+            display: flex;
+            gap: 30px;
+            font-family: Arial, sans-serif;
+        }
+        .selectContainer label {
+            margin-bottom: 5px;
+            font-weight: bolder;
+            color: #333;
+        }
+        .yearSelect, .monthSelect {
+            padding: 0 0 0 10px;
+            border: 2px solid #ddd; /* 테두리 */
+            border-radius: 8px; /* 모서리 둥글게 */
+            background-color: #fff; /* 배경색 */
+            color: #333; /* 글자색 */
+            appearance: none; /* 기본 브라우저 스타일 제거 */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23333' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px; /* 화살표 아이콘 크기 */
+            cursor: pointer;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            /* 셀렉트 박스 크기 고정 및 박스 사이즈 설정 */
+            width: 150px; /* 고정 너비 */
+            min-width: 150px; /* 최소 너비 */
+            height: 100px;
+            box-sizing: border-box; /* 패딩과 테두리를 포함한 너비 설정 */
+        }
+        /* 셀렉트 박스 호버 및 포커스 효과 */
+        .yearSelect:hover, .monthSelect:hover {
+            border-color: #aaa;
+        }
+        .yearSelect:focus, .monthSelect:focus {
+            outline: none;
+            border-color: #4CAF50; /* 초록색 강조 */
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* 포커스 시 그림자 효과 */
+        }
+        /* 셀렉트 박스 옵션 스타일 (크롬 기반) */
+        .yearSelect option, .monthSelect option {
+            background-color: #fff;
+            color: #333;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        /* 반응형 스타일 */
+        @media (max-width: 600px) {
+            .selectContainer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .yearSelect, .monthSelect {
+                width: 100%;
+            }
+        }
+        .header-container h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #32928E;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+
+        .header-container p {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+<div class="grid-container">
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>
+    </header>
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+    <main class="layout-main">
+        <div class="topContainer">
+            <div class="productPlanInfoWrap">
+                <div class="productionPlanCount">
+                    <h2>현재 진행 중인 생산 계획</h2>
+                    <span> 총  <a href=""> #</a> 건</span>
+                </div>
+            </div>
+
+            <div class="productPlanInfoWrap">
+                <div class="productionPlanCount">
+                    <h2> 출고 진행  대기 현황 </h2>
+                    <span> 총 <a href="">#</a>  건</span>
+                </div>
+            </div>
+        </div>
+        <section class="planDetail">
+            <div class="container">
+                <section class="calendarWrap">
+                    <h3>진행 중인 생산 일정</h3>
+                    <div class="selectContainer">
+                        <div>
+                            <label for="yearSelect">연도:</label>
+                            <select id="yearSelect" class="yearSelect"></select>
+                        </div>
+                        <div>
+                            <label for="monthSelect">월:</label>
+                            <select id="monthSelect" class="monthSelect">
+                                <option value="0">1</option>
+                                <option value="1">2</option>
+                                <option value="2">3</option>
+                                <option value="3">4</option>
+                                <option value="4">5</option>
+                                <option value="5">6</option>
+                                <option value="6">7</option>
+                                <option value="7">8</option>
+                                <option value="8">9</option>
+                                <option value="9">10</option>
+                                <option value="10">11</option>
+                                <option value="11">12</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="calendar" id="calendar">
+                    </div>
+                </section>
+            </div>
+            <div style="background: red ; padding: 30px">
+
+            </div>
+        </section>
+         </main>
+</div>
+<script th:src="@{/JS/productPlanView.js}"></script>
+<script>
+    let highlightedDates = []; // 색칠된 날짜를 저장할 배열
+    let currentMonth = new Date().getMonth(); // 현재 월 (기본값)
+    let currentYear = new Date().getFullYear(); // 현재 연도 (기본값)
+
+    // 날짜 범위의 시작과 끝을 Date 객체로 변환하고 날짜 범위에 색칠
+    function highlightDates(event) {
+        let selectedRow = event.currentTarget;
+        let startDate = selectedRow.querySelector("td:nth-child(1)").innerText;
+        let endDate = selectedRow.querySelector("td:nth-child(2)").innerText;
+
+        // 시작일과 종료일을 Date 객체로 변환
+        let start = new Date(startDate + "T00:00:00");
+        let end = new Date(endDate + "T23:59:59");
+
+        // 색칠된 날짜 배열 초기화
+        highlightedDates = [];
+
+        // 날짜 범위가 두 달에 걸쳐 있을 경우 처리
+        let currentDate = new Date(start); // 시작일부터 시작
+
+        while (currentDate <= end) {
+            const calendarDateText = currentDate.getDate().toString();
+            const month = currentDate.getMonth();
+            const year = currentDate.getFullYear();
+
+            let dateDiv = document.querySelector(`.calendar div[data-day="${calendarDateText}"]`);
+
+            if (dateDiv) {
+                dateDiv.style.backgroundColor = '#e30018'; // 날짜 색칠
+                // 색칠된 날짜를 연도, 월, 일 기준으로 저장
+                highlightedDates.push({
+                    day: calendarDateText,
+                    month: month,
+                    year: year
+                });
+            }
+
+            // 날짜를 하루씩 증가시킴
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        // 선택된 연도와 월을 셀렉트 박스에 반영
+        document.getElementById('yearSelect').value = start.getFullYear(); // 시작 연도를 연도 셀렉트 박스에 설정
+        document.getElementById('monthSelect').value = start.getMonth();  // 시작 월을 월 셀렉트 박스에 설정
+
+        // 달력 리렌더링 (선택된 월과 연도로)
+        renderCalendar(start.getMonth(), start.getFullYear());
+    }
+
+    // 달력을 렌더링하는 함수 (해당 월, 연도에 맞는 날짜만 표시)
+    function renderCalendar(month, year) {
+        const calendar = document.querySelector("#calendar");
+        const maxDaysInMonth = new Date(year, month + 1, 0).getDate(); // 해당 월의 최대 일수 구하기
+        const firstDay = new Date(year, month, 1).getDay(); // 해당 월의 첫 번째 날이 무슨 요일인지 구하기
+        const days = Array.from({length: maxDaysInMonth}, (_, i) => i + 1); // 해당 월의 날짜들
+
+        // 기존 달력 내용 초기화
+        calendar.innerHTML = '<div style="color: red">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color:blue; ">토</div>';
+        // 첫 번째 날 이전의 빈 칸 만들기
+        for (let i = 0; i < firstDay; i++) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.classList.add('calenderDiv');
+            calendar.appendChild(emptyDiv);
+        }
+        // 해당 월의 날짜들을 달력에 추가
+        for(day of days){
+            const dayDiv = document.createElement('div');
+            const date = new Date(year, month, day); // month는 0부터 시작하므로 -1 해줌
+            const dayOfWeek = date.getDay(); // 0(일요일) ~ 6(토요일)
+            dayDiv.classList.add('calenderDiv');
+            dayDiv.innerText = day;
+            dayDiv.setAttribute('data-day', day); // 각 날짜에 data-day 속성 추가
+            if(dayOfWeek === 0){
+                dayDiv.style.color="#FF0000";
+            }else if(dayOfWeek===6){
+                dayDiv.style.color="#0000FF";
+            }else{
+                dayDiv.style.color="#000000";
+            }
+            calendar.appendChild(dayDiv);
+        }
+        // 색칠된 날짜 복원
+        restoreHighlightedDates(month, year);
+    }
+
+    // 색칠된 날짜 복원 함수
+    function restoreHighlightedDates(month, year) {
+        const calendarDates = document.querySelectorAll('.calendar div');
+        calendarDates.forEach(dateDiv => {
+            let calendarDateText = dateDiv.innerText;
+            // 해당 날짜가 저장된 날짜 배열에 있고, 월과 연도가 일치하면 색칠
+            if (calendarDateText && highlightedDates.some(date => date.day == calendarDateText && date.month == month && date.year == year)) {
+                dateDiv.style.backgroundColor = '#32928E';  // 색칠된 날짜 배경색
+            }
+        });
+    }
+
+    // 월 변경 시 달력 리렌더링 후 색칠된 날짜 복원
+    document.getElementById("monthSelect").addEventListener("change", function () {
+        currentMonth = parseInt(this.value);
+        renderCalendar(currentMonth, currentYear);
+    });
+    // 연도 변경 시 달력 리렌더링 후 색칠된 날짜 복원
+    document.getElementById("yearSelect").addEventListener("change", function () {
+        currentYear = parseInt(this.value);
+        renderCalendar(currentMonth, currentYear);
+    });
+    // 생산 계획 목록 클릭 시 날짜 범위 색칠
+    const planRows = document.querySelectorAll("tr");
+    planRows.forEach(row => {
+        row.addEventListener("click", function (event) {
+            // 클릭된 계획에 따라 색칠
+            highlightDates(event);
+            // 색칠된 날짜들 초기화
+            const calendarDates = document.querySelectorAll('.calendar div');
+            calendarDates.forEach(dateDiv => {
+                dateDiv.style.backgroundColor = ''; // 모든 날짜의 배경색을 초기화
+            });
+            // 새로운 계획에 맞게 색칠된 날짜만 다시 적용
+            highlightDates(event);
+        });
+    });
+    // 초기 달력 렌더링 (기본값: 현재 월, 현재 연도)
+    renderCalendar(currentMonth, currentYear);
+    document.addEventListener("DOMContentLoaded", function () {
+        const planTableBody = document.getElementById("planTableBody");
+    });
+</script>
+</body>
+</html>

@@ -190,13 +190,11 @@
             align-items: center;
 
         }
-
         .selectContainer div {
             display: flex;
             gap: 30px;
             font-family: Arial, sans-serif;
         }
-
         .selectContainer label {
             margin-bottom: 5px;
             font-weight: bolder;
@@ -256,7 +254,6 @@
         .header-container {
             margin: 20px 0;
         }
-
         .header-container h1 {
             color: #2c3e50;
             font-size: 2rem;
@@ -265,12 +262,12 @@
             font-weight: bold;
             padding-bottom: 10px;
         }
-
         .header-container p {
             font-size: 16px;
             color: #7f8c8d;
         }
     </style>
+
 </head>
 <body>
 <div class="grid-container">
@@ -328,7 +325,6 @@
                         <div>Sat</div>
                     </div>
                 </section>
-
                 <!-- 생산 계획 목록 부분 -->
                 <section class="productionPlanListWrap">
 
@@ -400,21 +396,20 @@
                     <div class="pagination">
                         <!-- 이전 버튼 -->
                         <span th:if="${currentPage > 0}">
-        <a th:href="@{/productionPlan/view(page=${currentPage - 1})}">이전</a>
-    </span>
+                            <a th:href="@{/productionPlan/view(page=${currentPage - 1})}">이전</a>
+                         </span>
                         <!-- 페이지 번호 반복 -->
                         <span th:each="pageNum : ${#numbers.sequence(startPage, endPage - 1)}">
-        <a th:href="@{/productionPlan/view(page=${pageNum})}"
-           th:text="${pageNum + 1}"
-           th:classappend="${pageNum == currentPage ? 'current' : ''}"></a>
-    </span>
+                            <a th:href="@{/productionPlan/view(page=${pageNum})}"
+                                                         th:text="${pageNum + 1}"
+                                    th:classappend="${pageNum == currentPage ? 'current' : ''}"></a>
+                        </span>
 
                         <!-- 다음 버튼 -->
                         <span th:if="${currentPage < totalPages - 1}">
-        <a th:href="@{/productionPlan/view(page=${currentPage + 1})}">다음</a>
-    </span>
+                             <a th:href="@{/productionPlan/view(page=${currentPage + 1})}">다음</a>
+                        </span>
                     </div>
-
 
                 </section>
             </div>
@@ -624,7 +619,6 @@
         deleteBtn.addEventListener('click', function () {
             const row = deleteBtn.closest('tr');
             const productPlanCode = row.querySelector('td:nth-child(3)').innerText; // 생산계획번호
-
             const confirmDelete = confirm('정말로 삭제하시겠습니까?');
             if (confirmDelete) {
                 // Ajax 요청으로 서버에 삭제 요청

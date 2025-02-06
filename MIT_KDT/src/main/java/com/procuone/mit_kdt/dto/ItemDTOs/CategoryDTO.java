@@ -11,7 +11,6 @@ import java.util.Set;
 @Builder
 @ToString
 public class CategoryDTO {
-
     private Long id; // Category ID
     private String name; // 카테고리 이름
     private String type; // 카테고리 타입 (예: 중분류, 소분류)

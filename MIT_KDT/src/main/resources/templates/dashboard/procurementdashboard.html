@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/procuOneHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+</head>
+<body>
+<div class="grid-container">
+    <header class="layout-header">
+        <div th:replace="partials/procuOneHeader :: header"></div>ㅁ
+    </header>
+
+    <aside class="layout-sidebar">
+        <div th:replace="partials/procuOneSide :: side"></div>
+    </aside>
+    <main class="layout-main">
+    </main>
+    <footer class="layout-footer">
+
+    </footer>
+
+</div>
+</body>
+</html>

@@ -11,10 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
@@ -34,12 +31,10 @@ public class MemberController {
         model.addAttribute("memberDTO", new MemberDTO());
         return "support/login";
     }
-
     @GetMapping("signup")
     public String signup(Model model) {
         return "support/signup";
     }
-
     @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
         request.getSession().invalidate();
@@ -49,6 +44,7 @@ public class MemberController {
     @PostMapping("/login")
     public String loginService(@ModelAttribute MemberDTO memberDTO, HttpSession session) {
         // 로그인 시도
+
         String ok = memberService.login(memberDTO.getMemberId(), memberDTO.getPassword());
 
         if (ok.equals("success")) {
@@ -76,6 +72,42 @@ public class MemberController {
             return "redirect:/login?error=true"; // 로그인 페이지로 다시 리다이렉트
         }
     }
+
+    @PostMapping("/loginsh")
+    public String processLogin(@RequestBody Map<String,Object> requestData, HttpSession session) {
+        // 로그인 시도
+        String memberId = (String)requestData.get("memberId");
+        String password = (String)requestData.get("password");
+
+        System.out.println("memberId: " + memberId);
+        System.out.println("password: " + password);
+
+        String loginResult = memberService.login(memberId,password);
+        if (loginResult.equals("success")) {
+            // 로그인 성공 후, 사용자 정보와 타입을 세션에 저장
+            String userType = memberService.getUserType(memberId); // 회원의 타입을 서비스에서 가져옴
+            if (userType.equals("협력업체")) {
+                String businessId = companyService.getCompanyBusinessIdBycomId(memberId);
+                if (businessId != null) {
+                    session.setAttribute("businessId", businessId);
+                } else {
+                    System.out.println("Business ID not found!");
+                }
+            }
+            Optional<Member> sessionMember = memberService.getMember(memberId);
+            session.setAttribute("userId", sessionMember.get().getMemberId());
+            session.setAttribute("username", sessionMember.get().getMemberName()); // 사용자 ID 세션에 저장
+            session.setAttribute("userType", userType); // 사용자 타입 세션에 저장
+            // 세션 값 확인을 위한 출력
+            System.out.println("UserType: " + session.getAttribute("userType"));
+            System.out.println("Username: " + session.getAttribute("username"));
+            return "redirect:/Home"; // 홈 페이지로 리다이렉트
+        } else {
+            return "redirect:/login?error=true"; // 로그인 페이지로 다시 리다이렉트
+        }
+    }
+
+
     @GetMapping("/compSignup")
     public String compSignupPage() {
         return "support/compSignup";  // 'compSignup.html'을 반환
@@ -83,6 +115,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public String signup(MemberDTO dto, RedirectAttributes redirectAttributes) {
+
         String memberId = memberService.signup(dto);
         redirectAttributes.addFlashAttribute("memberDTO", dto);
         return "redirect:/login";
@@ -101,19 +134,15 @@ public class MemberController {
     public String showMyPage(HttpSession session, Model model) {
         // 세션에서 user 객체를 가져옵니다.
         User user = (User) session.getAttribute("username");
-
 //        // 만약 세션에 user 객체가 없다면 로그인 페이지로 리다이렉트할 수 있습니다.
 //        if (user == null) {
 //            return "redirect:/login";  // 예시: 로그인 페이지로 리다이렉트
 //        }
-
         // 모델에 user 객체를 추가하여 템플릿에 전달
         model.addAttribute("user", user);
 
         // myPage.html 뷰를 반환
         return "support/myPage";
     }
-
-
 }
 
